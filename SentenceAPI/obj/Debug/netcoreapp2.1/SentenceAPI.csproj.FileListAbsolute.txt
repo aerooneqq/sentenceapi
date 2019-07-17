@@ -1,0 +1,11 @@
+C:\Users\evgen\source\repos\SentenceAPI\SentenceAPI\bin\Debug\netcoreapp2.1\SentenceAPI.deps.json
+C:\Users\evgen\source\repos\SentenceAPI\SentenceAPI\bin\Debug\netcoreapp2.1\SentenceAPI.runtimeconfig.json
+C:\Users\evgen\source\repos\SentenceAPI\SentenceAPI\bin\Debug\netcoreapp2.1\SentenceAPI.runtimeconfig.dev.json
+C:\Users\evgen\source\repos\SentenceAPI\SentenceAPI\bin\Debug\netcoreapp2.1\SentenceAPI.dll
+C:\Users\evgen\source\repos\SentenceAPI\SentenceAPI\obj\Debug\netcoreapp2.1\SentenceAPI.csprojAssemblyReference.cache
+C:\Users\evgen\source\repos\SentenceAPI\SentenceAPI\obj\Debug\netcoreapp2.1\SentenceAPI.csproj.CoreCompileInputs.cache
+C:\Users\evgen\source\repos\SentenceAPI\SentenceAPI\obj\Debug\netcoreapp2.1\SentenceAPI.RazorAssemblyInfo.cache
+C:\Users\evgen\source\repos\SentenceAPI\SentenceAPI\obj\Debug\netcoreapp2.1\SentenceAPI.RazorAssemblyInfo.cs
+C:\Users\evgen\source\repos\SentenceAPI\SentenceAPI\obj\Debug\netcoreapp2.1\SentenceAPI.AssemblyInfoInputs.cache
+C:\Users\evgen\source\repos\SentenceAPI\SentenceAPI\obj\Debug\netcoreapp2.1\SentenceAPI.AssemblyInfo.cs
+C:\Users\evgen\source\repos\SentenceAPI\SentenceAPI\obj\Debug\netcoreapp2.1\SentenceAPI.RazorTargetAssemblyInfo.cache
