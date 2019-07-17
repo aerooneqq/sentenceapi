@@ -3,11 +3,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace SentenceAPI.Features.FactoryManager.Models
+using SentenceAPI.KernelInterfaces;
+
+namespace SentenceAPI.Features.FactoriesManager.Models
 {
     public class FactoryInfo
     {
-        public Type InterfaceFactoryType { get; }
-        public Type ImplementaionFactoryType { get; }
+        public IFactory Factory { get; }
+        public Type ServiceType { get; }
+
+        public FactoryInfo(IFactory factory, Type serviceType)
+        {
+            Factory = factory;
+            ServiceType = serviceType;
+        }
     }
 }

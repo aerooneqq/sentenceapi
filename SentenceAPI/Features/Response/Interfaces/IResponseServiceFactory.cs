@@ -5,10 +5,10 @@ using System.Threading.Tasks;
 
 using SentenceAPI.KernelInterfaces;
 
-namespace SentenceAPI.Features.Authentication.Interfaces
+namespace SentenceAPI.Features.Response.Interfaces
 {
-    public interface ITokenServiceFactory : IFactory
+    public interface IResponseServiceFactory : IFactory
     {
-        ITokenService GetService();
+        IResponseService GetService();
     }
 }

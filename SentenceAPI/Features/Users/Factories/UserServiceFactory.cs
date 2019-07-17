@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using SentenceAPI.Features.Users.Interfaces;
 using SentenceAPI.Features.Users.Services;
 using SentenceAPI.Features.Users.Models;
+using SentenceAPI.KernelInterfaces;
 
 namespace SentenceAPI.Features.Users.Factories
 {

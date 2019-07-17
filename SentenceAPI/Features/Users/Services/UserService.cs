@@ -24,9 +24,9 @@ namespace SentenceAPI.Features.Users.Services
             throw new System.NotImplementedException();
         }
 
-        public UserInfo Get(string login, string password)
+        public UserInfo Get(string email, string password)
         {
-            return users.FirstOrDefault(u => u.Login == login && u.Password == password);
+            return users.FirstOrDefault(u => u.Email == email && u.Password == password);
         }
 
         public void Insert(UserInfo user)
