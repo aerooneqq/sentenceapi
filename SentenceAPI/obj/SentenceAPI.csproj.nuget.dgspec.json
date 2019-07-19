@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\evgen\\source\\repos\\SentenceAPI\\SentenceAPI\\SentenceAPI.csproj": {}
+    "C:\\Users\\Aero\\Desktop\\Sentence\\SentenceAPI\\SentenceAPI\\SentenceAPI.csproj": {}
   },
   "projects": {
-    "C:\\Users\\evgen\\source\\repos\\SentenceAPI\\SentenceAPI\\SentenceAPI.csproj": {
+    "C:\\Users\\Aero\\Desktop\\Sentence\\SentenceAPI\\SentenceAPI\\SentenceAPI.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\evgen\\source\\repos\\SentenceAPI\\SentenceAPI\\SentenceAPI.csproj",
+        "projectUniqueName": "C:\\Users\\Aero\\Desktop\\Sentence\\SentenceAPI\\SentenceAPI\\SentenceAPI.csproj",
         "projectName": "SentenceAPI",
-        "projectPath": "C:\\Users\\evgen\\source\\repos\\SentenceAPI\\SentenceAPI\\SentenceAPI.csproj",
-        "packagesPath": "C:\\Users\\evgen\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\evgen\\source\\repos\\SentenceAPI\\SentenceAPI\\obj\\",
+        "projectPath": "C:\\Users\\Aero\\Desktop\\Sentence\\SentenceAPI\\SentenceAPI\\SentenceAPI.csproj",
+        "packagesPath": "C:\\Users\\Aero\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Aero\\Desktop\\Sentence\\SentenceAPI\\SentenceAPI\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
         ],
         "configFilePaths": [
-          "C:\\Users\\evgen\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Aero\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -41,10 +41,6 @@
       "frameworks": {
         "netcoreapp2.1": {
           "dependencies": {
-            "Microsoft.AspNet.WebApi.Core": {
-              "target": "Package",
-              "version": "[5.2.7, )"
-            },
             "Microsoft.AspNetCore.App": {
               "suppressParent": "All",
               "target": "Package",
@@ -64,6 +60,10 @@
             "System.IdentityModel.Tokens.Jwt": {
               "target": "Package",
               "version": "[5.5.0, )"
+            },
+            "System.Net.Http": {
+              "target": "Package",
+              "version": "[4.3.4, )"
             }
           },
           "imports": [

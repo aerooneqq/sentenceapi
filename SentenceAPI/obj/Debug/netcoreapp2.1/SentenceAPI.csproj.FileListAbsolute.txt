@@ -14,7 +14,6 @@ C:\Users\Aero\Desktop\Sentence\sentenceapi\SentenceAPI\bin\Debug\netcoreapp2.1\S
 C:\Users\Aero\Desktop\Sentence\sentenceapi\SentenceAPI\bin\Debug\netcoreapp2.1\SentenceAPI.runtimeconfig.dev.json
 C:\Users\Aero\Desktop\Sentence\sentenceapi\SentenceAPI\bin\Debug\netcoreapp2.1\SentenceAPI.dll
 C:\Users\Aero\Desktop\Sentence\sentenceapi\SentenceAPI\bin\Debug\netcoreapp2.1\SentenceAPI.pdb
-C:\Users\Aero\Desktop\Sentence\sentenceapi\SentenceAPI\obj\Debug\netcoreapp2.1\SentenceAPI.csprojAssemblyReference.cache
 C:\Users\Aero\Desktop\Sentence\sentenceapi\SentenceAPI\obj\Debug\netcoreapp2.1\SentenceAPI.csproj.CoreCompileInputs.cache
 C:\Users\Aero\Desktop\Sentence\sentenceapi\SentenceAPI\obj\Debug\netcoreapp2.1\SentenceAPI.RazorAssemblyInfo.cache
 C:\Users\Aero\Desktop\Sentence\sentenceapi\SentenceAPI\obj\Debug\netcoreapp2.1\SentenceAPI.RazorAssemblyInfo.cs
@@ -23,3 +22,4 @@ C:\Users\Aero\Desktop\Sentence\sentenceapi\SentenceAPI\obj\Debug\netcoreapp2.1\S
 C:\Users\Aero\Desktop\Sentence\sentenceapi\SentenceAPI\obj\Debug\netcoreapp2.1\SentenceAPI.RazorTargetAssemblyInfo.cache
 C:\Users\Aero\Desktop\Sentence\sentenceapi\SentenceAPI\obj\Debug\netcoreapp2.1\SentenceAPI.dll
 C:\Users\Aero\Desktop\Sentence\sentenceapi\SentenceAPI\obj\Debug\netcoreapp2.1\SentenceAPI.pdb
+C:\Users\Aero\Desktop\Sentence\SentenceAPI\SentenceAPI\obj\Debug\netcoreapp2.1\SentenceAPI.csprojAssemblyReference.cache

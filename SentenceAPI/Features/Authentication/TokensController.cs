@@ -23,7 +23,7 @@ namespace SentenceAPI.Features.Authentication
     public class TokensController : Controller
     {
         #region Factories
-        private IFactoryManager factoryManager = FactoriesManager.FactoriesManager.Instance;
+        private IFactoriesManager factoryManager = FactoriesManager.FactoriesManager.Instance;
         private IUserServiceFactory userServiceFactory;
         private ITokenServiceFactory tokenServiceFactory;
         #endregion

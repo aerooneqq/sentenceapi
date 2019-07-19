@@ -33,32 +33,20 @@ namespace SentenceAPI
 {
     public class Startup
     {
-        public IConfiguration Configuration { get; }
+        public IConfiguration Configuration { get; set;  }
 
         public Startup(IConfiguration configuration)
         {
-            Configuration = configuration;
-        }
 
-        /// <summary>
-        /// This method initializes a factory manager, where all factories which will be needed in the system
-        /// are stored. With a factory we can get access to any service in any part of the system.
-        /// </summary>
-        public void ConfigureCustomServices()
-        {
-            IFactoryManager factoryManager = FactoriesManager.Instance;
-
-            factoryManager.AddFactory(new FactoryInfo(new UserServiceFactory(), typeof(IUserService<UserInfo>)));
-            factoryManager.AddFactory(new FactoryInfo(new TokenServiceFactory(), typeof(ITokenService)));
-            factoryManager.AddFactory(new FactoryInfo(new ResponseServiceFactory(), typeof(IResponseService)));
         }
 
         public void ConfigureServices(IServiceCollection services)
         {
+            ITokenService tokenService = new TokenService();
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(
                 options =>
                 {
-                    options.RequireHttpsMetadata = false;
+                    options.RequireHttpsMetadata = true;
                     options.TokenValidationParameters = new TokenValidationParameters()
                     {
                         ValidateIssuer = true,
@@ -66,6 +54,7 @@ namespace SentenceAPI
                         ValidateAudience = true,
                         ValidAudience = AuthOptions.AUDIENCE,
                         ValidateLifetime = true,
+                        LifetimeValidator = tokenService.GetLifeTimeValidationDel(),
 
                         IssuerSigningKey = AuthOptions.GetSymmetricSecurityKey(),
                         ValidateIssuerSigningKey = true
@@ -77,6 +66,9 @@ namespace SentenceAPI
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+            ConfigureCustomServices();
+            BuildConfiguration(env);
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -87,9 +79,34 @@ namespace SentenceAPI
             }
 
             app.UseHttpsRedirection();
-            app.UseMvc();
+            app.UseDefaultFiles();
+            app.UseStaticFiles();
 
-            ConfigureCustomServices();
+            app.UseAuthentication();
+            app.UseMvc();
+        }
+
+        /// <summary>
+        /// Configures the configuration for this system by setting a path to config file.
+        /// </summary>
+        private void BuildConfiguration(IHostingEnvironment env)
+        {
+            var configBuilder = new ConfigurationBuilder().
+                SetBasePath(env.ContentRootPath).AddJsonFile("app_config.json");
+            Configuration = configBuilder.Build();
+        }
+
+        /// <summary>
+        /// This method initializes a factory manager, where all factories which will be needed in the system
+        /// are stored. With a factory we can get access to any service in any part of the system.
+        /// </summary>
+        private void ConfigureCustomServices()
+        {
+            IFactoriesManager factoryManager = FactoriesManager.Instance;
+
+            factoryManager.AddFactory(new FactoryInfo(new UserServiceFactory(), typeof(IUserService<UserInfo>)));
+            factoryManager.AddFactory(new FactoryInfo(new TokenServiceFactory(), typeof(ITokenService)));
+            factoryManager.AddFactory(new FactoryInfo(new ResponseServiceFactory(), typeof(IResponseService)));
         }
     }
 }

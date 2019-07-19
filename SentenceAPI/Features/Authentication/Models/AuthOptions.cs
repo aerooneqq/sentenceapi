@@ -9,7 +9,7 @@ namespace SentenceAPI.Features.Authentication.Models
     public class AuthOptions
     {
         public const string ISSUER = "SentenceKernel";
-        public const string AUDIENCE = "";
+        public const string AUDIENCE = "https://localhost:44368/";
         const string SecretKey = "asdl;kf l;sdfksdl;f'k dsfl;kds;ldsl;kds;l sd';lfk sdl;'f d";
 
         public const int SecondsLifeTime = 100;

@@ -11350,11 +11350,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Aero\\Desktop\\Sentence\\sentenceapi\\SentenceAPI\\SentenceAPI.csproj",
+      "projectUniqueName": "C:\\Users\\Aero\\Desktop\\Sentence\\SentenceAPI\\SentenceAPI\\SentenceAPI.csproj",
       "projectName": "SentenceAPI",
-      "projectPath": "C:\\Users\\Aero\\Desktop\\Sentence\\sentenceapi\\SentenceAPI\\SentenceAPI.csproj",
+      "projectPath": "C:\\Users\\Aero\\Desktop\\Sentence\\SentenceAPI\\SentenceAPI\\SentenceAPI.csproj",
       "packagesPath": "C:\\Users\\Aero\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Aero\\Desktop\\Sentence\\sentenceapi\\SentenceAPI\\obj\\",
+      "outputPath": "C:\\Users\\Aero\\Desktop\\Sentence\\SentenceAPI\\SentenceAPI\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"

@@ -21,7 +21,7 @@ namespace SentenceAPI.Features.Authentication.Services
 
         public string CreateEncodedToken(UserInfo user)
         {
-            var now = DateTime.Now;
+            var now = DateTime.UtcNow;
             var jwtToken = new JwtSecurityToken(
                     issuer: AuthOptions.ISSUER,
                     audience: AuthOptions.AUDIENCE,
@@ -36,11 +36,26 @@ namespace SentenceAPI.Features.Authentication.Services
             return encodedToken;
         }
 
+        public LifetimeValidator GetLifeTimeValidationDel()
+        {
+            return (notBefore, exp, token, parameters) =>
+            {
+                var now = DateTime.UtcNow;
+
+                if (now < notBefore)
+                    return false;
+                if (now > exp)
+                    return false;
+
+                return true;
+            };
+        }
+
         private ClaimsIdentity GetUserIdentity(UserInfo user)
         {
             ClaimsIdentity userIdentity = new ClaimsIdentity();
 
-            userIdentity.AddClaim(new Claim(ClaimTypes.Email, user.Email));
+            userIdentity.AddClaim(new Claim("Email", user.Email));
             userIdentity.AddClaim(new Claim("Login", user.Login));
 
             return userIdentity;

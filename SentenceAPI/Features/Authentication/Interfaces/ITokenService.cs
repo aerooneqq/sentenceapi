@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.IdentityModel.Tokens;
 using SentenceAPI.Features.Users.Models;
 using SentenceAPI.KernelInterfaces;
 using SentenceAPI.KernelModels;
@@ -13,5 +14,6 @@ namespace SentenceAPI.Features.Authentication.Interfaces
     {
         bool CheckToken();
         string CreateEncodedToken(UserInfo user);
+        LifetimeValidator GetLifeTimeValidationDel();
     }
 }

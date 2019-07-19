@@ -4,11 +4,11 @@ using SentenceAPI.Features.FactoriesManager.Models;
 
 namespace SentenceAPI.Features.FactoriesManager.Interfaces
 {
-    public interface IFactoryManager
+    public interface IFactoriesManager
     {
         void AddFactory(FactoryInfo factory);
-        bool RemoveFactory(FactoryInfo factory);
+        bool RemoveFactory(Type serviceType);
 
-        FactoryInfo this[Type t] { get; }
+        FactoryInfo this[Type serviceType] { get; }
     }
 }
