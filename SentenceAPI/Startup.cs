@@ -37,7 +37,7 @@ namespace SentenceAPI
 
         public Startup(IConfiguration configuration)
         {
-
+            Configuration = configuration;
         }
 
         public void ConfigureServices(IServiceCollection services)
@@ -67,7 +67,6 @@ namespace SentenceAPI
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             ConfigureCustomServices();
-            BuildConfiguration(env);
 
             if (env.IsDevelopment())
             {
@@ -84,16 +83,6 @@ namespace SentenceAPI
 
             app.UseAuthentication();
             app.UseMvc();
-        }
-
-        /// <summary>
-        /// Configures the configuration for this system by setting a path to config file.
-        /// </summary>
-        private void BuildConfiguration(IHostingEnvironment env)
-        {
-            var configBuilder = new ConfigurationBuilder().
-                SetBasePath(env.ContentRootPath).AddJsonFile("app_config.json");
-            Configuration = configBuilder.Build();
         }
 
         /// <summary>

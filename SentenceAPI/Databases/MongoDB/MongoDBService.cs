@@ -3,20 +3,51 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.IO;
+
+using MongoDB.Bson;
+using MongoDB.Driver;
+
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Protocols;
 
 namespace SentenceAPI.Databases.MongoDB
 {
     public class MongoDBService<DataType> : IMongoDBService<DataType>
     {
-        private string collectionName;
-        private string connectionString;
+        #region Fields
+        private MongoClient mongoClient;
+        private IMongoDatabase database;
+        private IMongoCollection<DataType> mongoCollection;
+        #endregion
 
-        public MongoDBService()
+        #region Properties
+        public string DatabaseName { get; set; }
+        public string CollectionName { get; set; }
+        public string ConnectionString { get; set; }
+        public IConfiguration Configuration { get; set; }
+        #endregion
+
+        #region Constructors
+        public MongoDBService() { }
+        #endregion
+
+        #region IMongoDBService<DataType> implementation
+        public async Task Connect()
         {
-
+            await Task.Run(() =>
+            {
+                mongoClient = new MongoClient(ConnectionString);
+                database = mongoClient.GetDatabase(DatabaseName);
+            });
         }
 
         public Task Delete(int id)
+        {
+            throw new NotImplementedException();    
+        }
+
+        public Task Disconnect()
         {
             throw new NotImplementedException();
         }
@@ -28,7 +59,7 @@ namespace SentenceAPI.Databases.MongoDB
 
         public Task<DataType> Get(Dictionary<string, object> properties)
         {
-            throw new NotImplementedException();
+            mongoCollection = database.GetCollection<DataType>();
         }
 
         public Task Insert(DataType entity)
@@ -40,5 +71,6 @@ namespace SentenceAPI.Databases.MongoDB
         {
             throw new NotImplementedException();
         }
+        #endregion
     }
 }

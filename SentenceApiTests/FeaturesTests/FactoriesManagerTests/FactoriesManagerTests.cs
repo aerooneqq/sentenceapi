@@ -27,24 +27,6 @@ namespace SentenceApiTests.FeaturesTests.FactoriesTests
         [Test]
         public void TestIndexAccess()
         {
-
-        }
-
-        [Test]
-        public void TestAdding()
-        {
-
-        }
-
-        [Test]
-        public void TestRemoval()
-        {
-
-        }
-
-        [Test]
-        public void TestFactoriesManager()
-        {
             //Try to get factory when the manager is empty.
             var factory = factoriesManager[typeof(ITokenService)];
 
@@ -58,7 +40,30 @@ namespace SentenceApiTests.FeaturesTests.FactoriesTests
 
             factory = factoriesManager[typeof(ITokenService)];
 
-            if (!(factory is ITokenServiceFactory))
+            if (!(factory.Factory is ITokenServiceFactory))
+            {
+                Assert.Fail();
+            }
+
+
+            //Try to access "null" factory.
+            try
+            {
+                factory = factoriesManager[null];
+                Assert.Fail();
+            }
+            catch (ArgumentNullException) { }
+
+            Assert.Pass();
+        }
+
+        [Test]
+        public void TestAdding()
+        {
+            //Try to put a FactoryInfo object in the factories manager
+            factoriesManager.AddFactory(new FactoryInfo(tokenServiceFactory, typeof(ITokenService)));
+
+            if (!(factoriesManager[typeof(ITokenService)].Factory is ITokenServiceFactory))
             {
                 Assert.Fail();
             }
@@ -71,6 +76,7 @@ namespace SentenceApiTests.FeaturesTests.FactoriesTests
             }
             catch (ArgumentException) { }
 
+
             //Try to put a FactoryInfo object with partially same peoperties as it was before
             try
             {
@@ -78,6 +84,14 @@ namespace SentenceApiTests.FeaturesTests.FactoriesTests
                 Assert.Fail();
             }
             catch (ArgumentException) { }
+
+            Assert.Pass();
+        }
+
+        [Test]
+        public void TestRemoval()
+        {
+            factoriesManager.AddFactory(new FactoryInfo(tokenServiceFactory, typeof(ITokenService)));
 
             //Try to remove "null" FactoryInfo.
             try
@@ -94,22 +108,15 @@ namespace SentenceApiTests.FeaturesTests.FactoriesTests
                 Assert.Fail();
             }
 
+
             //Try to remove an existing factory from a factory manager.
             factoriesManager.RemoveFactory(typeof(ITokenService));
-            factory = factoriesManager[typeof(ITokenService)];
+            var factory = factoriesManager[typeof(ITokenService)];
 
             if (factory != null)
             {
                 Assert.Fail();
             }
-
-            //Try to access "null" factory.
-            try
-            {
-                factory = factoriesManager[null];
-                Assert.Fail();
-            }
-            catch (ArgumentNullException) { }
 
             Assert.Pass();
         }

@@ -22,8 +22,9 @@ namespace SentenceApiTests.FeaturesTests.AuthenticationTests
         [Test]
         public void TestTokenServiceFactory()
         {
-            var tokenSerivce = tokenServiceFactory.GetService();
-            if (tokenSerivce.GetType() != typeof(ITokenService))
+            ITokenService tokenSerivce = tokenServiceFactory.GetService();
+
+            if (!(tokenSerivce is ITokenService))
             {
                 Assert.Fail();
             }

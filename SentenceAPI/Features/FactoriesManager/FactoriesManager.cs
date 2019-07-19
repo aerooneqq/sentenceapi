@@ -32,6 +32,11 @@ namespace SentenceAPI.Features.FactoriesManager
         {
             get
             {
+                if (serviceType == null)
+                {
+                    throw new ArgumentNullException("Service type can not be null.");
+                }
+
                 return factoryInfos.FirstOrDefault(f => f.ServiceType == serviceType);
             }
         }
