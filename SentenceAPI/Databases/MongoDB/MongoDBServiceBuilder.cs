@@ -23,11 +23,11 @@ namespace SentenceAPI.Databases.MongoDB
         #endregion
 
         #region IMongoDBServiceBuilder<DataType> implementations
-        public IMongoDBServiceBuilder<DataType> AddConfigurationFile()
+        public IMongoDBServiceBuilder<DataType> AddConfigurationFile(string filePath)
         {
             mongoDBService.Configuration = new ConfigurationBuilder().
                 SetBasePath(Directory.GetCurrentDirectory()).
-                AddJsonFile("database_config.json").Build();
+                AddJsonFile(filePath).Build();
 
             return this;
         }
@@ -36,6 +36,8 @@ namespace SentenceAPI.Databases.MongoDB
         {
             string collectionName = typeof(DataType).Name + collectionPostfix;
             mongoDBService.CollectionName = collectionName;
+            mongoDBService.SupportCollectionName = "SupportCollection";
+            mongoDBService.SupportDocumentName = collectionName + "Support";
 
             return this;
         }
@@ -52,6 +54,24 @@ namespace SentenceAPI.Databases.MongoDB
         {
             mongoDBService.DatabaseName = databaseName;
 
+            return this;
+        }
+
+        public IMongoDBServiceBuilder<DataType> SetUserName()
+        {
+            mongoDBService.UserName = mongoDBService.Configuration["userName"];
+            return this;
+        }
+
+        public IMongoDBServiceBuilder<DataType> SetPassword()
+        {
+            mongoDBService.Password = mongoDBService.Configuration["password"];
+            return this;
+        }
+
+        public IMongoDBServiceBuilder<DataType> SetAuthMechanism()
+        {
+            mongoDBService.AuthMechanism = mongoDBService.Configuration["authMechanism"];
             return this;
         }
 

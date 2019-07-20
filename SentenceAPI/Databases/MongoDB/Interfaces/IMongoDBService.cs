@@ -15,22 +15,27 @@ namespace SentenceAPI.Databases.MongoDB.Interfaces
     public interface IMongoDBService<DataType> : IDatabaseService
     {
         #region Properties
+        string UserName { get; set; }
+        string Password { get; set; }
         string ConnectionString { get; set; }
         string CollectionName { get; set; }
+        string SupportCollectionName { get; set; }
+        string SupportDocumentName { get; set; }
         IConfiguration Configuration { get; set; }
         string DatabaseName { get; set; }
+        string AuthMechanism { get; set; } 
         #endregion
 
         #region Methods
         Task Insert(DataType entity);
-        Task Update(DataType entity);
-        Task<DataType> Get(int id);
+        Task Update(DataType entity, IEnumerable<string> properties);
+        Task<DataType> Get(long id);
 
         /// <summary>
         /// Gets all records which satisfy the given property-value dictionary
         /// </summary>
         Task<DataType> Get(Dictionary<string, object> properties);
-        Task Delete(int id);
+        Task Delete(long id);
         #endregion
     }
 }

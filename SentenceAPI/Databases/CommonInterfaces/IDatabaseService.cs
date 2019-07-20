@@ -9,6 +9,5 @@ namespace SentenceAPI.Databases.CommonInterfaces
     public interface IDatabaseService : IService
     {
         Task Connect();
-        Task Disconnect();
     }
 }
