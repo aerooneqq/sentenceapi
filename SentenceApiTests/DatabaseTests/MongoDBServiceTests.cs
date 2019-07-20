@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Linq;
 
 using SentenceAPI.Databases.MongoDB.Interfaces;
 using SentenceAPI.Databases.MongoDB;
@@ -91,9 +92,78 @@ namespace SentenceApiTests.DatabaseTests
                     SetCollectionName().Build();
 
                 await mongoDBService.Connect();
-                await mongoDBService.Delete(1);
+                await mongoDBService.Delete(2);
             }
             catch
+            {
+                Assert.Fail();
+            }
+
+            Assert.Pass();
+        }
+
+        [Test]
+        public async Task TestGettingEntititiesByID()
+        {
+            //warning make sure that entity with id = 0 is in the collection
+            long id = 0;
+
+            mongoDBService = mongoDBServiceBuilder.AddConfigurationFile("database_config.json").
+                SetConnectionString().
+                SetDatabaseName("SentenceDatabase").
+                SetCollectionName().Build();
+
+            await mongoDBService.Connect();
+
+            var obj = await mongoDBService.Get(0);
+            if (obj == null || !(obj is UserInfo))
+            {
+                Assert.Fail();
+            }
+
+            obj = await mongoDBService.Get(-1);
+            if (obj != null)
+            {
+                Assert.Fail();
+            }
+
+            Assert.Pass();
+        }
+
+        [Test]
+        public async Task TestGettingElementByProperties()
+        {
+            //make sure that there are 4 similar records in the database (except of the ID property)
+            mongoDBService = mongoDBServiceBuilder.AddConfigurationFile("database_config.json").
+                SetConnectionString().
+                SetDatabaseName("SentenceDatabase").
+                SetCollectionName().Build();
+            await mongoDBService.Connect();
+
+            Dictionary<string, object> properties = new Dictionary<string, object>()
+            {
+                {"login", "Aero" },
+                {"email", "aerooneQ@yandex.ru" }
+            };
+
+            var objs = mongoDBService.Get(properties).GetAwaiter().GetResult().ToList();
+            if (objs.Count != 4)
+            {
+                Assert.Fail();
+            }
+
+            properties.Add("_id", 1);
+
+            objs = mongoDBService.Get(properties).GetAwaiter().GetResult().ToList();
+            if (objs.Count != 1 || objs[0].ID != 1)
+            {
+                Assert.Fail();
+            }
+
+            properties.Add("asdasd", "asdaasd");
+
+            objs = (await mongoDBService.Get(properties)).ToList();
+            if (objs.Count != 0)
             {
                 Assert.Fail();
             }

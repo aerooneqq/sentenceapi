@@ -69,7 +69,7 @@ namespace SentenceAPI.Databases.MongoDB
             try
             {
                 mongoCollection = database.GetCollection<DataType>(CollectionName);
-                supportMongoCollection = database.GetCollection<CollectionProperties>(SupportDocumentName);
+                supportMongoCollection = database.GetCollection<CollectionProperties>(SupportCollectionName);
 
                 await CheckIfRecordWithLastID(id, supportMongoCollection);
 
@@ -77,7 +77,7 @@ namespace SentenceAPI.Databases.MongoDB
             }
             catch
             {
-                throw new DatabaseException("Error occured while deleting the entity");
+                throw new DatabaseException("Error occured while deleting the entity.");
             }
         }
 
@@ -92,7 +92,7 @@ namespace SentenceAPI.Databases.MongoDB
             var filter = Builders<CollectionProperties>.Filter.Eq("collectionName", SupportDocumentName);
             CollectionProperties document = (await supportCollection.Find(filter).FirstAsync());
 
-            if (document.LastID == id)
+            if (document.LastID - 1 == id)
             {
                 await supportCollection.UpdateOneAsync(filter, Builders<CollectionProperties>.Update.Set(
                     "lastID", id - 1));
@@ -101,15 +101,48 @@ namespace SentenceAPI.Databases.MongoDB
 
         public async Task<DataType> Get(long id)
         {
-            mongoCollection = database.GetCollection<DataType>(CollectionName);
-            var filter = Builders<DataType>.Filter.Eq("_id", id);
+            try
+            {
+                mongoCollection = database.GetCollection<DataType>(CollectionName);
+                var filter = Builders<DataType>.Filter.Eq("_id", id);
+                var resList = (await mongoCollection.FindAsync(filter)).ToList();
 
-            return (await mongoCollection.Find(filter).FirstAsync());
+                if (resList.Count > 1)
+                {
+                    #warning handle the exception when there is more then 1 docs with a same ID
+                    throw new DatabaseException("Fatal error happened.");
+                }
+
+                return resList.Count == 0 ? null : resList[0];
+            }
+            catch
+            {
+                throw new DatabaseException("Error occured while connecting to the database.");
+            }
         }
 
-        public Task<DataType> Get(Dictionary<string, object> properties)
+        /// <summary>
+        /// This method gets the list of records which satisfies the dictionary of properties.
+        /// </summary>
+        /// <param name="properties">
+        /// The dictionary of pairs (name of the property of an object, the value of this property).
+        /// </param>
+        /// <exception cref="DatabaseException">
+        /// This exception is thrown when any error occurs during this method.
+        /// </exception>
+        public async Task<IEnumerable<DataType>> Get(Dictionary<string, object> properties)
         {
-            throw new NotImplementedException();
+            try
+            {
+                mongoCollection = database.GetCollection<DataType>(CollectionName);
+                var filter = new BsonDocument(properties);
+
+                return (await mongoCollection.FindAsync(filter)).ToListAsync().GetAwaiter().GetResult();
+            }
+            catch
+            {
+                throw new DatabaseException("Error occured while connecting to the database.");
+            }
         }
 
         /// <summary>
@@ -189,7 +222,9 @@ namespace SentenceAPI.Databases.MongoDB
         #region IDisposable implementation
         public void Dispose()
         {
-            throw new NotImplementedException();
+            mongoClient = null;
+            mongoCollection = null;
+            supportMongoCollection = null;
         }
         #endregion
     }

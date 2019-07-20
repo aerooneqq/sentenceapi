@@ -34,7 +34,7 @@ namespace SentenceAPI.Databases.MongoDB.Interfaces
         /// <summary>
         /// Gets all records which satisfy the given property-value dictionary
         /// </summary>
-        Task<DataType> Get(Dictionary<string, object> properties);
+        Task<IEnumerable<DataType>> Get(Dictionary<string, object> properties);
         Task Delete(long id);
         #endregion
     }
