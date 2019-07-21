@@ -23,10 +23,13 @@ namespace SentenceAPI.Databases.MongoDB.Interfaces
         string SupportDocumentName { get; set; }
         IConfiguration Configuration { get; set; }
         string DatabaseName { get; set; }
-        string AuthMechanism { get; set; } 
+        string AuthMechanism { get; set; }
         #endregion
 
         #region Methods
+        Task CreateCollection();
+        Task DeleteCollection();
+        Task<bool> IsCollectionExist();
         Task Insert(DataType entity);
         Task Update(DataType entity, IEnumerable<string> properties);
         Task<DataType> Get(long id);

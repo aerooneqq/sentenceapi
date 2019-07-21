@@ -217,6 +217,57 @@ namespace SentenceAPI.Databases.MongoDB
                 throw new DatabaseException("Error while updating the given record");
             }
         }
+
+        public async Task<bool> IsCollectionExist()
+        {
+            try
+            {
+                List<string> collectionsList = (await database.ListCollectionNamesAsync()).ToList();
+                if (collectionsList.FindIndex(n => n == CollectionName) > -1)
+                {
+                    return true;
+                }
+
+                return false;
+            }
+            catch
+            {
+                throw new DatabaseException("Error occured when checking if collection exists");
+            }
+        }
+
+        public async Task CreateCollection()
+        {
+            try
+            {
+                await database.CreateCollectionAsync(CollectionName);
+
+                IMongoCollection<CollectionProperties> supportCollection =
+                     database.GetCollection<CollectionProperties>(SupportCollectionName);
+
+                await supportCollection.InsertOneAsync(new CollectionProperties()
+                {
+                    CollectionName = SupportDocumentName,
+                    LastID = 0
+                });
+            }
+            catch (Exception ex)
+            {
+                throw new DatabaseException("Error occured while creating the new collection.");
+            }
+        }
+
+        public async Task DeleteCollection()
+        {
+            try
+            {
+                await database.DropCollectionAsync(CollectionName);
+            }
+            catch
+            {
+                throw new DatabaseException("Error occured while deleting the collection");
+            }
+        }
         #endregion
 
         #region IDisposable implementation

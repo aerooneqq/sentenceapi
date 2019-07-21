@@ -10,6 +10,7 @@ using NUnit.Framework;
 using SentenceAPI.Features.Users.Models;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using SentenceApiTests.DatabaseTests.TestModels;
 
 namespace SentenceApiTests.DatabaseTests
 {
@@ -17,16 +18,18 @@ namespace SentenceApiTests.DatabaseTests
     public class MongoDBServiceTests
     {
         #region Fields
-        private IMongoDBServiceBuilder<UserInfo> mongoDBServiceBuilder;
-        private IMongoDBService<UserInfo> mongoDBService;
-        private UserInfo user;
+        private IMongoDBServiceBuilder<TestModel> mongoDBServiceBuilder;
+        private IMongoDBService<TestModel> mongoDBService;
+        private TestModel model;
+        private string testCollectionName;
         #endregion
 
         [SetUp]
         public void SetUp()
         {
-            mongoDBService = new MongoDBService<UserInfo>();
-            mongoDBServiceBuilder = new MongoDBServiceBuilder<UserInfo>(mongoDBService);
+            mongoDBService = new MongoDBService<TestModel>();
+            mongoDBServiceBuilder = new MongoDBServiceBuilder<TestModel>(mongoDBService);
+            testCollectionName = "TestCollection";
 
             CareerStage firstStage = new CareerStage()
             {
@@ -44,20 +47,72 @@ namespace SentenceApiTests.DatabaseTests
                 Job = "Scrum manager"
             };
 
-            user = new UserInfo()
+            model = new TestModel()
             {
-                ID = 1,
-                City = "Washington",
-                CareerStages = new List<CareerStage>() { firstStage, secondStage },
-                Country = "USA",
+                City = "Moscow",
                 Email = "aerooneQ@yandex.ru",
-                IsAccountVerified = false,
-                Login = "Aero",
-                MiddleName = "Вадимович",
-                Name = "Евгений",
-                Password = "AeroOne1234",
-                Surname = "Степанов"
+                Name = "John",
+                Year = 2019,
             };
+        }
+
+        [Test]
+        public async Task TestCreatingCollection()
+        {
+            try
+            {
+                mongoDBService = mongoDBServiceBuilder.AddConfigurationFile("database_config.json").
+                    SetConnectionString().
+                    SetDatabaseName("SentenceDatabase").
+                    SetCollectionName().Build();
+
+                await mongoDBService.Connect();
+                await mongoDBService.CreateCollection();
+
+                if (!(await mongoDBService.IsCollectionExist()))
+                {
+                    Assert.Fail();
+                }
+            }
+            catch
+            {
+                Assert.Fail();
+            }
+
+            Assert.Pass();
+        }
+
+        [Test]
+        public async Task TestDeletingCollection()
+        {
+            try
+            {
+                mongoDBService = mongoDBServiceBuilder.AddConfigurationFile("database_config.json").
+                    SetConnectionString().
+                    SetDatabaseName("SentenceDatabase").
+                    SetCollectionName().Build();
+
+                await mongoDBService.Connect();
+                if (await mongoDBService.IsCollectionExist())
+                {
+                    await mongoDBService.DeleteCollection();
+
+                    if (await mongoDBService.IsCollectionExist())
+                    {
+                        Assert.Fail();
+                    }
+                }
+                else
+                {
+                    Assert.Fail("The collection doesn't exist before deleting, so the test failed");
+                }
+            }
+            catch
+            {
+                Assert.Fail();
+            }
+
+            Assert.Pass();
         }
 
         [Test]
@@ -71,7 +126,7 @@ namespace SentenceApiTests.DatabaseTests
                     SetCollectionName().Build();
 
                 await mongoDBService.Connect();
-                await mongoDBService.Insert(user);
+                await mongoDBService.Insert(model);
             }
             catch
             {
@@ -92,7 +147,7 @@ namespace SentenceApiTests.DatabaseTests
                     SetCollectionName().Build();
 
                 await mongoDBService.Connect();
-                await mongoDBService.Delete(2);
+                await mongoDBService.Delete(0);
             }
             catch
             {
@@ -106,8 +161,6 @@ namespace SentenceApiTests.DatabaseTests
         public async Task TestGettingEntititiesByID()
         {
             //warning make sure that entity with id = 0 is in the collection
-            long id = 0;
-
             mongoDBService = mongoDBServiceBuilder.AddConfigurationFile("database_config.json").
                 SetConnectionString().
                 SetDatabaseName("SentenceDatabase").
@@ -116,7 +169,7 @@ namespace SentenceApiTests.DatabaseTests
             await mongoDBService.Connect();
 
             var obj = await mongoDBService.Get(0);
-            if (obj == null || !(obj is UserInfo))
+            if (obj == null || !(obj is TestModel))
             {
                 Assert.Fail();
             }
@@ -142,12 +195,12 @@ namespace SentenceApiTests.DatabaseTests
 
             Dictionary<string, object> properties = new Dictionary<string, object>()
             {
-                {"login", "Aero" },
+                {"year", 2019 },
                 {"email", "aerooneQ@yandex.ru" }
             };
 
             var objs = mongoDBService.Get(properties).GetAwaiter().GetResult().ToList();
-            if (objs.Count != 4)
+            if (objs.Count != 1)
             {
                 Assert.Fail();
             }
@@ -155,7 +208,7 @@ namespace SentenceApiTests.DatabaseTests
             properties.Add("_id", 1);
 
             objs = mongoDBService.Get(properties).GetAwaiter().GetResult().ToList();
-            if (objs.Count != 1 || objs[0].ID != 1)
+            if (objs.Count != 0)
             {
                 Assert.Fail();
             }

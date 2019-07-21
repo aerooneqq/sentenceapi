@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
+using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Driver;
 
@@ -12,7 +13,8 @@ namespace SentenceAPI.KernelModels
 {
     public class CollectionProperties
     {
-        public object _id;
+        [BsonId]
+        public ObjectId _id { get; set; }
         [BsonElement("collectionName"), JsonProperty("collectionName")]
         public string CollectionName { get; set; }
         [BsonElement("lastID"), JsonProperty("lastID")]
