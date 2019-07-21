@@ -12,7 +12,7 @@ namespace SentenceAPI.Databases.MongoDB.Interfaces
     /// This is a basic interface for working with a mongo database
     /// </summary>
     /// <typeparam name="DataType">The type of a </typeparam>
-    public interface IMongoDBService<DataType> : IDatabaseService
+    public interface IMongoDBService<DataType> : IDatabaseService, IDisposable
     {
         #region Properties
         string UserName { get; set; }

@@ -21,7 +21,6 @@ namespace SentenceApiTests.DatabaseTests
         private IMongoDBServiceBuilder<TestModel> mongoDBServiceBuilder;
         private IMongoDBService<TestModel> mongoDBService;
         private TestModel model;
-        private string testCollectionName;
         #endregion
 
         [SetUp]
@@ -29,7 +28,6 @@ namespace SentenceApiTests.DatabaseTests
         {
             mongoDBService = new MongoDBService<TestModel>();
             mongoDBServiceBuilder = new MongoDBServiceBuilder<TestModel>(mongoDBService);
-            testCollectionName = "TestCollection";
 
             CareerStage firstStage = new CareerStage()
             {

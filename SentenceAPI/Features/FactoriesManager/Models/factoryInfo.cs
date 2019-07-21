@@ -10,12 +10,12 @@ namespace SentenceAPI.Features.FactoriesManager.Models
     public class FactoryInfo
     {
         public IFactory Factory { get; }
-        public Type ServiceType { get; }
+        public Type FactoryType { get; }
 
-        public FactoryInfo(IFactory factory, Type serviceType)
+        public FactoryInfo(IFactory factory, Type factoryType)
         {
             Factory = factory;
-            ServiceType = serviceType;
+            FactoryType = factoryType;
         }
     }
 }

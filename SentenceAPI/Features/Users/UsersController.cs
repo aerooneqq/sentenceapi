@@ -13,10 +13,6 @@ namespace SentenceAPI.Features.Users
     [Authorize]
     public class UsersController : Controller
     {
-        [HttpGet]
-        public int Get(int id)
-        {
-            return id;
-        }
+
     }
 }

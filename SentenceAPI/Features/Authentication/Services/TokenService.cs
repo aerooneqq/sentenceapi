@@ -5,35 +5,78 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
+using Microsoft.IdentityModel.Tokens;
+
 using SentenceAPI.Features.Authentication.Interfaces;
 using SentenceAPI.Features.Authentication.Models;
 using SentenceAPI.Features.Users.Models;
-using Microsoft.IdentityModel.Tokens;
+using SentenceAPI.Databases.MongoDB.Interfaces;
+using SentenceAPI.Features.FactoriesManager.Models;
 
 namespace SentenceAPI.Features.Authentication.Services
 {
     public class TokenService : ITokenService
     {
+        #region Services
+        private IMongoDBService<JwtToken> mongoDBService;
+        #endregion
+
+        #region Builders
+        private IMongoDBServiceBuilder<JwtToken> mongoDBServiceBuilder;
+        #endregion
+
+        #region Factories
+        private FactoriesManager.FactoriesManager factoriesManager = FactoriesManager.FactoriesManager.Instance;
+        private IMongoDBServiceFactory mongoDBServiceFactory;
+        #endregion
+
+        #region Constructors
+        public TokenService()
+        {
+            mongoDBServiceFactory = factoriesManager[typeof(IMongoDBServiceFactory)].Factory
+                as IMongoDBServiceFactory;
+
+            mongoDBServiceBuilder = mongoDBServiceFactory.GetBuilder(mongoDBServiceFactory.GetService<JwtToken>());
+            mongoDBService = mongoDBServiceBuilder.AddConfigurationFile("database_config.json")
+                .SetConnectionString()
+                .SetDatabaseName("SentenceDatabase")
+                .SetCollectionName()
+                .Build();
+        }
+        #endregion
+
         public bool CheckToken()
         {
             throw new NotImplementedException();
         }
 
-        public string CreateEncodedToken(UserInfo user)
+        public async Task InsertTokenInDB(JwtToken token)
+        {
+            await mongoDBService.Connect();
+            await mongoDBService.Insert(token);
+        }
+
+        /// <summary>
+        /// Creates the Jwt security token
+        /// </summary>
+        /// <returns>
+        /// The encoded token (string) and the JwtSecurityToken object
+        /// </returns>
+        public (string encodedToken, JwtSecurityToken securityToken) CreateEncodedToken(UserInfo user)
         {
             var now = DateTime.UtcNow;
             var jwtToken = new JwtSecurityToken(
                     issuer: AuthOptions.ISSUER,
                     audience: AuthOptions.AUDIENCE,
                     expires: now.Add(TimeSpan.FromSeconds(AuthOptions.SecondsLifeTime)),
-                    claims: GetUserIdentity(user).Claims,
+                    claims: GetUserIdentity(user).Claims,   
                     notBefore: now,
                     signingCredentials: new SigningCredentials(AuthOptions.GetSymmetricSecurityKey(),
                         SecurityAlgorithms.HmacSha256)
-                );  
+                );
 
             var encodedToken = new JwtSecurityTokenHandler().WriteToken(jwtToken);
-            return encodedToken;
+            return (encodedToken, jwtToken);
         }
 
         public LifetimeValidator GetLifeTimeValidationDel()

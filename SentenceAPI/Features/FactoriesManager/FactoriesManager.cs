@@ -28,16 +28,16 @@ namespace SentenceAPI.Features.FactoriesManager
         /// <param name="t">
         /// Type of the interface.
         /// </param>
-        public FactoryInfo this[Type serviceType]
+        public FactoryInfo this[Type factoryType]
         {
             get
             {
-                if (serviceType == null)
+                if (factoryType == null)
                 {
                     throw new ArgumentNullException("Service type can not be null.");
                 }
 
-                return factoryInfos.FirstOrDefault(f => f.ServiceType == serviceType);
+                return factoryInfos.FirstOrDefault(f => f.FactoryType == factoryType);
             }
         }
 
@@ -54,7 +54,7 @@ namespace SentenceAPI.Features.FactoriesManager
 
             if (factoryInfos.FindIndex(f =>
             {
-                if (f.ServiceType == factory.ServiceType || f.Factory.GetType() == factory.Factory.GetType())
+                if (f.FactoryType == factory.FactoryType || f.Factory.GetType() == factory.Factory.GetType())
                 {
                     return true; 
                 }
@@ -62,7 +62,8 @@ namespace SentenceAPI.Features.FactoriesManager
                 return false;
             }) != -1)
             {
-                throw new ArgumentException("The factory info with a given parameters already exists in a manager");
+                throw new ArgumentException("The factory info with a given parameters" +
+                    " already exists in a manager");
             }
 
             factoryInfos.Add(factory);
@@ -71,15 +72,14 @@ namespace SentenceAPI.Features.FactoriesManager
         /// <summary>
         /// Removes the factory from the factory list.
         /// </summary>
-        /// <param name="factory"></param>
         /// <exception cref="ArgumentNullException">When the factory is null</exception>
         /// <returns>True if the removal was successful, false otherwise</returns>
-        public bool RemoveFactory(Type serviceType)
+        public bool RemoveFactory(Type factoryType)
         {
-            if (serviceType == null)
+            if (factoryType == null)
                 throw new ArgumentNullException("Service type can not be null.");
 
-            return factoryInfos.Remove(factoryInfos.Find(f => f.ServiceType == serviceType));
+            return factoryInfos.Remove(factoryInfos.Find(f => f.FactoryType == factoryType));
         }
         #endregion
 

@@ -18,7 +18,7 @@ using System.Reflection;
 
 namespace SentenceAPI.Databases.MongoDB
 {
-    public class MongoDBService<DataType> : IMongoDBService<DataType>, IDisposable
+    public class MongoDBService<DataType> : IMongoDBService<DataType>
         where DataType : UniqueEntity
     {
         #region Fields
@@ -187,7 +187,7 @@ namespace SentenceAPI.Databases.MongoDB
 
         /// <summary>
         /// Tries to update the record. Only the properties which are listed in the "properties"
-        /// will be updated.
+        /// dictionary will be updated.
         /// </summary>
         /// <exception cref="DatabaseException">
         /// Fires when any error while working with the database occurs.
@@ -236,6 +236,12 @@ namespace SentenceAPI.Databases.MongoDB
             }
         }
 
+        /// <summary>
+        /// Creates the collection and document in a support collection.
+        /// </summary>
+        /// <exception cref="DatabaseException">
+        /// When the error working with the mongo database occurs.
+        /// </exception>
         public async Task CreateCollection()
         {
             try
@@ -251,17 +257,30 @@ namespace SentenceAPI.Databases.MongoDB
                     LastID = 0
                 });
             }
-            catch (Exception ex)
+            catch
             {
                 throw new DatabaseException("Error occured while creating the new collection.");
             }
         }
 
+        /// <summary>
+        /// Deletes the collection and also deletes the support document of this collection
+        /// in the support collection.
+        /// </summary>
+        /// <exception cref="DatabaseException">
+        /// When the error working with the mongo database occurs.
+        /// </exception>
         public async Task DeleteCollection()
         {
             try
             {
                 await database.DropCollectionAsync(CollectionName);
+
+                IMongoCollection<CollectionProperties> supportCollection =
+                    database.GetCollection<CollectionProperties>(SupportDocumentName);
+
+                var filter = Builders<CollectionProperties>.Filter.Eq("collectionName", SupportDocumentName);
+                await supportCollection.DeleteOneAsync(filter);
             }
             catch
             {

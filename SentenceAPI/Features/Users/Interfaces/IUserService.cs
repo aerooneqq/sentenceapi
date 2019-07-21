@@ -1,4 +1,5 @@
 ﻿using SentenceAPI.KernelInterfaces;
+using SentenceAPI.KernelModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace SentenceAPI.Features.Users.Interfaces
 {
-    public interface IUserService<T> : IService
+    public interface IUserService<T> : IService where T : UniqueEntity
     {
-        T Get(string email, string password);
+        Task<T> Get(string email, string password);
         void Insert(T user);
         void Delete(long id);
         void Update(T user);

@@ -15,6 +15,9 @@ using SentenceAPI.Features.Users.Models;
 using SentenceAPI.Features.Authentication.Interfaces;
 using System.IdentityModel.Tokens.Jwt;
 using SentenceAPI.Features.Authentication.Models;
+using SentenceAPI.Features.Response.Interfaces;
+using SentenceAPI.Databases.Exceptions;
+using SentenceAPI.Databases.MongoDB.Interfaces;
 
 namespace SentenceAPI.Features.Authentication
 {
@@ -23,7 +26,7 @@ namespace SentenceAPI.Features.Authentication
     public class TokensController : Controller
     {
         #region Factories
-        private IFactoriesManager factoryManager = FactoriesManager.FactoriesManager.Instance;
+        private readonly IFactoriesManager factoryManager = FactoriesManager.FactoriesManager.Instance;
         private IUserServiceFactory userServiceFactory;
         private ITokenServiceFactory tokenServiceFactory;
         #endregion
@@ -36,9 +39,10 @@ namespace SentenceAPI.Features.Authentication
         #region Constructors
         public TokensController()
         {
-            userServiceFactory = factoryManager[typeof(IUserService<UserInfo>)].Factory
+            userServiceFactory = factoryManager[typeof(IUserServiceFactory)].Factory
                 as IUserServiceFactory;
-            tokenServiceFactory = factoryManager[typeof(ITokenService)].Factory as ITokenServiceFactory;
+            tokenServiceFactory = factoryManager[typeof(ITokenServiceFactory)].Factory
+                as ITokenServiceFactory;
 
             userService = userServiceFactory.GetService();
             tokenService = tokenServiceFactory.GetService();
@@ -51,22 +55,30 @@ namespace SentenceAPI.Features.Authentication
         /// the jwt token for this user.
         /// </summary>
         [HttpGet]
-        public async Task<string> Get(string email, string password)
+        public async Task<IActionResult> Get(string email, string password)
         {
-            UserInfo user = userService.Get(email, password);
-
-            if (user == null)
+            try
             {
-                Response.StatusCode = 401;
-                return "";
+                UserInfo user = await userService.Get(email, password);
+
+                if (user == null)
+                {
+                    return Unauthorized();
+                }
+
+                var (encodedToken, securityToken) = tokenService.CreateEncodedToken(user);
+
+                await tokenService.InsertTokenInDB(new JwtToken(securityToken, user));
+                return Ok(encodedToken);
             }
-
-            string encodedToken = tokenService.CreateEncodedToken(user);
-
-            Response.StatusCode = 200;
-            Response.ContentType = "application/json";
-
-            return encodedToken;
+            catch (DatabaseException ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+            catch
+            {
+                return StatusCode(500);
+            }
         }
         #endregion
     }

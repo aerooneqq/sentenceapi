@@ -7,8 +7,8 @@ namespace SentenceAPI.Features.FactoriesManager.Interfaces
     public interface IFactoriesManager
     {
         void AddFactory(FactoryInfo factory);
-        bool RemoveFactory(Type serviceType);
+        bool RemoveFactory(Type factoryInfo);
 
-        FactoryInfo this[Type serviceType] { get; }
+        FactoryInfo this[Type factoryInfo] { get; }
     }
 }

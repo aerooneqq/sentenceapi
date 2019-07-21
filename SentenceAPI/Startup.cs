@@ -28,11 +28,21 @@ using SentenceAPI.Features.Authentication.Services;
 using SentenceAPI.Features.Authentication.Factories;
 using SentenceAPI.Features.Response.Factories;
 using SentenceAPI.Features.Response.Interfaces;
+using SentenceAPI.Databases.MongoDB.Factories;
+using SentenceAPI.Databases.MongoDB.Interfaces;
 
 namespace SentenceAPI
 {
     public class Startup
     {
+        #region Services
+        private ITokenService tokenService;
+        #endregion
+
+        #region Factories
+        private readonly FactoriesManager factoriesManager = FactoriesManager.Instance;
+        #endregion
+
         public IConfiguration Configuration { get; set;  }
 
         public Startup(IConfiguration configuration)
@@ -42,7 +52,10 @@ namespace SentenceAPI
 
         public void ConfigureServices(IServiceCollection services)
         {
-            ITokenService tokenService = new TokenService();
+            ConfigureCustomServices();
+            tokenService = (factoriesManager[typeof(ITokenServiceFactory)].Factory as ITokenServiceFactory)
+                .GetService();
+
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(
                 options =>
                 {
@@ -66,8 +79,6 @@ namespace SentenceAPI
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            ConfigureCustomServices();
-
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -93,9 +104,14 @@ namespace SentenceAPI
         {
             IFactoriesManager factoryManager = FactoriesManager.Instance;
 
-            factoryManager.AddFactory(new FactoryInfo(new UserServiceFactory(), typeof(IUserService<UserInfo>)));
-            factoryManager.AddFactory(new FactoryInfo(new TokenServiceFactory(), typeof(ITokenService)));
-            factoryManager.AddFactory(new FactoryInfo(new ResponseServiceFactory(), typeof(IResponseService)));
+            factoryManager.AddFactory(new FactoryInfo(new UserServiceFactory(), 
+                typeof(IUserServiceFactory)));
+            factoryManager.AddFactory(new FactoryInfo(new TokenServiceFactory(), 
+                typeof(ITokenServiceFactory)));
+            factoryManager.AddFactory(new FactoryInfo(new ResponseServiceFactory(), 
+                typeof(IResponseServiceFactory)));
+            factoryManager.AddFactory(new FactoryInfo(new MongoDBServiceFactory(),
+                typeof(IMongoDBServiceFactory)));
         }
     }
 }

@@ -4,16 +4,18 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.IdentityModel.Tokens;
+using SentenceAPI.Features.Authentication.Models;
 using SentenceAPI.Features.Users.Models;
 using SentenceAPI.KernelInterfaces;
 using SentenceAPI.KernelModels;
 
 namespace SentenceAPI.Features.Authentication.Interfaces
-{
+{   
     public interface ITokenService : IService
     {
         bool CheckToken();
-        string CreateEncodedToken(UserInfo user);
+        (string encodedToken, JwtSecurityToken securityToken) CreateEncodedToken(UserInfo user);
         LifetimeValidator GetLifeTimeValidationDel();
+        Task InsertTokenInDB(JwtToken token);
     }
 }

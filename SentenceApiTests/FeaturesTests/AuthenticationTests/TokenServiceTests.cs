@@ -4,8 +4,11 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
+
 using Microsoft.IdentityModel.Tokens;
+
 using NUnit.Framework;
+
 using SentenceAPI.Features.Authentication.Interfaces;
 using SentenceAPI.Features.Authentication.Services;
 using SentenceAPI.Features.Users.Models;
@@ -35,7 +38,7 @@ namespace SentenceApiTests.FeaturesTests.AuthenticationTests
 
             var tokenStr = tokenService.CreateEncodedToken(user);
             var handler = new JwtSecurityTokenHandler();
-            var token = handler.ReadToken(tokenStr) as JwtSecurityToken;
+            var token = handler.ReadToken(tokenStr.encodedToken) as JwtSecurityToken;
 
             List<Claim> claims = token.Claims.ToList();
 
