@@ -9,6 +9,7 @@ using MongoDB.Bson.Serialization.Attributes;
 using SentenceAPI.Databases.MongoDB.Interfaces;
 using SentenceAPI.Features.Users.Interfaces;
 using SentenceAPI.Features.Users.Models;
+using SentenceAPI.Databases.Exceptions;
 
 namespace SentenceAPI.Features.Users.Services
 {
@@ -52,23 +53,44 @@ namespace SentenceAPI.Features.Users.Services
 
         public async Task<UserInfo> Get(string email, string password)
         {
-            await mongoDBService.Connect();
-
-            string emailPropertyName = GetPropertyBsonElement("Email");
-            string passwordPropertyName = GetPropertyBsonElement("Password");
-
-            var users = (await mongoDBService.Get(new Dictionary<string, object>()
+            try
             {
-                { emailPropertyName, email },
-                { passwordPropertyName, password }
-            })).ToList();
+                await mongoDBService.Connect();
 
-            if (users.Count != 1)
-            {
-                return null;
+                string emailPropertyName = GetPropertyBsonElement("Email");
+                string passwordPropertyName = GetPropertyBsonElement("Password");
+
+                var users = (await mongoDBService.Get(new Dictionary<string, object>()
+                {
+                    { emailPropertyName, email },
+                    { passwordPropertyName, password }
+                })).ToList();
+
+                if (users.Count != 1)
+                {
+                    return null;
+                }
+
+                return users[0];
             }
+            catch
+            {
+                throw new DatabaseException("Error occured while working with the database");
+            }
+        }
 
-            return users[0];
+        public async Task<UserInfo> Get(long id)
+        {
+            try
+            {
+                await mongoDBService.Connect();
+
+                return await mongoDBService.Get(id);
+            }
+            catch
+            {
+                throw new DatabaseException("Error occured while working with the database");
+            }
         }
 
         private string GetPropertyBsonElement(string propertyName)
@@ -77,12 +99,12 @@ namespace SentenceAPI.Features.Users.Services
                 ElementName;
         }
 
-        public void Insert(UserInfo user)
+        public void Update(UserInfo user)
         {
             throw new NotImplementedException();
         }
 
-        public void Update(UserInfo user)
+        public Task CreateNewUser(string email, string password)
         {
             throw new NotImplementedException();
         }

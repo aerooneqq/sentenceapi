@@ -13,7 +13,7 @@ namespace SentenceAPI.Features.Authentication.Interfaces
 {   
     public interface ITokenService : IService
     {
-        bool CheckToken();
+        bool CheckToken(string encodedToken);
         (string encodedToken, JwtSecurityToken securityToken) CreateEncodedToken(UserInfo user);
         LifetimeValidator GetLifeTimeValidationDel();
         Task InsertTokenInDB(JwtToken token);

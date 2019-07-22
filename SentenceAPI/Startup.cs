@@ -1,16 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Net.Http.Headers;
-
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Mvc;
 
@@ -20,16 +12,14 @@ using SentenceAPI.Features.FactoriesManager.Interfaces;
 using SentenceAPI.Features.FactoriesManager;
 using SentenceAPI.Features.Users.Interfaces;
 using SentenceAPI.Features.Authentication.Interfaces;
-using SentenceAPI.Features.Users.Services;
-using SentenceAPI.Features.Users.Models;
 using SentenceAPI.Features.Users.Factories;
-using SentenceAPI.KernelInterfaces;
-using SentenceAPI.Features.Authentication.Services;
 using SentenceAPI.Features.Authentication.Factories;
 using SentenceAPI.Features.Response.Factories;
 using SentenceAPI.Features.Response.Interfaces;
 using SentenceAPI.Databases.MongoDB.Factories;
 using SentenceAPI.Databases.MongoDB.Interfaces;
+using SentenceAPI.Features.Loggers.Factories;
+using SentenceAPI.Features.Loggers.Interfaces;
 
 namespace SentenceAPI
 {
@@ -93,6 +83,7 @@ namespace SentenceAPI
             app.UseStaticFiles();
 
             app.UseAuthentication();
+            app.UseCors(builder => builder.AllowAnyOrigin());
             app.UseMvc();
         }
 
@@ -112,6 +103,8 @@ namespace SentenceAPI
                 typeof(IResponseServiceFactory)));
             factoryManager.AddFactory(new FactoryInfo(new MongoDBServiceFactory(),
                 typeof(IMongoDBServiceFactory)));
+            factoryManager.AddFactory(new FactoryInfo(new LoggerFactory(),
+                typeof(ILoggerFactory)));
         }
     }
 }

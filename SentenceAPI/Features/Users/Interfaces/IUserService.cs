@@ -10,7 +10,8 @@ namespace SentenceAPI.Features.Users.Interfaces
     public interface IUserService<T> : IService where T : UniqueEntity
     {
         Task<T> Get(string email, string password);
-        void Insert(T user);
+        Task<T> Get(long id);
+        Task CreateNewUser(string email, string password);
         void Delete(long id);
         void Update(T user);
     }

@@ -1,0 +1,2 @@
+{"errorDate":"2019-07-22T22:45:06.4165172Z","message":"TestMessage","configuration":null,"ID":0}
+{"errorDate":"2019-07-22T22:56:36.1105944Z","message":"TestMessage","configuration":{"controllerName":"TestControllerName","serviceName":"TestServiceName"},"ID":0}

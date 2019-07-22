@@ -45,7 +45,7 @@ namespace SentenceAPI.Features.Authentication.Services
         }
         #endregion
 
-        public bool CheckToken()
+        public bool CheckToken(string encodedToken)
         {
             throw new NotImplementedException();
         }

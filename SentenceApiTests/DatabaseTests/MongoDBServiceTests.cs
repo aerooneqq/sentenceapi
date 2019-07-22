@@ -52,6 +52,18 @@ namespace SentenceApiTests.DatabaseTests
                 Name = "John",
                 Year = 2019,
             };
+
+            mongoDBService = mongoDBServiceBuilder.AddConfigurationFile("database_config.json").
+                SetConnectionString().
+                SetDatabaseName("SentenceDatabase").
+                SetCollectionName().Build();
+
+            mongoDBService.Connect().GetAwaiter().GetResult();
+            if (mongoDBService.IsCollectionExist().GetAwaiter().GetResult())
+            {
+                mongoDBService.DeleteCollection().GetAwaiter().GetResult();
+                mongoDBService.CreateCollection().GetAwaiter().GetResult();
+            }
         }
 
         [Test]

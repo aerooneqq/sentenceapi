@@ -21,7 +21,7 @@ namespace SentenceAPI.Features.Users.Models
         public string Password { get; set; }
         #endregion
 
-        #region User data (name + country)
+        #region User data (name + country + photo)
         [BsonElement("name"), JsonProperty("name")]
         public string Name { get; set; }
 
@@ -36,6 +36,9 @@ namespace SentenceAPI.Features.Users.Models
 
         [BsonElement("city"), JsonProperty("city")]
         public string City { get; set; }
+
+        [BsonElement("photo"), JsonProperty("photo")]
+        public byte[] Photo { get; set; }
         #endregion
 
         #region Career

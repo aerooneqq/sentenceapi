@@ -4,6 +4,8 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
+using System.IdentityModel.Tokens.Jwt;
+
 using Newtonsoft.Json;
 
 using Microsoft.AspNetCore.Mvc;
@@ -13,11 +15,11 @@ using SentenceAPI.Features.Users.Interfaces;
 using SentenceAPI.Features.FactoriesManager;
 using SentenceAPI.Features.Users.Models;
 using SentenceAPI.Features.Authentication.Interfaces;
-using System.IdentityModel.Tokens.Jwt;
 using SentenceAPI.Features.Authentication.Models;
 using SentenceAPI.Features.Response.Interfaces;
 using SentenceAPI.Databases.Exceptions;
 using SentenceAPI.Databases.MongoDB.Interfaces;
+using SentenceAPI.Features.Loggers.Interfaces;
 
 namespace SentenceAPI.Features.Authentication
 {
@@ -29,11 +31,13 @@ namespace SentenceAPI.Features.Authentication
         private readonly IFactoriesManager factoryManager = FactoriesManager.FactoriesManager.Instance;
         private IUserServiceFactory userServiceFactory;
         private ITokenServiceFactory tokenServiceFactory;
+        private ILoggerFactory loggerFactory;
         #endregion
 
         #region Services
         private IUserService<UserInfo> userService;
         private ITokenService tokenService;
+        private ILogger logger;
         #endregion
 
         #region Constructors
@@ -43,9 +47,17 @@ namespace SentenceAPI.Features.Authentication
                 as IUserServiceFactory;
             tokenServiceFactory = factoryManager[typeof(ITokenServiceFactory)].Factory
                 as ITokenServiceFactory;
+            loggerFactory = factoryManager[typeof(ILoggerFactory)].Factory as ILoggerFactory;
 
             userService = userServiceFactory.GetService();
             tokenService = tokenServiceFactory.GetService();
+
+            logger = loggerFactory.GetLogger();
+            logger.LogConfiguration = new Loggers.Models.LogConfiguration()
+            {
+                ControllerName = this.GetType().Name,
+                ServiceName = string.Empty
+            };
         }
         #endregion
 
@@ -73,10 +85,12 @@ namespace SentenceAPI.Features.Authentication
             }
             catch (DatabaseException ex)
             {
+                logger.Log(ex);
                 return StatusCode(500, ex.Message);
             }
-            catch
+            catch (Exception ex)
             {
+                logger.Log(ex);
                 return StatusCode(500);
             }
         }

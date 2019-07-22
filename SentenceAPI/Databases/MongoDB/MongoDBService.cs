@@ -139,7 +139,7 @@ namespace SentenceAPI.Databases.MongoDB
 
                 return (await mongoCollection.FindAsync(filter)).ToListAsync().GetAwaiter().GetResult();
             }
-            catch
+            catch (Exception ex)
             {
                 throw new DatabaseException("Error occured while connecting to the database.");
             }
@@ -200,19 +200,19 @@ namespace SentenceAPI.Databases.MongoDB
                 mongoCollection = database.GetCollection<DataType>(CollectionName);
                 DataType record = (await mongoCollection.Find(filter).FirstAsync());
 
-                var updateDocument = Builders<DataType>.Update;
                 foreach (string propertyName in properties)
                 {
                     #warning create a better solution by using dynamic methods
                     PropertyInfo property = typeof(DataType).GetProperty(propertyName);
                     string bsonPropertyName = property.GetCustomAttribute<BsonElementAttribute>().ElementName;
 
-                    updateDocument.Set(bsonPropertyName, property.GetValue(entity));
-                }
+                    UpdateDefinition<DataType> update = Builders<DataType>.Update.Set(bsonPropertyName,
+                        property.GetValue(entity));
 
-                await mongoCollection.UpdateOneAsync(filter, updateDocument.ToBsonDocument());
+                    await mongoCollection.UpdateOneAsync(filter, update);
+                }
             }
-            catch
+            catch (Exception ex)
             {
                 throw new DatabaseException("Error while updating the given record");
             }
