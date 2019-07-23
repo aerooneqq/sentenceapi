@@ -20,6 +20,7 @@ using SentenceAPI.Databases.MongoDB.Factories;
 using SentenceAPI.Databases.MongoDB.Interfaces;
 using SentenceAPI.Features.Loggers.Factories;
 using SentenceAPI.Features.Loggers.Interfaces;
+using SentenceAPI.Features.Middlewares.RequestLoggerMiddleware;
 
 namespace SentenceAPI
 {
@@ -78,32 +79,32 @@ namespace SentenceAPI
                 app.UseHsts();
             }
 
-            app.UseHttpsRedirection();
-            app.UseDefaultFiles();
-            app.UseStaticFiles();
+            app.UseMiddleware<RequestLogger>();
 
+            app.UseHttpsRedirection();
             app.UseAuthentication();
+
             app.UseCors(builder => builder.AllowAnyOrigin());
             app.UseMvc();
         }
 
         /// <summary>
         /// This method initializes a factory manager, where all factories which will be needed in the system
-        /// are stored. With a factory we can get access to any service in any part of the system.
+        /// are stored. With a factories manager we can get access to any service in any part of the system.
         /// </summary>
         private void ConfigureCustomServices()
         {
-            IFactoriesManager factoryManager = FactoriesManager.Instance;
+            IFactoriesManager factoriesManager = FactoriesManager.Instance;
 
-            factoryManager.AddFactory(new FactoryInfo(new UserServiceFactory(), 
+            factoriesManager.AddFactory(new FactoryInfo(new UserServiceFactory(), 
                 typeof(IUserServiceFactory)));
-            factoryManager.AddFactory(new FactoryInfo(new TokenServiceFactory(), 
+            factoriesManager.AddFactory(new FactoryInfo(new TokenServiceFactory(), 
                 typeof(ITokenServiceFactory)));
-            factoryManager.AddFactory(new FactoryInfo(new ResponseServiceFactory(), 
+            factoriesManager.AddFactory(new FactoryInfo(new ResponseServiceFactory(), 
                 typeof(IResponseServiceFactory)));
-            factoryManager.AddFactory(new FactoryInfo(new MongoDBServiceFactory(),
+            factoriesManager.AddFactory(new FactoryInfo(new MongoDBServiceFactory(),
                 typeof(IMongoDBServiceFactory)));
-            factoryManager.AddFactory(new FactoryInfo(new LoggerFactory(),
+            factoriesManager.AddFactory(new FactoryInfo(new LoggerFactory(),
                 typeof(ILoggerFactory)));
         }
     }

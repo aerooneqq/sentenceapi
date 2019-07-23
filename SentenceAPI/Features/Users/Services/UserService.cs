@@ -10,12 +10,21 @@ using SentenceAPI.Databases.MongoDB.Interfaces;
 using SentenceAPI.Features.Users.Interfaces;
 using SentenceAPI.Features.Users.Models;
 using SentenceAPI.Databases.Exceptions;
+using SentenceAPI.Features.Loggers.Interfaces;
+using SentenceAPI.Features.Loggers.Models;
 
 namespace SentenceAPI.Features.Users.Services
 {
     public class UserService : IUserService<UserInfo>
     {
-        #region Fields
+        public static LogConfiguration LogConfiguration { get; } = new LogConfiguration()
+        {
+            ControllerName = string.Empty,
+            ServiceName = "UserService"
+        };
+
+        #region Services
+        private readonly ILogger<ApplicationError> exceptionLogger;
         private readonly IMongoDBService<UserInfo> mongoDBService;
         #endregion
 
@@ -24,9 +33,11 @@ namespace SentenceAPI.Features.Users.Services
         #endregion
 
         #region Factories
+  
         private readonly FactoriesManager.FactoriesManager factoriesManager =
             FactoriesManager.FactoriesManager.Instance;
         private readonly IMongoDBServiceFactory mongoDBServiceFactory;
+        private readonly ILoggerFactory loggerFactory;
         #endregion
 
         #region Constructors
@@ -34,6 +45,7 @@ namespace SentenceAPI.Features.Users.Services
         {
             mongoDBServiceFactory = factoriesManager[typeof(IMongoDBServiceFactory)].Factory
                 as IMongoDBServiceFactory;
+            loggerFactory = factoriesManager[typeof(ILoggerFactory)].Factory as ILoggerFactory;
 
             mongoDBService = mongoDBServiceFactory.GetService<UserInfo>();
             mongoDBServiceBuilder = mongoDBServiceFactory.GetBuilder(mongoDBService);
@@ -43,6 +55,9 @@ namespace SentenceAPI.Features.Users.Services
                 .SetDatabaseName("SentenceDatabase")
                 .SetCollectionName()
                 .Build();
+
+            exceptionLogger = loggerFactory.GetExceptionLogger();
+            exceptionLogger.LogConfiguration = LogConfiguration;
         }
         #endregion
 
@@ -73,8 +88,9 @@ namespace SentenceAPI.Features.Users.Services
 
                 return users[0];
             }
-            catch
+            catch (Exception ex)
             {
+                await exceptionLogger.Log(new ApplicationError(ex.Message));
                 throw new DatabaseException("Error occured while working with the database");
             }
         }
@@ -87,8 +103,9 @@ namespace SentenceAPI.Features.Users.Services
 
                 return await mongoDBService.Get(id);
             }
-            catch
+            catch (Exception ex)
             {
+                await exceptionLogger.Log(new ApplicationError(ex.Message));
                 throw new DatabaseException("Error occured while working with the database");
             }
         }
@@ -104,9 +121,27 @@ namespace SentenceAPI.Features.Users.Services
             throw new NotImplementedException();
         }
 
-        public Task CreateNewUser(string email, string password)
+        public async Task<long> CreateNewUser(string email, string password)
         {
-            throw new NotImplementedException();
+            try
+            {
+                UserInfo user = new UserInfo()
+                {
+                    Email = email,
+                    Password = password.GetHashCode().ToString(),
+                    IsAccountVerified = false,
+                };
+
+                await mongoDBService.Connect();
+                await mongoDBService.Insert(user);
+
+                return user.ID;
+            }
+            catch (Exception ex)
+            {
+                await exceptionLogger.Log(new ApplicationError(ex.Message));
+                throw new DatabaseException("Error occured when inserting a user in the database");
+            }
         }
     }
 }

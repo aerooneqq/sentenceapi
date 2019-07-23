@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Features\Email\" />
+    <Folder Include="Features\Email\Models\" />
     <Folder Include="KernelModels\Interfaces\" />
     <Folder Include="wwwroot\" />
   </ItemGroup>

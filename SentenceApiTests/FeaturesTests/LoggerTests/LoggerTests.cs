@@ -17,7 +17,7 @@ namespace SentenceApiTests.FeaturesTests.LoggerTests
     public class LoggerTests
     {
         #region Services
-        private ILogger logger;
+        private ILogger<ApplicationError> exceptionLogger;
         private IMongoDBService<ApplicationError> mongoDBService;
         #endregion
 
@@ -36,7 +36,7 @@ namespace SentenceApiTests.FeaturesTests.LoggerTests
             loggerFactory = new LoggerFactory();
             mongoDBServiceFactory = new MongoDBServiceFactory();
 
-            logger = loggerFactory.GetLogger();
+            exceptionLogger = loggerFactory.GetExceptionLogger();
             mongoDBServiceBuilder = mongoDBServiceFactory.GetBuilder(mongoDBServiceFactory.GetService<ApplicationError>());
             mongoDBService = mongoDBServiceBuilder.AddConfigurationFile("database_config.json").SetConnectionString()
                 .SetDatabaseName("SentenceDatabase").SetCollectionName().Build();
@@ -55,10 +55,10 @@ namespace SentenceApiTests.FeaturesTests.LoggerTests
                     ServiceName = "TestServiceName"
                 };
 
-                ApplicationError applicationError = new ApplicationError(ex.Message, logConfiguration);
+                ApplicationError applicationError = new ApplicationError(ex.Message);
 
-                logger.LogConfiguration = logConfiguration;
-                await logger.Log(ex);
+                exceptionLogger.LogConfiguration = logConfiguration;
+                await exceptionLogger.Log(applicationError);
 
                 await mongoDBService.Connect();
                 var errs = (await mongoDBService.Get(new Dictionary<string, object>()

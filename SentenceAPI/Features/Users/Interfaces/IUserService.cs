@@ -11,7 +11,7 @@ namespace SentenceAPI.Features.Users.Interfaces
     {
         Task<T> Get(string email, string password);
         Task<T> Get(long id);
-        Task CreateNewUser(string email, string password);
+        Task<long> CreateNewUser(string email, string password);
         void Delete(long id);
         void Update(T user);
     }

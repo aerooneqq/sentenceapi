@@ -10,35 +10,57 @@ using Microsoft.AspNetCore.Mvc;
 using SentenceAPI.Databases.Exceptions;
 using SentenceAPI.Features.Users.Interfaces;
 using SentenceAPI.Features.Users.Models;
+using SentenceAPI.Features.Loggers.Interfaces;
+using SentenceAPI.Features.Loggers.Models;
+using SentenceAPI.Features.Email.Interfaces;
+using SentenceAPI.Features.Links.Interfaces;
 
 using Newtonsoft.Json;
-using SentenceAPI.Features.Loggers.Interfaces;
 
 namespace SentenceAPI.Features.Users
 {
     [Route("api/[controller]"), ApiController, Authorize]
     public class UsersController : Controller
     {
+        public static LogConfiguration LogConfiguration { get; } = new LogConfiguration()
+        {
+            ControllerName = string.Empty,
+            ServiceName = "UsersController"
+        };
+
         #region Services
+        private ILinkService linkService;
+        private IEmailService emailService;
         private IUserService<UserInfo> userService;
-        private ILogger logger;
+        private ILogger<ApplicationError> exceptionLogger;
         #endregion
 
         #region Factories
         private FactoriesManager.FactoriesManager factoriesManager = 
             FactoriesManager.FactoriesManager.Instance;
+
+        private ILinkServiceFactoty linkServiceFactory;
         private IUserServiceFactory userServiceFactory;
         private ILoggerFactory loggerFactory;
+        private IEmailServiceFactory emailServiceFactory;
         #endregion
 
         public UsersController()
         {
-            userServiceFactory = factoriesManager[typeof(IUserServiceFactory)].Factory as IUserServiceFactory;
+            userServiceFactory = factoriesManager[typeof(IUserServiceFactory)].Factory
+                as IUserServiceFactory;
             loggerFactory = factoriesManager[typeof(ILoggerFactory)].Factory as ILoggerFactory;
+            emailServiceFactory = factoriesManager[typeof(IEmailServiceFactory)].Factory
+                as IEmailServiceFactory;
+            linkServiceFactory = factoriesManager[typeof(ILinkServiceFactoty)].Factory as
+                ILinkServiceFactoty;
 
+            emailService = emailServiceFactory.GetService();
             userService = userServiceFactory.GetService();
-            logger = loggerFactory.GetLogger();
-            logger.LogConfiguration = new Loggers.Models.LogConfiguration()
+            linkService = linkServiceFactory.GetService();
+
+            exceptionLogger = loggerFactory.GetExceptionLogger();
+            exceptionLogger.LogConfiguration = new Loggers.Models.LogConfiguration()
             {
                 ControllerName = this.GetType().Name,
                 ServiceName = string.Empty,
@@ -54,12 +76,12 @@ namespace SentenceAPI.Features.Users
             }
             catch (DatabaseException ex)
             {
-                logger.Log(ex);
+                await exceptionLogger.Log(new ApplicationError(ex.Message));
                 return StatusCode(500, ex.Message);
             }
             catch (Exception ex)
             {
-                logger.Log(ex);
+                await exceptionLogger.Log(new ApplicationError(ex.Message));
                 return StatusCode(500);
             }
         }
@@ -73,32 +95,41 @@ namespace SentenceAPI.Features.Users
             }
             catch (DatabaseException ex)
             {
-                logger.Log(ex);
+                await exceptionLogger.Log(new ApplicationError(ex.Message));
                 return StatusCode(500, ex.Message);
             }
             catch (Exception ex)
             {
-                logger.Log(ex);
+                await exceptionLogger.Log(new ApplicationError(ex.Message));
                 return StatusCode(500);
             }
         }
 
+        /// <summary>
+        /// Creates a new user record in the mongo database. If the record was successful,
+        /// then the letter with a link to activate the account is sent to the user.
+        /// </summary>
         [HttpPost]
         public async Task<IActionResult> CreateNewUser(string email, string password)
         {
             try
             {
-                await userService.CreateNewUser(email, password);
+                long id = await userService.CreateNewUser(email, password);
+                UserInfo user = await userService.Get(id);
+
+                string link = await linkService.CreateVerificationLink(user);
+                await emailService.SendConfirmationEmail(link, user);
+
                 return Ok();
             }
             catch (DatabaseException ex)
             {
-                logger.Log(ex);
+                await exceptionLogger.Log(new ApplicationError(ex.Message));
                 return StatusCode(500, ex.Message);
             }
             catch (Exception ex)
             {
-                logger.Log(ex);
+                await exceptionLogger.Log(new ApplicationError(ex.Message));
                 return StatusCode(500);
             }
         }

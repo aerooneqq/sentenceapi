@@ -20,6 +20,7 @@ using SentenceAPI.Features.Response.Interfaces;
 using SentenceAPI.Databases.Exceptions;
 using SentenceAPI.Databases.MongoDB.Interfaces;
 using SentenceAPI.Features.Loggers.Interfaces;
+using SentenceAPI.Features.Loggers.Models;
 
 namespace SentenceAPI.Features.Authentication
 {
@@ -27,6 +28,12 @@ namespace SentenceAPI.Features.Authentication
     [ApiController]
     public class TokensController : Controller
     {
+        public static LogConfiguration LogConfiguration { get; } = new LogConfiguration()
+        {
+            ControllerName = string.Empty,
+            ServiceName = "TokensController"
+        };
+
         #region Factories
         private readonly IFactoriesManager factoryManager = FactoriesManager.FactoriesManager.Instance;
         private IUserServiceFactory userServiceFactory;
@@ -37,7 +44,7 @@ namespace SentenceAPI.Features.Authentication
         #region Services
         private IUserService<UserInfo> userService;
         private ITokenService tokenService;
-        private ILogger logger;
+        private ILogger<ApplicationError> exceptionLogger;
         #endregion
 
         #region Constructors
@@ -52,12 +59,8 @@ namespace SentenceAPI.Features.Authentication
             userService = userServiceFactory.GetService();
             tokenService = tokenServiceFactory.GetService();
 
-            logger = loggerFactory.GetLogger();
-            logger.LogConfiguration = new Loggers.Models.LogConfiguration()
-            {
-                ControllerName = this.GetType().Name,
-                ServiceName = string.Empty
-            };
+            exceptionLogger = loggerFactory.GetExceptionLogger();
+            exceptionLogger.LogConfiguration = LogConfiguration;
         }
         #endregion
 
@@ -85,12 +88,12 @@ namespace SentenceAPI.Features.Authentication
             }
             catch (DatabaseException ex)
             {
-                logger.Log(ex);
+                await exceptionLogger.Log(new ApplicationError(ex.Message));
                 return StatusCode(500, ex.Message);
             }
             catch (Exception ex)
             {
-                logger.Log(ex);
+                await exceptionLogger.Log(new ApplicationError(ex.Message));
                 return StatusCode(500);
             }
         }

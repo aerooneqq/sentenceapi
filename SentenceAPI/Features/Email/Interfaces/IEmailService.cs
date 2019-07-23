@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 using SentenceAPI.Features.Users.Models;
 using SentenceAPI.KernelInterfaces;
 
-namespace SentenceAPI.Features.Users.Interfaces
+namespace SentenceAPI.Features.Email.Interfaces
 {
-    public interface IUserServiceFactory : IFactory
+    public interface IEmailService : IService
     {
-        IUserService<UserInfo> GetService();
+        Task SendConfirmationEmail(string link, UserInfo user);
     }
 }
