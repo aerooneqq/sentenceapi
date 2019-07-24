@@ -71,7 +71,7 @@ namespace SentenceAPI.Features.Middlewares.RequestLoggerMiddleware
                 using (FileStream fs = new FileStream(FileName, FileMode.Append, FileAccess.Write))
                 {
                     using (StreamWriter sw = new StreamWriter(fs))
-                    {
+                    {   
                         await sw.WriteLineAsync(JsonConvert.SerializeObject(requestLog));
                     }
                 }

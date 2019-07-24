@@ -8,7 +8,7 @@ using SentenceAPI.Features.Links.Services;
 
 namespace SentenceAPI.Features.Links.Factories
 {
-    public class LinkServiceFactory : ILinkServiceFactoty
+    public class LinkServiceFactory : ILinkServiceFactory
     {
         public ILinkService GetService()
         {

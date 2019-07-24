@@ -16,6 +16,8 @@ using SentenceAPI.Features.Email.Interfaces;
 using SentenceAPI.Features.Links.Interfaces;
 
 using Newtonsoft.Json;
+using SentenceAPI.Features.Authentication.Interfaces;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace SentenceAPI.Features.Users
 {
@@ -39,7 +41,7 @@ namespace SentenceAPI.Features.Users
         private FactoriesManager.FactoriesManager factoriesManager = 
             FactoriesManager.FactoriesManager.Instance;
 
-        private ILinkServiceFactoty linkServiceFactory;
+        private ILinkServiceFactory linkServiceFactory;
         private IUserServiceFactory userServiceFactory;
         private ILoggerFactory loggerFactory;
         private IEmailServiceFactory emailServiceFactory;
@@ -52,8 +54,8 @@ namespace SentenceAPI.Features.Users
             loggerFactory = factoriesManager[typeof(ILoggerFactory)].Factory as ILoggerFactory;
             emailServiceFactory = factoriesManager[typeof(IEmailServiceFactory)].Factory
                 as IEmailServiceFactory;
-            linkServiceFactory = factoriesManager[typeof(ILinkServiceFactoty)].Factory as
-                ILinkServiceFactoty;
+            linkServiceFactory = factoriesManager[typeof(ILinkServiceFactory)].Factory as
+                ILinkServiceFactory;
 
             emailService = emailServiceFactory.GetService();
             userService = userServiceFactory.GetService();
@@ -67,16 +69,19 @@ namespace SentenceAPI.Features.Users
             };
         }
 
+
         [HttpGet]
-        public async Task<IActionResult> Get(string email, string password)
+        public async Task<IActionResult> Get()
         {
             try
             {
-                return Json(await userService.Get(email, password));
+                string authorization = Request.Headers["Authorization"];
+                string token = authorization.Split()[1];
+
+                return Json(await userService.Get(token));
             }
             catch (DatabaseException ex)
             {
-                await exceptionLogger.Log(new ApplicationError(ex.Message));
                 return StatusCode(500, ex.Message);
             }
             catch (Exception ex)
@@ -86,8 +91,25 @@ namespace SentenceAPI.Features.Users
             }
         }
 
-        [HttpGet]
-        public async Task<IActionResult> Get(long id)
+
+        public async Task<IActionResult> Get([FromQuery]string email, [FromQuery]string password)
+        {
+            try
+            {
+                return Json(await userService.Get(email, password));
+            }
+            catch (DatabaseException ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+            catch (Exception ex)
+            {
+                await exceptionLogger.Log(new ApplicationError(ex.Message));
+                return StatusCode(500);
+            }
+        }
+
+        public async Task<IActionResult> Get([FromQuery]long id)
         {
             try
             {
@@ -95,7 +117,6 @@ namespace SentenceAPI.Features.Users
             }
             catch (DatabaseException ex)
             {
-                await exceptionLogger.Log(new ApplicationError(ex.Message));
                 return StatusCode(500, ex.Message);
             }
             catch (Exception ex)
@@ -124,7 +145,6 @@ namespace SentenceAPI.Features.Users
             }
             catch (DatabaseException ex)
             {
-                await exceptionLogger.Log(new ApplicationError(ex.Message));
                 return StatusCode(500, ex.Message);
             }
             catch (Exception ex)

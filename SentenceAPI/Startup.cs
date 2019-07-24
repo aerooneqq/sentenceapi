@@ -21,6 +21,11 @@ using SentenceAPI.Databases.MongoDB.Interfaces;
 using SentenceAPI.Features.Loggers.Factories;
 using SentenceAPI.Features.Loggers.Interfaces;
 using SentenceAPI.Features.Middlewares.RequestLoggerMiddleware;
+using SentenceAPI.Features.Email.Services;
+using SentenceAPI.Features.Email.Interfaces;
+using SentenceAPI.Features.Email.Factories;
+using SentenceAPI.Features.Links.Factories;
+using SentenceAPI.Features.Links.Interfaces;
 
 namespace SentenceAPI
 {
@@ -34,7 +39,7 @@ namespace SentenceAPI
         private readonly FactoriesManager factoriesManager = FactoriesManager.Instance;
         #endregion
 
-        public IConfiguration Configuration { get; set;  }
+        public IConfiguration Configuration { get; set; }
 
         public Startup(IConfiguration configuration)
         {
@@ -84,7 +89,13 @@ namespace SentenceAPI
             app.UseHttpsRedirection();
             app.UseAuthentication();
 
-            app.UseCors(builder => builder.AllowAnyOrigin());
+            app.UseCors(builder =>
+            {
+                builder.AllowAnyOrigin();
+                builder.AllowAnyHeader();
+                builder.AllowAnyMethod();
+                builder.AllowCredentials();
+            });
             app.UseMvc();
         }
 
@@ -96,16 +107,20 @@ namespace SentenceAPI
         {
             IFactoriesManager factoriesManager = FactoriesManager.Instance;
 
-            factoriesManager.AddFactory(new FactoryInfo(new UserServiceFactory(), 
+            factoriesManager.AddFactory(new FactoryInfo(new UserServiceFactory(),
                 typeof(IUserServiceFactory)));
-            factoriesManager.AddFactory(new FactoryInfo(new TokenServiceFactory(), 
+            factoriesManager.AddFactory(new FactoryInfo(new TokenServiceFactory(),
                 typeof(ITokenServiceFactory)));
-            factoriesManager.AddFactory(new FactoryInfo(new ResponseServiceFactory(), 
+            factoriesManager.AddFactory(new FactoryInfo(new ResponseServiceFactory(),
                 typeof(IResponseServiceFactory)));
             factoriesManager.AddFactory(new FactoryInfo(new MongoDBServiceFactory(),
                 typeof(IMongoDBServiceFactory)));
             factoriesManager.AddFactory(new FactoryInfo(new LoggerFactory(),
                 typeof(ILoggerFactory)));
+            factoriesManager.AddFactory(new FactoryInfo(new EmailServiceFactory(),
+                typeof(IEmailServiceFactory)));
+            factoriesManager.AddFactory(new FactoryInfo(new LinkServiceFactory(),
+                typeof(ILinkServiceFactory)));
         }
     }
 }

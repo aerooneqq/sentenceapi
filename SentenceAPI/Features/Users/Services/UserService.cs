@@ -12,6 +12,8 @@ using SentenceAPI.Features.Users.Models;
 using SentenceAPI.Databases.Exceptions;
 using SentenceAPI.Features.Loggers.Interfaces;
 using SentenceAPI.Features.Loggers.Models;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
 namespace SentenceAPI.Features.Users.Services
 {
@@ -64,6 +66,26 @@ namespace SentenceAPI.Features.Users.Services
         public void Delete(long id)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<UserInfo> Get(string token)
+        {
+            try
+            {
+                JwtSecurityToken jwtSecurityToken = new JwtSecurityTokenHandler().ReadToken(token) as JwtSecurityToken;
+                string email = jwtSecurityToken.Claims.ToList().Find(c => c.Type == "Email").Value;
+
+                await mongoDBService.Connect();
+                return mongoDBService.Get(new Dictionary<string, object>()
+                {
+                    { GetPropertyBsonElement("Email"), email }
+                }).GetAwaiter().GetResult().FirstOrDefault();
+            }
+            catch (Exception ex)
+            {
+                await exceptionLogger.Log(new ApplicationError(ex.Message));
+                throw new DatabaseException("Error occured while working with the database");
+            }
         }
 
         public async Task<UserInfo> Get(string email, string password)
