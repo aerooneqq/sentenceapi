@@ -18,6 +18,8 @@ using SentenceAPI.Features.Links.Interfaces;
 using Newtonsoft.Json;
 using SentenceAPI.Features.Authentication.Interfaces;
 using System.IdentityModel.Tokens.Jwt;
+using System.IO;
+using System.Text;
 
 namespace SentenceAPI.Features.Users
 {
@@ -91,7 +93,6 @@ namespace SentenceAPI.Features.Users
             }
         }
 
-
         public async Task<IActionResult> Get([FromQuery]string email, [FromQuery]string password)
         {
             try
@@ -150,6 +151,33 @@ namespace SentenceAPI.Features.Users
             catch (Exception ex)
             {
                 await exceptionLogger.Log(new ApplicationError(ex.Message));
+                return StatusCode(500);
+            }
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> UpdateUser()
+        {
+            try
+            {
+                UserInfo user = null;
+                using (StreamReader sr = new StreamReader(Request.Body, Encoding.UTF8, true, 1024, true))
+                {
+                    string body = await sr.ReadToEndAsync();
+                    user = JsonConvert.DeserializeObject<UserInfo>(body);
+                }
+
+                await userService.Update(user);
+
+                return Ok(JsonConvert.SerializeObject(await userService.Get(user.ID)));
+            }
+            catch (DatabaseException ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+            catch (Exception ex)
+            {
+                exceptionLogger.Log(new ApplicationError(ex.Message));
                 return StatusCode(500);
             }
         }

@@ -138,9 +138,18 @@ namespace SentenceAPI.Features.Users.Services
                 ElementName;
         }
 
-        public void Update(UserInfo user)
+        public async Task Update(UserInfo user)
         {
-            throw new NotImplementedException();
+            try
+            {
+                await mongoDBService.Connect();
+                await mongoDBService.Update(user);
+            }
+            catch (Exception ex)
+            {
+                await exceptionLogger.Log(new ApplicationError(ex.Message));
+                throw new DatabaseException("Error occured while ipdating record in the database");
+            }
         }
 
         public async Task<long> CreateNewUser(string email, string password)

@@ -37,14 +37,14 @@ namespace SentenceApiTests.FeaturesTests.LinkServicesTest
         private IFactoriesManager factoriesManager = FactoriesManager.Instance;
 
         private IUserServiceFactory userServiceFactory;
-        private ILinkServiceFactoty linkServiceFactory;
+        private ILinkServiceFactory linkServiceFactory;
         #endregion
 
         [SetUp]
         public void SetUp()
         {
             factoriesManager.AddFactory(new FactoryInfo(new LinkServiceFactory(),
-                typeof(ILinkServiceFactoty)));
+                typeof(ILinkServiceFactory)));
             factoriesManager.AddFactory(new FactoryInfo(new UserServiceFactory(),
                 typeof(IUserServiceFactory)));
             factoriesManager.AddFactory(new FactoryInfo(new MongoDBServiceFactory(),
@@ -55,7 +55,7 @@ namespace SentenceApiTests.FeaturesTests.LinkServicesTest
             userServiceFactory = factoriesManager[typeof(IUserServiceFactory)].Factory as IUserServiceFactory;
             userService = userServiceFactory.GetService();
 
-            linkServiceFactory = factoriesManager[typeof(ILinkServiceFactoty)].Factory as ILinkServiceFactoty;
+            linkServiceFactory = factoriesManager[typeof(ILinkServiceFactory)].Factory as ILinkServiceFactory;
             linkService = linkServiceFactory.GetService();
         }
 

@@ -12507,23 +12507,23 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\evgen\\.nuget\\packages\\": {},
+    "C:\\Users\\Aero\\.nuget\\packages\\": {},
     "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\evgen\\OneDrive\\Рабочий стол\\Sentence\\SentenceAPI\\SentenceAPI\\SentenceAPI.csproj",
+      "projectUniqueName": "C:\\Users\\Aero\\Desktop\\Sentence\\sentenceapi\\SentenceAPI\\SentenceAPI.csproj",
       "projectName": "SentenceAPI",
-      "projectPath": "C:\\Users\\evgen\\OneDrive\\Рабочий стол\\Sentence\\SentenceAPI\\SentenceAPI\\SentenceAPI.csproj",
-      "packagesPath": "C:\\Users\\evgen\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\evgen\\OneDrive\\Рабочий стол\\Sentence\\SentenceAPI\\SentenceAPI\\obj\\",
+      "projectPath": "C:\\Users\\Aero\\Desktop\\Sentence\\sentenceapi\\SentenceAPI\\SentenceAPI.csproj",
+      "packagesPath": "C:\\Users\\Aero\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\Aero\\Desktop\\Sentence\\sentenceapi\\SentenceAPI\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
       ],
       "configFilePaths": [
-        "C:\\Users\\evgen\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\Aero\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [

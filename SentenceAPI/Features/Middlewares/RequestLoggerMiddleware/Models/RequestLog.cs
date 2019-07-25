@@ -4,9 +4,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.IO;
+using System.Text;
 
 using MongoDB.Bson.Serialization.Attributes;
+
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Internal;
 
 using Newtonsoft.Json;
 
@@ -37,13 +40,15 @@ namespace SentenceAPI.Features.Middlewares.RequestLoggerMiddleware.Models
 
         public RequestLog(HttpRequest request)
         {
-            QueryString = request.QueryString.Value;
-
-            using (StreamReader sr = new StreamReader(request.Body))
+            request.EnableRewind();
+            using (StreamReader sr = new StreamReader(request.Body, Encoding.UTF8, true, 1024, true))
             {
                 Body = sr.ReadToEnd();
             }
 
+            request.Body.Position = 0;
+
+            QueryString = request.QueryString.Value;
             ContentType = request.ContentType;
             ContentLength = request.ContentLength;
             Host = new HostObject(request.Host);

@@ -32,6 +32,7 @@ namespace SentenceAPI.Databases.MongoDB.Interfaces
         Task<bool> IsCollectionExist();
         Task Insert(DataType entity);
         Task Update(DataType entity, IEnumerable<string> properties);
+        Task Update(DataType entity);
         Task<DataType> Get(long id);
 
         /// <summary>

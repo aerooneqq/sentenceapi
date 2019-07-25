@@ -186,6 +186,25 @@ namespace SentenceAPI.Databases.MongoDB
         }
 
         /// <summary>
+        /// Updates the whole entity, whoch means the replacement of the entity in the database to
+        /// a given one.
+        /// </summary>
+        public async Task Update(DataType entity)
+        {
+            try
+            {
+                var filter = Builders<DataType>.Filter.Eq("_id", entity.ID);
+
+                mongoCollection = database.GetCollection<DataType>(CollectionName);
+                await mongoCollection.ReplaceOneAsync(filter, entity);
+            }
+            catch (Exception ex)
+            {
+                throw new DatabaseException("Error occured while updating the entity");
+            }
+        }
+
+        /// <summary>
         /// Tries to update the record. Only the properties which are listed in the "properties"
         /// dictionary will be updated.
         /// </summary>
