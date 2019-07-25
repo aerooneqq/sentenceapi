@@ -14,20 +14,19 @@ namespace SentenceAPI.Features.Users.Models
     /// </summary>
     public class CareerStage
     {
-        [BsonElement("company")]
-        [JsonProperty("company")]
+        [BsonElement("company"), JsonProperty("company")]
         public string Company { get; set; }
 
-        [BsonElement("job")]
-        [JsonProperty("job")]
+        [BsonElement("job"), JsonProperty("job")]
         public string Job { get; set; }
 
-        [BsonElement("startYear")]
-        [JsonProperty("startYear")]
+        [BsonElement("description"), JsonProperty("description")]
+        public string Description { get; set; }
+
+        [BsonElement("startYear"), JsonProperty("startYear")]
         public DateTime StartYear { get; set; }
 
-        [BsonElement("finishYear")]
-        [JsonProperty("finishYear")]
+        [BsonElement("finishYear"), JsonProperty("finishYear")]
         public DateTime FinishYear { get; set; }
     }
 }
