@@ -11,8 +11,8 @@ namespace SentenceAPI.Features.Authentication.Models
         #region Public constants
         public const string ISSUER = "SentenceKernel";
         public const string AUDIENCE = "https://localhost:44368/";
-        public const int SecondsLifeTime = 100;
-        public const int CustomClaimsCount = 2;
+        public const int SecondsLifeTime = 86400;
+        public const int CustomClaimsCount = 3;
         #endregion
 
         #region Private constants

@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using SentenceAPI.KernelModels;
 
 using MongoDB.Bson.Serialization.Attributes;
+using System;
 
 namespace SentenceAPI.Features.Users.Models
 {
@@ -40,6 +41,9 @@ namespace SentenceAPI.Features.Users.Models
         [BsonElement("photo"), JsonProperty("photo")]
         public byte[] Photo { get; set; }
         #endregion
+
+        [BsonElement("birthDate"), JsonProperty("birthDate")]
+        public DateTime BirthDate { get; set; } 
 
         #region Career
         [BsonElement("careerStages"), JsonProperty("careerStages")]

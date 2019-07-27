@@ -40,6 +40,7 @@ namespace SentenceAPI.Databases.MongoDB.Interfaces
         /// </summary>
         Task<IEnumerable<DataType>> Get(Dictionary<string, object> properties);
         Task Delete(long id);
+        Task<IEnumerable<DataType>> GetWhereEntry(string property, string value);
         #endregion
     }
 }

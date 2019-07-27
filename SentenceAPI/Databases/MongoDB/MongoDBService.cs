@@ -276,7 +276,7 @@ namespace SentenceAPI.Databases.MongoDB
                     LastID = 0
                 });
             }
-            catch
+            catch (Exception ex)
             {
                 throw new DatabaseException("Error occured while creating the new collection.");
             }
@@ -305,6 +305,14 @@ namespace SentenceAPI.Databases.MongoDB
             {
                 throw new DatabaseException("Error occured while deleting the collection");
             }
+        }
+
+        public async Task<IEnumerable<DataType>> GetWhereEntry(string property, string value)
+        {
+            mongoCollection = database.GetCollection<DataType>(CollectionName);
+            var filter = Builders<DataType>.Filter.Regex(property, $"/{value}/");
+
+            return await mongoCollection.FindAsync<DataType>(filter).GetAwaiter().GetResult().ToListAsync();
         }
         #endregion
 

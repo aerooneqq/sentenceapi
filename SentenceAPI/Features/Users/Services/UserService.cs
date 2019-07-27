@@ -174,5 +174,19 @@ namespace SentenceAPI.Features.Users.Services
                 throw new DatabaseException("Error occured when inserting a user in the database");
             }
         }
+
+        public async Task<IEnumerable<UserInfo>> FindUsersWithLogin(string login)
+        {
+            try
+            {
+                await mongoDBService.Connect(); 
+                return await mongoDBService.GetWhereEntry("login", login);
+            }
+            catch (Exception ex)
+            {
+                await exceptionLogger.Log(new ApplicationError(ex.Message));
+                throw new DatabaseException("Error occured when inserting a user in the database");
+            }
+        }
     }
 }

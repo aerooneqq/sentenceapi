@@ -26,6 +26,8 @@ using SentenceAPI.Features.Email.Interfaces;
 using SentenceAPI.Features.Email.Factories;
 using SentenceAPI.Features.Links.Factories;
 using SentenceAPI.Features.Links.Interfaces;
+using SentenceAPI.Features.UserFriends.Factories;
+using SentenceAPI.Features.UserFriends.Interfaces;
 
 namespace SentenceAPI
 {
@@ -121,6 +123,8 @@ namespace SentenceAPI
                 typeof(IEmailServiceFactory)));
             factoriesManager.AddFactory(new FactoryInfo(new LinkServiceFactory(),
                 typeof(ILinkServiceFactory)));
+            factoriesManager.AddFactory(new FactoryInfo(new UserFriendsServiceFactory(),
+                typeof(IUserFriendsServiceFactory)));
         }
     }
 }

@@ -71,6 +71,24 @@ namespace SentenceAPI.Features.Users
             };
         }
 
+        [HttpGet, Route("search/login")]
+        public async Task<IActionResult> FindUsersWithLogin([FromQuery]string login)
+        {
+            try
+            {
+                return Ok(JsonConvert.SerializeObject(await userService.FindUsersWithLogin(login)));
+            }
+            catch (DatabaseException ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+            catch (Exception ex)
+            {
+                await exceptionLogger.Log(new ApplicationError(ex.Message));
+                return StatusCode(500);
+            }
+        }
+
 
         [HttpGet]
         public async Task<IActionResult> Get()

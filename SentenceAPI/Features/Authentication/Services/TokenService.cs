@@ -100,8 +100,15 @@ namespace SentenceAPI.Features.Authentication.Services
 
             userIdentity.AddClaim(new Claim("Email", user.Email));
             userIdentity.AddClaim(new Claim("Login", user.Login));
+            userIdentity.AddClaim(new Claim("ID", user.ID.ToString()));
 
             return userIdentity;
+        }
+
+        public string GetTokenClaim(string token, string claimType)
+        {
+            JwtSecurityToken jwtSecurityToken = new JwtSecurityTokenHandler().ReadToken(token) as JwtSecurityToken;
+            return jwtSecurityToken.Claims.ToList().Find(c => c.Type == claimType).Value;
         }
     }
 }
