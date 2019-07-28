@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
+using MongoDB.Driver;
 using SentenceAPI.Databases.CommonInterfaces;
 using SentenceAPI.KernelInterfaces;
 
@@ -40,7 +41,15 @@ namespace SentenceAPI.Databases.MongoDB.Interfaces
         /// </summary>
         Task<IEnumerable<DataType>> Get(Dictionary<string, object> properties);
         Task Delete(long id);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="property"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
         Task<IEnumerable<DataType>> GetWhereEntry(string property, string value);
+        Task<IEnumerable<DataType>> GetWithFilter(FilterDefinition<DataType> filter);
         #endregion
     }
 }

@@ -9,6 +9,9 @@ namespace SentenceAPI.Features.UserFriends.Models
 {
     public class Subscription
     {
+        [JsonProperty("userID")]
+        public long UserID { get; set; }
+
         [JsonProperty("name")]
         public string Name { get; set; } 
 

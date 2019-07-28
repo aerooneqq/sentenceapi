@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
 using SentenceAPI.Databases.Exceptions;
+using SentenceAPI.Features.Authentication.Interfaces;
 using SentenceAPI.Features.Loggers.Interfaces;
 using SentenceAPI.Features.Loggers.Models;
 using SentenceAPI.Features.UserActivity.Interfaces;
@@ -16,9 +17,10 @@ using System.Threading.Tasks;
 namespace SentenceAPI.Features.UserActivity
 {
     [Route("api/[controller]"), Authorize, ApiController]
-    public class UserActivityController : Controller
+    public class UserActivitiesController : Controller
     {
         #region Services
+        private ITokenService tokenService;
         private ILogger<ApplicationError> exceptionLogger;
         private IUserActivityService userActivityService;
         #endregion
@@ -26,25 +28,35 @@ namespace SentenceAPI.Features.UserActivity
         #region Factories
         private FactoriesManager.FactoriesManager factoriesManager = FactoriesManager.FactoriesManager.Instance;
 
+        private ITokenServiceFactory tokenServiceFactory;
         private ILoggerFactory loggerFactory;
         private IUserActivityServiceFactory userActivityServiceFactory;
         #endregion
 
-        public UserActivityController()
+        public UserActivitiesController()
         {
             userActivityServiceFactory = factoriesManager[typeof(IUserActivityServiceFactory)].Factory
                 as IUserActivityServiceFactory;
             loggerFactory = factoriesManager[typeof(ILoggerFactory)].Factory as ILoggerFactory;
+            tokenServiceFactory = factoriesManager[typeof(ITokenServiceFactory)].Factory as ITokenServiceFactory;
 
             userActivityService = userActivityServiceFactory.GetService();
             exceptionLogger = loggerFactory.GetExceptionLogger();
+            tokenService = tokenServiceFactory.GetService();
         }
 
-        public async Task<IActionResult> GetUserActivities([FromQuery]long id)
+        [HttpGet]
+        public async Task<IActionResult> GetUserActivities()
         {
             try
             {
+                string authHeader = Request.Headers["Authorization"];
+                string token = authHeader.Split()[1];
+
+                long id = long.Parse(tokenService.GetTokenClaim(token, "ID"));
+
                 var userActivities = await userActivityService.GetUserActivity(id);
+
                 return Ok(JsonConvert.SerializeObject(userActivities));
             }
             catch (DatabaseException ex)

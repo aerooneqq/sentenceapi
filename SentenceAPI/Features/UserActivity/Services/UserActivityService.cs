@@ -38,6 +38,28 @@ namespace SentenceAPI.Features.UserActivity.Services
                 .SetDatabaseName("SentenceDatabase")
                 .SetCollectionName()
                 .Build();
+
+            mongoDBService.Connect().GetAwaiter().GetResult();
+            mongoDBService.Insert(new Models.UserActivity()
+            {
+                IsOnline = false,
+                UserID = 0,
+                Activities = new List<SingleUserActivity>()
+                {
+                    new SingleUserActivity()
+                    {
+                        Activity = "Logged in",
+                        ActivityDate = DateTime.Now,
+                    },
+                    new SingleUserActivity()
+                    {
+                        ActivityDate = DateTime.Now,
+                        Activity = "Logged out"
+                    }
+                },
+                LastActivityDate = DateTime.Now,
+                LastOnline = DateTime.Now
+            });
         }
         #endregion
 

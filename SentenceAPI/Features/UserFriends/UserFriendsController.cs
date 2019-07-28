@@ -88,17 +88,14 @@ namespace SentenceAPI.Features.UserFriends
         }
 
         [HttpPut, Route("subscribers")]
-        public async Task<IActionResult> AddSubscriber([FromQuery]long userID)
+        public async Task<IActionResult> AddSubscriber([FromQuery]long subscriberID)
         {
             try
             {
-                long subscriberID = -1;
-                using (StreamReader sr = new StreamReader(Request.Body))
-                {
-                    subscriberID = long.Parse(await sr.ReadToEndAsync());
-                }
+                string authHeader = Request.Headers["Authorization"];
+                string token = authHeader.Split()[1];
 
-                await userFriendsService.AddSubscriber(userID, subscriberID);
+                await userFriendsService.AddSubscriber(token, subscriberID);
 
                 return Ok();
             }
@@ -113,17 +110,14 @@ namespace SentenceAPI.Features.UserFriends
         }
 
         [HttpPut, Route("subscriptions")]
-        public async Task<IActionResult> AddSubscription([FromQuery]long userID)
+        public async Task<IActionResult> AddSubscription([FromQuery]long subscriptionID)
         {
             try
             {
-                long subscriptionID = -1;
-                using (StreamReader sr = new StreamReader(Request.Body))
-                {
-                    subscriptionID = long.Parse(await sr.ReadToEndAsync());
-                }
+                string authHeader = Request.Headers["Authorization"];
+                string token = authHeader.Split()[1];
 
-                await userFriendsService.AddSubscription(userID, subscriptionID);
+                await userFriendsService.AddSubscription(token, subscriptionID);
 
                 return Ok();
             }
@@ -139,17 +133,14 @@ namespace SentenceAPI.Features.UserFriends
         }
 
         [HttpDelete, Route("subscribers")]
-        public async Task<IActionResult> DeleteSubscriber([FromQuery]long userID)
+        public async Task<IActionResult> DeleteSubscriber([FromQuery]long subscriberID)
         {
             try
             {
-                long subscriberID = -1;
-                using (StreamReader sr = new StreamReader(Request.Body))
-                {
-                    subscriberID = long.Parse(await sr.ReadToEndAsync());
-                }
+                string authHeader = Request.Headers["Authorization"];
+                string token = authHeader.Split()[1];
 
-                await userFriendsService.DeleteSubscriber(userID, subscriberID);
+                await userFriendsService.DeleteSubscriber(token, subscriberID);
 
                 return Ok();
             }
@@ -165,17 +156,14 @@ namespace SentenceAPI.Features.UserFriends
         }
 
         [HttpDelete, Route("subscriptions")]
-        public async Task<IActionResult> DeleteSubscription([FromQuery] long userID)
+        public async Task<IActionResult> DeleteSubscription([FromQuery]long subscriptionID)
         {
             try
             {
-                long subscriptionID = -1;
-                using (StreamReader sr = new StreamReader(Request.Body))
-                {
-                    subscriptionID = long.Parse(await sr.ReadToEndAsync());
-                }
+                string authHeader = Request.Headers["Authorization"];
+                string token = authHeader.Split()[1];
 
-                await userFriendsService.DeleteSubscription(userID, subscriptionID);
+                await userFriendsService.DeleteSubscription(token, subscriptionID);
 
                 return Ok();
             }

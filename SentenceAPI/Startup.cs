@@ -28,6 +28,10 @@ using SentenceAPI.Features.Links.Factories;
 using SentenceAPI.Features.Links.Interfaces;
 using SentenceAPI.Features.UserFriends.Factories;
 using SentenceAPI.Features.UserFriends.Interfaces;
+using SentenceAPI.Features.UserActivity.Factories;
+using SentenceAPI.Features.UserActivity.Interfaces;
+using SentenceAPI.Features.UserFeed.Factories;
+using SentenceAPI.Features.UserFeed.Interfaces;
 
 namespace SentenceAPI
 {
@@ -125,6 +129,10 @@ namespace SentenceAPI
                 typeof(ILinkServiceFactory)));
             factoriesManager.AddFactory(new FactoryInfo(new UserFriendsServiceFactory(),
                 typeof(IUserFriendsServiceFactory)));
+            factoriesManager.AddFactory(new FactoryInfo(new UserActivityServiceFactory(),
+                typeof(IUserActivityServiceFactory)));
+            factoriesManager.AddFactory(new FactoryInfo(new UserFeedServiceFactory(),
+                typeof(IUserFeedServiceFactory)));
         }
     }
 }

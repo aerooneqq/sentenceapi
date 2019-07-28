@@ -11,11 +11,15 @@ namespace SentenceAPI.Features.UserFriends.Interfaces
 {
     public interface IUserFriendsService : IService
     {
-        Task AddSubscriber(long userID, long subscriberID);
-        Task AddSubscription(long userID, long subscriptionID);
-        Task DeleteSubscriber(long userID, long subscriberID);
-        Task DeleteSubscription(long userID, long subscriptionID);
+        Task AddSubscriber(string token, long subscriberID);
+        Task AddSubscription(string token, long subscriptionID);
+        Task DeleteSubscriber(string token, long subscriberID);
+        Task DeleteSubscription(string token, long subscriptionID);
+
         Task<IEnumerable<Subscriber>> GetSubscribers(string token);
         Task<IEnumerable<Subscription>> GetSubscriptions(string token);
+
+        Task<IEnumerable<Subscriber>> GetSubscribers(long userID);
+        Task<IEnumerable<Subscription>> GetSubscriptions(long userID);
     }
 }

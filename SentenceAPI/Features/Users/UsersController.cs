@@ -76,7 +76,15 @@ namespace SentenceAPI.Features.Users
         {
             try
             {
-                return Ok(JsonConvert.SerializeObject(await userService.FindUsersWithLogin(login)));
+                return Ok(JsonConvert.SerializeObject((await userService.FindUsersWithLogin(login)).Select(u =>
+                {
+                    return new
+                    {
+                        userID = u.ID,
+                        name = u.Name + u.Surname,
+                        birthDate = u.BirthDate,
+                    };
+                })));
             }
             catch (DatabaseException ex)
             {

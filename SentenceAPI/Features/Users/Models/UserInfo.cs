@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
+using System;
 
 using Newtonsoft.Json;
 
 using SentenceAPI.KernelModels;
 
 using MongoDB.Bson.Serialization.Attributes;
-using System;
 
 namespace SentenceAPI.Features.Users.Models
 {
@@ -18,7 +18,7 @@ namespace SentenceAPI.Features.Users.Models
         [BsonElement("email"), JsonProperty("email")]
         public string Email { get; set; }
 
-        [BsonElement("password"), JsonProperty("password")]
+        [BsonElement("password"), JsonIgnore]
         public string Password { get; set; }
         #endregion
 

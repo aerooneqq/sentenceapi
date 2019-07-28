@@ -314,6 +314,13 @@ namespace SentenceAPI.Databases.MongoDB
 
             return await mongoCollection.FindAsync<DataType>(filter).GetAwaiter().GetResult().ToListAsync();
         }
+
+        public async Task<IEnumerable<DataType>> GetWithFilter(FilterDefinition<DataType> filter)
+        {
+            mongoCollection = database.GetCollection<DataType>(CollectionName);
+
+            return await mongoCollection.FindAsync<DataType>(filter).GetAwaiter().GetResult().ToListAsync();
+        }
         #endregion
 
         #region IDisposable implementation
