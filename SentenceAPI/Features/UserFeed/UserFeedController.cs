@@ -20,6 +20,8 @@ namespace SentenceAPI.Features.UserFeed
         #region Services
         private ILogger<ApplicationError> exceptionLogger;
         private IUserFeedService userFeedService;
+
+
         #endregion
 
         #region Factories
