@@ -112,7 +112,7 @@ namespace SentenceAPI
         private void ConfigureCustomServices()
         {
             IFactoriesManager factoriesManager = FactoriesManager.Instance;
-
+            
             factoriesManager.AddFactory(new FactoryInfo(new UserServiceFactory(),
                 typeof(IUserServiceFactory)));
             factoriesManager.AddFactory(new FactoryInfo(new TokenServiceFactory(),
