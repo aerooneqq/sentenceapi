@@ -20,12 +20,10 @@ namespace SentenceAPI.Features.UserFeed
         #region Services
         private ILogger<ApplicationError> exceptionLogger;
         private IUserFeedService userFeedService;
-
-
         #endregion
 
         #region Factories
-        private IFactoriesManager factoriesManager = FactoriesManager.FactoriesManager.Instance;
+        private readonly IFactoriesManager factoriesManager = FactoriesManager.FactoriesManager.Instance;
 
         private ILoggerFactory loggerFactory;
         private IUserFeedServiceFactory userFeedServiceFactory;
