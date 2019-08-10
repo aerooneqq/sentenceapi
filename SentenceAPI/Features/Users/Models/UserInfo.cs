@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using SentenceAPI.KernelModels;
 
 using MongoDB.Bson.Serialization.Attributes;
+using SentenceAPI.Attributes;
 
 namespace SentenceAPI.Features.Users.Models
 {
@@ -18,7 +19,7 @@ namespace SentenceAPI.Features.Users.Models
         [BsonElement("email"), JsonProperty("email")]
         public string Email { get; set; }
 
-        [BsonElement("password"), JsonIgnore]
+        [BsonElement("password"), JsonIgnore, Secret]
         public string Password { get; set; }
         #endregion
 

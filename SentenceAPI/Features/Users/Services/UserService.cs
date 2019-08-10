@@ -14,6 +14,10 @@ using SentenceAPI.Features.Loggers.Interfaces;
 using SentenceAPI.Features.Loggers.Models;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using SentenceAPI.Databases.CommonInterfaces;
+using SentenceAPI.Databases.Filters;
+using SentenceAPI.Extensions;
+using System.Text.RegularExpressions;
 
 namespace SentenceAPI.Features.Users.Services
 {
@@ -27,7 +31,7 @@ namespace SentenceAPI.Features.Users.Services
 
         #region Services
         private readonly ILogger<ApplicationError> exceptionLogger;
-        private readonly IMongoDBService<UserInfo> mongoDBService;
+        private readonly IDatabaseService<UserInfo> mongoDBService;
         #endregion
 
         #region Builders
@@ -35,7 +39,6 @@ namespace SentenceAPI.Features.Users.Services
         #endregion
 
         #region Factories
-  
         private readonly FactoriesManager.FactoriesManager factoriesManager =
             FactoriesManager.FactoriesManager.Instance;
         private readonly IMongoDBServiceFactory mongoDBServiceFactory;
@@ -49,8 +52,7 @@ namespace SentenceAPI.Features.Users.Services
                 as IMongoDBServiceFactory;
             loggerFactory = factoriesManager[typeof(ILoggerFactory)].Factory as ILoggerFactory;
 
-            mongoDBService = mongoDBServiceFactory.GetService<UserInfo>();
-            mongoDBServiceBuilder = mongoDBServiceFactory.GetBuilder(mongoDBService);
+            mongoDBServiceBuilder = mongoDBServiceFactory.GetBuilder<UserInfo>(mongoDBServiceFactory.GetService<UserInfo>());
 
             mongoDBService = mongoDBServiceBuilder.AddConfigurationFile("database_config.json")
                 .SetConnectionString()
@@ -76,10 +78,9 @@ namespace SentenceAPI.Features.Users.Services
                 string email = jwtSecurityToken.Claims.ToList().Find(c => c.Type == "Email").Value;
 
                 await mongoDBService.Connect();
-                return mongoDBService.Get(new Dictionary<string, object>()
-                {
-                    { GetPropertyBsonElement("Email"), email }
-                }).GetAwaiter().GetResult().FirstOrDefault();
+
+                var filter = new EqualityFilter<string>("email", email);
+                return (await mongoDBService.Get(filter)).FirstOrDefault();
             }
             catch (Exception ex)
             {
@@ -94,14 +95,13 @@ namespace SentenceAPI.Features.Users.Services
             {
                 await mongoDBService.Connect();
 
-                string emailPropertyName = GetPropertyBsonElement("Email");
-                string passwordPropertyName = GetPropertyBsonElement("Password");
-
-                var users = (await mongoDBService.Get(new Dictionary<string, object>()
+                IEnumerable<IFilter> filters = new []
                 {
-                    { emailPropertyName, email },
-                    { passwordPropertyName, password }
-                })).ToList();
+                    new EqualityFilter<string>(typeof(UserInfo).GetBsonPropertyName("Email"), email),
+                    new EqualityFilter<string>(typeof(UserInfo).GetBsonPropertyName("Password"), password)
+                };
+
+                var users = (await mongoDBService.Get(new FilterCollection(filters))).ToList();
 
                 if (users.Count != 1)
                 {
@@ -123,19 +123,14 @@ namespace SentenceAPI.Features.Users.Services
             {
                 await mongoDBService.Connect();
 
-                return await mongoDBService.Get(id);
+                return (await mongoDBService.Get(new EqualityFilter<long>
+                    (typeof(UserInfo).GetBsonPropertyName("ID"), id))).FirstOrDefault();
             }
             catch (Exception ex)
             {
                 await exceptionLogger.Log(new ApplicationError(ex.Message));
                 throw new DatabaseException("Error occured while working with the database");
             }
-        }
-
-        private string GetPropertyBsonElement(string propertyName)
-        {
-            return typeof(UserInfo).GetProperty(propertyName).GetCustomAttribute<BsonElementAttribute>().
-                ElementName;
         }
 
         public async Task Update(UserInfo user)
@@ -179,8 +174,12 @@ namespace SentenceAPI.Features.Users.Services
         {
             try
             {
-                await mongoDBService.Connect(); 
-                return await mongoDBService.GetWhereEntry("login", login);
+                await mongoDBService.Connect();
+
+                string bsonPropertyName = typeof(UserInfo).GetBsonPropertyName("Login");
+                var filter = new RegexFilter(bsonPropertyName, $"/{login}/");
+
+                return await mongoDBService.Get(filter);
             }
             catch (Exception ex)
             {

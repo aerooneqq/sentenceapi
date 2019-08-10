@@ -7,20 +7,18 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Mvc;
 
 using SentenceAPI.Features.Authentication.Models;
-using SentenceAPI.Features.FactoriesManager.Models;
-using SentenceAPI.Features.FactoriesManager.Interfaces;
-using SentenceAPI.Features.FactoriesManager;
+using SentenceAPI.FactoriesManager.Models;
+using SentenceAPI.FactoriesManager.Interfaces;
+using SentenceAPI.FactoriesManager;
 using SentenceAPI.Features.Users.Interfaces;
 using SentenceAPI.Features.Authentication.Interfaces;
 using SentenceAPI.Features.Users.Factories;
 using SentenceAPI.Features.Authentication.Factories;
-using SentenceAPI.Features.Response.Factories;
-using SentenceAPI.Features.Response.Interfaces;
 using SentenceAPI.Databases.MongoDB.Factories;
 using SentenceAPI.Databases.MongoDB.Interfaces;
 using SentenceAPI.Features.Loggers.Factories;
 using SentenceAPI.Features.Loggers.Interfaces;
-using SentenceAPI.Features.Middlewares.RequestLoggerMiddleware;
+using SentenceAPI.Middlewares.RequestLoggerMiddleware;
 using SentenceAPI.Features.Email.Services;
 using SentenceAPI.Features.Email.Interfaces;
 using SentenceAPI.Features.Email.Factories;
@@ -42,7 +40,7 @@ namespace SentenceAPI
         #endregion
 
         #region Factories
-        private readonly FactoriesManager factoriesManager = FactoriesManager.Instance;
+        private readonly FactoriesManager.FactoriesManager factoriesManager = FactoriesManager.FactoriesManager.Instance;
         #endregion
 
         public IConfiguration Configuration { get; set; }
@@ -111,14 +109,12 @@ namespace SentenceAPI
         /// </summary>
         private void ConfigureCustomServices()
         {
-            IFactoriesManager factoriesManager = FactoriesManager.Instance;
+            IFactoriesManager factoriesManager = FactoriesManager.FactoriesManager.Instance;
             
             factoriesManager.AddFactory(new FactoryInfo(new UserServiceFactory(),
                 typeof(IUserServiceFactory)));
             factoriesManager.AddFactory(new FactoryInfo(new TokenServiceFactory(),
                 typeof(ITokenServiceFactory)));
-            factoriesManager.AddFactory(new FactoryInfo(new ResponseServiceFactory(),
-                typeof(IResponseServiceFactory)));
             factoriesManager.AddFactory(new FactoryInfo(new MongoDBServiceFactory(),
                 typeof(IMongoDBServiceFactory)));
             factoriesManager.AddFactory(new FactoryInfo(new LoggerFactory(),

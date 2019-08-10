@@ -9,6 +9,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using SentenceAPI.Features.UserActivity.Factories;
 using SentenceAPI.Databases.MongoDB.Factories;
+using SentenceAPI.Databases.Filters;
 
 namespace SentenceAPI.Features.UserActivity.Services
 {
@@ -77,10 +78,8 @@ namespace SentenceAPI.Features.UserActivity.Services
         public async Task AddSingleActivity(long userID, SingleUserActivity singleUserActivity)
         {
             await mongoDBService.Connect();
-            Models.UserActivity userActivity = mongoDBService.Get(new Dictionary<string, object>()
-            {
-                { "userID", userID }
-            }).GetAwaiter().GetResult().FirstOrDefault();
+            var filter = new EqualityFilter<long>("userID", userID); 
+            Models.UserActivity userActivity = (await mongoDBService.Get(filter).ConfigureAwait(false)).FirstOrDefault();
 
             if (userActivity == null)
             {
@@ -102,10 +101,9 @@ namespace SentenceAPI.Features.UserActivity.Services
         public async Task<Models.UserActivity> GetUserActivity(long userID)
         {
             await mongoDBService.Connect();
-            return mongoDBService.Get(new Dictionary<string, object>()
-            {
-                { "userID", userID }
-            }).GetAwaiter().GetResult().FirstOrDefault();
+
+            var filter = new EqualityFilter<long>("userID", userID);
+            return (await mongoDBService.Get(filter).ConfigureAwait(false)).FirstOrDefault();
         }
 
         /// <summary>
@@ -117,10 +115,8 @@ namespace SentenceAPI.Features.UserActivity.Services
         public async Task<IEnumerable<SingleUserActivity>> GetUserSingleActivities(long userID)
         {
             await mongoDBService.Connect();
-            return mongoDBService.Get(new Dictionary<string, object>()
-            {
-                { "userID", userID }
-            }).GetAwaiter().GetResult().FirstOrDefault()?.Activities;
+            var filter = new EqualityFilter<long>("userID", userID);
+            return (await mongoDBService.Get(filter).ConfigureAwait(false)).FirstOrDefault()?.Activities;
         }
 
         /// <summary>

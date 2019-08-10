@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using SentenceAPI.Databases.Exceptions;
-using SentenceAPI.Features.FactoriesManager.Interfaces;
+using SentenceAPI.FactoriesManager.Interfaces;
 using SentenceAPI.Features.Loggers.Interfaces;
 using SentenceAPI.Features.Loggers.Models;
 using SentenceAPI.Features.UserFeed.Interfaces;

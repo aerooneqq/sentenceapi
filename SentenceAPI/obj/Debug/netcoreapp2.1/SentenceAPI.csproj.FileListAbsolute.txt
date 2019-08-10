@@ -28,7 +28,6 @@ C:\Users\evgen\OneDrive\Рабочий стол\Sentence\SentenceAPI\SentenceAPI
 C:\Users\evgen\OneDrive\Рабочий стол\Sentence\SentenceAPI\SentenceAPI\bin\Debug\netcoreapp2.1\SentenceAPI.runtimeconfig.dev.json
 C:\Users\evgen\OneDrive\Рабочий стол\Sentence\SentenceAPI\SentenceAPI\bin\Debug\netcoreapp2.1\SentenceAPI.dll
 C:\Users\evgen\OneDrive\Рабочий стол\Sentence\SentenceAPI\SentenceAPI\bin\Debug\netcoreapp2.1\SentenceAPI.pdb
-C:\Users\evgen\OneDrive\Рабочий стол\Sentence\SentenceAPI\SentenceAPI\obj\Debug\netcoreapp2.1\SentenceAPI.csprojAssemblyReference.cache
 C:\Users\evgen\OneDrive\Рабочий стол\Sentence\SentenceAPI\SentenceAPI\obj\Debug\netcoreapp2.1\SentenceAPI.csproj.CoreCompileInputs.cache
 C:\Users\evgen\OneDrive\Рабочий стол\Sentence\SentenceAPI\SentenceAPI\obj\Debug\netcoreapp2.1\SentenceAPI.RazorAssemblyInfo.cache
 C:\Users\evgen\OneDrive\Рабочий стол\Sentence\SentenceAPI\SentenceAPI\obj\Debug\netcoreapp2.1\SentenceAPI.RazorAssemblyInfo.cs
@@ -37,3 +36,4 @@ C:\Users\evgen\OneDrive\Рабочий стол\Sentence\SentenceAPI\SentenceAPI
 C:\Users\evgen\OneDrive\Рабочий стол\Sentence\SentenceAPI\SentenceAPI\obj\Debug\netcoreapp2.1\SentenceAPI.RazorTargetAssemblyInfo.cache
 C:\Users\evgen\OneDrive\Рабочий стол\Sentence\SentenceAPI\SentenceAPI\obj\Debug\netcoreapp2.1\SentenceAPI.dll
 C:\Users\evgen\OneDrive\Рабочий стол\Sentence\SentenceAPI\SentenceAPI\obj\Debug\netcoreapp2.1\SentenceAPI.pdb
+C:\Users\evgen\OneDrive\Рабочий стол\Sentence\SentenceAPI\SentenceAPI\obj\Debug\netcoreapp2.1\SentenceAPI.csprojAssemblyReference.cache

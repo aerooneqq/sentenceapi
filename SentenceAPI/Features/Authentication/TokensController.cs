@@ -10,13 +10,12 @@ using Newtonsoft.Json;
 
 using Microsoft.AspNetCore.Mvc;
 
-using SentenceAPI.Features.FactoriesManager.Interfaces;
+using SentenceAPI.FactoriesManager.Interfaces;
 using SentenceAPI.Features.Users.Interfaces;
-using SentenceAPI.Features.FactoriesManager;
+using SentenceAPI.FactoriesManager;
 using SentenceAPI.Features.Users.Models;
 using SentenceAPI.Features.Authentication.Interfaces;
 using SentenceAPI.Features.Authentication.Models;
-using SentenceAPI.Features.Response.Interfaces;
 using SentenceAPI.Databases.Exceptions;
 using SentenceAPI.Databases.MongoDB.Interfaces;
 using SentenceAPI.Features.Loggers.Interfaces;
@@ -30,8 +29,8 @@ namespace SentenceAPI.Features.Authentication
     {
         public static LogConfiguration LogConfiguration { get; } = new LogConfiguration()
         {
-            ControllerName = string.Empty,
-            ServiceName = "TokensController"
+            ControllerName = "TokensController",
+            ServiceName = string.Empty
         };
 
         #region Factories

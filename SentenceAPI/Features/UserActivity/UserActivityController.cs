@@ -8,6 +8,7 @@ using SentenceAPI.Features.Authentication.Interfaces;
 using SentenceAPI.Features.Loggers.Interfaces;
 using SentenceAPI.Features.Loggers.Models;
 using SentenceAPI.Features.UserActivity.Interfaces;
+using SentenceAPI.FactoriesManager;
 
 using System;
 using System.Collections.Generic;

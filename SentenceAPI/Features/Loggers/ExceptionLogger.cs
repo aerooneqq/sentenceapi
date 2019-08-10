@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Threading;
 using System.IO;
 
 using SentenceAPI.Databases.MongoDB.Interfaces;
@@ -10,13 +11,16 @@ using SentenceAPI.Databases.MongoDB.Factories;
 using SentenceAPI.Features.Loggers.Interfaces;
 
 using Newtonsoft.Json;
+using SentenceAPI.Databases.CommonInterfaces;
 
 namespace SentenceAPI.Features.Logger
 {
     public class ExceptionLogger : ILogger<ApplicationError>
     {
+        private static object fileLocker = new object();
+
         #region Services
-        private IMongoDBService<ApplicationError> mongoDBService;
+        private IDatabaseService<ApplicationError> mongoDBService;
         #endregion
 
         #region Factories
@@ -61,14 +65,17 @@ namespace SentenceAPI.Features.Logger
         #endregion
 
         #region ILogger implmentation
-        public async Task WriteLogToFile(ApplicationError logObject)
+        public void WriteLogToFile(ApplicationError logObject)
         {
-            using (FileStream fs = new FileStream(FileName, FileMode.Append, FileAccess.Write))
+            lock (fileLocker)
             {
-                string applicationErrorJson = JsonConvert.SerializeObject(logObject);
-                using (StreamWriter sw = new StreamWriter(fs))
+                using (FileStream fs = new FileStream(FileName, FileMode.Append, FileAccess.Write))
                 {
-                    await sw.WriteLineAsync(applicationErrorJson);
+                    string applicationErrorJson = JsonConvert.SerializeObject(logObject);
+                    using (StreamWriter sw = new StreamWriter(fs))
+                    {
+                        sw.WriteLine(applicationErrorJson);
+                    }
                 }
             }
         }
@@ -84,7 +91,7 @@ namespace SentenceAPI.Features.Logger
             }
             catch
             {
-                await WriteLogToFile(logObject);
+                new Thread(new ThreadStart(() => WriteLogToFile(logObject))).Start();
             }
         }
         #endregion

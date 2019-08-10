@@ -3,7 +3,7 @@ using MongoDB.Driver;
 using SentenceAPI.Databases.Exceptions;
 using SentenceAPI.Databases.MongoDB.Interfaces;
 using SentenceAPI.Features.Authentication.Interfaces;
-using SentenceAPI.Features.FactoriesManager.Interfaces;
+using SentenceAPI.FactoriesManager.Interfaces;
 using SentenceAPI.Features.Loggers.Interfaces;
 using SentenceAPI.Features.Loggers.Models;
 using SentenceAPI.Features.UserFeed.Interfaces;
@@ -14,6 +14,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using SentenceAPI.Databases.CommonInterfaces;
+using SentenceAPI.Databases.Filters;
 
 namespace SentenceAPI.Features.UserFeed.Services
 {
@@ -21,7 +23,7 @@ namespace SentenceAPI.Features.UserFeed.Services
     {
         #region Services
         private IUserFriendsService userFriendsService;
-        private IMongoDBService<Models.UserFeed> mongoDBService;
+        private IDatabaseService<Models.UserFeed> mongoDBService;
         private ILogger<ApplicationError> exceptionLogger;
         private ITokenService tokenService;
         #endregion
@@ -65,7 +67,7 @@ namespace SentenceAPI.Features.UserFeed.Services
                 subscriptionsID.Add(userID);
 
                 await mongoDBService.Connect();
-                return mongoDBService.GetWithFilter(Builders<Models.UserFeed>.Filter.In("userID", subscriptionsID))
+                return mongoDBService.Get(new InFilter<long>("userID", subscriptionsID))
                     .GetAwaiter().GetResult().OrderBy(uf => uf.PublicationDate);
             }
             catch (Exception ex) when (ex.GetType() != typeof(DatabaseException))

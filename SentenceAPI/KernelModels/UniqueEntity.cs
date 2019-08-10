@@ -9,7 +9,7 @@ namespace SentenceAPI.KernelModels
 {
     public class UniqueEntity
     {
-        [BsonId]
+        [BsonId, BsonElement("_id")]
         public long ID { get; set; }
     }
 }

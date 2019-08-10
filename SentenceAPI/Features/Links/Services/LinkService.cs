@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-
+using SentenceAPI.Databases.CommonInterfaces;
 using SentenceAPI.Databases.Exceptions;
+using SentenceAPI.Databases.Filters;
 using SentenceAPI.Databases.MongoDB.Interfaces;
 using SentenceAPI.Features.Links.Interfaces;
 using SentenceAPI.Features.Links.Models;
@@ -26,7 +27,7 @@ namespace SentenceAPI.Features.Links.Services
 
         #region Service
         private ILogger<ApplicationError> exceptionLogger;
-        private IMongoDBService<VerificationLink> mongoDBService;
+        private IDatabaseService<VerificationLink> mongoDBService;
         #endregion
 
         #region Builders
@@ -89,10 +90,8 @@ namespace SentenceAPI.Features.Links.Services
         {
             try
             {
-                VerificationLink verificationLink = mongoDBService.Get(new Dictionary<string, object>()
-                {
-                    { "link", link }
-                }).GetAwaiter().GetResult().FirstOrDefault();
+                var filter = new EqualityFilter<string>("link", link);
+                VerificationLink verificationLink = (await mongoDBService.Get(filter)).FirstOrDefault();
 
                 if (verificationLink == null)
                 {

@@ -1,4 +1,6 @@
-﻿using SentenceAPI.Databases.Exceptions;
+﻿using SentenceAPI.Databases.CommonInterfaces;
+using SentenceAPI.Databases.Exceptions;
+using SentenceAPI.Databases.Filters;
 using SentenceAPI.Databases.MongoDB.Interfaces;
 using SentenceAPI.Features.Authentication.Interfaces;
 using SentenceAPI.Features.Loggers.Interfaces;
@@ -19,7 +21,7 @@ namespace SentenceAPI.Features.UserFriends.Services
     {
         #region Services
         private ILogger<ApplicationError> exceptionLogger;
-        private IMongoDBService<Models.UserFriends> mongoDBService;
+        private IDatabaseService<Models.UserFriends> mongoDBService;
         private IUserService<UserInfo> userService;
         private ITokenService tokenService;
         #endregion
@@ -67,7 +69,8 @@ namespace SentenceAPI.Features.UserFriends.Services
 
                 await mongoDBService.Connect();
 
-                Models.UserFriends userFriends = await mongoDBService.Get(userID);
+                Models.UserFriends userFriends = (await mongoDBService.Get(new EqualityFilter<long>("userID",
+                    userID))).FirstOrDefault();
                 userFriends.SubscribersID.Add(subscriberID);
 
                 await mongoDBService.Update(userFriends, new[] { "SubscribersID" });
@@ -87,7 +90,8 @@ namespace SentenceAPI.Features.UserFriends.Services
 
                 await mongoDBService.Connect();
 
-                Models.UserFriends userFriends = await mongoDBService.Get(userID);
+                Models.UserFriends userFriends = (await mongoDBService.Get(new EqualityFilter<long>("userID",
+                    userID))).FirstOrDefault();
                 userFriends.SubscriptionsID.Add(subscriptionID);
 
                 await mongoDBService.Update(userFriends, new[] { "SubscriptionsID" });
@@ -107,7 +111,8 @@ namespace SentenceAPI.Features.UserFriends.Services
 
                 await mongoDBService.Connect();
 
-                Models.UserFriends userFriends = await mongoDBService.Get(userID);
+                Models.UserFriends userFriends = (await mongoDBService.Get(new EqualityFilter<long>("userID",
+                    userID))).FirstOrDefault();
                 userFriends.SubscribersID.Remove(subscriberID);
 
                 await mongoDBService.Update(userFriends, new[] { "SubscribersID" });
@@ -131,8 +136,8 @@ namespace SentenceAPI.Features.UserFriends.Services
 
                 await mongoDBService.Connect();
 
-                Models.UserFriends userFriends = await mongoDBService.Get(userID);
-                userFriends.SubscriptionsID.Remove(subscriptionID);
+                Models.UserFriends userFriends = (await mongoDBService.Get(new EqualityFilter<long>("userID",
+                    userID))).FirstOrDefault();
 
                 await mongoDBService.Update(userFriends, new[] { "SubscriptionsID" });
             }
@@ -172,9 +177,8 @@ namespace SentenceAPI.Features.UserFriends.Services
                 await mongoDBService.Connect();
 
                 List<Subscriber> subscribers = new List<Subscriber>();
-                Models.UserFriends userFriends = (await mongoDBService.Get(
-                    new Dictionary<string, object>() { { "userID", userID } }))
-                    .FirstOrDefault();
+                Models.UserFriends userFriends = (await mongoDBService.Get(new EqualityFilter<long>("userID",
+                    userID))).FirstOrDefault();
 
                 if (userFriends == null)
                 {
@@ -229,9 +233,8 @@ namespace SentenceAPI.Features.UserFriends.Services
                 await mongoDBService.Connect();
 
                 List<Subscription> subscriptions = new List<Subscription>();
-                Models.UserFriends userFriends = (await mongoDBService.Get(
-                    new Dictionary<string, object>() { { "userID", userID } }))
-                    .FirstOrDefault();
+                Models.UserFriends userFriends = (await mongoDBService.Get(new EqualityFilter<long>("userID",
+                    userID))).FirstOrDefault();
 
                 if (userFriends == null)
                 {

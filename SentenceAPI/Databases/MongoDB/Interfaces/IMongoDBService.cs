@@ -1,19 +1,15 @@
-﻿using System;
+﻿using Microsoft.Extensions.Configuration;
+using SentenceAPI.Databases.CommonInterfaces;
+using SentenceAPI.KernelModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
-using MongoDB.Driver;
-using SentenceAPI.Databases.CommonInterfaces;
-using SentenceAPI.KernelInterfaces;
 
 namespace SentenceAPI.Databases.MongoDB.Interfaces
 {
-    /// <summary>
-    /// This is a basic interface for working with a mongo database
-    /// </summary>
-    /// <typeparam name="DataType">The type of a </typeparam>
-    public interface IMongoDBService<DataType> : IDatabaseService, IDisposable
+    public interface IMongoDBService<DataType> : IDatabaseService<DataType>
+        where DataType : UniqueEntity
     {
         #region Properties
         string UserName { get; set; }
@@ -25,31 +21,6 @@ namespace SentenceAPI.Databases.MongoDB.Interfaces
         IConfiguration Configuration { get; set; }
         string DatabaseName { get; set; }
         string AuthMechanism { get; set; }
-        #endregion
-
-        #region Methods
-        Task CreateCollection();
-        Task DeleteCollection();
-        Task<bool> IsCollectionExist();
-        Task Insert(DataType entity);
-        Task Update(DataType entity, IEnumerable<string> properties);
-        Task Update(DataType entity);
-        Task<DataType> Get(long id);
-
-        /// <summary>
-        /// Gets all records which satisfy the given property-value dictionary
-        /// </summary>
-        Task<IEnumerable<DataType>> Get(Dictionary<string, object> properties);
-        Task Delete(long id);
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="property"></param>
-        /// <param name="value"></param>
-        /// <returns></returns>
-        Task<IEnumerable<DataType>> GetWhereEntry(string property, string value);
-        Task<IEnumerable<DataType>> GetWithFilter(FilterDefinition<DataType> filter);
         #endregion
     }
 }

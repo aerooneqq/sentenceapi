@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 using SentenceAPI.KernelInterfaces;
 
-namespace SentenceAPI.Features.FactoriesManager.Models
+namespace SentenceAPI.FactoriesManager.Models
 {
     public class FactoryInfo
     {

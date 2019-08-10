@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 
-using SentenceAPI.Features.FactoriesManager.Interfaces;
-using SentenceAPI.Features.FactoriesManager.Models;
+using SentenceAPI.FactoriesManager.Interfaces;
+using SentenceAPI.FactoriesManager.Models;
 
-namespace SentenceAPI.Features.FactoriesManager
+namespace SentenceAPI.FactoriesManager
 {
     public class FactoriesManager : IFactoriesManager
     {

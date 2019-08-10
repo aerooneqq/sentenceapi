@@ -1,5 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
+using SentenceAPI.Databases.CommonInterfaces;
 using SentenceAPI.Databases.MongoDB.Interfaces;
+using SentenceAPI.KernelModels;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -9,10 +11,11 @@ using System.Threading.Tasks;
 namespace SentenceAPI.Databases.MongoDB
 {
     public class MongoDBServiceBuilder<DataType> : IMongoDBServiceBuilder<DataType>
+        where DataType : UniqueEntity
     {
         #region Fields
-        private string collectionPostfix = "Collection";
-        private IMongoDBService<DataType> mongoDBService;
+        private readonly string collectionPostfix = "Collection";
+        private readonly IMongoDBService<DataType> mongoDBService;
         #endregion
 
         #region Constructors

@@ -21,10 +21,18 @@ namespace SentenceAPI.Features.Loggers.Models
         [BsonElement("configuration"), JsonProperty("configuration")]
         public LogConfiguration LogConfiguration { get; set; }
 
+        #region Constructors
         public ApplicationError(string message)
         {
             ErrorDate = DateTime.UtcNow;
             Message = message;
         }
+
+        public ApplicationError(Exception ex)
+        {
+            ErrorDate = DateTime.UtcNow;
+            Message = ex.Message;
+        }
+        #endregion
     }
 }

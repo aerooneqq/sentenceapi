@@ -11,6 +11,8 @@ using SentenceAPI.Features.Loggers.Models;
 using SentenceAPI.Features.Loggers.Interfaces;
 using SentenceAPI.Features.Users.Models;
 using SentenceAPI.Databases.Exceptions;
+using SentenceAPI.FactoriesManager;
+using SentenceAPI.Databases.CommonInterfaces;
 
 namespace SentenceAPI.Features.Email.Services
 {
@@ -31,7 +33,7 @@ namespace SentenceAPI.Features.Email.Services
         #region Services
         private ILogger<EmailLog> emailLogger;
         private ILogger<ApplicationError> exceptionLogger;
-        private IMongoDBService<EmailLog> mongoDBService;
+        private IDatabaseService<EmailLog> mongoDBService;
         #endregion
 
         #region Builders
@@ -87,7 +89,7 @@ namespace SentenceAPI.Features.Email.Services
             }
             catch (Exception ex)
             {
-                exceptionLogger.Log(new ApplicationError(ex.Message));
+                await exceptionLogger.Log(new ApplicationError(ex.Message));
                 throw new DatabaseException("Error occured while working with the database");
             }
         }

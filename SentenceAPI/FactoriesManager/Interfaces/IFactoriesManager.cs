@@ -1,8 +1,8 @@
 ﻿using System;
 
-using SentenceAPI.Features.FactoriesManager.Models;
+using SentenceAPI.FactoriesManager.Models;
 
-namespace SentenceAPI.Features.FactoriesManager.Interfaces
+namespace SentenceAPI.FactoriesManager.Interfaces
 {
     public interface IFactoriesManager
     {

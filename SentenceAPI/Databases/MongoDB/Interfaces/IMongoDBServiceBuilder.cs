@@ -1,4 +1,6 @@
-﻿using System;
+﻿using SentenceAPI.Databases.CommonInterfaces;
+using SentenceAPI.KernelModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -6,6 +8,7 @@ using System.Threading.Tasks;
 namespace SentenceAPI.Databases.MongoDB.Interfaces
 {
     public interface IMongoDBServiceBuilder<DataType>
+        where DataType : UniqueEntity
     {
         IMongoDBServiceBuilder<DataType> AddConfigurationFile(string filePath);
         IMongoDBServiceBuilder<DataType> SetCollectionName();

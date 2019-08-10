@@ -15,6 +15,9 @@ using Microsoft.IdentityModel.Protocols;
 using SentenceAPI.Databases.Exceptions;
 using SentenceAPI.KernelModels;
 using System.Reflection;
+using SentenceAPI.Databases.CommonInterfaces;
+using SentenceAPI.Databases.Filters;
+using SentenceAPI.Databases.Filters.Interfaces;
 
 namespace SentenceAPI.Databases.MongoDB
 {
@@ -61,32 +64,22 @@ namespace SentenceAPI.Databases.MongoDB
         /// <summary>
         /// This method deletes the record with a given id from a mongo cloud database.
         /// </summary>
-        /// <exception cref="DatabaseException">
-        /// When anu exception occurs in this method
-        /// </exception>
         public async Task Delete(long id)
         {
-            try
-            {
-                mongoCollection = database.GetCollection<DataType>(CollectionName);
-                supportMongoCollection = database.GetCollection<CollectionProperties>(SupportCollectionName);
+            mongoCollection = database.GetCollection<DataType>(CollectionName);
+            supportMongoCollection = database.GetCollection<CollectionProperties>(SupportCollectionName);
 
-                await CheckIfRecordWithLastID(id, supportMongoCollection);
+            await CheckIfRecordWithLastID(id, supportMongoCollection);
 
-                await mongoCollection.DeleteOneAsync(Builders<DataType>.Filter.Eq("_id", id));
-            }
-            catch
-            {
-                throw new DatabaseException("Error occured while deleting the entity.");
-            }
+            await mongoCollection.DeleteOneAsync(Builders<DataType>.Filter.Eq("_id", id));
         }
 
         /// <summary>
         /// If we delete the record with the last id then we should decrement the "LastID"
-        /// value in the SupportDatabase
+        /// value in the collection.
         /// </summary>
         /// <param name="id">Id of recrod which is being deleted</param>
-        private async Task CheckIfRecordWithLastID(long id, 
+        private async Task CheckIfRecordWithLastID(long id,
             IMongoCollection<CollectionProperties> supportCollection)
         {
             var filter = Builders<CollectionProperties>.Filter.Eq("collectionName", SupportDocumentName);
@@ -101,72 +94,30 @@ namespace SentenceAPI.Databases.MongoDB
 
         public async Task<DataType> Get(long id)
         {
-            try
-            {
-                mongoCollection = database.GetCollection<DataType>(CollectionName);
-                var filter = Builders<DataType>.Filter.Eq("_id", id);
-                var resList = (await mongoCollection.FindAsync(filter)).ToList();
+            mongoCollection = database.GetCollection<DataType>(CollectionName);
+            var filter = Builders<DataType>.Filter.Eq("_id", id);
+            var resList = (await mongoCollection.FindAsync(filter)).ToList();
 
-                if (resList.Count > 1)
-                {
-                    #warning handle the exception when there is more then 1 docs with a same ID
-                    throw new DatabaseException("Fatal error happened.");
-                }
-
-                return resList.Count == 0 ? null : resList[0];
-            }
-            catch
+            if (resList.Count > 1)
             {
-                throw new DatabaseException("Error occured while connecting to the database.");
+#warning handle the exception when there is more then 1 docs with a same ID
+                throw new DatabaseException("Fatal error happened.");
             }
-        }
 
-        /// <summary>
-        /// This method gets the list of records which satisfies the dictionary of properties.
-        /// </summary>
-        /// <param name="properties">
-        /// The dictionary of pairs (name of the property of an object, the value of this property).
-        /// </param>
-        /// <exception cref="DatabaseException">
-        /// This exception is thrown when any error occurs during this method.
-        /// </exception>
-        public async Task<IEnumerable<DataType>> Get(Dictionary<string, object> properties)
-        {
-            try
-            {
-                mongoCollection = database.GetCollection<DataType>(CollectionName);
-                var filter = new BsonDocument(properties);
-
-                return (await mongoCollection.FindAsync(filter)).ToListAsync().GetAwaiter().GetResult();
-            }
-            catch (Exception ex)
-            {
-                throw new DatabaseException("Error occured while connecting to the database.");
-            }
+            return resList.Count == 0 ? null : resList[0];
         }
 
         /// <summary>
         /// Inserts one entity in a cloud mongo database.
         /// </summary>
-        /// <exception cref="DatabaseException">
-        /// When any exception occur
-        /// </exception>
         public async Task Insert(DataType entity)
         {
-            try
-            {
-                mongoCollection = database.GetCollection<DataType>(CollectionName);
-                supportMongoCollection = database.GetCollection<CollectionProperties>(SupportCollectionName);
+            mongoCollection = database.GetCollection<DataType>(CollectionName);
+            supportMongoCollection = database.GetCollection<CollectionProperties>(SupportCollectionName);
 
-                entity.ID = await GetNewID(supportMongoCollection);
+            entity.ID = await GetNewID(supportMongoCollection);
 
-                await mongoCollection.InsertOneAsync(entity);
-            }
-            catch
-            {
-                throw new DatabaseException("Error occured while inserting the entity in a" +
-                    "mongo database");
-            }
+            await mongoCollection.InsertOneAsync(entity);
         }
 
         /// <summary>
@@ -191,135 +142,90 @@ namespace SentenceAPI.Databases.MongoDB
         /// </summary>
         public async Task Update(DataType entity)
         {
-            try
-            {
-                var filter = Builders<DataType>.Filter.Eq("_id", entity.ID);
+            var filter = Builders<DataType>.Filter.Eq("_id", entity.ID);
 
-                mongoCollection = database.GetCollection<DataType>(CollectionName);
-                await mongoCollection.ReplaceOneAsync(filter, entity);
-            }
-            catch (Exception ex)
-            {
-                throw new DatabaseException("Error occured while updating the entity");
-            }
+            mongoCollection = database.GetCollection<DataType>(CollectionName);
+            await mongoCollection.ReplaceOneAsync(filter, entity);
         }
 
         /// <summary>
         /// Tries to update the record. Only the properties which are listed in the "properties"
         /// dictionary will be updated.
         /// </summary>
-        /// <exception cref="DatabaseException">
-        /// Fires when any error while working with the database occurs.
-        /// </exception>
         public async Task Update(DataType entity, IEnumerable<string> properties)
         {
-            try
+            var filter = Builders<DataType>.Filter.Eq("_id", entity.ID);
+            mongoCollection = database.GetCollection<DataType>(CollectionName);
+            DataType record = (await mongoCollection.Find(filter).FirstAsync());
+
+            foreach (string propertyName in properties)
             {
-                var filter = Builders<DataType>.Filter.Eq("_id", entity.ID);
-                mongoCollection = database.GetCollection<DataType>(CollectionName);
-                DataType record = (await mongoCollection.Find(filter).FirstAsync());
+#warning create a better solution by using dynamic methods
+                PropertyInfo property = typeof(DataType).GetProperty(propertyName);
+                string bsonPropertyName = property.GetCustomAttribute<BsonElementAttribute>().ElementName;
 
-                foreach (string propertyName in properties)
-                {
-                    #warning create a better solution by using dynamic methods
-                    PropertyInfo property = typeof(DataType).GetProperty(propertyName);
-                    string bsonPropertyName = property.GetCustomAttribute<BsonElementAttribute>().ElementName;
+                UpdateDefinition<DataType> update = Builders<DataType>.Update.Set(bsonPropertyName,
+                    property.GetValue(entity));
 
-                    UpdateDefinition<DataType> update = Builders<DataType>.Update.Set(bsonPropertyName,
-                        property.GetValue(entity));
-
-                    await mongoCollection.UpdateOneAsync(filter, update);
-                }
-            }
-            catch (Exception ex)
-            {
-                throw new DatabaseException("Error while updating the given record");
+                await mongoCollection.UpdateOneAsync(filter, update);
             }
         }
 
         public async Task<bool> IsCollectionExist()
         {
-            try
+            List<string> collectionsList = (await database.ListCollectionNamesAsync()).ToList();
+            if (collectionsList.FindIndex(n => n == CollectionName) > -1)
             {
-                List<string> collectionsList = (await database.ListCollectionNamesAsync()).ToList();
-                if (collectionsList.FindIndex(n => n == CollectionName) > -1)
-                {
-                    return true;
-                }
+                return true;
+            }
 
-                return false;
-            }
-            catch
-            {
-                throw new DatabaseException("Error occured when checking if collection exists");
-            }
+            return false;
         }
 
         /// <summary>
         /// Creates the collection and document in a support collection.
         /// </summary>
-        /// <exception cref="DatabaseException">
-        /// When the error working with the mongo database occurs.
-        /// </exception>
         public async Task CreateCollection()
         {
-            try
-            {
-                await database.CreateCollectionAsync(CollectionName);
+            await database.CreateCollectionAsync(CollectionName);
 
-                IMongoCollection<CollectionProperties> supportCollection =
-                     database.GetCollection<CollectionProperties>(SupportCollectionName);
+            IMongoCollection<CollectionProperties> supportCollection =
+                 database.GetCollection<CollectionProperties>(SupportCollectionName);
 
-                await supportCollection.InsertOneAsync(new CollectionProperties()
-                {
-                    CollectionName = SupportDocumentName,
-                    LastID = 0
-                });
-            }
-            catch (Exception ex)
+            await supportCollection.InsertOneAsync(new CollectionProperties()
             {
-                throw new DatabaseException("Error occured while creating the new collection.");
-            }
+                CollectionName = SupportDocumentName,
+                LastID = 0
+            });
         }
 
         /// <summary>
         /// Deletes the collection and also deletes the support document of this collection
         /// in the support collection.
         /// </summary>
-        /// <exception cref="DatabaseException">
-        /// When the error working with the mongo database occurs.
-        /// </exception>
         public async Task DeleteCollection()
         {
-            try
-            {
-                await database.DropCollectionAsync(CollectionName);
+            await database.DropCollectionAsync(CollectionName);
 
-                IMongoCollection<CollectionProperties> supportCollection =
-                    database.GetCollection<CollectionProperties>(SupportDocumentName);
+            IMongoCollection<CollectionProperties> supportCollection =
+                database.GetCollection<CollectionProperties>(SupportDocumentName);
 
-                var filter = Builders<CollectionProperties>.Filter.Eq("collectionName", SupportDocumentName);
-                await supportCollection.DeleteOneAsync(filter);
-            }
-            catch
-            {
-                throw new DatabaseException("Error occured while deleting the collection");
-            }
+            var filter = Builders<CollectionProperties>.Filter.Eq("collectionName", SupportDocumentName);
+            await supportCollection.DeleteOneAsync(filter);
         }
 
-        public async Task<IEnumerable<DataType>> GetWhereEntry(string property, string value)
-        {
-            mongoCollection = database.GetCollection<DataType>(CollectionName);
-            var filter = Builders<DataType>.Filter.Regex(property, $"/{value}/");
-
-            return await mongoCollection.FindAsync<DataType>(filter).GetAwaiter().GetResult().ToListAsync();
-        }
-
-        public async Task<IEnumerable<DataType>> GetWithFilter(FilterDefinition<DataType> filter)
+        public async Task<IEnumerable<DataType>> Get(IFilter filter)
         {
             mongoCollection = database.GetCollection<DataType>(CollectionName);
 
-            return await mongoCollection.FindAsync<DataType>(filter).GetAwaiter().GetResult().ToListAsync();
+            return (await mongoCollection.FindAsync(filter.ToMongoFilter<DataType>())).ToList();
+        }
+
+        public async Task<IEnumerable<DataType>> Get(IFilterCollection filterCollection)
+        {
+            mongoCollection = database.GetCollection<DataType>(CollectionName);
+
+            return (await mongoCollection.FindAsync(filterCollection.ToMongoFilter<DataType>())).ToList();
         }
         #endregion
 

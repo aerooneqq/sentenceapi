@@ -10,8 +10,9 @@ using SentenceAPI.Databases.MongoDB.Interfaces;
 using SentenceAPI.Features.Middlewares.RequestLoggerMiddleware.Models;
 
 using Newtonsoft.Json;
+using SentenceAPI.Databases.CommonInterfaces;
 
-namespace SentenceAPI.Features.Middlewares.RequestLoggerMiddleware
+namespace SentenceAPI.Middlewares.RequestLoggerMiddleware
 {
     /// <summary>
     /// Class which represents the middleware request logger.
@@ -23,7 +24,7 @@ namespace SentenceAPI.Features.Middlewares.RequestLoggerMiddleware
         #endregion
 
         #region Services
-        private IMongoDBService<RequestLog> mongoDBService;
+        private IDatabaseService<RequestLog> mongoDBService;
         #endregion
 
         #region Factories

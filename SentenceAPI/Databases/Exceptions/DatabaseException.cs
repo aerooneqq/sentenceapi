@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace SentenceAPI.Databases.Exceptions
 {
     /// <summary>
-    /// This exception is thrown when the exception occurs while connecting to the database
+    /// This exception is thrown when the exception occurs while working with the database
     /// </summary>
     public class DatabaseException : Exception
     {

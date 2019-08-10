@@ -17,7 +17,7 @@ namespace SentenceAPI.Features.Loggers.Interfaces
 
         #region Methods
         Task Log(LogType logObject);
-        Task WriteLogToFile(LogType logType);
+        void WriteLogToFile(LogType logType);
         #endregion
     }
 }

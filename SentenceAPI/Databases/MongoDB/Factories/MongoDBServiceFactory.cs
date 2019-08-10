@@ -1,4 +1,5 @@
-﻿using SentenceAPI.Databases.MongoDB.Interfaces;
+﻿using SentenceAPI.Databases.CommonInterfaces;
+using SentenceAPI.Databases.MongoDB.Interfaces;
 using SentenceAPI.KernelModels;
 using System;
 using System.Collections.Generic;

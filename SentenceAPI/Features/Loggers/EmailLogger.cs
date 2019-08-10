@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using Newtonsoft.Json;
-
+using SentenceAPI.Databases.CommonInterfaces;
 using SentenceAPI.Databases.MongoDB.Interfaces;
 using SentenceAPI.Features.Loggers.Interfaces;
 using SentenceAPI.Features.Loggers.Models;
@@ -14,8 +14,10 @@ namespace SentenceAPI.Features.Loggers
 {
     public class EmailLogger : ILogger<EmailLog>
     {
+        private static object fileLoceker = new object();
+
         #region Services
-        private IMongoDBService<EmailLog> mongoDBService;
+        private IDatabaseService<EmailLog> mongoDBService;
         #endregion
 
         #region Factories
@@ -29,6 +31,9 @@ namespace SentenceAPI.Features.Loggers
 
         #region Properties
         public string FileName { get; }
+        /// <summary>
+        /// This property must be initialized befote each logging
+        /// </summary>
         public LogConfiguration LogConfiguration { get; set; }
         #endregion
 
@@ -44,14 +49,17 @@ namespace SentenceAPI.Features.Loggers
         }
 
         #region ILogger implementation
-        public async Task WriteLogToFile(EmailLog logObject)
+        public void WriteLogToFile(EmailLog logObject)
         {
-            using (FileStream fs = new FileStream(FileName, FileMode.Append, FileAccess.Write))
+            lock (fileLoceker)
             {
-                string applicationErrorJson = JsonConvert.SerializeObject(logObject);
-                using (StreamWriter sw = new StreamWriter(fs))
+                using (FileStream fs = new FileStream(FileName, FileMode.Append, FileAccess.Write))
                 {
-                    await sw.WriteLineAsync(applicationErrorJson);
+                    string applicationErrorJson = JsonConvert.SerializeObject(logObject);
+                    using (StreamWriter sw = new StreamWriter(fs))
+                    {
+                        sw.WriteLine(applicationErrorJson);
+                    }
                 }
             }
         }
@@ -67,7 +75,7 @@ namespace SentenceAPI.Features.Loggers
             }
             catch
             {
-                await WriteLogToFile(logObject);
+                WriteLogToFile(logObject);
             }
         }
         #endregion

@@ -11,14 +11,15 @@ using SentenceAPI.Features.Authentication.Interfaces;
 using SentenceAPI.Features.Authentication.Models;
 using SentenceAPI.Features.Users.Models;
 using SentenceAPI.Databases.MongoDB.Interfaces;
-using SentenceAPI.Features.FactoriesManager.Models;
+using SentenceAPI.FactoriesManager.Models;
+using SentenceAPI.Databases.CommonInterfaces;
 
 namespace SentenceAPI.Features.Authentication.Services
 {
     public class TokenService : ITokenService
     {
         #region Services
-        private IMongoDBService<JwtToken> mongoDBService;
+        private IDatabaseService<JwtToken> mongoDBService;
         #endregion
 
         #region Builders

@@ -14,17 +14,19 @@ using SentenceAPI.Features.Loggers.Interfaces;
 using SentenceAPI.Features.Loggers.Models;
 using SentenceAPI.Features.Email.Interfaces;
 using SentenceAPI.Features.Links.Interfaces;
+using SentenceAPI.Extensions;
 
 using Newtonsoft.Json;
 using SentenceAPI.Features.Authentication.Interfaces;
 using System.IdentityModel.Tokens.Jwt;
 using System.IO;
 using System.Text;
+using SentenceAPI.ActionResults;
 
 namespace SentenceAPI.Features.Users
 {
     [Route("api/[controller]"), ApiController, Authorize]
-    public class UsersController : Controller
+    public class UsersController : ControllerBase
     {
         public static LogConfiguration LogConfiguration { get; } = new LogConfiguration()
         {
@@ -40,7 +42,7 @@ namespace SentenceAPI.Features.Users
         #endregion
 
         #region Factories
-        private FactoriesManager.FactoriesManager factoriesManager = 
+        private FactoriesManager.FactoriesManager factoriesManager =
             FactoriesManager.FactoriesManager.Instance;
 
         private ILinkServiceFactory linkServiceFactory;
@@ -64,11 +66,7 @@ namespace SentenceAPI.Features.Users
             linkService = linkServiceFactory.GetService();
 
             exceptionLogger = loggerFactory.GetExceptionLogger();
-            exceptionLogger.LogConfiguration = new Loggers.Models.LogConfiguration()
-            {
-                ControllerName = this.GetType().Name,
-                ServiceName = string.Empty,
-            };
+            exceptionLogger.LogConfiguration = LogConfiguration;
         }
 
         [HttpGet, Route("search/login")]
@@ -76,27 +74,19 @@ namespace SentenceAPI.Features.Users
         {
             try
             {
-                return Ok(JsonConvert.SerializeObject((await userService.FindUsersWithLogin(login)).Select(u =>
-                {
-                    return new
-                    {
-                        userID = u.ID,
-                        name = u.Name + u.Surname,
-                        birthDate = u.BirthDate,
-                    };
-                })));
+                return new OkJson<IEnumerable<UserSearchResult>>((await userService.FindUsersWithLogin(login))
+                    .Select(user => new UserSearchResult(user)));
             }
             catch (DatabaseException ex)
             {
-                return StatusCode(500, ex.Message);
+                return new InternalServerError(ex.Message);
             }
             catch (Exception ex)
             {
-                await exceptionLogger.Log(new ApplicationError(ex.Message));
-                return StatusCode(500);
+                await exceptionLogger.Log(new ApplicationError(ex));
+                return new InternalServerError();
             }
         }
-
 
         [HttpGet]
         public async Task<IActionResult> Get()
@@ -106,33 +96,44 @@ namespace SentenceAPI.Features.Users
                 string authorization = Request.Headers["Authorization"];
                 string token = authorization.Split()[1];
 
-                return Json(await userService.Get(token));
+                return new OkJson<UserInfo>(await userService.Get(token));
             }
             catch (DatabaseException ex)
             {
-                return StatusCode(500, ex.Message);
+                return new InternalServerError(ex.Message);
             }
             catch (Exception ex)
             {
-                await exceptionLogger.Log(new ApplicationError(ex.Message));
-                return StatusCode(500);
+                await exceptionLogger.Log(new ApplicationError(ex));
+                return new InternalServerError();
             }
         }
 
-        public async Task<IActionResult> Get([FromQuery]string email, [FromQuery]string password)
+        /// <summary>
+        /// Gets the user object and returns only data which was requied in the request.
+        /// If the property which is marked with SECRET attribute will be listed in the list of properties,
+        /// it will not be returned.
+        /// </summary>
+        /// <param name="properties">The list of properties devided by ',' or ';'</param>
+        [HttpGet, Route("partial")]
+        public async Task<IActionResult> Get([FromQuery]string properties)
         {
             try
             {
-                return Json(await userService.Get(email, password));
+                string authorization = Request.Headers["Authorization"];
+                string token = authorization.Split()[1];
+
+                return new OkJson<Dictionary<string, object>>((await userService.Get(token))
+                    .ConfigureNewObject(properties.Split(',', ';', StringSplitOptions.RemoveEmptyEntries)));
             }
             catch (DatabaseException ex)
             {
-                return StatusCode(500, ex.Message);
+                return new InternalServerError(ex.Message);
             }
             catch (Exception ex)
             {
-                await exceptionLogger.Log(new ApplicationError(ex.Message));
-                return StatusCode(500);
+                await exceptionLogger.Log(new ApplicationError(ex));
+                return new InternalServerError();
             }
         }
 
@@ -140,16 +141,16 @@ namespace SentenceAPI.Features.Users
         {
             try
             {
-                return Json(await userService.Get(id));
+                return new OkJson<UserInfo>(await userService.Get(id));
             }
             catch (DatabaseException ex)
             {
-                return StatusCode(500, ex.Message);
+                return new InternalServerError(ex.Message);
             }
             catch (Exception ex)
             {
-                await exceptionLogger.Log(new ApplicationError(ex.Message));
-                return StatusCode(500);
+                await exceptionLogger.Log(new ApplicationError(ex));
+                return new InternalServerError();
             }
         }
 
@@ -168,16 +169,16 @@ namespace SentenceAPI.Features.Users
                 string link = await linkService.CreateVerificationLink(user);
                 await emailService.SendConfirmationEmail(link, user);
 
-                return Ok();
+                return new Ok();
             }
             catch (DatabaseException ex)
             {
-                return StatusCode(500, ex.Message);
+                return new InternalServerError(ex.Message);
             }
             catch (Exception ex)
             {
-                await exceptionLogger.Log(new ApplicationError(ex.Message));
-                return StatusCode(500);
+                await exceptionLogger.Log(new ApplicationError(ex));
+                return new InternalServerError();
             }
         }
 
@@ -195,16 +196,16 @@ namespace SentenceAPI.Features.Users
 
                 await userService.Update(user);
 
-                return Ok(JsonConvert.SerializeObject(await userService.Get(user.ID)));
+                return new OkJson<UserInfo>(await userService.Get(user.ID));
             }
             catch (DatabaseException ex)
             {
-                return StatusCode(500, ex.Message);
+                return new InternalServerError(ex.Message);
             }
             catch (Exception ex)
             {
-                exceptionLogger.Log(new ApplicationError(ex.Message));
-                return StatusCode(500);
+                await exceptionLogger.Log(new ApplicationError(ex));
+                return new InternalServerError();
             }
         }
     }

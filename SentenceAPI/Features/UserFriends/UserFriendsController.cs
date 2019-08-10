@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using SentenceAPI.Databases.Exceptions;
 using SentenceAPI.Databases.MongoDB.Interfaces;
-using SentenceAPI.Features.FactoriesManager.Interfaces;
+using SentenceAPI.FactoriesManager.Interfaces;
 using SentenceAPI.Features.Loggers.Interfaces;
 using SentenceAPI.Features.Loggers.Models;
 using SentenceAPI.Features.UserFriends.Interfaces;
@@ -53,7 +53,7 @@ namespace SentenceAPI.Features.UserFriends
                 string authHeader = Request.Headers["Authorization"];
                 string token = authHeader.Split()[1];
 
-                return Ok(JsonConvert.SerializeObject(await userFriendsService.GetSubscribers(token)));
+                return Ok(await userFriendsService.GetSubscribers(token));
             }
             catch (DatabaseException ex)
             {
