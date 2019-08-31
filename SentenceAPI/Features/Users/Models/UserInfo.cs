@@ -3,10 +3,11 @@ using System;
 
 using Newtonsoft.Json;
 
-using SentenceAPI.KernelModels;
-
 using MongoDB.Bson.Serialization.Attributes;
+
 using SentenceAPI.Attributes;
+
+using DataAccessLayer.KernelModels;
 
 namespace SentenceAPI.Features.Users.Models
 {

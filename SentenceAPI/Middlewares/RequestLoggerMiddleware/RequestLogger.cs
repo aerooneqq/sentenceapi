@@ -6,11 +6,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.IO;
 
-using SentenceAPI.Databases.MongoDB.Interfaces;
 using SentenceAPI.Features.Middlewares.RequestLoggerMiddleware.Models;
 
 using Newtonsoft.Json;
-using SentenceAPI.Databases.CommonInterfaces;
+using DataAccessLayer.CommonInterfaces;
+using DataAccessLayer.Configuration.Interfaces;
+using DataAccessLayer.DatabasesManager;
+using DataAccessLayer.Configuration;
 
 namespace SentenceAPI.Middlewares.RequestLoggerMiddleware
 {
@@ -19,21 +21,15 @@ namespace SentenceAPI.Middlewares.RequestLoggerMiddleware
     /// </summary>
     public class RequestLogger
     {
-        #region Constants
-        private const string FileName = "request_log.txt";
+        #region Static fields
+        private static readonly string fileName = "request_log.txt";
+        private static readonly string databaseConfigFile = "mongo_database_config.json";
         #endregion
 
-        #region Services
-        private IDatabaseService<RequestLog> mongoDBService;
-        #endregion
-
-        #region Factories
-        private FactoriesManager.FactoriesManager factoriesManager = FactoriesManager.FactoriesManager.Instance;
-        private IMongoDBServiceFactory mongoDBServiceFactory;
-        #endregion
-
-        #region Builders
-        private IMongoDBServiceBuilder<RequestLog> mongoDBServiceBuilder;
+        #region Databases
+        private IDatabaseService<RequestLog> database;
+        private IConfigurationBuilder configurationBuilder;
+        private DatabasesManager databasesManager = DatabasesManager.Manager;
         #endregion
 
         #region Fields
@@ -45,12 +41,11 @@ namespace SentenceAPI.Middlewares.RequestLoggerMiddleware
         {
             this.nextMiddlewareDel = nextMiddlewareDel;
 
-            mongoDBServiceFactory = factoriesManager[typeof(IMongoDBServiceFactory)].Factory
-                as IMongoDBServiceFactory;
-            mongoDBServiceBuilder = mongoDBServiceFactory.GetBuilder(
-                mongoDBServiceFactory.GetService<RequestLog>());
-            mongoDBService = mongoDBServiceBuilder.AddConfigurationFile("database_config.json")
-                .SetConnectionString().SetDatabaseName("SentenceDatabase").SetCollectionName().Build();
+            databasesManager.MongoDBFactory.GetDatabase<RequestLog>().TryGetTarget(out database);
+
+            configurationBuilder = new MongoConfigurationBuilder(database.Configuration);
+            configurationBuilder.SetConfigurationFilePath(databaseConfigFile).SetAuthMechanism()
+                                .SetUserName().SetPassword().SetDatabaseName().SetServerName().SetConnectionString();
         }
         #endregion
 
@@ -64,16 +59,16 @@ namespace SentenceAPI.Middlewares.RequestLoggerMiddleware
 
             try
             {
-                await mongoDBService.Connect();
-                await mongoDBService.Insert(requestLog);
+                await database.Connect();
+                await database.Insert(requestLog);
             }
             catch
             {
-                using (FileStream fs = new FileStream(FileName, FileMode.Append, FileAccess.Write))
+                using (FileStream fs = new FileStream(fileName, FileMode.Append, FileAccess.Write))
                 {
                     using (StreamWriter sw = new StreamWriter(fs))
-                    {   
-                        await sw.WriteLineAsync(JsonConvert.SerializeObject(requestLog));
+                    {
+                        sw.WriteLine(JsonConvert.SerializeObject(requestLog));
                     }
                 }
             }

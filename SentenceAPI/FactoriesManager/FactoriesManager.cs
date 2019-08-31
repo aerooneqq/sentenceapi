@@ -4,6 +4,7 @@ using System.Linq;
 
 using SentenceAPI.FactoriesManager.Interfaces;
 using SentenceAPI.FactoriesManager.Models;
+using SentenceAPI.KernelInterfaces;
 
 namespace SentenceAPI.FactoriesManager
 {
@@ -28,7 +29,13 @@ namespace SentenceAPI.FactoriesManager
         /// <param name="t">
         /// Type of the interface.
         /// </param>
-        public FactoryInfo this[Type factoryType]
+        /// <exception cref="ArgumentNullException">
+        /// If the factoryType parameter was NULL
+        /// </exception>
+        /// <returns>
+        /// NULL if the value of the weak reference doesn't contain a value
+        /// </returns>
+        public IServiceFactory this[Type factoryType]
         {
             get
             {
@@ -37,7 +44,15 @@ namespace SentenceAPI.FactoriesManager
                     throw new ArgumentNullException("Service type can not be null.");
                 }
 
-                return factoryInfos.FirstOrDefault(f => f.FactoryType == factoryType);
+                bool result = factoryInfos.FirstOrDefault(f => f.FactoryType == factoryType).
+                    Factory.TryGetTarget(out IServiceFactory factory);
+
+                if (result == false)
+                {
+                    return null;
+                }
+
+                return factory;
             }
         }
 
@@ -50,23 +65,30 @@ namespace SentenceAPI.FactoriesManager
         public void AddFactory(FactoryInfo factory)
         {
             if (factory == null)
-                throw new ArgumentNullException("Factory object can not be null.");
-
-            if (factoryInfos.FindIndex(f =>
             {
-                if (f.FactoryType == factory.FactoryType || f.Factory.GetType() == factory.Factory.GetType())
-                {
-                    return true; 
-                }
+                throw new ArgumentNullException("Factory object can not be null.");
+            }
 
-                return false;
-            }) != -1)
+            if (CheckIfFactoryAlreadyAdded(factory))
             {
                 throw new ArgumentException("The factory info with a given parameters" +
                     " already exists in a manager");
             }
 
             factoryInfos.Add(factory);
+        }
+
+        private bool CheckIfFactoryAlreadyAdded(FactoryInfo factory)
+        {
+            return factoryInfos.FindIndex(f =>
+            {
+                if (f.FactoryType == factory.FactoryType)
+                {
+                    return true;
+                }
+
+                return false;
+            }) != -1;
         }
 
         /// <summary>

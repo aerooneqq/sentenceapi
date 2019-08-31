@@ -19,6 +19,7 @@ namespace SentenceAPI.ActionResults
         public InternalServerError(string message, Encoding encoding)
         {
             this.message = message;
+            this.encoding = encoding;
         }
 
         public InternalServerError(string message) : this(message, Encoding.UTF8) { }
@@ -31,7 +32,8 @@ namespace SentenceAPI.ActionResults
             return Task.Run(() =>
             {
                 responseBuilder = new HttpResponseBuilder(context.HttpContext.Response, encoding);
-                responseBuilder.SetStatusCode(500)
+
+                responseBuilder.SetCORSHeaders().SetStatusCode((int)HttpResponseCodes.InternalServerError)
                                .SetContentType(ContentTypes.TextPlain)
                                .SetContent(message)
                                .SetContentLength();

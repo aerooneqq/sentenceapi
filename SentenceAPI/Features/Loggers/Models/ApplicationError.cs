@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-using SentenceAPI.KernelModels;
-
 using MongoDB.Bson.Serialization.Attributes;
 using Newtonsoft.Json;
+using DataAccessLayer.KernelModels;
 
 namespace SentenceAPI.Features.Loggers.Models
 {

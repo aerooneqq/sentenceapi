@@ -3,14 +3,15 @@ using System.Collections.Generic;
 using System.Text;
 using System.Linq;
 
-using SentenceAPI.Databases.MongoDB.Interfaces;
-using SentenceAPI.Databases.MongoDB;
+using DataAccessLayer.MongoDB.Interfaces;
+using DataAccessLayer.MongoDB;
 
 using NUnit.Framework;
 using SentenceAPI.Features.Users.Models;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using SentenceApiTests.DatabaseTests.TestModels;
+using DataAccessLayer.CommonInterfaces;
 
 namespace SentenceApiTests.DatabaseTests
 {
@@ -18,8 +19,7 @@ namespace SentenceApiTests.DatabaseTests
     public class MongoDBServiceTests
     {
         #region Fields
-        private IMongoDBServiceBuilder<TestModel> mongoDBServiceBuilder;
-        private IMongoDBService<TestModel> mongoDBService;
+        private IDatabaseService<TestModel> mongoDBService;
         private TestModel model;
         #endregion
 
@@ -27,7 +27,6 @@ namespace SentenceApiTests.DatabaseTests
         public void SetUp()
         {
             mongoDBService = new MongoDBService<TestModel>();
-            mongoDBServiceBuilder = new MongoDBServiceBuilder<TestModel>(mongoDBService);
 
             CareerStage firstStage = new CareerStage()
             {
@@ -53,13 +52,9 @@ namespace SentenceApiTests.DatabaseTests
                 Year = 2019,
             };
 
-            mongoDBService = mongoDBServiceBuilder.AddConfigurationFile("database_config.json").
-                SetConnectionString().
-                SetDatabaseName("SentenceDatabase").
-                SetCollectionName().Build();
 
             mongoDBService.Connect().GetAwaiter().GetResult();
-            if (mongoDBService.IsCollectionExist().GetAwaiter().GetResult())
+            if (mongoDBService.DoesCollectionExist().GetAwaiter().GetResult())
             {
                 mongoDBService.DeleteCollection().GetAwaiter().GetResult();
                 mongoDBService.CreateCollection().GetAwaiter().GetResult();
@@ -71,15 +66,11 @@ namespace SentenceApiTests.DatabaseTests
         {
             try
             {
-                mongoDBService = mongoDBServiceBuilder.AddConfigurationFile("database_config.json").
-                    SetConnectionString().
-                    SetDatabaseName("SentenceDatabase").
-                    SetCollectionName().Build();
 
                 await mongoDBService.Connect();
                 await mongoDBService.CreateCollection();
 
-                if (!(await mongoDBService.IsCollectionExist()))
+                if (!(await mongoDBService.DoesCollectionExist()))
                 {
                     Assert.Fail();
                 }
@@ -97,17 +88,13 @@ namespace SentenceApiTests.DatabaseTests
         {
             try
             {
-                mongoDBService = mongoDBServiceBuilder.AddConfigurationFile("database_config.json").
-                    SetConnectionString().
-                    SetDatabaseName("SentenceDatabase").
-                    SetCollectionName().Build();
 
                 await mongoDBService.Connect();
-                if (await mongoDBService.IsCollectionExist())
+                if (await mongoDBService.DoesCollectionExist())
                 {
                     await mongoDBService.DeleteCollection();
 
-                    if (await mongoDBService.IsCollectionExist())
+                    if (await mongoDBService.DoesCollectionExist())
                     {
                         Assert.Fail();
                     }
@@ -130,11 +117,6 @@ namespace SentenceApiTests.DatabaseTests
         {
             try
             {
-                mongoDBService = mongoDBServiceBuilder.AddConfigurationFile("database_config.json").
-                    SetConnectionString().
-                    SetDatabaseName("SentenceDatabase").
-                    SetCollectionName().Build();
-
                 await mongoDBService.Connect();
                 await mongoDBService.Insert(model);
             }
@@ -151,11 +133,6 @@ namespace SentenceApiTests.DatabaseTests
         {
             try
             {
-                mongoDBService = mongoDBServiceBuilder.AddConfigurationFile("database_config.json").
-                    SetConnectionString().
-                    SetDatabaseName("SentenceDatabase").
-                    SetCollectionName().Build();
-
                 await mongoDBService.Connect();
                 await mongoDBService.Delete(0);
             }
@@ -170,11 +147,6 @@ namespace SentenceApiTests.DatabaseTests
         [Test]
         public async Task TestGettingEntititiesByID()
         {
-            //warning make sure that entity with id = 0 is in the collection
-            mongoDBService = mongoDBServiceBuilder.AddConfigurationFile("database_config.json").
-                SetConnectionString().
-                SetDatabaseName("SentenceDatabase").
-                SetCollectionName().Build();
 
             await mongoDBService.Connect();
 
@@ -184,49 +156,8 @@ namespace SentenceApiTests.DatabaseTests
                 Assert.Fail();
             }
 
-            obj = await mongoDBService.Get(-1);
+            //obj = await mongoDBService.Get(-1);
             if (obj != null)
-            {
-                Assert.Fail();
-            }
-
-            Assert.Pass();
-        }
-
-        [Test]
-        public async Task TestGettingElementByProperties()
-        {
-            //make sure that there are 4 similar records in the database (except of the ID property)
-            mongoDBService = mongoDBServiceBuilder.AddConfigurationFile("database_config.json").
-                SetConnectionString().
-                SetDatabaseName("SentenceDatabase").
-                SetCollectionName().Build();
-            await mongoDBService.Connect();
-
-            Dictionary<string, object> properties = new Dictionary<string, object>()
-            {
-                {"year", 2019 },
-                {"email", "aerooneQ@yandex.ru" }
-            };
-
-            var objs = mongoDBService.Get(properties).GetAwaiter().GetResult().ToList();
-            if (objs.Count != 1)
-            {
-                Assert.Fail();
-            }
-
-            properties.Add("_id", 1);
-
-            objs = mongoDBService.Get(properties).GetAwaiter().GetResult().ToList();
-            if (objs.Count != 0)
-            {
-                Assert.Fail();
-            }
-
-            properties.Add("asdasd", "asdaasd");
-
-            objs = (await mongoDBService.Get(properties)).ToList();
-            if (objs.Count != 0)
             {
                 Assert.Fail();
             }

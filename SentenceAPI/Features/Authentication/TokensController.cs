@@ -16,10 +16,13 @@ using SentenceAPI.FactoriesManager;
 using SentenceAPI.Features.Users.Models;
 using SentenceAPI.Features.Authentication.Interfaces;
 using SentenceAPI.Features.Authentication.Models;
-using SentenceAPI.Databases.Exceptions;
-using SentenceAPI.Databases.MongoDB.Interfaces;
+
 using SentenceAPI.Features.Loggers.Interfaces;
 using SentenceAPI.Features.Loggers.Models;
+
+using DataAccessLayer.Exceptions;
+using DataAccessLayer.Hashes;
+using SentenceAPI.ActionResults;
 
 namespace SentenceAPI.Features.Authentication
 {
@@ -49,11 +52,9 @@ namespace SentenceAPI.Features.Authentication
         #region Constructors
         public TokensController()
         {
-            userServiceFactory = factoryManager[typeof(IUserServiceFactory)].Factory
-                as IUserServiceFactory;
-            tokenServiceFactory = factoryManager[typeof(ITokenServiceFactory)].Factory
-                as ITokenServiceFactory;
-            loggerFactory = factoryManager[typeof(ILoggerFactory)].Factory as ILoggerFactory;
+            userServiceFactory = factoryManager[typeof(IUserServiceFactory)] as IUserServiceFactory;
+            tokenServiceFactory = factoryManager[typeof(ITokenServiceFactory)] as ITokenServiceFactory;
+            loggerFactory = factoryManager[typeof(ILoggerFactory)] as ILoggerFactory;
 
             userService = userServiceFactory.GetService();
             tokenService = tokenServiceFactory.GetService();
@@ -73,6 +74,8 @@ namespace SentenceAPI.Features.Authentication
         {
             try
             {
+                password = password.GetMD5Hash();
+
                 UserInfo user = await userService.Get(email, password);
 
                 if (user == null)
@@ -83,17 +86,17 @@ namespace SentenceAPI.Features.Authentication
                 var (encodedToken, securityToken) = tokenService.CreateEncodedToken(user);
 
                 await tokenService.InsertTokenInDB(new JwtToken(securityToken, user));
-                return Ok(encodedToken);
+                return new Ok(encodedToken);
             }
             catch (DatabaseException ex)
             {
                 await exceptionLogger.Log(new ApplicationError(ex.Message));
-                return StatusCode(500, ex.Message);
+                return new InternalServerError(ex.Message);
             }
             catch (Exception ex)
             {
                 await exceptionLogger.Log(new ApplicationError(ex.Message));
-                return StatusCode(500);
+                return new InternalServerError();
             }
         }
         #endregion

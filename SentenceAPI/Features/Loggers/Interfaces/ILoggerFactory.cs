@@ -7,7 +7,7 @@ using SentenceAPI.KernelInterfaces;
 
 namespace SentenceAPI.Features.Loggers.Interfaces
 {
-    public interface ILoggerFactory : IFactory
+    public interface ILoggerFactory : IServiceFactory
     {
         ILogger<ApplicationError> GetExceptionLogger();
         ILogger<EmailLog> GetEmailLogger();

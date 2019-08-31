@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SentenceAPI.Features.UserFeed.Interfaces
 {
-    public interface IUserFeedServiceFactory : IFactory
+    public interface IUserFeedServiceFactory : IServiceFactory
     {
         IUserFeedService GetService();
     }

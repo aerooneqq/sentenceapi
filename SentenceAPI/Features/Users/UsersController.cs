@@ -2,30 +2,34 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.IO;
+using System.Text;
 using System.Web.Http;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-using SentenceAPI.Databases.Exceptions;
 using SentenceAPI.Features.Users.Interfaces;
 using SentenceAPI.Features.Users.Models;
 using SentenceAPI.Features.Loggers.Interfaces;
 using SentenceAPI.Features.Loggers.Models;
 using SentenceAPI.Features.Email.Interfaces;
 using SentenceAPI.Features.Links.Interfaces;
+using SentenceAPI.Validators;
 using SentenceAPI.Extensions;
 
 using Newtonsoft.Json;
-using SentenceAPI.Features.Authentication.Interfaces;
-using System.IdentityModel.Tokens.Jwt;
-using System.IO;
-using System.Text;
+
 using SentenceAPI.ActionResults;
+
+using DataAccessLayer.Exceptions;
+using SentenceAPI.KernelInterfaces;
+using SentenceAPI.Features.Codes.Models;
+using SentenceAPI.Features.Codes.Interfaces;
 
 namespace SentenceAPI.Features.Users
 {
-    [Route("api/[controller]"), ApiController, Authorize]
+    [Route("api/[controller]"), ApiController]
     public class UsersController : ControllerBase
     {
         public static LogConfiguration LogConfiguration { get; } = new LogConfiguration()
@@ -39,6 +43,7 @@ namespace SentenceAPI.Features.Users
         private IEmailService emailService;
         private IUserService<UserInfo> userService;
         private ILogger<ApplicationError> exceptionLogger;
+        private ICodesService codesService;
         #endregion
 
         #region Factories
@@ -49,27 +54,27 @@ namespace SentenceAPI.Features.Users
         private IUserServiceFactory userServiceFactory;
         private ILoggerFactory loggerFactory;
         private IEmailServiceFactory emailServiceFactory;
+        private ICodesServiceFactory codesServiceFactory;
         #endregion
 
         public UsersController()
         {
-            userServiceFactory = factoriesManager[typeof(IUserServiceFactory)].Factory
-                as IUserServiceFactory;
-            loggerFactory = factoriesManager[typeof(ILoggerFactory)].Factory as ILoggerFactory;
-            emailServiceFactory = factoriesManager[typeof(IEmailServiceFactory)].Factory
-                as IEmailServiceFactory;
-            linkServiceFactory = factoriesManager[typeof(ILinkServiceFactory)].Factory as
-                ILinkServiceFactory;
+            userServiceFactory = (IUserServiceFactory)factoriesManager[typeof(IUserServiceFactory)];
+            loggerFactory = (ILoggerFactory)factoriesManager[typeof(ILoggerFactory)];
+            emailServiceFactory = (IEmailServiceFactory)factoriesManager[typeof(IEmailServiceFactory)];
+            linkServiceFactory = (ILinkServiceFactory)factoriesManager[typeof(ILinkServiceFactory)];
+            codesServiceFactory = (ICodesServiceFactory)factoriesManager[typeof(ICodesServiceFactory)];
 
             emailService = emailServiceFactory.GetService();
             userService = userServiceFactory.GetService();
             linkService = linkServiceFactory.GetService();
+            codesService = codesServiceFactory.GetService();
 
             exceptionLogger = loggerFactory.GetExceptionLogger();
             exceptionLogger.LogConfiguration = LogConfiguration;
         }
 
-        [HttpGet, Route("search/login")]
+        [HttpGet, Route("search/login"), Authorize]
         public async Task<IActionResult> FindUsersWithLogin([FromQuery]string login)
         {
             try
@@ -88,7 +93,7 @@ namespace SentenceAPI.Features.Users
             }
         }
 
-        [HttpGet]
+        [HttpGet, Authorize]
         public async Task<IActionResult> Get()
         {
             try
@@ -96,7 +101,9 @@ namespace SentenceAPI.Features.Users
                 string authorization = Request.Headers["Authorization"];
                 string token = authorization.Split()[1];
 
-                return new OkJson<UserInfo>(await userService.Get(token));
+                var user = await userService.Get(token);
+
+                return new OkJson<UserInfo>(user);
             }
             catch (DatabaseException ex)
             {
@@ -115,7 +122,7 @@ namespace SentenceAPI.Features.Users
         /// it will not be returned.
         /// </summary>
         /// <param name="properties">The list of properties devided by ',' or ';'</param>
-        [HttpGet, Route("partial")]
+        [HttpGet, Route("partial"), Authorize]
         public async Task<IActionResult> Get([FromQuery]string properties)
         {
             try
@@ -137,6 +144,7 @@ namespace SentenceAPI.Features.Users
             }
         }
 
+        [Authorize]
         public async Task<IActionResult> Get([FromQuery]long id)
         {
             try
@@ -159,17 +167,30 @@ namespace SentenceAPI.Features.Users
         /// then the letter with a link to activate the account is sent to the user.
         /// </summary>
         [HttpPost]
-        public async Task<IActionResult> CreateNewUser(string email, string password)
+        public async Task<IActionResult> CreateNewUser([FromQuery]string email, [FromQuery]string password)
         {
             try
             {
-                long id = await userService.CreateNewUser(email, password);
-                UserInfo user = await userService.Get(id);
+                (bool validationResult, IEnumerable<string> errors) = ValidateEmailAndPassword(email, password);
 
-                string link = await linkService.CreateVerificationLink(user);
-                await emailService.SendConfirmationEmail(link, user);
+                if (!validationResult)
+                {
+                    return new BadSendedRequest<IEnumerable<string>>(errors);
+                }
 
-                return new Ok();
+                if (!(await userService.DoesUserExist(email).ConfigureAwait(false)))
+                {
+                    long id = await userService.CreateNewUser(email, password);
+
+                    ActivationCode activationCode = codesService.CreateActivationCode(id);
+                    await codesService.InsertCodeInDatabase(activationCode).ConfigureAwait(false);
+
+                    await emailService.SendConfirmationEmail(activationCode.Code, email);
+
+                    return new Created();
+                }
+
+                return new NoContent();
             }
             catch (DatabaseException ex)
             {
@@ -180,9 +201,26 @@ namespace SentenceAPI.Features.Users
                 await exceptionLogger.Log(new ApplicationError(ex));
                 return new InternalServerError();
             }
+            finally
+            {
+                GC.Collect();
+            }
         }
 
-        [HttpPut]
+        private (bool, IEnumerable<string>) ValidateEmailAndPassword(string email, string password)
+        {
+            (bool emailValidation, string emailError) = new EmailValidator(email).Validate();
+            (bool passValidation, string passError) = new PasswordValidator(password).Validate();
+
+            if (emailValidation && passValidation)
+            {
+                return (true, new string[] { });
+            }
+
+            return (false, new[] { emailError, passError });
+        }
+
+        [HttpPut, Authorize]
         public async Task<IActionResult> UpdateUser()
         {
             try

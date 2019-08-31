@@ -1,0 +1,76 @@
+﻿using SentenceAPI.KernelInterfaces;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace SentenceAPI.Validators
+{
+    public class LoginValidator : IValidator
+    {
+        private static string englishLowerLetters = "qwertyuiopasdfghjklzxcvbnm";
+        private static string englishHigherLetters = "QWERTYUIOPASDFGHJKLZXCVBNM";
+        private static string numbers = "0123456789";
+
+        private static string notEnoughLengthErrorMessage = "The length of the login must be greater than 8";
+        private static string noCapitalLetterErrorMessage = "The login must contain the capital letters";
+        private static string noLowerLetterErrorMesage = "The login must contain lower english letter";
+        private static string noNumberInLoginErrorMessage = "The login must contain number";
+
+        private string login;
+
+        public LoginValidator(string login)
+        {
+            this.login = login;
+        }
+
+        public (bool, string) Validate()
+        {
+            if (login == null || login.Length < 8)
+            {
+                return (false, notEnoughLengthErrorMessage);
+            }
+
+            bool capitalLetterInLogin = false;
+            bool lowerLetterInLogin = false;
+            bool numberInLogin = false;
+
+            for (int i = 0; i < login.Length; i++)
+            {
+                char letter = login[i];
+
+                if (englishLowerLetters.IndexOf(letter) > -1)
+                {
+                    lowerLetterInLogin = true;
+                }
+
+                if (englishHigherLetters.IndexOf(letter) > -1)
+                {
+                    capitalLetterInLogin = true;
+                }
+
+                if (numbers.IndexOf(letter) > -1)
+                {
+                    numberInLogin = true;
+                }
+            }
+
+            if (!capitalLetterInLogin)
+            {
+                return (false, noCapitalLetterErrorMessage);
+            }
+
+            if (!lowerLetterInLogin)
+            {
+                return (false, noLowerLetterErrorMesage);
+            }
+
+            if (!numberInLogin)
+            {
+                return (false, noNumberInLoginErrorMessage);
+            }
+
+            return (true, string.Empty);
+        }
+    }
+}

@@ -37,3 +37,6 @@ C:\Users\evgen\OneDrive\Рабочий стол\Sentence\SentenceAPI\SentenceAPI
 C:\Users\evgen\OneDrive\Рабочий стол\Sentence\SentenceAPI\SentenceAPI\obj\Debug\netcoreapp2.1\SentenceAPI.dll
 C:\Users\evgen\OneDrive\Рабочий стол\Sentence\SentenceAPI\SentenceAPI\obj\Debug\netcoreapp2.1\SentenceAPI.pdb
 C:\Users\evgen\OneDrive\Рабочий стол\Sentence\SentenceAPI\SentenceAPI\obj\Debug\netcoreapp2.1\SentenceAPI.csprojAssemblyReference.cache
+C:\Users\Aero\Desktop\Sentence\sentenceapi\SentenceAPI\bin\Debug\netcoreapp2.1\DataAccessLayer.dll
+C:\Users\Aero\Desktop\Sentence\sentenceapi\SentenceAPI\bin\Debug\netcoreapp2.1\DataAccessLayer.pdb
+C:\Users\Aero\Desktop\Sentence\sentenceapi\SentenceAPI\obj\Debug\netcoreapp2.1\SentenceAPI.csproj.CopyComplete

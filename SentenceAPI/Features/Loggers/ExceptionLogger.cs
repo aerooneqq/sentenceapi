@@ -5,32 +5,26 @@ using System.Threading.Tasks;
 using System.Threading;
 using System.IO;
 
-using SentenceAPI.Databases.MongoDB.Interfaces;
 using SentenceAPI.Features.Loggers.Models;
-using SentenceAPI.Databases.MongoDB.Factories;
 using SentenceAPI.Features.Loggers.Interfaces;
 
 using Newtonsoft.Json;
-using SentenceAPI.Databases.CommonInterfaces;
+using DataAccessLayer.CommonInterfaces;
+using DataAccessLayer.Configuration.Interfaces;
+using DataAccessLayer.DatabasesManager;
+using DataAccessLayer.Configuration;
 
 namespace SentenceAPI.Features.Logger
 {
     public class ExceptionLogger : ILogger<ApplicationError>
     {
         private static object fileLocker = new object();
+        private static readonly string databaseConfigFile = "mongo_database_config.json";
 
-        #region Services
-        private IDatabaseService<ApplicationError> mongoDBService;
-        #endregion
-
-        #region Factories
-        private FactoriesManager.FactoriesManager factoriesManager = 
-            FactoriesManager.FactoriesManager.Instance;
-        private IMongoDBServiceFactory mongoDBServiceFactory;
-        #endregion
-
-        #region Builder
-        private IMongoDBServiceBuilder<ApplicationError> mongoDBServiceBuilder;
+        #region Databases
+        private IDatabaseService<ApplicationError> database;
+        private IConfigurationBuilder configurationBuilder;
+        private DatabasesManager databasesManager = DatabasesManager.Manager;
         #endregion
 
         #region Properties
@@ -38,27 +32,18 @@ namespace SentenceAPI.Features.Logger
         /// This property must be initialized before logging
         /// </summary>
         public LogConfiguration LogConfiguration { get; set; }
+
         public string FileName { get; }
         #endregion
 
         #region Constructors
         public ExceptionLogger()
         {
-            if (factoriesManager != null && (factoriesManager[typeof(IMongoDBServiceFactory)]
-                is IMongoDBServiceFactory))
-            {
-                mongoDBServiceFactory = factoriesManager[typeof(IMongoDBServiceFactory)].Factory as
-                    IMongoDBServiceFactory;
-            }
-            else
-            {
-                mongoDBServiceFactory = new MongoDBServiceFactory();
-            }
+            databasesManager.MongoDBFactory.GetDatabase<ApplicationError>().TryGetTarget(out database);
 
-            mongoDBServiceBuilder = mongoDBServiceFactory.GetBuilder(mongoDBServiceFactory.GetService
-                <ApplicationError>());
-            mongoDBService = mongoDBServiceBuilder.AddConfigurationFile("database_config.json")
-                .SetConnectionString().SetDatabaseName("SentenceDatabase").SetCollectionName().Build();
+            configurationBuilder = new MongoConfigurationBuilder(database.Configuration);
+            configurationBuilder.SetConfigurationFilePath(databaseConfigFile).SetAuthMechanism()
+                                .SetUserName().SetPassword().SetDatabaseName().SetServerName().SetConnectionString();
 
             FileName = "log.txt";
         }
@@ -86,8 +71,8 @@ namespace SentenceAPI.Features.Logger
 
             try
             {
-                await mongoDBService.Connect();
-                await mongoDBService.Insert(logObject);
+                await database.Connect();
+                await database.Insert(logObject);
             }
             catch
             {

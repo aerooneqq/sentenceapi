@@ -2,57 +2,59 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using SentenceAPI.Databases.CommonInterfaces;
-using SentenceAPI.Databases.Exceptions;
-using SentenceAPI.Databases.Filters;
-using SentenceAPI.Databases.MongoDB.Interfaces;
+
 using SentenceAPI.Features.Links.Interfaces;
 using SentenceAPI.Features.Links.Models;
 using SentenceAPI.Features.Loggers.Interfaces;
 using SentenceAPI.Features.Loggers.Models;
 using SentenceAPI.Features.Users.Models;
 
+using DataAccessLayer.DatabasesManager;
+using DataAccessLayer.CommonInterfaces;
+using DataAccessLayer.Exceptions;
+using DataAccessLayer.Filters;
+using DataAccessLayer.Configuration.Interfaces;
+using DataAccessLayer.Configuration;
+
 namespace SentenceAPI.Features.Links.Services
 {
     public class LinkService : ILinkService
     {
         #region Static fields
-        public static Random Random { get; } = new Random();
-        public static LogConfiguration LogConfiguration { get; } = new LogConfiguration()
+        private static Random Random { get; } = new Random();
+        private static LogConfiguration LogConfiguration { get; } = new LogConfiguration()
         {
             ControllerName = string.Empty,
             ServiceName = "LinkService"
         };
+        private static readonly string databaseConfigFile = "mongo_database_config.json";
+        #endregion
+
+        #region Daatabases
+        private DatabasesManager databasesManager = DatabasesManager.Manager;
+        private IDatabaseService<VerificationLink> database;
+        private IConfigurationBuilder configurationBuilder;
         #endregion
 
         #region Service
         private ILogger<ApplicationError> exceptionLogger;
-        private IDatabaseService<VerificationLink> mongoDBService;
-        #endregion
-
-        #region Builders
-        private IMongoDBServiceBuilder<VerificationLink> mongoDBServiceBuilder;
         #endregion
 
         #region Factories
         private FactoriesManager.FactoriesManager factoriesManager = 
             FactoriesManager.FactoriesManager.Instance;
-        private IMongoDBServiceFactory mongoDBServiceFactory;
         private ILoggerFactory loggerFactory;
         #endregion
 
         public LinkService()
         {
-            mongoDBServiceFactory = factoriesManager[typeof(IMongoDBServiceFactory)].Factory 
-                as IMongoDBServiceFactory;
-            loggerFactory = factoriesManager[typeof(ILoggerFactory)].Factory
-                as ILoggerFactory;
+            databasesManager.MongoDBFactory.GetDatabase<VerificationLink>().TryGetTarget(out database);
 
-            mongoDBServiceBuilder = mongoDBServiceFactory.GetBuilder(
-                mongoDBServiceFactory.GetService<VerificationLink>());
-            mongoDBService = mongoDBServiceBuilder.AddConfigurationFile("database_config.json")
-                .SetConnectionString().SetDatabaseName("SentenceDatabase").SetCollectionName().
-                Build();
+            configurationBuilder = new MongoConfigurationBuilder(database.Configuration);
+            configurationBuilder.SetConfigurationFilePath(databaseConfigFile).SetAuthMechanism()
+                                .SetUserName().SetPassword().SetDatabaseName().SetServerName().SetConnectionString();
+
+            loggerFactory = (ILoggerFactory)factoriesManager[typeof(ILoggerFactory)];
 
             exceptionLogger = loggerFactory.GetExceptionLogger();
             exceptionLogger.LogConfiguration = LogConfiguration;
@@ -65,9 +67,8 @@ namespace SentenceAPI.Features.Links.Services
             {
                 VerificationLink link = new VerificationLink(user);
 
-                await mongoDBService.Connect();
-                await mongoDBService.CreateCollection();
-                await mongoDBService.Insert(link);
+                await database.Connect();
+                await database.Insert(link);
 
                 return link.Link;
             }
@@ -91,7 +92,7 @@ namespace SentenceAPI.Features.Links.Services
             try
             {
                 var filter = new EqualityFilter<string>("link", link);
-                VerificationLink verificationLink = (await mongoDBService.Get(filter)).FirstOrDefault();
+                VerificationLink verificationLink = (await database.Get(filter)).FirstOrDefault();
 
                 if (verificationLink == null)
                 {
@@ -104,7 +105,7 @@ namespace SentenceAPI.Features.Links.Services
                 }
 
                 verificationLink.Used = true;
-                await mongoDBService.Update(verificationLink, new[] { "Used" });
+                await database.Update(verificationLink, new[] { "Used" });
 
                 return true;
             }

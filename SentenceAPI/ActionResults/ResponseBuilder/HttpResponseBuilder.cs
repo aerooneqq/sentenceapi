@@ -27,10 +27,8 @@ namespace SentenceAPI.ActionResults.ResponseBuilder
         public IResponseBuilder SetContent(string content)
         {
             this.content = content;
-            using (StreamWriter sr = new StreamWriter(response.Body, encoding))
-            {
-                sr.Write(content);
-            }
+
+            response.WriteAsync(content);
 
             return this;
         }
@@ -59,6 +57,19 @@ namespace SentenceAPI.ActionResults.ResponseBuilder
         public IResponseBuilder SetStatusCode(int statusCode)
         {
             response.StatusCode = statusCode;
+
+            return this;
+        }
+
+        /// <summary>
+        /// If the CORS headers were not set to the request, this method will do it
+        /// </summary>
+        public IResponseBuilder SetCORSHeaders()
+        {
+            if (!response.Headers.ContainsKey("Access-Control-Allow-Origin"))
+            {
+                response.Headers.Add("Access-Control-Allow-Origin", "*");
+            }
 
             return this;
         }

@@ -10,39 +10,37 @@ using Microsoft.IdentityModel.Tokens;
 using SentenceAPI.Features.Authentication.Interfaces;
 using SentenceAPI.Features.Authentication.Models;
 using SentenceAPI.Features.Users.Models;
-using SentenceAPI.Databases.MongoDB.Interfaces;
+
+using DataAccessLayer.MongoDB;
+using DataAccessLayer.CommonInterfaces;
+
 using SentenceAPI.FactoriesManager.Models;
-using SentenceAPI.Databases.CommonInterfaces;
+using DataAccessLayer.DatabasesManager;
+using DataAccessLayer.Configuration.Interfaces;
+using DataAccessLayer.Configuration;
 
 namespace SentenceAPI.Features.Authentication.Services
 {
     public class TokenService : ITokenService
     {
-        #region Services
+        #region Static properties
+        private static readonly string databaseConfigFile = "mongo_database_config.json";
+        #endregion
+
+        #region Databases
+        private readonly DatabasesManager databasesManager = DatabasesManager.Manager;
         private IDatabaseService<JwtToken> mongoDBService;
-        #endregion
-
-        #region Builders
-        private IMongoDBServiceBuilder<JwtToken> mongoDBServiceBuilder;
-        #endregion
-
-        #region Factories
-        private FactoriesManager.FactoriesManager factoriesManager = FactoriesManager.FactoriesManager.Instance;
-        private IMongoDBServiceFactory mongoDBServiceFactory;
+        private IConfigurationBuilder configurationBuilder;
         #endregion
 
         #region Constructors
         public TokenService()
         {
-            mongoDBServiceFactory = factoriesManager[typeof(IMongoDBServiceFactory)].Factory
-                as IMongoDBServiceFactory;
+            databasesManager.MongoDBFactory.GetDatabase<JwtToken>().TryGetTarget(out mongoDBService);
+            configurationBuilder = new MongoConfigurationBuilder(mongoDBService.Configuration);
 
-            mongoDBServiceBuilder = mongoDBServiceFactory.GetBuilder(mongoDBServiceFactory.GetService<JwtToken>());
-            mongoDBService = mongoDBServiceBuilder.AddConfigurationFile("database_config.json")
-                .SetConnectionString()
-                .SetDatabaseName("SentenceDatabase")
-                .SetCollectionName()
-                .Build();
+            configurationBuilder.SetConfigurationFilePath(databaseConfigFile).SetUserName().SetPassword()
+                                .SetAuthMechanism().SetDatabaseName().SetServerName().SetConnectionString();
         }
         #endregion
 
@@ -51,10 +49,9 @@ namespace SentenceAPI.Features.Authentication.Services
             throw new NotImplementedException();
         }
 
-        public async Task InsertTokenInDB(JwtToken token)
+        public Task InsertTokenInDB(JwtToken token)
         {
-            await mongoDBService.Connect();
-            await mongoDBService.Insert(token);
+            return mongoDBService.Connect().ContinueWith((t) => mongoDBService.Insert(token));
         }
 
         /// <summary>
@@ -70,7 +67,7 @@ namespace SentenceAPI.Features.Authentication.Services
                     issuer: AuthOptions.ISSUER,
                     audience: AuthOptions.AUDIENCE,
                     expires: now.Add(TimeSpan.FromSeconds(AuthOptions.SecondsLifeTime)),
-                    claims: GetUserIdentity(user).Claims,   
+                    claims: GetUserIdentity(user).Claims,
                     notBefore: now,
                     signingCredentials: new SigningCredentials(AuthOptions.GetSymmetricSecurityKey(),
                         SecurityAlgorithms.HmacSha256)
@@ -100,7 +97,7 @@ namespace SentenceAPI.Features.Authentication.Services
             ClaimsIdentity userIdentity = new ClaimsIdentity();
 
             userIdentity.AddClaim(new Claim("Email", user.Email));
-            userIdentity.AddClaim(new Claim("Login", user.Login));
+            userIdentity.AddClaim(new Claim("Login", user.Login ?? string.Empty));
             userIdentity.AddClaim(new Claim("ID", user.ID.ToString()));
 
             return userIdentity;

@@ -9,12 +9,12 @@ namespace SentenceAPI.FactoriesManager.Models
 {
     public class FactoryInfo
     {
-        public IFactory Factory { get; }
+        public WeakReference<IServiceFactory> Factory { get; }
         public Type FactoryType { get; }
 
-        public FactoryInfo(IFactory factory, Type factoryType)
+        public FactoryInfo(IServiceFactory factory, Type factoryType)
         {
-            Factory = factory;
+            Factory = new WeakReference<IServiceFactory>(factory);
             FactoryType = factoryType;
         }
     }

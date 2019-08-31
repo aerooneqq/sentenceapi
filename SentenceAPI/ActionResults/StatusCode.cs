@@ -44,7 +44,8 @@ namespace SentenceAPI.ActionResults
                 {
                     responseBuilder.SetContent(serializer.Serialize())
                                    .SetContentLength()
-                                   .SetContentType(ContentTypes.ApplicationJson);
+                                   .SetContentType(ContentTypes.ApplicationJson)
+                                   .SetCORSHeaders();
                 }
             });
         }

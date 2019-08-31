@@ -8,7 +8,7 @@ using SentenceAPI.KernelInterfaces;
 
 namespace SentenceAPI.Features.Users.Interfaces
 {
-    public interface IUserServiceFactory : IFactory
+    public interface IUserServiceFactory : IServiceFactory
     {
         IUserService<UserInfo> GetService();
     }

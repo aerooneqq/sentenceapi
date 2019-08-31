@@ -1,0 +1,1 @@
+{"emailAddress":"aerooneQ@yandex.ru","sendDate":"2019-08-31T10:14:58.496877Z","text":"Your code is: \n CHNDDF \n\n Best wishes, \n Sentence team","configuration":{"controllerName":"","serviceName":"EmailService"},"ID":0}

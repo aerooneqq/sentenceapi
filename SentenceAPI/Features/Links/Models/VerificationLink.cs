@@ -1,5 +1,4 @@
-﻿using SentenceAPI.KernelModels;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -7,6 +6,7 @@ using System.Threading.Tasks;
 using MongoDB.Bson.Serialization.Attributes;
 using Newtonsoft.Json;
 using SentenceAPI.Features.Users.Models;
+using DataAccessLayer.KernelModels;
 
 namespace SentenceAPI.Features.Links.Models
 {

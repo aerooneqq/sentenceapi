@@ -1,9 +1,9 @@
-﻿using SentenceAPI.KernelModels;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 
 using MongoDB.Bson.Serialization.Attributes;
+using DataAccessLayer.KernelModels;
 
 namespace SentenceApiTests.DatabaseTests.TestModels
 {

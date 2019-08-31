@@ -5,32 +5,39 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using Newtonsoft.Json;
-using SentenceAPI.Databases.CommonInterfaces;
-using SentenceAPI.Databases.MongoDB.Interfaces;
+
 using SentenceAPI.Features.Loggers.Interfaces;
 using SentenceAPI.Features.Loggers.Models;
+
+using DataAccessLayer.CommonInterfaces;
+using DataAccessLayer.MongoDB.Interfaces;
+using DataAccessLayer.DatabasesManager;
+using DataAccessLayer.Configuration.Interfaces;
+using DataAccessLayer.Configuration;
 
 namespace SentenceAPI.Features.Loggers
 {
     public class EmailLogger : ILogger<EmailLog>
     {
+        #region Static fields
+        private static readonly string databaseConfigFile = "mongo_database_config.json";
         private static object fileLoceker = new object();
+        #endregion
 
-        #region Services
-        private IDatabaseService<EmailLog> mongoDBService;
+        #region Databases
+        private DatabasesManager databasesManager = DatabasesManager.Manager;
+        private IDatabaseService<EmailLog> database;
+        private IConfigurationBuilder configurationBuilder;
         #endregion
 
         #region Factories
-        private FactoriesManager.FactoriesManager factoriesManager = FactoriesManager.FactoriesManager.Instance;
-        private IMongoDBServiceFactory mongoDBServiceFactory;
-        #endregion
-
-        #region Builders
-        private IMongoDBServiceBuilder<EmailLog> mongoDBServiceBuilder;
+        private FactoriesManager.FactoriesManager factoriesManager = 
+            FactoriesManager.FactoriesManager.Instance;
         #endregion
 
         #region Properties
         public string FileName { get; }
+
         /// <summary>
         /// This property must be initialized befote each logging
         /// </summary>
@@ -39,11 +46,11 @@ namespace SentenceAPI.Features.Loggers
 
         public EmailLogger()
         {
-            mongoDBServiceFactory = factoriesManager[typeof(IMongoDBServiceFactory)].Factory as IMongoDBServiceFactory;
+            databasesManager.MongoDBFactory.GetDatabase<EmailLog>().TryGetTarget(out database);
 
-            mongoDBServiceBuilder = mongoDBServiceFactory.GetBuilder(mongoDBServiceFactory.GetService<EmailLog>());
-            mongoDBService = mongoDBServiceBuilder.AddConfigurationFile("database_config.json")
-                .SetConnectionString().SetDatabaseName("SentenceDatabase").SetCollectionName().Build();
+            configurationBuilder = new MongoConfigurationBuilder(database.Configuration);
+            configurationBuilder.SetConfigurationFilePath(databaseConfigFile).SetAuthMechanism()
+                                .SetUserName().SetPassword().SetDatabaseName().SetServerName().SetConnectionString();
 
             FileName = "email_log.txt";
         }
@@ -70,8 +77,8 @@ namespace SentenceAPI.Features.Loggers
 
             try
             {
-                await mongoDBService.Connect();
-                await mongoDBService.Insert(logObject);
+                await database.Connect();
+                await database.Insert(logObject);
             }
             catch
             {

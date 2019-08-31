@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using DataAccessLayer.Exceptions;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using SentenceAPI.Databases.Exceptions;
+using SentenceAPI.ActionResults;
 using SentenceAPI.FactoriesManager.Interfaces;
 using SentenceAPI.Features.Loggers.Interfaces;
 using SentenceAPI.Features.Loggers.Models;
@@ -17,6 +19,12 @@ namespace SentenceAPI.Features.UserFeed
     [Route("api/[controller]"), Authorize, ApiController]
     public class UserFeedController : Controller
     {
+        private static LogConfiguration LogConfiguration => new LogConfiguration()
+        {
+            ControllerName = "UserFeedController",
+            ServiceName = string.Empty
+        };
+
         #region Services
         private ILogger<ApplicationError> exceptionLogger;
         private IUserFeedService userFeedService;
@@ -31,10 +39,12 @@ namespace SentenceAPI.Features.UserFeed
 
         public UserFeedController()
         {
-            userFeedServiceFactory = factoriesManager[typeof(IUserFeedServiceFactory)].Factory as IUserFeedServiceFactory;
-            loggerFactory = factoriesManager[typeof(ILoggerFactory)].Factory as ILoggerFactory;
+            userFeedServiceFactory = (IUserFeedServiceFactory)factoriesManager[typeof(IUserFeedServiceFactory)];
+            loggerFactory = (ILoggerFactory)factoriesManager[typeof(ILoggerFactory)];
 
             exceptionLogger = loggerFactory.GetExceptionLogger();
+            exceptionLogger.LogConfiguration = LogConfiguration;
+
             userFeedService = userFeedServiceFactory.GetService();
         }
 
@@ -43,20 +53,27 @@ namespace SentenceAPI.Features.UserFeed
         {
             try
             {
-                string authHeader = Request.Headers["Authorization"];
-                string token = authHeader.Split()[1];
+                string token = GetToken(Request);
 
-                return Ok(JsonConvert.SerializeObject(await userFeedService.GetUserFeed(token)));
+                var userFeed = await userFeedService.GetUserFeed(token);
+
+                return new OkJson<IEnumerable<Models.UserFeed>>(userFeed);
             }
             catch (DatabaseException ex)
             {
-                return StatusCode(500, ex.Message);
+                return new InternalServerError(ex.Message);
             }
             catch (Exception ex)
             {
-                await exceptionLogger.Log(new ApplicationError(ex.Message));
-                return StatusCode(500);
+                await exceptionLogger.Log(new ApplicationError(ex));
+                return new InternalServerError();
             }
+        }
+
+        private string GetToken(HttpRequest request)
+        {
+            string authHeader = request.Headers["Authorization"];
+            return authHeader.Split()[1];
         }
 
         [HttpPut]
@@ -64,8 +81,7 @@ namespace SentenceAPI.Features.UserFeed
         {
             try
             {
-                string authHeader = Request.Headers["Authorization"];
-                string token = authHeader.Split()[1];
+                string token = GetToken(Request);
 
                 string message = null;
                 using (StreamReader sr = new StreamReader(Request.Body))
@@ -75,16 +91,16 @@ namespace SentenceAPI.Features.UserFeed
 
                 await userFeedService.InsertUserPost(token, message);
 
-                return Ok();
+                return new Ok();
             }
             catch (DatabaseException ex)
             {
-                return StatusCode(500, ex.Message);
+                return new InternalServerError(ex.Message);
             }
             catch (Exception ex)
             {
                 await exceptionLogger.Log(new ApplicationError(ex.Message));
-                return StatusCode(500);
+                return new InternalServerError();
             }
         }
     }

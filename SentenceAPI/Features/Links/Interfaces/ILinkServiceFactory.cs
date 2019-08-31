@@ -7,7 +7,7 @@ using SentenceAPI.KernelInterfaces;
 
 namespace SentenceAPI.Features.Links.Interfaces
 {
-    public interface ILinkServiceFactory : IFactory
+    public interface ILinkServiceFactory : IServiceFactory
     {
         ILinkService GetService();
     }
