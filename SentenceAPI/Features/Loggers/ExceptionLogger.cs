@@ -18,7 +18,7 @@ namespace SentenceAPI.Features.Logger
 {
     public class ExceptionLogger : ILogger<ApplicationError>
     {
-        private static object fileLocker = new object();
+        private static readonly object fileLocker = new object();
         private static readonly string databaseConfigFile = "mongo_database_config.json";
 
         #region Databases

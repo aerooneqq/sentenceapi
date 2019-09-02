@@ -37,7 +37,7 @@ namespace SentenceAPI.Features.Authentication
         };
 
         #region Factories
-        private readonly IFactoriesManager factoryManager = FactoriesManager.FactoriesManager.Instance;
+        private readonly IFactoriesManager factoriesManager = FactoriesManager.FactoriesManager.Instance;
         private IUserServiceFactory userServiceFactory;
         private ITokenServiceFactory tokenServiceFactory;
         private ILoggerFactory loggerFactory;
@@ -52,14 +52,10 @@ namespace SentenceAPI.Features.Authentication
         #region Constructors
         public TokensController()
         {
-            userServiceFactory = factoryManager[typeof(IUserServiceFactory)] as IUserServiceFactory;
-            tokenServiceFactory = factoryManager[typeof(ITokenServiceFactory)] as ITokenServiceFactory;
-            loggerFactory = factoryManager[typeof(ILoggerFactory)] as ILoggerFactory;
+            factoriesManager.GetService<IUserService<UserInfo>>().TryGetTarget(out userService);
+            factoriesManager.GetService<ITokenService>().TryGetTarget(out tokenService);
+            factoriesManager.GetService<ILogger<ApplicationError>>().TryGetTarget(out exceptionLogger);
 
-            userService = userServiceFactory.GetService();
-            tokenService = tokenServiceFactory.GetService();
-
-            exceptionLogger = loggerFactory.GetExceptionLogger();
             exceptionLogger.LogConfiguration = LogConfiguration;
         }
         #endregion

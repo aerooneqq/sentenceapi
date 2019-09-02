@@ -43,14 +43,11 @@ namespace SentenceAPI.Features.UserActivity
 
         public UserActivitiesController()
         {
-            userActivityServiceFactory = factoriesManager[typeof(IUserActivityServiceFactory)] as IUserActivityServiceFactory;
-            loggerFactory = factoriesManager[typeof(ILoggerFactory)] as ILoggerFactory;
-            tokenServiceFactory = factoriesManager[typeof(ITokenServiceFactory)] as ITokenServiceFactory;
+            factoriesManager.GetService<IUserActivityService>().TryGetTarget(out userActivityService);
+            factoriesManager.GetService<ILogger<ApplicationError>>().TryGetTarget(out exceptionLogger);
+            factoriesManager.GetService<ITokenService>().TryGetTarget(out tokenService);
 
-            userActivityService = userActivityServiceFactory.GetService();
-            exceptionLogger = loggerFactory.GetExceptionLogger();
             exceptionLogger.LogConfiguration = LogConfiguration;
-            tokenService = tokenServiceFactory.GetService();
         }
 
         [HttpGet]

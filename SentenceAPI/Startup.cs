@@ -53,7 +53,8 @@ namespace SentenceAPI
         public void ConfigureServices(IServiceCollection services)
         {
             ConfigureCustomServices();
-            tokenService = (factoriesManager[typeof(ITokenServiceFactory)] as ITokenServiceFactory).GetService();
+
+            factoriesManager.GetService<ITokenService>().TryGetTarget(out tokenService);
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(
                 options =>

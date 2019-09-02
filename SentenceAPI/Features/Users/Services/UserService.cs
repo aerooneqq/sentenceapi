@@ -60,9 +60,8 @@ namespace SentenceAPI.Features.Users.Services
             configurationBuilder.SetConfigurationFilePath(databaseConfigFile).SetAuthMechanism()
                                 .SetUserName().SetPassword().SetDatabaseName().SetServerName().SetConnectionString();
 
-            loggerFactory = factoriesManager[typeof(ILoggerFactory)] as ILoggerFactory;
+            factoriesManager.GetService<ILogger<ApplicationError>>().TryGetTarget(out exceptionLogger);
 
-            exceptionLogger = loggerFactory.GetExceptionLogger();
             exceptionLogger.LogConfiguration = LogConfiguration;
         }
         #endregion

@@ -6,6 +6,7 @@ using SentenceAPI.ActionResults;
 using SentenceAPI.FactoriesManager.Interfaces;
 using SentenceAPI.Features.Loggers.Interfaces;
 using SentenceAPI.Features.Loggers.Models;
+using SentenceAPI.Features.Requests.Interfaces;
 using SentenceAPI.Features.UserFriends.Interfaces;
 
 using System;
@@ -28,24 +29,21 @@ namespace SentenceAPI.Features.UserFriends
         #region Services
         private ILogger<ApplicationError> exceptionLogger;
         private IUserFriendsService userFriendsService;
+        private IRequestService requestService; 
         #endregion
 
         #region Factories
         private IFactoriesManager factoriesManager = FactoriesManager.FactoriesManager.Instance;
-
-        private ILoggerFactory loggerFactory;
-        private IUserFriendsServiceFactory userFriendsServiceFactory;
         #endregion
 
         public UserFriendsController()
         {
-            userFriendsServiceFactory = factoriesManager[typeof(IUserFriendsServiceFactory)] as IUserFriendsServiceFactory;
-            loggerFactory = factoriesManager[typeof(ILoggerFactory)] as ILoggerFactory;
-
-            exceptionLogger = loggerFactory.GetExceptionLogger();
+            factoriesManager.GetService<IUserFriendsService>().TryGetTarget(out userFriendsService);
+            factoriesManager.GetService<IUserFriendsService>().TryGetTarget(out userFriendsService);
+            factoriesManager.GetService<ILogger<ApplicationError>>().TryGetTarget(out exceptionLogger);
+            factoriesManager.GetService<IRequestService>().TryGetTarget(out requestService);
+            
             exceptionLogger.LogConfiguration = LogConfiguration;
-
-            userFriendsService = userFriendsServiceFactory.GetSerivce();
         }
 
         [HttpGet, Route("subscribers")]
@@ -53,8 +51,7 @@ namespace SentenceAPI.Features.UserFriends
         {
             try
             {
-                string authHeader = Request.Headers["Authorization"];
-                string token = authHeader.Split()[1];
+                string token = requestService.GetToken(Request);
 
                 var subscribers = await userFriendsService.GetSubscribers(token);
 
@@ -76,8 +73,7 @@ namespace SentenceAPI.Features.UserFriends
         {
             try
             {
-                string authHeader = Request.Headers["Authorization"];
-                string token = authHeader.Split()[1];
+                string token = requestService.GetToken(Request);
 
                 var subscriptions = await userFriendsService.GetSubscriptions(token);
 
@@ -99,8 +95,7 @@ namespace SentenceAPI.Features.UserFriends
         {
             try
             {
-                string authHeader = Request.Headers["Authorization"];
-                string token = authHeader.Split()[1];
+                string token = requestService.GetToken(Request);
 
                 await userFriendsService.AddSubscriber(token, subscriberID);
 
@@ -122,8 +117,7 @@ namespace SentenceAPI.Features.UserFriends
         {
             try
             {
-                string authHeader = Request.Headers["Authorization"];
-                string token = authHeader.Split()[1];
+                string token = requestService.GetToken(Request);
 
                 await userFriendsService.AddSubscription(token, subscriptionID);
 
@@ -145,8 +139,7 @@ namespace SentenceAPI.Features.UserFriends
         {
             try
             {
-                string authHeader = Request.Headers["Authorization"];
-                string token = authHeader.Split()[1];
+                string token = requestService.GetToken(Request);
 
                 await userFriendsService.DeleteSubscriber(token, subscriberID);
 
@@ -168,8 +161,7 @@ namespace SentenceAPI.Features.UserFriends
         {
             try
             {
-                string authHeader = Request.Headers["Authorization"];
-                string token = authHeader.Split()[1];
+                string token = requestService.GetToken(Request);
 
                 await userFriendsService.DeleteSubscription(token, subscriptionID);
 

@@ -43,10 +43,6 @@ namespace SentenceAPI.Features.UserFeed.Services
 
         #region Factories
         IFactoriesManager factoriesManager = FactoriesManager.FactoriesManager.Instance;
-
-        private ITokenServiceFactory tokenServiceFactory;
-        private IUserFriendsServiceFactory userFriendsServiceFactory;
-        private ILoggerFactory loggerFactory;
         #endregion
 
         public UserFeedService()
@@ -57,13 +53,9 @@ namespace SentenceAPI.Features.UserFeed.Services
             configurationBuilder.SetConfigurationFilePath(databaseConfigFile).SetAuthMechanism()
                                 .SetUserName().SetPassword().SetDatabaseName().SetServerName().SetConnectionString();
 
-            loggerFactory = (ILoggerFactory)factoriesManager[typeof(ILoggerFactory)];
-            userFriendsServiceFactory = (IUserFriendsServiceFactory)factoriesManager[typeof(IUserFriendsServiceFactory)];
-            tokenServiceFactory = (ITokenServiceFactory)factoriesManager[typeof(ITokenServiceFactory)];
-
-            exceptionLogger = loggerFactory.GetExceptionLogger();
-            userFriendsService = userFriendsServiceFactory.GetSerivce();
-            tokenService = tokenServiceFactory.GetService();
+            factoriesManager.GetService<ILogger<ApplicationError>>().TryGetTarget(out exceptionLogger);
+            factoriesManager.GetService<IUserFriendsService>().TryGetTarget(out userFriendsService);
+            factoriesManager.GetService<ITokenService>().TryGetTarget(out tokenService);
         }
 
         public async Task<IEnumerable<Models.UserFeed>> GetUserFeed(long userID)

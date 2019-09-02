@@ -52,31 +52,17 @@ namespace SentenceAPI.Features.Users
         #region Factories
         private FactoriesManager.FactoriesManager factoriesManager =
             FactoriesManager.FactoriesManager.Instance;
-
-        private ILinkServiceFactory linkServiceFactory;
-        private IUserServiceFactory userServiceFactory;
-        private ILoggerFactory loggerFactory;
-        private IEmailServiceFactory emailServiceFactory;
-        private ICodesServiceFactory codesServiceFactory;
-        private IRequestServiceFactory requestServiceFactory;
         #endregion
 
         public UsersController()
         {
-            userServiceFactory = (IUserServiceFactory)factoriesManager[typeof(IUserServiceFactory)];
-            loggerFactory = (ILoggerFactory)factoriesManager[typeof(ILoggerFactory)];
-            emailServiceFactory = (IEmailServiceFactory)factoriesManager[typeof(IEmailServiceFactory)];
-            linkServiceFactory = (ILinkServiceFactory)factoriesManager[typeof(ILinkServiceFactory)];
-            codesServiceFactory = (ICodesServiceFactory)factoriesManager[typeof(ICodesServiceFactory)];
-            requestServiceFactory = (IRequestServiceFactory)factoriesManager[typeof(IRequestServiceFactory)];
+            factoriesManager.GetService<IUserService<UserInfo>>().TryGetTarget(out userService);
+            factoriesManager.GetService<ILinkService>().TryGetTarget(out linkService);
+            factoriesManager.GetService<IEmailService>().TryGetTarget(out emailService);
+            factoriesManager.GetService<ILogger<ApplicationError>>().TryGetTarget(out exceptionLogger);
+            factoriesManager.GetService<ICodesService>().TryGetTarget(out codesService);
+            factoriesManager.GetService<IRequestService>().TryGetTarget(out requestService);
 
-            emailService = emailServiceFactory.GetService();
-            userService = userServiceFactory.GetService();
-            linkService = linkServiceFactory.GetService();
-            codesService = codesServiceFactory.GetService();
-            requestService = requestServiceFactory.GetService();
-            
-            exceptionLogger = loggerFactory.GetExceptionLogger();
             exceptionLogger.LogConfiguration = LogConfiguration;
         }
 

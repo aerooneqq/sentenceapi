@@ -47,8 +47,6 @@ namespace SentenceAPI.Features.Email.Services
         #region Factories
         private FactoriesManager.FactoriesManager factoriesManager = 
             FactoriesManager.FactoriesManager.Instance;
-
-        private ILoggerFactory loggerFactory;
         #endregion
 
         public EmailService()
@@ -59,12 +57,10 @@ namespace SentenceAPI.Features.Email.Services
             configurationBuilder.SetConfigurationFilePath(databaseConfigFile).SetAuthMechanism()
                                 .SetUserName().SetPassword().SetDatabaseName().SetServerName().SetConnectionString();
 
-            loggerFactory = (ILoggerFactory)factoriesManager[typeof(ILoggerFactory)];
+            factoriesManager.GetService<ILogger<ApplicationError>>().TryGetTarget(out exceptionLogger);
+            factoriesManager.GetService<ILogger<EmailLog>>().TryGetTarget(out emailLogger);
 
-            exceptionLogger = loggerFactory.GetExceptionLogger();
             exceptionLogger.LogConfiguration = LogConfiguration;
-
-            emailLogger = loggerFactory.GetEmailLogger();
             emailLogger.LogConfiguration = LogConfiguration; 
         }
 

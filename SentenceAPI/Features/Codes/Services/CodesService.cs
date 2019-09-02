@@ -47,9 +47,6 @@ namespace SentenceAPI.Features.Codes.Services
         #region Factories
         private FactoriesManager.FactoriesManager factoriesManager =
             FactoriesManager.FactoriesManager.Instance;
-
-        private ITokenServiceFactory tokenServiceFactory;
-        private ILoggerFactory loggerFactory;
         #endregion
 
         public CodesService()
@@ -60,13 +57,10 @@ namespace SentenceAPI.Features.Codes.Services
             configurationBuilder.SetConfigurationFilePath(databaseConfigFile).SetAuthMechanism()
                                 .SetUserName().SetPassword().SetDatabaseName().SetServerName().SetConnectionString();
 
-            loggerFactory = (ILoggerFactory)factoriesManager[typeof(ILoggerFactory)];
-            tokenServiceFactory = (ITokenServiceFactory)factoriesManager[typeof(ITokenServiceFactory)];
+            factoriesManager.GetService<ILogger<ApplicationError>>().TryGetTarget(out exceptionLogger);
+            factoriesManager.GetService<ITokenService>().TryGetTarget(out tokenService);
 
-            exceptionLogger = loggerFactory.GetExceptionLogger();
             exceptionLogger.LogConfiguration = logConfiguration;
-
-            tokenService = tokenServiceFactory.GetService();
         }
 
         public ActivationCode CreateActivationCode(long userID)

@@ -10,6 +10,6 @@ namespace SentenceAPI.FactoriesManager.Interfaces
         void AddFactory(FactoryInfo factory);
         bool RemoveFactory(Type factoryInfo);
 
-        IServiceFactory this[Type factoryInfo] { get; }
+        WeakReference<IType> GetService<IType>() where IType : class;
     }
 }

@@ -43,7 +43,6 @@ namespace SentenceAPI.Features.Links.Services
         #region Factories
         private FactoriesManager.FactoriesManager factoriesManager = 
             FactoriesManager.FactoriesManager.Instance;
-        private ILoggerFactory loggerFactory;
         #endregion
 
         public LinkService()
@@ -54,9 +53,8 @@ namespace SentenceAPI.Features.Links.Services
             configurationBuilder.SetConfigurationFilePath(databaseConfigFile).SetAuthMechanism()
                                 .SetUserName().SetPassword().SetDatabaseName().SetServerName().SetConnectionString();
 
-            loggerFactory = (ILoggerFactory)factoriesManager[typeof(ILoggerFactory)];
+            factoriesManager.GetService<ILogger<ApplicationError>>().TryGetTarget(out exceptionLogger);
 
-            exceptionLogger = loggerFactory.GetExceptionLogger();
             exceptionLogger.LogConfiguration = LogConfiguration;
         }
 

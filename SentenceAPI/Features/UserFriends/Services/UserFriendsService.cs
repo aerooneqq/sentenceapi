@@ -53,13 +53,9 @@ namespace SentenceAPI.Features.UserFriends.Services
             configurationBuilder.SetConfigurationFilePath(databaseConfigFile).SetAuthMechanism()
                                 .SetUserName().SetPassword().SetDatabaseName().SetServerName().SetConnectionString();
 
-            loggerFactory = factoriesManager[typeof(ILoggerFactory)] as ILoggerFactory;
-            userServiceFactory = factoriesManager[typeof(IUserServiceFactory)] as IUserServiceFactory;
-            tokenServiceFactory = factoriesManager[typeof(ITokenServiceFactory)] as ITokenServiceFactory;
-
-            exceptionLogger = loggerFactory.GetExceptionLogger();
-            userService = userServiceFactory.GetService();
-            tokenService = tokenServiceFactory.GetService();
+            factoriesManager.GetService<ILogger<ApplicationError>>().TryGetTarget(out exceptionLogger);
+            factoriesManager.GetService<IUserService<UserInfo>>().TryGetTarget(out userService);
+            factoriesManager.GetService<ITokenService>().TryGetTarget(out tokenService);
         }
 
         #region IUserFriendsService implementation
@@ -94,6 +90,7 @@ namespace SentenceAPI.Features.UserFriends.Services
 
                 Models.UserFriends userFriends = (await database.Get(new EqualityFilter<long>("userID",
                     userID))).FirstOrDefault();
+
                 userFriends.SubscriptionsID.Add(subscriptionID);
 
                 await database.Update(userFriends, new[] { "SubscriptionsID" });
@@ -115,6 +112,7 @@ namespace SentenceAPI.Features.UserFriends.Services
 
                 Models.UserFriends userFriends = (await database.Get(new EqualityFilter<long>("userID",
                     userID))).FirstOrDefault();
+
                 userFriends.SubscribersID.Remove(subscriberID);
 
                 await database.Update(userFriends, new[] { "SubscribersID" });

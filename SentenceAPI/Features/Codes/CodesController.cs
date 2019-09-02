@@ -48,15 +48,11 @@ namespace SentenceAPI.Features.Codes
 
         public CodesController()
         {
-            loggerFactory = (ILoggerFactory)factoriesManager[typeof(ILoggerFactory)];
-            codesServiceFactory = (ICodesServiceFactory)factoriesManager[typeof(ICodesServiceFactory)];
-            userServiceFactory = (IUserServiceFactory)factoriesManager[typeof(IUserServiceFactory)];
+            factoriesManager.GetService<ILogger<ApplicationError>>().TryGetTarget(out exceptionLogger);
+            factoriesManager.GetService<ICodesService>().TryGetTarget(out codesService);
+            factoriesManager.GetService<IUserService<UserInfo>>().TryGetTarget(out userService);
 
-            exceptionLogger = loggerFactory.GetExceptionLogger();
             exceptionLogger.LogConfiguration = logConfiguration;
-
-            codesService = codesServiceFactory.GetService();
-            userService = userServiceFactory.GetService();
         }
 
         [HttpPut]

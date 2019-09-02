@@ -21,7 +21,7 @@ namespace SentenceAPI.Features.Loggers
     {
         #region Static fields
         private static readonly string databaseConfigFile = "mongo_database_config.json";
-        private static object fileLoceker = new object();
+        private static readonly object fileLoceker = new object();
         #endregion
 
         #region Databases

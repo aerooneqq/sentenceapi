@@ -42,15 +42,11 @@ namespace SentenceAPI.Features.UserFeed
 
         public UserFeedController()
         {
-            userFeedServiceFactory = (IUserFeedServiceFactory)factoriesManager[typeof(IUserFeedServiceFactory)];
-            loggerFactory = (ILoggerFactory)factoriesManager[typeof(ILoggerFactory)];
-            requestServiceFactory = (IRequestServiceFactory)factoriesManager[typeof(IRequestServiceFactory)];
+            factoriesManager.GetService<IUserFeedService>().TryGetTarget(out userFeedService);
+            factoriesManager.GetService<ILogger<ApplicationError>>().TryGetTarget(out exceptionLogger);
+            factoriesManager.GetService<IRequestService>().TryGetTarget(out requestService);
 
-            exceptionLogger = loggerFactory.GetExceptionLogger();
             exceptionLogger.LogConfiguration = LogConfiguration;
-
-            userFeedService = userFeedServiceFactory.GetService();
-            requestService = requestServiceFactory.GetService();
         }
 
         [HttpGet]

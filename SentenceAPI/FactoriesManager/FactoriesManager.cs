@@ -35,25 +35,17 @@ namespace SentenceAPI.FactoriesManager
         /// <returns>
         /// NULL if the value of the weak reference doesn't contain a value
         /// </returns>
-        public IServiceFactory this[Type factoryType]
+        public WeakReference<ServiceType> GetService<ServiceType>() where ServiceType : class
         {
-            get
+            foreach (FactoryInfo factory in factoryInfos)
             {
-                if (factoryType == null)
+                if (factory.CheckIfFactorySupportService(typeof(ServiceType)))
                 {
-                    throw new ArgumentNullException("Service type can not be null.");
+                    return new WeakReference<ServiceType>(factory.GetService<ServiceType>(typeof(ServiceType)));
                 }
-
-                bool result = factoryInfos.FirstOrDefault(f => f.FactoryType == factoryType).
-                    Factory.TryGetTarget(out IServiceFactory factory);
-
-                if (result == false)
-                {
-                    return null;
-                }
-
-                return factory;
             }
+
+            return null; 
         }
 
         /// <summary>
