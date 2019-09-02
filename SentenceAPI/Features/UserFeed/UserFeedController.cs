@@ -12,6 +12,7 @@ using SentenceAPI.ActionResults;
 using SentenceAPI.FactoriesManager.Interfaces;
 using SentenceAPI.Features.Loggers.Interfaces;
 using SentenceAPI.Features.Loggers.Models;
+using SentenceAPI.Features.Requests.Interfaces;
 using SentenceAPI.Features.UserFeed.Interfaces;
 
 namespace SentenceAPI.Features.UserFeed
@@ -28,6 +29,7 @@ namespace SentenceAPI.Features.UserFeed
         #region Services
         private ILogger<ApplicationError> exceptionLogger;
         private IUserFeedService userFeedService;
+        private IRequestService requestService;
         #endregion
 
         #region Factories
@@ -35,17 +37,20 @@ namespace SentenceAPI.Features.UserFeed
 
         private ILoggerFactory loggerFactory;
         private IUserFeedServiceFactory userFeedServiceFactory;
+        private IRequestServiceFactory requestServiceFactory;
         #endregion
 
         public UserFeedController()
         {
             userFeedServiceFactory = (IUserFeedServiceFactory)factoriesManager[typeof(IUserFeedServiceFactory)];
             loggerFactory = (ILoggerFactory)factoriesManager[typeof(ILoggerFactory)];
+            requestServiceFactory = (IRequestServiceFactory)factoriesManager[typeof(IRequestServiceFactory)];
 
             exceptionLogger = loggerFactory.GetExceptionLogger();
             exceptionLogger.LogConfiguration = LogConfiguration;
 
             userFeedService = userFeedServiceFactory.GetService();
+            requestService = requestServiceFactory.GetService();
         }
 
         [HttpGet]
@@ -53,7 +58,7 @@ namespace SentenceAPI.Features.UserFeed
         {
             try
             {
-                string token = GetToken(Request);
+                string token = requestService.GetToken(Request);
 
                 var userFeed = await userFeedService.GetUserFeed(token);
 
@@ -70,24 +75,14 @@ namespace SentenceAPI.Features.UserFeed
             }
         }
 
-        private string GetToken(HttpRequest request)
-        {
-            string authHeader = request.Headers["Authorization"];
-            return authHeader.Split()[1];
-        }
-
         [HttpPut]
         public async Task<IActionResult> InsertFeed()
         {
             try
             {
-                string token = GetToken(Request);
+                string token = requestService.GetToken(Request);
 
-                string message = null;
-                using (StreamReader sr = new StreamReader(Request.Body))
-                {
-                    message = await sr.ReadToEndAsync();
-                }
+                string message = requestService.GetRequestBody(Request);
 
                 await userFeedService.InsertUserPost(token, message);
 

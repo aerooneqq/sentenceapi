@@ -26,6 +26,8 @@ using DataAccessLayer.Exceptions;
 using SentenceAPI.KernelInterfaces;
 using SentenceAPI.Features.Codes.Models;
 using SentenceAPI.Features.Codes.Interfaces;
+using Microsoft.AspNetCore.Http;
+using SentenceAPI.Features.Requests.Interfaces;
 
 namespace SentenceAPI.Features.Users
 {
@@ -44,6 +46,7 @@ namespace SentenceAPI.Features.Users
         private IUserService<UserInfo> userService;
         private ILogger<ApplicationError> exceptionLogger;
         private ICodesService codesService;
+        private IRequestService requestService;
         #endregion
 
         #region Factories
@@ -55,6 +58,7 @@ namespace SentenceAPI.Features.Users
         private ILoggerFactory loggerFactory;
         private IEmailServiceFactory emailServiceFactory;
         private ICodesServiceFactory codesServiceFactory;
+        private IRequestServiceFactory requestServiceFactory;
         #endregion
 
         public UsersController()
@@ -64,12 +68,14 @@ namespace SentenceAPI.Features.Users
             emailServiceFactory = (IEmailServiceFactory)factoriesManager[typeof(IEmailServiceFactory)];
             linkServiceFactory = (ILinkServiceFactory)factoriesManager[typeof(ILinkServiceFactory)];
             codesServiceFactory = (ICodesServiceFactory)factoriesManager[typeof(ICodesServiceFactory)];
+            requestServiceFactory = (IRequestServiceFactory)factoriesManager[typeof(IRequestServiceFactory)];
 
             emailService = emailServiceFactory.GetService();
             userService = userServiceFactory.GetService();
             linkService = linkServiceFactory.GetService();
             codesService = codesServiceFactory.GetService();
-
+            requestService = requestServiceFactory.GetService();
+            
             exceptionLogger = loggerFactory.GetExceptionLogger();
             exceptionLogger.LogConfiguration = LogConfiguration;
         }
@@ -225,16 +231,15 @@ namespace SentenceAPI.Features.Users
         {
             try
             {
-                UserInfo user = null;
-                using (StreamReader sr = new StreamReader(Request.Body, Encoding.UTF8, true, 1024, true))
+                var updatedFields = requestService.GetRequestBody<Dictionary<string, object>>(Request);
+                UserInfo user = new UserInfo(updatedFields);
+
+                await userService.Update(user, updatedFields.Keys.Select(propName =>
                 {
-                    string body = await sr.ReadToEndAsync();
-                    user = JsonConvert.DeserializeObject<UserInfo>(body);
-                }
+                    return typeof(UserInfo).GetPropertyFromJsonName(propName).Name;
+                }));
 
-                await userService.Update(user);
-
-                return new OkJson<UserInfo>(await userService.Get(user.ID));
+                return new Ok();
             }
             catch (DatabaseException ex)
             {

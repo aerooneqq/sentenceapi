@@ -28,6 +28,8 @@ using SentenceAPI.Features.UserFeed.Factories;
 using SentenceAPI.Features.UserFeed.Interfaces;
 using SentenceAPI.Features.Codes.Factories;
 using SentenceAPI.Features.Codes.Interfaces;
+using SentenceAPI.Features.Requests.Factories;
+using SentenceAPI.Features.Requests.Interfaces;
 
 namespace SentenceAPI
 {
@@ -126,6 +128,8 @@ namespace SentenceAPI
                 typeof(IUserFeedServiceFactory)));
             factoriesManager.AddFactory(new FactoryInfo(new CodesServiceFactory(),
                 typeof(ICodesServiceFactory)));
+            factoriesManager.AddFactory(new FactoryInfo(new RequestServiceFactory(),
+                typeof(IRequestServiceFactory)));
         }
     }
 }

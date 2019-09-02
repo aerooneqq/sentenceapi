@@ -149,6 +149,20 @@ namespace SentenceAPI.Features.Users.Services
             }
         }
 
+        public async Task Update(UserInfo user, IEnumerable<string> properties)
+        {
+            try
+            {
+                await database.Connect();
+                await database.Update(user, properties);
+            }
+            catch (Exception ex)
+            {
+                await exceptionLogger.Log(new ApplicationError(ex));
+                throw new DatabaseException("The error occured while updating the user.");
+            }
+        }
+
         public async Task<long> CreateNewUser(string email, string password)
         {
             try

@@ -66,7 +66,6 @@ namespace SentenceApiTests.DatabaseTests
         {
             try
             {
-
                 await mongoDBService.Connect();
                 await mongoDBService.CreateCollection();
 

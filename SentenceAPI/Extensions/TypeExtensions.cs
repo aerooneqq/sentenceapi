@@ -1,4 +1,6 @@
 ﻿using MongoDB.Bson.Serialization.Attributes;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,6 +36,56 @@ namespace SentenceAPI.Extensions
             }
 
             return bsonElementNameAttr.ElementName;
+        }
+
+        /// <summary>
+        /// Gets the property depending on the BSON property name
+        /// </summary>
+        /// <returns>
+        /// The PropertyInfo object if the property under the given name exists,
+        /// NULL otherwise
+        /// </returns>
+        public static PropertyInfo GetPropertyFromBSONName(this Type type, string bsonPropertyName)
+        {
+            PropertyInfo[] properties = type.GetTypeInfo().GetProperties(BindingFlags.Public 
+                | BindingFlags.Instance);
+
+            return properties.Where(p =>
+            {
+                BsonElementAttribute bsonElementAttribute = p.GetCustomAttribute<BsonElementAttribute>();
+
+                if (bsonElementAttribute != null)
+                {
+                    return bsonElementAttribute.ElementName == bsonPropertyName;
+                }
+
+                return false;
+            }).FirstOrDefault();
+        }
+
+        /// <summary>
+        /// Gets the property depending on the JSON property name.
+        /// </summary>
+        /// <returns>
+        /// The PropertyInfo object of the property under the given JSON name exists,
+        /// NULL otherwise
+        /// </returns>
+        public static PropertyInfo GetPropertyFromJsonName(this Type type, string jsonPropertyName)
+        {
+            PropertyInfo[] properties = type.GetTypeInfo().GetProperties(BindingFlags.Public |
+                BindingFlags.Instance);
+
+            return properties.Where(p =>
+            {
+                JsonPropertyAttribute jsonPropertyAttribute = p.GetCustomAttribute<JsonPropertyAttribute>();
+
+                if (jsonPropertyAttribute != null )
+                {
+                    return jsonPropertyAttribute.PropertyName == jsonPropertyName;
+                }
+
+                return false;
+            }).FirstOrDefault();
         }
     }
 }

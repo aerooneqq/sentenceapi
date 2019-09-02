@@ -12,11 +12,15 @@ namespace SentenceAPI.Features.Users.Interfaces
         Task<T> Get(string email, string password);
         Task<T> Get(long id);
         Task<T> Get(string token);
-        Task<long> CreateNewUser(string email, string password);
-        void Delete(long id);
-        Task Update(T user);
-        Task<IEnumerable<T>> FindUsersWithLogin(string login);
 
+        Task<long> CreateNewUser(string email, string password);
+
+        void Delete(long id);
+
+        Task Update(T user);
+        Task Update(T user, IEnumerable<string> properties);
+
+        Task<IEnumerable<T>> FindUsersWithLogin(string login);
         Task<bool> DoesUserExist(string email);
     }
 }
