@@ -6,6 +6,13 @@ using System.Threading.Tasks;
 
 namespace SentenceAPI.Validators
 {
+    /// <summary>
+    /// LOGIN CONDITIONS:
+    /// 1) length > 8
+    /// 2) MUST contain an english lower-case letter
+    /// 3) MUST contain an english upper-case letter
+    /// 4) MUST contain a number
+    /// </summary>
     public class LoginValidator : IValidator
     {
         private static string englishLowerLetters = "qwertyuiopasdfghjklzxcvbnm";

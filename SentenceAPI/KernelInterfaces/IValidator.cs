@@ -7,6 +7,6 @@ namespace SentenceAPI.KernelInterfaces
 {
     public interface IValidator
     {
-        (bool, string) Validate();
+        (bool result, string errorMessage) Validate();
     }
 }

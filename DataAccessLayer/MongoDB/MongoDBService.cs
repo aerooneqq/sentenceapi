@@ -104,8 +104,16 @@ namespace DataAccessLayer.MongoDB
         /// <summary>
         /// Inserts one entity in a cloud mongo database.
         /// </summary>
+        /// <exception cref="ArgumentException">
+        /// If the given entity is not of a type <DataType>
+        /// </exception>
         public Task Insert(DataType entity)
         {
+            if (!(entity is DataType))
+            {
+                throw new ArgumentException($"The entity is not of type {typeof(DataType).Name}");
+            }
+
             return Task.Run(() =>
             {
                 mongoCollection = database.GetCollection<DataType>(CollectionName);
@@ -139,6 +147,11 @@ namespace DataAccessLayer.MongoDB
         /// </summary>
         public Task Update(DataType entity)
         {
+            if (!(entity is DataType))
+            {
+                throw new ArgumentException($"The entity is not of type {typeof(DataType).Name}");
+            }
+
             return Task.Run(() =>
             {
                 var filter = Builders<DataType>.Filter.Eq("_id", entity.ID);

@@ -38,9 +38,6 @@ namespace SentenceAPI.Features.Authentication
 
         #region Factories
         private readonly IFactoriesManager factoriesManager = FactoriesManager.FactoriesManager.Instance;
-        private IUserServiceFactory userServiceFactory;
-        private ITokenServiceFactory tokenServiceFactory;
-        private ILoggerFactory loggerFactory;
         #endregion
 
         #region Services

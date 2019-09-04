@@ -6,6 +6,12 @@ using System.Threading.Tasks;
 
 namespace SentenceAPI.Validators
 {
+    /// <summary>
+    /// PASSWORD RULES:
+    /// 1) length >= 8
+    /// 2) length <= 30
+    /// 3) MUST contain only english letters (higher or lower case) and at least one number
+    /// </summary>
     public class PasswordValidator : IValidator
     {
         private static int minPassLength = 8;

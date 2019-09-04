@@ -4,7 +4,7 @@ using System.Text;
 using System.Linq;
 
 using SentenceAPI.Features.Users.Models;
-using SentenceAPI.Features.Extensions;
+using SentenceAPI.Extensions;
 
 using NUnit.Framework;
 using System.Reflection;

@@ -6,7 +6,7 @@ using System.Text;
 
 namespace DataAccessLayer.Configuration
 {
-    class MongoDatabaseConfiguration : IDatabaseConfiguration
+    public class MongoDatabaseConfiguration : IDatabaseConfiguration
     {
         public string ConnectionString { get; set; }
         public string UserName { get; set; }

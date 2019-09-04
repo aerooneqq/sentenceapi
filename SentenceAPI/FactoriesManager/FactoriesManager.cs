@@ -23,7 +23,7 @@ namespace SentenceAPI.FactoriesManager
 
         #region IFactoryManager implementaion
         /// <summary>
-        /// Returns the factory with a given interface type. If the factory not in
+        /// Returns the weak reference factory with a given interface type. If the factory not in
         /// the list returns null.
         /// </summary>
         /// <param name="t">

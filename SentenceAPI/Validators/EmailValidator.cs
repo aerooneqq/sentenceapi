@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace SentenceAPI.Validators
 {
+    /// <summary>
+    /// The standart rules of email address are implemented here
+    /// </summary>
     public class EmailValidator : IValidator
     {
         private static string errorMessage = "Email address is not correct.";
@@ -32,7 +35,7 @@ namespace SentenceAPI.Validators
 
                 return (true, string.Empty);
             }
-            catch (FormatException)
+            catch
             {
                 return (false, errorMessage);
             }
