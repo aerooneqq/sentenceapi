@@ -11,8 +11,8 @@ using Microsoft.AspNetCore.Mvc;
 
 using SentenceAPI.Features.Users.Interfaces;
 using SentenceAPI.Features.Users.Models;
-using SentenceAPI.Features.Loggers.Interfaces;
-using SentenceAPI.Features.Loggers.Models;
+using SentenceAPI.ApplicationFeatures.Loggers.Interfaces;
+using SentenceAPI.ApplicationFeatures.Loggers.Models;
 using SentenceAPI.Features.Email.Interfaces;
 using SentenceAPI.Features.Links.Interfaces;
 using SentenceAPI.Validators;
@@ -27,7 +27,7 @@ using SentenceAPI.KernelInterfaces;
 using SentenceAPI.Features.Codes.Models;
 using SentenceAPI.Features.Codes.Interfaces;
 using Microsoft.AspNetCore.Http;
-using SentenceAPI.Features.Requests.Interfaces;
+using SentenceAPI.ApplicationFeatures.Requests.Interfaces;
 
 namespace SentenceAPI.Features.Users
 {

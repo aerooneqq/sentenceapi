@@ -10,8 +10,8 @@ using SentenceAPI.Extensions;
 using SentenceAPI.Features.Authentication.Interfaces;
 using SentenceAPI.Features.Codes.Interfaces;
 using SentenceAPI.Features.Codes.Models;
-using SentenceAPI.Features.Loggers.Interfaces;
-using SentenceAPI.Features.Loggers.Models;
+using SentenceAPI.ApplicationFeatures.Loggers.Interfaces;
+using SentenceAPI.ApplicationFeatures.Loggers.Models;
 
 using System;
 using System.Collections.Generic;

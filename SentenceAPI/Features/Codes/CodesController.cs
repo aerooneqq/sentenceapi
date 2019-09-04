@@ -7,8 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 
 using SentenceAPI.ActionResults;
 using SentenceAPI.Features.Codes.Interfaces;
-using SentenceAPI.Features.Loggers.Interfaces;
-using SentenceAPI.Features.Loggers.Models;
+using SentenceAPI.ApplicationFeatures.Loggers.Interfaces;
+using SentenceAPI.ApplicationFeatures.Loggers.Models;
 using SentenceAPI.Features.Users.Interfaces;
 using SentenceAPI.Features.Users.Models;
 

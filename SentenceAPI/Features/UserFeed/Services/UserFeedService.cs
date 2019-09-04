@@ -2,8 +2,8 @@
 
 using SentenceAPI.Features.Authentication.Interfaces;
 using SentenceAPI.FactoriesManager.Interfaces;
-using SentenceAPI.Features.Loggers.Interfaces;
-using SentenceAPI.Features.Loggers.Models;
+using SentenceAPI.ApplicationFeatures.Loggers.Interfaces;
+using SentenceAPI.ApplicationFeatures.Loggers.Models;
 using SentenceAPI.Features.UserFeed.Interfaces;
 using SentenceAPI.Features.UserFeed.Models;
 using SentenceAPI.Features.UserFriends.Interfaces;

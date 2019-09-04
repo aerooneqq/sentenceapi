@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 
 using SentenceAPI.Features.Links.Interfaces;
 using SentenceAPI.Features.Links.Models;
-using SentenceAPI.Features.Loggers.Interfaces;
-using SentenceAPI.Features.Loggers.Models;
+using SentenceAPI.ApplicationFeatures.Loggers.Interfaces;
+using SentenceAPI.ApplicationFeatures.Loggers.Models;
 using SentenceAPI.Features.Users.Models;
 
 using DataAccessLayer.DatabasesManager;

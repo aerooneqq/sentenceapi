@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace SentenceAPI.Features.Loggers.Models
+namespace SentenceAPI.ApplicationFeatures.Loggers.Models
 {
     public class LogConfiguration
     {

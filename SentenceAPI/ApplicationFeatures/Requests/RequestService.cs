@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
-using SentenceAPI.Features.Requests.Interfaces;
+using SentenceAPI.ApplicationFeatures.Requests.Interfaces;
 using SentenceAPI.Serialization;
 using SentenceAPI.Serialization.Json;
 using System;
@@ -9,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SentenceAPI.Features.Requests
+namespace SentenceAPI.ApplicationFeatures.Requests
 {
     public class RequestService : IRequestService
     {

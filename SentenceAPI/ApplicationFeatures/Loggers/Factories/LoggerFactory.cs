@@ -1,13 +1,13 @@
-﻿using SentenceAPI.Features.Loggers.Interfaces;
-using SentenceAPI.Features.Logger;
+﻿using SentenceAPI.ApplicationFeatures.Loggers.Interfaces;
+using SentenceAPI.ApplicationFeatures.Loggers;
+using SentenceAPI.ApplicationFeatures.Loggers.Models;
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using SentenceAPI.Features.Loggers.Models;
 
-namespace SentenceAPI.Features.Loggers.Factories
+namespace SentenceAPI.ApplicationFeatures.Loggers.Factories
 {
     public class LoggerFactory : ILoggerFactory
     {

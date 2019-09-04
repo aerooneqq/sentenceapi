@@ -4,8 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
 using SentenceAPI.Features.Authentication.Interfaces;
-using SentenceAPI.Features.Loggers.Interfaces;
-using SentenceAPI.Features.Loggers.Models;
+using SentenceAPI.ApplicationFeatures.Loggers.Interfaces;
+using SentenceAPI.ApplicationFeatures.Loggers.Models;
 using SentenceAPI.Features.UserActivity.Interfaces;
 using SentenceAPI.FactoriesManager;
 
@@ -35,10 +35,6 @@ namespace SentenceAPI.Features.UserActivity
 
         #region Factories
         private FactoriesManager.FactoriesManager factoriesManager = FactoriesManager.FactoriesManager.Instance;
-
-        private ITokenServiceFactory tokenServiceFactory;
-        private ILoggerFactory loggerFactory;
-        private IUserActivityServiceFactory userActivityServiceFactory;
         #endregion
 
         public UserActivitiesController()

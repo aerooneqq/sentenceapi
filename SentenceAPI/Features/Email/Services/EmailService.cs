@@ -6,8 +6,8 @@ using System.Net.Mail;
 using System.Net;
 
 using SentenceAPI.Features.Email.Interfaces;
-using SentenceAPI.Features.Loggers.Models;
-using SentenceAPI.Features.Loggers.Interfaces;
+using SentenceAPI.ApplicationFeatures.Loggers.Models;
+using SentenceAPI.ApplicationFeatures.Loggers.Interfaces;
 using SentenceAPI.Features.Users.Models;
 using DataAccessLayer.CommonInterfaces;
 using DataAccessLayer.Configuration.Interfaces;

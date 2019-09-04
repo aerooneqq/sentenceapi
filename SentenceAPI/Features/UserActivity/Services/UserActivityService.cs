@@ -42,30 +42,54 @@ namespace SentenceAPI.Features.UserActivity.Services
         #region IUserActivityService implementation
         /// <summary>
         /// This method adds a single activity to a list of user's single activities with
-        /// a given userID.
+        /// a given userID. If there is no record of user activity, then the new record is created
+        /// in the database.
         /// </summary>
         /// <exception cref="DatabaseException">
-        /// When the error occurs while working with the database.
-        /// </exception>
-        /// <exception cref="ArgumentException">
-        /// When there is no user with a given ID.
+        /// When the error occurs while working with the database. Provides the meaningful description of the error.
         /// </exception>
         public async Task AddSingleActivity(long userID, SingleUserActivity singleUserActivity)
         {
             await database.Connect();
+
             var filter = new EqualityFilter<long>("userID", userID); 
             Models.UserActivity userActivity = (await database.Get(filter).ConfigureAwait(false))
                 .FirstOrDefault();
 
             if (userActivity == null)
             {
-                throw new ArgumentNullException("The user activity for a user with such userID was not found");
+                await CreateUserActivity(userID);
             }
 
+            userActivity = (await database.Get(filter).ConfigureAwait(false))
+                .FirstOrDefault();
+
+            AddActivityToList(userActivity, singleUserActivity);
+
+            await database.Update(userActivity, new[] { "Activities" });
+        }
+
+        private void AddActivityToList(Models.UserActivity userActivity, SingleUserActivity singleUserActivity)
+        {
             var activitiesList = userActivity.Activities.ToList();
+
             activitiesList.Add(singleUserActivity);
             userActivity.Activities = activitiesList;
-            await database.Update(userActivity, new[] { "Activities" });
+        }
+
+        /// <summary>
+        /// Creates the user activity record in the database.
+        /// </summary>
+        private async Task CreateUserActivity(long userID)
+        {
+            await database.Insert(new Models.UserActivity()
+            {
+                Activities = new List<SingleUserActivity>(),
+                IsOnline = false,
+                LastActivityDate = DateTime.Now,
+                LastOnline = DateTime.Now,
+                UserID = userID
+            });
         }
 
         /// <summary>

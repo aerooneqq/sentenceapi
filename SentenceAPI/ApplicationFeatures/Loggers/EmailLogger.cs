@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 using Newtonsoft.Json;
 
-using SentenceAPI.Features.Loggers.Interfaces;
-using SentenceAPI.Features.Loggers.Models;
+using SentenceAPI.ApplicationFeatures.Loggers.Interfaces;
+using SentenceAPI.ApplicationFeatures.Loggers.Models;
 
 using DataAccessLayer.CommonInterfaces;
 using DataAccessLayer.MongoDB.Interfaces;
@@ -15,7 +15,7 @@ using DataAccessLayer.DatabasesManager;
 using DataAccessLayer.Configuration.Interfaces;
 using DataAccessLayer.Configuration;
 
-namespace SentenceAPI.Features.Loggers
+namespace SentenceAPI.ApplicationFeatures.Loggers
 {
     public class EmailLogger : ILogger<EmailLog>
     {

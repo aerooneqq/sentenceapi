@@ -1,10 +1,11 @@
-﻿using SentenceAPI.Features.Requests.Interfaces;
+﻿using SentenceAPI.ApplicationFeatures.Requests.Interfaces;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace SentenceAPI.Features.Requests.Factories
+namespace SentenceAPI.ApplicationFeatures.Requests.Factories
 {
     class RequestServiceFactory : IRequestServiceFactory
     {

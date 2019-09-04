@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-using SentenceAPI.Features.Loggers.Models;
+using SentenceAPI.ApplicationFeatures.Loggers.Models;
 using SentenceAPI.KernelInterfaces;
 
-namespace SentenceAPI.Features.Loggers.Interfaces
+namespace SentenceAPI.ApplicationFeatures.Loggers.Interfaces
 {
     public interface ILogger<LogType> : IService
     {

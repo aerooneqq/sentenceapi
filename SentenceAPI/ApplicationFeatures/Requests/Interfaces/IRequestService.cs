@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace SentenceAPI.Features.Requests.Interfaces
+namespace SentenceAPI.ApplicationFeatures.Requests.Interfaces
 {
     interface IRequestService
     {

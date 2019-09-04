@@ -10,8 +10,8 @@ using MongoDB.Bson.Serialization.Attributes;
 
 using SentenceAPI.Features.Users.Interfaces;
 using SentenceAPI.Features.Users.Models;
-using SentenceAPI.Features.Loggers.Interfaces;
-using SentenceAPI.Features.Loggers.Models;
+using SentenceAPI.ApplicationFeatures.Loggers.Interfaces;
+using SentenceAPI.ApplicationFeatures.Loggers.Models;
 using SentenceAPI.Extensions;
 
 using DataAccessLayer.CommonInterfaces;

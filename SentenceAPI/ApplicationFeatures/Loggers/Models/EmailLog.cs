@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 using SentenceAPI.Features.Users.Models;
 using DataAccessLayer.KernelModels;
 
-namespace SentenceAPI.Features.Loggers.Models
+namespace SentenceAPI.ApplicationFeatures.Loggers.Models
 {
     public class EmailLog : UniqueEntity
     {

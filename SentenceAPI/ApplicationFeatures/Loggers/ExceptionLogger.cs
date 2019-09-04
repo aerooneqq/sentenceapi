@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 using System.Threading;
 using System.IO;
 
-using SentenceAPI.Features.Loggers.Models;
-using SentenceAPI.Features.Loggers.Interfaces;
+using SentenceAPI.ApplicationFeatures.Loggers.Models;
+using SentenceAPI.ApplicationFeatures.Loggers.Interfaces;
 
 using Newtonsoft.Json;
 using DataAccessLayer.CommonInterfaces;
@@ -14,7 +14,7 @@ using DataAccessLayer.Configuration.Interfaces;
 using DataAccessLayer.DatabasesManager;
 using DataAccessLayer.Configuration;
 
-namespace SentenceAPI.Features.Logger
+namespace SentenceAPI.ApplicationFeatures.Loggers
 {
     public class ExceptionLogger : ILogger<ApplicationError>
     {

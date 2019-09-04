@@ -17,12 +17,14 @@ using SentenceAPI.Features.Users.Models;
 using SentenceAPI.Features.Authentication.Interfaces;
 using SentenceAPI.Features.Authentication.Models;
 
-using SentenceAPI.Features.Loggers.Interfaces;
-using SentenceAPI.Features.Loggers.Models;
+using SentenceAPI.ApplicationFeatures.Loggers.Interfaces;
+using SentenceAPI.ApplicationFeatures.Loggers.Models;
 
 using DataAccessLayer.Exceptions;
 using DataAccessLayer.Hashes;
 using SentenceAPI.ActionResults;
+using SentenceAPI.ApplicationFeatures.DefferedExecution;
+using SentenceAPI.Features.UserActivity.Interfaces;
 
 namespace SentenceAPI.Features.Authentication
 {
@@ -44,6 +46,7 @@ namespace SentenceAPI.Features.Authentication
         private IUserService<UserInfo> userService;
         private ITokenService tokenService;
         private ILogger<ApplicationError> exceptionLogger;
+        private IUserActivityService userActivityService;
         #endregion
 
         #region Constructors
@@ -52,6 +55,7 @@ namespace SentenceAPI.Features.Authentication
             factoriesManager.GetService<IUserService<UserInfo>>().TryGetTarget(out userService);
             factoriesManager.GetService<ITokenService>().TryGetTarget(out tokenService);
             factoriesManager.GetService<ILogger<ApplicationError>>().TryGetTarget(out exceptionLogger);
+            factoriesManager.GetService<IUserActivityService>().TryGetTarget(out userActivityService);
 
             exceptionLogger.LogConfiguration = LogConfiguration;
         }
@@ -79,6 +83,14 @@ namespace SentenceAPI.Features.Authentication
                 var (encodedToken, securityToken) = tokenService.CreateEncodedToken(user);
 
                 await tokenService.InsertTokenInDB(new JwtToken(securityToken, user));
+
+                DefferedTasksManager.AddTask(new Action(() => userActivityService.AddSingleActivity(user.ID,
+                    new UserActivity.Models.SingleUserActivity()
+                    {
+                        ActivityDate = DateTime.Now,
+                        Activity = "Logged in"
+                    })));
+
                 return new Ok(encodedToken);
             }
             catch (DatabaseException ex)
