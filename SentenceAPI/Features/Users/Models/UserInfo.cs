@@ -78,7 +78,7 @@ namespace SentenceAPI.Features.Users.Models
                 }
 
                 PropertyInfo property = typeof(UserInfo).GetPropertyFromJsonName(propName);
-                property.SetValue(this, newValue);
+                property.SetValue(this, ((JArray)newValue).ToObject(property.PropertyType));
             }
         }
 

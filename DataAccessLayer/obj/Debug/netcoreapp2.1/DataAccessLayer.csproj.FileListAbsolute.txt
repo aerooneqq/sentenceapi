@@ -7,3 +7,11 @@ C:\Users\Aero\Desktop\Sentence\sentenceapi\DataAccessLayer\obj\Debug\netcoreapp2
 C:\Users\Aero\Desktop\Sentence\sentenceapi\DataAccessLayer\bin\Debug\netcoreapp2.1\DataAccessLayer.pdb
 C:\Users\Aero\Desktop\Sentence\sentenceapi\DataAccessLayer\obj\Debug\netcoreapp2.1\DataAccessLayer.dll
 C:\Users\Aero\Desktop\Sentence\sentenceapi\DataAccessLayer\obj\Debug\netcoreapp2.1\DataAccessLayer.pdb
+C:\Users\evgen\OneDrive\Рабочий стол\Sentence\SentenceAPI\DataAccessLayer\bin\Debug\netcoreapp2.1\DataAccessLayer.deps.json
+C:\Users\evgen\OneDrive\Рабочий стол\Sentence\SentenceAPI\DataAccessLayer\bin\Debug\netcoreapp2.1\DataAccessLayer.dll
+C:\Users\evgen\OneDrive\Рабочий стол\Sentence\SentenceAPI\DataAccessLayer\bin\Debug\netcoreapp2.1\DataAccessLayer.pdb
+C:\Users\evgen\OneDrive\Рабочий стол\Sentence\SentenceAPI\DataAccessLayer\obj\Debug\netcoreapp2.1\DataAccessLayer.csproj.CoreCompileInputs.cache
+C:\Users\evgen\OneDrive\Рабочий стол\Sentence\SentenceAPI\DataAccessLayer\obj\Debug\netcoreapp2.1\DataAccessLayer.AssemblyInfoInputs.cache
+C:\Users\evgen\OneDrive\Рабочий стол\Sentence\SentenceAPI\DataAccessLayer\obj\Debug\netcoreapp2.1\DataAccessLayer.AssemblyInfo.cs
+C:\Users\evgen\OneDrive\Рабочий стол\Sentence\SentenceAPI\DataAccessLayer\obj\Debug\netcoreapp2.1\DataAccessLayer.dll
+C:\Users\evgen\OneDrive\Рабочий стол\Sentence\SentenceAPI\DataAccessLayer\obj\Debug\netcoreapp2.1\DataAccessLayer.pdb

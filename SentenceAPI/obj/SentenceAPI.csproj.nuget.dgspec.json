@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Aero\\Desktop\\Sentence\\sentenceapi\\SentenceAPI\\SentenceAPI.csproj": {}
+    "C:\\Users\\evgen\\OneDrive\\Рабочий стол\\Sentence\\SentenceAPI\\SentenceAPI\\SentenceAPI.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Aero\\Desktop\\Sentence\\sentenceapi\\DataAccessLayer\\DataAccessLayer.csproj": {
+    "C:\\Users\\evgen\\OneDrive\\Рабочий стол\\Sentence\\SentenceAPI\\DataAccessLayer\\DataAccessLayer.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Aero\\Desktop\\Sentence\\sentenceapi\\DataAccessLayer\\DataAccessLayer.csproj",
+        "projectUniqueName": "C:\\Users\\evgen\\OneDrive\\Рабочий стол\\Sentence\\SentenceAPI\\DataAccessLayer\\DataAccessLayer.csproj",
         "projectName": "DataAccessLayer",
-        "projectPath": "C:\\Users\\Aero\\Desktop\\Sentence\\sentenceapi\\DataAccessLayer\\DataAccessLayer.csproj",
-        "packagesPath": "C:\\Users\\Aero\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Aero\\Desktop\\Sentence\\sentenceapi\\DataAccessLayer\\obj\\",
+        "projectPath": "C:\\Users\\evgen\\OneDrive\\Рабочий стол\\Sentence\\SentenceAPI\\DataAccessLayer\\DataAccessLayer.csproj",
+        "packagesPath": "C:\\Users\\evgen\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\evgen\\OneDrive\\Рабочий стол\\Sentence\\SentenceAPI\\DataAccessLayer\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
         ],
         "configFilePaths": [
-          "C:\\Users\\Aero\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\evgen\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -64,20 +64,20 @@
         }
       }
     },
-    "C:\\Users\\Aero\\Desktop\\Sentence\\sentenceapi\\SentenceAPI\\SentenceAPI.csproj": {
+    "C:\\Users\\evgen\\OneDrive\\Рабочий стол\\Sentence\\SentenceAPI\\SentenceAPI\\SentenceAPI.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Aero\\Desktop\\Sentence\\sentenceapi\\SentenceAPI\\SentenceAPI.csproj",
+        "projectUniqueName": "C:\\Users\\evgen\\OneDrive\\Рабочий стол\\Sentence\\SentenceAPI\\SentenceAPI\\SentenceAPI.csproj",
         "projectName": "SentenceAPI",
-        "projectPath": "C:\\Users\\Aero\\Desktop\\Sentence\\sentenceapi\\SentenceAPI\\SentenceAPI.csproj",
-        "packagesPath": "C:\\Users\\Aero\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Aero\\Desktop\\Sentence\\sentenceapi\\SentenceAPI\\obj\\",
+        "projectPath": "C:\\Users\\evgen\\OneDrive\\Рабочий стол\\Sentence\\SentenceAPI\\SentenceAPI\\SentenceAPI.csproj",
+        "packagesPath": "C:\\Users\\evgen\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\evgen\\OneDrive\\Рабочий стол\\Sentence\\SentenceAPI\\SentenceAPI\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
         ],
         "configFilePaths": [
-          "C:\\Users\\Aero\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\evgen\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -90,8 +90,8 @@
         "frameworks": {
           "netcoreapp2.1": {
             "projectReferences": {
-              "C:\\Users\\Aero\\Desktop\\Sentence\\sentenceapi\\DataAccessLayer\\DataAccessLayer.csproj": {
-                "projectPath": "C:\\Users\\Aero\\Desktop\\Sentence\\sentenceapi\\DataAccessLayer\\DataAccessLayer.csproj"
+              "C:\\Users\\evgen\\OneDrive\\Рабочий стол\\Sentence\\SentenceAPI\\DataAccessLayer\\DataAccessLayer.csproj": {
+                "projectPath": "C:\\Users\\evgen\\OneDrive\\Рабочий стол\\Sentence\\SentenceAPI\\DataAccessLayer\\DataAccessLayer.csproj"
               }
             }
           }
