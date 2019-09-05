@@ -1,11 +1,12 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using DataAccessLayer.Exceptions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using SentenceAPI.Databases.Exceptions;
-using SentenceAPI.Databases.MongoDB.Interfaces;
+using SentenceAPI.ActionResults;
 using SentenceAPI.FactoriesManager.Interfaces;
-using SentenceAPI.Features.Loggers.Interfaces;
-using SentenceAPI.Features.Loggers.Models;
+using SentenceAPI.ApplicationFeatures.Loggers.Interfaces;
+using SentenceAPI.ApplicationFeatures.Loggers.Models;
+using SentenceAPI.ApplicationFeatures.Requests.Interfaces;
 using SentenceAPI.Features.UserFriends.Interfaces;
 
 using System;
@@ -19,30 +20,30 @@ namespace SentenceAPI.Features.UserFriends
     [Authorize, ApiController, Route("api/[controller]")]
     public class UserFriendsController : Controller
     {
+        private static LogConfiguration LogConfiguration => new LogConfiguration()
+        {
+            ControllerName = "UserFriendsController",
+            ServiceName = string.Empty,
+        };
+
         #region Services
-        private ILogger<ApplicationError> exceptionLogger; 
+        private ILogger<ApplicationError> exceptionLogger;
         private IUserFriendsService userFriendsService;
+        private IRequestService requestService; 
         #endregion
 
         #region Factories
         private IFactoriesManager factoriesManager = FactoriesManager.FactoriesManager.Instance;
-
-        private ILoggerFactory loggerFactory;
-        private IUserFriendsServiceFactory userFriendsServiceFactory;
-        #endregion
-
-        #region Builders
-        private IMongoDBServiceBuilder<Models.UserFriends> mongoDBServiceBuilder;
         #endregion
 
         public UserFriendsController()
         {
-            userFriendsServiceFactory = factoriesManager[typeof(IUserFriendsServiceFactory)].Factory 
-                as IUserFriendsServiceFactory;
-            loggerFactory = factoriesManager[typeof(ILoggerFactory)].Factory as ILoggerFactory;
-
-            exceptionLogger = loggerFactory.GetExceptionLogger();
-            userFriendsService = userFriendsServiceFactory.GetSerivce();
+            factoriesManager.GetService<IUserFriendsService>().TryGetTarget(out userFriendsService);
+            factoriesManager.GetService<IUserFriendsService>().TryGetTarget(out userFriendsService);
+            factoriesManager.GetService<ILogger<ApplicationError>>().TryGetTarget(out exceptionLogger);
+            factoriesManager.GetService<IRequestService>().TryGetTarget(out requestService);
+            
+            exceptionLogger.LogConfiguration = LogConfiguration;
         }
 
         [HttpGet, Route("subscribers")]
@@ -50,19 +51,20 @@ namespace SentenceAPI.Features.UserFriends
         {
             try
             {
-                string authHeader = Request.Headers["Authorization"];
-                string token = authHeader.Split()[1];
+                string token = requestService.GetToken(Request);
 
-                return Ok(await userFriendsService.GetSubscribers(token));
+                var subscribers = await userFriendsService.GetSubscribers(token);
+
+                return new OkJson<IEnumerable<Models.Subscriber>>(subscribers);
             }
             catch (DatabaseException ex)
             {
-                return StatusCode(500, ex.Message);
+                return new InternalServerError(ex.Message);
             }
             catch (Exception ex)
             {
-                await exceptionLogger.Log(new ApplicationError(ex.Message));
-                return StatusCode(500);
+                await exceptionLogger.Log(new ApplicationError(ex));
+                return new InternalServerError();
             }
         }
 
@@ -71,19 +73,20 @@ namespace SentenceAPI.Features.UserFriends
         {
             try
             {
-                string authHeader = Request.Headers["Authorization"];
-                string token = authHeader.Split()[1];
+                string token = requestService.GetToken(Request);
 
-                return Ok(JsonConvert.SerializeObject(await userFriendsService.GetSubscriptions(token)));
+                var subscriptions = await userFriendsService.GetSubscriptions(token);
+
+                return new OkJson<IEnumerable<Models.Subscription>>(subscriptions);
             }
             catch (DatabaseException ex)
             {
-                return StatusCode(500, ex.Message);
+                return new InternalServerError(ex.Message);
             }
             catch (Exception ex)
             {
-                await exceptionLogger.Log(new ApplicationError(ex.Message));
-                return StatusCode(500);
+                await exceptionLogger.Log(new ApplicationError(ex));
+                return new InternalServerError();
             }
         }
 
@@ -92,20 +95,20 @@ namespace SentenceAPI.Features.UserFriends
         {
             try
             {
-                string authHeader = Request.Headers["Authorization"];
-                string token = authHeader.Split()[1];
+                string token = requestService.GetToken(Request);
 
                 await userFriendsService.AddSubscriber(token, subscriberID);
 
-                return Ok();
+                return new Ok();
             }
             catch (DatabaseException ex)
             {
-                return StatusCode(500, ex.Message);
+                return new InternalServerError(ex.Message);
             }
             catch (Exception ex)
             {
-                return StatusCode(500);
+                await exceptionLogger.Log(new ApplicationError(ex));
+                return new InternalServerError();
             }
         }
 
@@ -114,21 +117,20 @@ namespace SentenceAPI.Features.UserFriends
         {
             try
             {
-                string authHeader = Request.Headers["Authorization"];
-                string token = authHeader.Split()[1];
+                string token = requestService.GetToken(Request);
 
                 await userFriendsService.AddSubscription(token, subscriptionID);
 
-                return Ok();
+                return new Ok();
             }
             catch (DatabaseException ex)
             {
-                return StatusCode(500, ex.Message);
+                return new InternalServerError(ex.Message);
             }
             catch (Exception ex)
             {
                 await exceptionLogger.Log(new ApplicationError(ex.Message));
-                return StatusCode(500);
+                return new InternalServerError();
             }
         }
 
@@ -137,21 +139,20 @@ namespace SentenceAPI.Features.UserFriends
         {
             try
             {
-                string authHeader = Request.Headers["Authorization"];
-                string token = authHeader.Split()[1];
+                string token = requestService.GetToken(Request);
 
                 await userFriendsService.DeleteSubscriber(token, subscriberID);
 
-                return Ok();
+                return new Ok();
             }
             catch (DatabaseException ex)
             {
-                return StatusCode(500, ex.Message);
+                return new InternalServerError(ex.Message);
             }
             catch (Exception ex)
             {
                 await exceptionLogger.Log(new ApplicationError(ex.Message));
-                return StatusCode(500);
+                return new InternalServerError();
             }
         }
 
@@ -160,21 +161,20 @@ namespace SentenceAPI.Features.UserFriends
         {
             try
             {
-                string authHeader = Request.Headers["Authorization"];
-                string token = authHeader.Split()[1];
+                string token = requestService.GetToken(Request);
 
                 await userFriendsService.DeleteSubscription(token, subscriptionID);
 
-                return Ok();
+                return new Ok();
             }
             catch (DatabaseException ex)
             {
-                return StatusCode(500, ex.Message);
+                return new InternalServerError(ex.Message);
             }
             catch (Exception ex)
             {
                 await exceptionLogger.Log(new ApplicationError(ex.Message));
-                return StatusCode(500);
+                return new InternalServerError();
             }
         }
     }

@@ -9,17 +9,13 @@ using Microsoft.AspNetCore.Mvc;
 using SentenceAPI.Features.Authentication.Models;
 using SentenceAPI.FactoriesManager.Models;
 using SentenceAPI.FactoriesManager.Interfaces;
-using SentenceAPI.FactoriesManager;
 using SentenceAPI.Features.Users.Interfaces;
 using SentenceAPI.Features.Authentication.Interfaces;
 using SentenceAPI.Features.Users.Factories;
 using SentenceAPI.Features.Authentication.Factories;
-using SentenceAPI.Databases.MongoDB.Factories;
-using SentenceAPI.Databases.MongoDB.Interfaces;
-using SentenceAPI.Features.Loggers.Factories;
-using SentenceAPI.Features.Loggers.Interfaces;
+using SentenceAPI.ApplicationFeatures.Loggers.Factories;
+using SentenceAPI.ApplicationFeatures.Loggers.Interfaces;
 using SentenceAPI.Middlewares.RequestLoggerMiddleware;
-using SentenceAPI.Features.Email.Services;
 using SentenceAPI.Features.Email.Interfaces;
 using SentenceAPI.Features.Email.Factories;
 using SentenceAPI.Features.Links.Factories;
@@ -30,6 +26,11 @@ using SentenceAPI.Features.UserActivity.Factories;
 using SentenceAPI.Features.UserActivity.Interfaces;
 using SentenceAPI.Features.UserFeed.Factories;
 using SentenceAPI.Features.UserFeed.Interfaces;
+using SentenceAPI.Features.Codes.Factories;
+using SentenceAPI.Features.Codes.Interfaces;
+using SentenceAPI.ApplicationFeatures.Requests.Factories;
+using SentenceAPI.ApplicationFeatures.Requests.Interfaces;
+using SentenceAPI.ApplicationFeatures.DefferedExecution;
 
 namespace SentenceAPI
 {
@@ -48,13 +49,16 @@ namespace SentenceAPI
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+
+            DefferedTasksManager.Initialize();
+            DefferedTasksManager.Start();
         }
 
         public void ConfigureServices(IServiceCollection services)
         {
             ConfigureCustomServices();
-            tokenService = (factoriesManager[typeof(ITokenServiceFactory)].Factory as ITokenServiceFactory)
-                .GetService();
+
+            factoriesManager.GetService<ITokenService>().TryGetTarget(out tokenService);
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(
                 options =>
@@ -96,10 +100,10 @@ namespace SentenceAPI
             app.UseCors(builder =>
             {
                 builder.AllowAnyOrigin();
-                builder.AllowAnyHeader();
                 builder.AllowAnyMethod();
-                builder.AllowCredentials();
+                builder.AllowAnyHeader();
             });
+
             app.UseMvc();
         }
 
@@ -110,13 +114,11 @@ namespace SentenceAPI
         private void ConfigureCustomServices()
         {
             IFactoriesManager factoriesManager = FactoriesManager.FactoriesManager.Instance;
-            
+
             factoriesManager.AddFactory(new FactoryInfo(new UserServiceFactory(),
                 typeof(IUserServiceFactory)));
             factoriesManager.AddFactory(new FactoryInfo(new TokenServiceFactory(),
                 typeof(ITokenServiceFactory)));
-            factoriesManager.AddFactory(new FactoryInfo(new MongoDBServiceFactory(),
-                typeof(IMongoDBServiceFactory)));
             factoriesManager.AddFactory(new FactoryInfo(new LoggerFactory(),
                 typeof(ILoggerFactory)));
             factoriesManager.AddFactory(new FactoryInfo(new EmailServiceFactory(),
@@ -129,6 +131,10 @@ namespace SentenceAPI
                 typeof(IUserActivityServiceFactory)));
             factoriesManager.AddFactory(new FactoryInfo(new UserFeedServiceFactory(),
                 typeof(IUserFeedServiceFactory)));
+            factoriesManager.AddFactory(new FactoryInfo(new CodesServiceFactory(),
+                typeof(ICodesServiceFactory)));
+            factoriesManager.AddFactory(new FactoryInfo(new RequestServiceFactory(),
+                typeof(IRequestServiceFactory)));
         }
     }
 }

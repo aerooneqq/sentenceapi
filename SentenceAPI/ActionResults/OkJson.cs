@@ -43,7 +43,9 @@ namespace SentenceAPI.ActionResults
             return Task.Run(() => 
             {
                 responseBuilder = new HttpResponseBuilder(context.HttpContext.Response, encoding);
-                responseBuilder.SetStatusCode(200)
+
+                responseBuilder.SetCORSHeaders()
+                               .SetStatusCode((int)HttpResponseCodes.OK)
                                .SetContentType(ContentTypes.ApplicationJson)
                                .SetContent(serializer.Serialize())
                                .SetContentLength();

@@ -1,5 +1,4 @@
-﻿using SentenceAPI.KernelModels;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,6 +11,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Internal;
 
 using Newtonsoft.Json;
+
+using DataAccessLayer.KernelModels;
 
 namespace SentenceAPI.Features.Middlewares.RequestLoggerMiddleware.Models
 {

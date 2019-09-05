@@ -6,86 +6,88 @@ using System.Net.Mail;
 using System.Net;
 
 using SentenceAPI.Features.Email.Interfaces;
-using SentenceAPI.Databases.MongoDB.Interfaces;
-using SentenceAPI.Features.Loggers.Models;
-using SentenceAPI.Features.Loggers.Interfaces;
+using SentenceAPI.ApplicationFeatures.Loggers.Models;
+using SentenceAPI.ApplicationFeatures.Loggers.Interfaces;
 using SentenceAPI.Features.Users.Models;
-using SentenceAPI.Databases.Exceptions;
-using SentenceAPI.FactoriesManager;
-using SentenceAPI.Databases.CommonInterfaces;
+using DataAccessLayer.CommonInterfaces;
+using DataAccessLayer.Configuration.Interfaces;
+using DataAccessLayer.DatabasesManager;
+using DataAccessLayer.Configuration;
+using DataAccessLayer.Exceptions;
 
 namespace SentenceAPI.Features.Email.Services
 {
     public class EmailService : IEmailService
     {
-        public static LogConfiguration LogConfiguration { get; } = new LogConfiguration()
+        #region Static properties
+        private static readonly string databaseConfigFile = "mongo_database_config.json";
+        private static LogConfiguration LogConfiguration { get; } = new LogConfiguration()
         {
             ControllerName = string.Empty,
             ServiceName = "EmailService"
         };
+        #endregion
 
         #region Constants
-        private const string Host = "mail.aerothedeveloper.ru";
-        private const string ServiceMailPass = "QRJ-6Cf-hDV-cqG";
-        private const string ServerMail = "sdwpemailservice@aerothedeveloper.ru";
+        private const string Host = "smtp.gmail.com";
+        private const string ServiceMailPass = "AeroOne1";
+        private const string ServerMail = "aeroone90@gmail.com";
+        #endregion
+
+        #region Databases
+        private IDatabaseService<EmailLog> database;
+        private IConfigurationBuilder configurationBuilder;
         #endregion
 
         #region Services
         private ILogger<EmailLog> emailLogger;
         private ILogger<ApplicationError> exceptionLogger;
-        private IDatabaseService<EmailLog> mongoDBService;
-        #endregion
-
-        #region Builders
-        private IMongoDBServiceBuilder<EmailLog> mongoDBServiceBuilder;
         #endregion
 
         #region Factories
         private FactoriesManager.FactoriesManager factoriesManager = 
             FactoriesManager.FactoriesManager.Instance;
-        private IMongoDBServiceFactory mongoDBServiceFactory;
-        private ILoggerFactory loggerFactory;
         #endregion
 
         public EmailService()
         {
-            mongoDBServiceFactory = factoriesManager[typeof(IMongoDBServiceFactory)].Factory as
-                IMongoDBServiceFactory;
-            loggerFactory = factoriesManager[typeof(ILoggerFactory)].Factory as ILoggerFactory;
+            DatabasesManager.Manager.MongoDBFactory.GetDatabase<EmailLog>().TryGetTarget(out database);
 
-            mongoDBServiceBuilder = mongoDBServiceFactory.GetBuilder(mongoDBServiceFactory.GetService<EmailLog>());
-            mongoDBService = mongoDBServiceBuilder.AddConfigurationFile("database_config.json").
-                SetConnectionString().SetDatabaseName("SentenceDatabase").SetCollectionName().Build();
+            configurationBuilder = new MongoConfigurationBuilder(database.Configuration);
+            configurationBuilder.SetConfigurationFilePath(databaseConfigFile).SetAuthMechanism()
+                                .SetUserName().SetPassword().SetDatabaseName().SetServerName().SetConnectionString();
 
-            exceptionLogger = loggerFactory.GetExceptionLogger();
+            factoriesManager.GetService<ILogger<ApplicationError>>().TryGetTarget(out exceptionLogger);
+            factoriesManager.GetService<ILogger<EmailLog>>().TryGetTarget(out emailLogger);
+
             exceptionLogger.LogConfiguration = LogConfiguration;
-
-            emailLogger = loggerFactory.GetEmailLogger();
             emailLogger.LogConfiguration = LogConfiguration; 
         }
 
-        public async Task SendConfirmationEmail(string link, UserInfo user)
+        public async Task SendConfirmationEmail(string code, string email)
         {
             try
             {
                 MailAddress senderAddress = new MailAddress(ServerMail);
-                MailAddress userAddress = new MailAddress(user.Email);
+                MailAddress userAddress = new MailAddress(email);
 
-                MailMessage mailMessage = new MailMessage()
+                using (MailMessage mailMessage = new MailMessage(senderAddress, userAddress)
                 {
-                    Subject = "Activation link for Sentence",
+                    Subject = "Activation code for Sentence",
                     IsBodyHtml = true,
-                    Body = $"Your code is: \n {link} \n\n Best wishes, \n Sentence team"
-                };
-
-                SmtpClient smtpClient = new SmtpClient()
+                    Body = $"Your code is: \n {code} \n\n Best wishes, \n Sentence team"
+                })
                 {
-                    Credentials = new NetworkCredential(ServerMail, ServiceMailPass),
-                    EnableSsl = false
-                };
-
-                await Task.Run(() => smtpClient.Send(mailMessage));
-                await emailLogger.Log(new EmailLog(user, mailMessage.Body));
+                    using (SmtpClient smtpClient = new SmtpClient(Host, 587)
+                    {
+                        Credentials = new NetworkCredential(ServerMail, ServiceMailPass),
+                        EnableSsl = true
+                    })
+                    {
+                        await smtpClient.SendMailAsync(mailMessage);
+                        await emailLogger.Log(new EmailLog(email, mailMessage.Body));
+                    }
+                }
             }
             catch (Exception ex)
             {

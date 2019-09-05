@@ -4,6 +4,7 @@ using System.Linq;
 
 using SentenceAPI.FactoriesManager.Interfaces;
 using SentenceAPI.FactoriesManager.Models;
+using SentenceAPI.KernelInterfaces;
 
 namespace SentenceAPI.FactoriesManager
 {
@@ -22,23 +23,29 @@ namespace SentenceAPI.FactoriesManager
 
         #region IFactoryManager implementaion
         /// <summary>
-        /// Returns the factory with a given interface type. If the factory not in
+        /// Returns the weak reference factory with a given interface type. If the factory not in
         /// the list returns null.
         /// </summary>
         /// <param name="t">
         /// Type of the interface.
         /// </param>
-        public FactoryInfo this[Type factoryType]
+        /// <exception cref="ArgumentNullException">
+        /// If the factoryType parameter was NULL
+        /// </exception>
+        /// <returns>
+        /// NULL if the value of the weak reference doesn't contain a value
+        /// </returns>
+        public WeakReference<ServiceType> GetService<ServiceType>() where ServiceType : class
         {
-            get
+            foreach (FactoryInfo factory in factoryInfos)
             {
-                if (factoryType == null)
+                if (factory.CheckIfFactorySupportService(typeof(ServiceType)))
                 {
-                    throw new ArgumentNullException("Service type can not be null.");
+                    return new WeakReference<ServiceType>(factory.GetService<ServiceType>(typeof(ServiceType)));
                 }
-
-                return factoryInfos.FirstOrDefault(f => f.FactoryType == factoryType);
             }
+
+            return null; 
         }
 
         /// <summary>
@@ -50,23 +57,30 @@ namespace SentenceAPI.FactoriesManager
         public void AddFactory(FactoryInfo factory)
         {
             if (factory == null)
-                throw new ArgumentNullException("Factory object can not be null.");
-
-            if (factoryInfos.FindIndex(f =>
             {
-                if (f.FactoryType == factory.FactoryType || f.Factory.GetType() == factory.Factory.GetType())
-                {
-                    return true; 
-                }
+                throw new ArgumentNullException("Factory object can not be null.");
+            }
 
-                return false;
-            }) != -1)
+            if (CheckIfFactoryAlreadyAdded(factory))
             {
                 throw new ArgumentException("The factory info with a given parameters" +
                     " already exists in a manager");
             }
 
             factoryInfos.Add(factory);
+        }
+
+        private bool CheckIfFactoryAlreadyAdded(FactoryInfo factory)
+        {
+            return factoryInfos.FindIndex(f =>
+            {
+                if (f.FactoryType == factory.FactoryType)
+                {
+                    return true;
+                }
+
+                return false;
+            }) != -1;
         }
 
         /// <summary>

@@ -13,6 +13,7 @@ namespace SentenceAPI.ActionResults.ResponseBuilder
         IResponseBuilder SetContentLength(int contentLength);
         IResponseBuilder SetContentLength();
         IResponseBuilder SetContent(string content);
+        IResponseBuilder SetCORSHeaders();
 
         HttpResponse Build();
     }

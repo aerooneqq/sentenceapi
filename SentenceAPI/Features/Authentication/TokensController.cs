@@ -16,10 +16,15 @@ using SentenceAPI.FactoriesManager;
 using SentenceAPI.Features.Users.Models;
 using SentenceAPI.Features.Authentication.Interfaces;
 using SentenceAPI.Features.Authentication.Models;
-using SentenceAPI.Databases.Exceptions;
-using SentenceAPI.Databases.MongoDB.Interfaces;
-using SentenceAPI.Features.Loggers.Interfaces;
-using SentenceAPI.Features.Loggers.Models;
+
+using SentenceAPI.ApplicationFeatures.Loggers.Interfaces;
+using SentenceAPI.ApplicationFeatures.Loggers.Models;
+
+using DataAccessLayer.Exceptions;
+using DataAccessLayer.Hashes;
+using SentenceAPI.ActionResults;
+using SentenceAPI.ApplicationFeatures.DefferedExecution;
+using SentenceAPI.Features.UserActivity.Interfaces;
 
 namespace SentenceAPI.Features.Authentication
 {
@@ -34,31 +39,24 @@ namespace SentenceAPI.Features.Authentication
         };
 
         #region Factories
-        private readonly IFactoriesManager factoryManager = FactoriesManager.FactoriesManager.Instance;
-        private IUserServiceFactory userServiceFactory;
-        private ITokenServiceFactory tokenServiceFactory;
-        private ILoggerFactory loggerFactory;
+        private readonly IFactoriesManager factoriesManager = FactoriesManager.FactoriesManager.Instance;
         #endregion
 
         #region Services
         private IUserService<UserInfo> userService;
         private ITokenService tokenService;
         private ILogger<ApplicationError> exceptionLogger;
+        private IUserActivityService userActivityService;
         #endregion
 
         #region Constructors
         public TokensController()
         {
-            userServiceFactory = factoryManager[typeof(IUserServiceFactory)].Factory
-                as IUserServiceFactory;
-            tokenServiceFactory = factoryManager[typeof(ITokenServiceFactory)].Factory
-                as ITokenServiceFactory;
-            loggerFactory = factoryManager[typeof(ILoggerFactory)].Factory as ILoggerFactory;
+            factoriesManager.GetService<IUserService<UserInfo>>().TryGetTarget(out userService);
+            factoriesManager.GetService<ITokenService>().TryGetTarget(out tokenService);
+            factoriesManager.GetService<ILogger<ApplicationError>>().TryGetTarget(out exceptionLogger);
+            factoriesManager.GetService<IUserActivityService>().TryGetTarget(out userActivityService);
 
-            userService = userServiceFactory.GetService();
-            tokenService = tokenServiceFactory.GetService();
-
-            exceptionLogger = loggerFactory.GetExceptionLogger();
             exceptionLogger.LogConfiguration = LogConfiguration;
         }
         #endregion
@@ -73,6 +71,8 @@ namespace SentenceAPI.Features.Authentication
         {
             try
             {
+                password = password.GetMD5Hash();
+
                 UserInfo user = await userService.Get(email, password);
 
                 if (user == null)
@@ -83,17 +83,25 @@ namespace SentenceAPI.Features.Authentication
                 var (encodedToken, securityToken) = tokenService.CreateEncodedToken(user);
 
                 await tokenService.InsertTokenInDB(new JwtToken(securityToken, user));
-                return Ok(encodedToken);
+
+                DefferedTasksManager.AddTask(new Action(() => userActivityService.AddSingleActivity(user.ID,
+                    new UserActivity.Models.SingleUserActivity()
+                    {
+                        ActivityDate = DateTime.Now,
+                        Activity = "Logged in"
+                    })));
+
+                return new Ok(encodedToken);
             }
             catch (DatabaseException ex)
             {
                 await exceptionLogger.Log(new ApplicationError(ex.Message));
-                return StatusCode(500, ex.Message);
+                return new InternalServerError(ex.Message);
             }
             catch (Exception ex)
             {
                 await exceptionLogger.Log(new ApplicationError(ex.Message));
-                return StatusCode(500);
+                return new InternalServerError();
             }
         }
         #endregion

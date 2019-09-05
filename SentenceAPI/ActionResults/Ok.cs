@@ -11,6 +11,19 @@ namespace SentenceAPI.ActionResults
     public class Ok : IActionResult
     {
         private IResponseBuilder responseBuilder;
+        private string message;
+
+        #region Constructors
+        public Ok(string message)
+        {
+            this.message = message;
+        }
+
+        public Ok()
+        {
+
+        }
+        #endregion
 
         public Task ExecuteResultAsync(ActionContext context)
         {
@@ -18,8 +31,12 @@ namespace SentenceAPI.ActionResults
             {
                 responseBuilder = new HttpResponseBuilder(context.HttpContext.Response, Encoding.UTF8);
 
-                responseBuilder.SetStatusCode(200)
-                               .SetContentLength(0); 
+                responseBuilder.SetStatusCode((int)HttpResponseCodes.OK).SetCORSHeaders(); 
+
+                if (message != null)
+                {
+                    responseBuilder.SetContent(message).SetContentLength();
+                }
             }));
         }
     }

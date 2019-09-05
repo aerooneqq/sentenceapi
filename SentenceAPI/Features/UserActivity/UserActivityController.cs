@@ -3,10 +3,9 @@ using Microsoft.AspNetCore.Mvc;
 
 using Newtonsoft.Json;
 
-using SentenceAPI.Databases.Exceptions;
 using SentenceAPI.Features.Authentication.Interfaces;
-using SentenceAPI.Features.Loggers.Interfaces;
-using SentenceAPI.Features.Loggers.Models;
+using SentenceAPI.ApplicationFeatures.Loggers.Interfaces;
+using SentenceAPI.ApplicationFeatures.Loggers.Models;
 using SentenceAPI.Features.UserActivity.Interfaces;
 using SentenceAPI.FactoriesManager;
 
@@ -14,12 +13,20 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using DataAccessLayer.Exceptions;
+using SentenceAPI.ActionResults;
 
 namespace SentenceAPI.Features.UserActivity
 {
     [Route("api/[controller]"), Authorize, ApiController]
     public class UserActivitiesController : Controller
     {
+        private static LogConfiguration LogConfiguration => new LogConfiguration()
+        {
+            ControllerName = "UserActivitiesController",
+            ServiceName = string.Empty
+        };
+
         #region Services
         private ITokenService tokenService;
         private ILogger<ApplicationError> exceptionLogger;
@@ -28,22 +35,15 @@ namespace SentenceAPI.Features.UserActivity
 
         #region Factories
         private FactoriesManager.FactoriesManager factoriesManager = FactoriesManager.FactoriesManager.Instance;
-
-        private ITokenServiceFactory tokenServiceFactory;
-        private ILoggerFactory loggerFactory;
-        private IUserActivityServiceFactory userActivityServiceFactory;
         #endregion
 
         public UserActivitiesController()
         {
-            userActivityServiceFactory = factoriesManager[typeof(IUserActivityServiceFactory)].Factory
-                as IUserActivityServiceFactory;
-            loggerFactory = factoriesManager[typeof(ILoggerFactory)].Factory as ILoggerFactory;
-            tokenServiceFactory = factoriesManager[typeof(ITokenServiceFactory)].Factory as ITokenServiceFactory;
+            factoriesManager.GetService<IUserActivityService>().TryGetTarget(out userActivityService);
+            factoriesManager.GetService<ILogger<ApplicationError>>().TryGetTarget(out exceptionLogger);
+            factoriesManager.GetService<ITokenService>().TryGetTarget(out tokenService);
 
-            userActivityService = userActivityServiceFactory.GetService();
-            exceptionLogger = loggerFactory.GetExceptionLogger();
-            tokenService = tokenServiceFactory.GetService();
+            exceptionLogger.LogConfiguration = LogConfiguration;
         }
 
         [HttpGet]
@@ -58,16 +58,16 @@ namespace SentenceAPI.Features.UserActivity
 
                 var userActivities = await userActivityService.GetUserActivity(id);
 
-                return Ok(JsonConvert.SerializeObject(userActivities));
+                return new OkJson<Models.UserActivity>(userActivities);
             }
             catch (DatabaseException ex)
             {
-                return StatusCode(500, ex.Message);
+                return new InternalServerError(ex.Message);
             }
             catch (Exception ex)
             {
                 await exceptionLogger.Log(new ApplicationError(ex.Message));
-                return StatusCode(500);
+                return new InternalServerError();
             }
         }
     }

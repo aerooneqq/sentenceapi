@@ -1,16 +1,17 @@
-﻿using SentenceAPI.KernelModels;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Security.Claims;
+using System.IdentityModel.Tokens.Jwt;
 
 using MongoDB.Bson.Serialization.Attributes;
 
-using System.IdentityModel.Tokens.Jwt;
-
 using Newtonsoft.Json;
+
 using SentenceAPI.Features.Users.Models;
-using System.Security.Claims;
+
+using DataAccessLayer.KernelModels;
 
 namespace SentenceAPI.Features.Authentication.Models
 {

@@ -7,7 +7,7 @@ using SentenceAPI.KernelInterfaces;
 
 namespace SentenceAPI.Features.Authentication.Interfaces
 {
-    public interface ITokenServiceFactory : IFactory
+    public interface ITokenServiceFactory : IServiceFactory
     {
         ITokenService GetService();
     }

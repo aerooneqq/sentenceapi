@@ -34,3 +34,5 @@ C:\Users\evgen\OneDrive\Рабочий стол\Sentence\SentenceAPI\SentenceApi
 C:\Users\evgen\OneDrive\Рабочий стол\Sentence\SentenceAPI\SentenceApiTests\obj\Debug\netcoreapp2.1\SentenceApiTests.csproj.CopyComplete
 C:\Users\evgen\OneDrive\Рабочий стол\Sentence\SentenceAPI\SentenceApiTests\obj\Debug\netcoreapp2.1\SentenceApiTests.dll
 C:\Users\evgen\OneDrive\Рабочий стол\Sentence\SentenceAPI\SentenceApiTests\obj\Debug\netcoreapp2.1\SentenceApiTests.pdb
+C:\Users\Aero\Desktop\Sentence\sentenceapi\SentenceApiTests\bin\Debug\netcoreapp2.1\DataAccessLayer.dll
+C:\Users\Aero\Desktop\Sentence\sentenceapi\SentenceApiTests\bin\Debug\netcoreapp2.1\DataAccessLayer.pdb

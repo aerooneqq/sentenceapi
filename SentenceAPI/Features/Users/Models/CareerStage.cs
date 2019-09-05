@@ -24,9 +24,9 @@ namespace SentenceAPI.Features.Users.Models
         public string Description { get; set; }
 
         [BsonElement("startYear"), JsonProperty("startYear")]
-        public DateTime StartYear { get; set; }
+        public int StartYear { get; set; }
 
         [BsonElement("finishYear"), JsonProperty("finishYear")]
-        public DateTime FinishYear { get; set; }
+        public int FinishYear { get; set; }
     }
 }

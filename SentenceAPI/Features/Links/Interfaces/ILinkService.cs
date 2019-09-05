@@ -1,5 +1,4 @@
-﻿using SentenceAPI.Databases.MongoDB.Interfaces;
-using SentenceAPI.Features.Users.Models;
+﻿using SentenceAPI.Features.Users.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;

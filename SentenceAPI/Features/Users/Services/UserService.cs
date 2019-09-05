@@ -3,64 +3,65 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Reflection;
 using System;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
 using MongoDB.Bson.Serialization.Attributes;
 
-using SentenceAPI.Databases.MongoDB.Interfaces;
 using SentenceAPI.Features.Users.Interfaces;
 using SentenceAPI.Features.Users.Models;
-using SentenceAPI.Databases.Exceptions;
-using SentenceAPI.Features.Loggers.Interfaces;
-using SentenceAPI.Features.Loggers.Models;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using SentenceAPI.Databases.CommonInterfaces;
-using SentenceAPI.Databases.Filters;
+using SentenceAPI.ApplicationFeatures.Loggers.Interfaces;
+using SentenceAPI.ApplicationFeatures.Loggers.Models;
 using SentenceAPI.Extensions;
-using System.Text.RegularExpressions;
+
+using DataAccessLayer.CommonInterfaces;
+using DataAccessLayer.Configuration.Interfaces;
+using DataAccessLayer.DatabasesManager;
+using DataAccessLayer.Configuration;
+using DataAccessLayer.Filters;
+using DataAccessLayer.Exceptions;
+using DataAccessLayer.Hashes;
 
 namespace SentenceAPI.Features.Users.Services
 {
     public class UserService : IUserService<UserInfo>
     {
-        public static LogConfiguration LogConfiguration { get; } = new LogConfiguration()
+        #region Static fields
+        private static LogConfiguration LogConfiguration { get; } = new LogConfiguration()
         {
             ControllerName = string.Empty,
             ServiceName = "UserService"
         };
+        private static readonly string databaseConfigFile = "mongo_database_config.json";
+        #endregion
+
+        #region Databases
+        private IDatabaseService<UserInfo> database;
+        private IConfigurationBuilder configurationBuilder;
+        private DatabasesManager databasesManager = DatabasesManager.Manager;
+        #endregion
 
         #region Services
         private readonly ILogger<ApplicationError> exceptionLogger;
-        private readonly IDatabaseService<UserInfo> mongoDBService;
-        #endregion
-
-        #region Builders
-        private readonly IMongoDBServiceBuilder<UserInfo> mongoDBServiceBuilder;
         #endregion
 
         #region Factories
         private readonly FactoriesManager.FactoriesManager factoriesManager =
             FactoriesManager.FactoriesManager.Instance;
-        private readonly IMongoDBServiceFactory mongoDBServiceFactory;
         private readonly ILoggerFactory loggerFactory;
         #endregion
 
         #region Constructors
         public UserService()
         {
-            mongoDBServiceFactory = factoriesManager[typeof(IMongoDBServiceFactory)].Factory
-                as IMongoDBServiceFactory;
-            loggerFactory = factoriesManager[typeof(ILoggerFactory)].Factory as ILoggerFactory;
+            databasesManager.MongoDBFactory.GetDatabase<UserInfo>().TryGetTarget(out database);
 
-            mongoDBServiceBuilder = mongoDBServiceFactory.GetBuilder<UserInfo>(mongoDBServiceFactory.GetService<UserInfo>());
+            configurationBuilder = new MongoConfigurationBuilder(database.Configuration);
+            configurationBuilder.SetConfigurationFilePath(databaseConfigFile).SetAuthMechanism()
+                                .SetUserName().SetPassword().SetDatabaseName().SetServerName().SetConnectionString();
 
-            mongoDBService = mongoDBServiceBuilder.AddConfigurationFile("database_config.json")
-                .SetConnectionString()
-                .SetDatabaseName("SentenceDatabase")
-                .SetCollectionName()
-                .Build();
+            factoriesManager.GetService<ILogger<ApplicationError>>().TryGetTarget(out exceptionLogger);
 
-            exceptionLogger = loggerFactory.GetExceptionLogger();
             exceptionLogger.LogConfiguration = LogConfiguration;
         }
         #endregion
@@ -77,10 +78,10 @@ namespace SentenceAPI.Features.Users.Services
                 JwtSecurityToken jwtSecurityToken = new JwtSecurityTokenHandler().ReadToken(token) as JwtSecurityToken;
                 string email = jwtSecurityToken.Claims.ToList().Find(c => c.Type == "Email").Value;
 
-                await mongoDBService.Connect();
+                await database.Connect();
 
                 var filter = new EqualityFilter<string>("email", email);
-                return (await mongoDBService.Get(filter)).FirstOrDefault();
+                return (await database.Get(filter)).FirstOrDefault();
             }
             catch (Exception ex)
             {
@@ -93,15 +94,15 @@ namespace SentenceAPI.Features.Users.Services
         {
             try
             {
-                await mongoDBService.Connect();
+                await database.Connect();
 
-                IEnumerable<IFilter> filters = new []
+                IEnumerable<IFilter> filters = new[]
                 {
                     new EqualityFilter<string>(typeof(UserInfo).GetBsonPropertyName("Email"), email),
                     new EqualityFilter<string>(typeof(UserInfo).GetBsonPropertyName("Password"), password)
                 };
 
-                var users = (await mongoDBService.Get(new FilterCollection(filters))).ToList();
+                var users = (await database.Get(new FilterCollection(filters))).ToList();
 
                 if (users.Count != 1)
                 {
@@ -110,7 +111,7 @@ namespace SentenceAPI.Features.Users.Services
 
                 return users[0];
             }
-            catch (Exception ex)
+            catch (Exception ex) when (ex.GetType() != typeof(DatabaseException))
             {
                 await exceptionLogger.Log(new ApplicationError(ex.Message));
                 throw new DatabaseException("Error occured while working with the database");
@@ -121,9 +122,9 @@ namespace SentenceAPI.Features.Users.Services
         {
             try
             {
-                await mongoDBService.Connect();
+                await database.Connect();
 
-                return (await mongoDBService.Get(new EqualityFilter<long>
+                return (await database.Get(new EqualityFilter<long>
                     (typeof(UserInfo).GetBsonPropertyName("ID"), id))).FirstOrDefault();
             }
             catch (Exception ex)
@@ -137,13 +138,27 @@ namespace SentenceAPI.Features.Users.Services
         {
             try
             {
-                await mongoDBService.Connect();
-                await mongoDBService.Update(user);
+                await database.Connect();
+                await database.Update(user);
             }
             catch (Exception ex)
             {
                 await exceptionLogger.Log(new ApplicationError(ex.Message));
                 throw new DatabaseException("Error occured while ipdating record in the database");
+            }
+        }
+
+        public async Task Update(UserInfo user, IEnumerable<string> properties)
+        {
+            try
+            {
+                await database.Connect();
+                await database.Update(user, properties);
+            }
+            catch (Exception ex)
+            {
+                await exceptionLogger.Log(new ApplicationError(ex));
+                throw new DatabaseException("The error occured while updating the user.");
             }
         }
 
@@ -154,12 +169,12 @@ namespace SentenceAPI.Features.Users.Services
                 UserInfo user = new UserInfo()
                 {
                     Email = email,
-                    Password = password.GetHashCode().ToString(),
+                    Password = password.GetMD5Hash(),
                     IsAccountVerified = false,
                 };
 
-                await mongoDBService.Connect();
-                await mongoDBService.Insert(user);
+                await database.Connect();
+                await database.Insert(user);
 
                 return user.ID;
             }
@@ -174,17 +189,45 @@ namespace SentenceAPI.Features.Users.Services
         {
             try
             {
-                await mongoDBService.Connect();
+                await database.Connect();
 
                 string bsonPropertyName = typeof(UserInfo).GetBsonPropertyName("Login");
                 var filter = new RegexFilter(bsonPropertyName, $"/{login}/");
 
-                return await mongoDBService.Get(filter);
+                return await database.Get(filter);
             }
             catch (Exception ex)
             {
                 await exceptionLogger.Log(new ApplicationError(ex.Message));
                 throw new DatabaseException("Error occured when inserting a user in the database");
+            }
+        }
+
+        /// <summary>
+        /// Checks if user with a given email exists in the database.
+        /// </summary>
+        public async Task<bool> DoesUserExist(string email)
+        {
+            try
+            {
+                await database.Connect();
+
+                string emailPropertyName = typeof(UserInfo).GetBsonPropertyName("Email");
+                IFilter emailFilter = new EqualityFilter<string>(emailPropertyName, email);
+
+                var users = (await database.Get(emailFilter).ConfigureAwait(false)).ToList();
+
+                if (users.Count > 0)
+                {
+                    return true;
+                }
+
+                return false;
+            }
+            catch (Exception ex)
+            {
+                await exceptionLogger.Log(new ApplicationError(ex.Message));
+                throw new DatabaseException("Error occured while checking the user");
             }
         }
     }

@@ -1,10 +1,12 @@
-﻿using SentenceAPI.Databases.CommonInterfaces;
-using SentenceAPI.Databases.Exceptions;
-using SentenceAPI.Databases.Filters;
-using SentenceAPI.Databases.MongoDB.Interfaces;
+﻿using DataAccessLayer.CommonInterfaces;
+using DataAccessLayer.Configuration;
+using DataAccessLayer.Configuration.Interfaces;
+using DataAccessLayer.DatabasesManager;
+using DataAccessLayer.Exceptions;
+using DataAccessLayer.Filters;
 using SentenceAPI.Features.Authentication.Interfaces;
-using SentenceAPI.Features.Loggers.Interfaces;
-using SentenceAPI.Features.Loggers.Models;
+using SentenceAPI.ApplicationFeatures.Loggers.Interfaces;
+using SentenceAPI.ApplicationFeatures.Loggers.Models;
 using SentenceAPI.Features.UserFriends.Interfaces;
 using SentenceAPI.Features.UserFriends.Models;
 using SentenceAPI.Features.Users.Interfaces;
@@ -19,9 +21,18 @@ namespace SentenceAPI.Features.UserFriends.Services
 {
     public class UserFriendsService : IUserFriendsService
     {
+        #region Static fields
+        private static readonly string databaseConfigFile = "mongo_database_config.json";
+        #endregion
+
+        #region Databases
+        private IDatabaseService<Models.UserFriends> database;
+        private IConfigurationBuilder configurationBuilder;
+        private DatabasesManager databasesManager = DatabasesManager.Manager;
+        #endregion
+
         #region Services
         private ILogger<ApplicationError> exceptionLogger;
-        private IDatabaseService<Models.UserFriends> mongoDBService;
         private IUserService<UserInfo> userService;
         private ITokenService tokenService;
         #endregion
@@ -32,32 +43,19 @@ namespace SentenceAPI.Features.UserFriends.Services
         private ITokenServiceFactory tokenServiceFactory;
         private IUserServiceFactory userServiceFactory;
         private ILoggerFactory loggerFactory;
-        private IMongoDBServiceFactory mongoDBServiceFactory;
-        #endregion
-
-        #region Builders
-        private IMongoDBServiceBuilder<Models.UserFriends> mongoDBServiceBuilder;
         #endregion
 
         public UserFriendsService()
         {
-            mongoDBServiceFactory = factoriesManager[typeof(IMongoDBServiceFactory)].Factory
-                as IMongoDBServiceFactory;
-            loggerFactory = factoriesManager[typeof(ILoggerFactory)].Factory
-                as ILoggerFactory;
-            userServiceFactory = factoriesManager[typeof(IUserServiceFactory)].Factory
-                as IUserServiceFactory;
-            tokenServiceFactory = factoriesManager[typeof(ITokenServiceFactory)].Factory
-                as ITokenServiceFactory;
+            databasesManager.MongoDBFactory.GetDatabase<Models.UserFriends>().TryGetTarget(out database);
 
-            mongoDBServiceBuilder = mongoDBServiceFactory.GetBuilder(mongoDBServiceFactory.GetService
-                <Models.UserFriends>());
-            mongoDBService = mongoDBServiceBuilder.AddConfigurationFile("database_config.json").SetConnectionString()
-                .SetDatabaseName("SentenceDatabase").SetCollectionName().Build();
+            configurationBuilder = new MongoConfigurationBuilder(database.Configuration);
+            configurationBuilder.SetConfigurationFilePath(databaseConfigFile).SetAuthMechanism()
+                                .SetUserName().SetPassword().SetDatabaseName().SetServerName().SetConnectionString();
 
-            exceptionLogger = loggerFactory.GetExceptionLogger();
-            userService = userServiceFactory.GetService();
-            tokenService = tokenServiceFactory.GetService();
+            factoriesManager.GetService<ILogger<ApplicationError>>().TryGetTarget(out exceptionLogger);
+            factoriesManager.GetService<IUserService<UserInfo>>().TryGetTarget(out userService);
+            factoriesManager.GetService<ITokenService>().TryGetTarget(out tokenService);
         }
 
         #region IUserFriendsService implementation
@@ -67,13 +65,13 @@ namespace SentenceAPI.Features.UserFriends.Services
             {
                 long userID = long.Parse(tokenService.GetTokenClaim(token, "ID"));
 
-                await mongoDBService.Connect();
+                await database.Connect();
 
-                Models.UserFriends userFriends = (await mongoDBService.Get(new EqualityFilter<long>("userID",
+                Models.UserFriends userFriends = (await database.Get(new EqualityFilter<long>("userID",
                     userID))).FirstOrDefault();
                 userFriends.SubscribersID.Add(subscriberID);
 
-                await mongoDBService.Update(userFriends, new[] { "SubscribersID" });
+                await database.Update(userFriends, new[] { "SubscribersID" });
             }
             catch (Exception ex)
             {
@@ -88,13 +86,14 @@ namespace SentenceAPI.Features.UserFriends.Services
             {
                 long userID = long.Parse(tokenService.GetTokenClaim(token, "ID"));
 
-                await mongoDBService.Connect();
+                await database.Connect();
 
-                Models.UserFriends userFriends = (await mongoDBService.Get(new EqualityFilter<long>("userID",
+                Models.UserFriends userFriends = (await database.Get(new EqualityFilter<long>("userID",
                     userID))).FirstOrDefault();
+
                 userFriends.SubscriptionsID.Add(subscriptionID);
 
-                await mongoDBService.Update(userFriends, new[] { "SubscriptionsID" });
+                await database.Update(userFriends, new[] { "SubscriptionsID" });
             }
             catch (Exception ex)
             {
@@ -109,13 +108,14 @@ namespace SentenceAPI.Features.UserFriends.Services
             {
                 long userID = long.Parse(tokenService.GetTokenClaim(token, "ID"));
 
-                await mongoDBService.Connect();
+                await database.Connect();
 
-                Models.UserFriends userFriends = (await mongoDBService.Get(new EqualityFilter<long>("userID",
+                Models.UserFriends userFriends = (await database.Get(new EqualityFilter<long>("userID",
                     userID))).FirstOrDefault();
+
                 userFriends.SubscribersID.Remove(subscriberID);
 
-                await mongoDBService.Update(userFriends, new[] { "SubscribersID" });
+                await database.Update(userFriends, new[] { "SubscribersID" });
             }
             catch (DatabaseException ex)
             {
@@ -134,12 +134,12 @@ namespace SentenceAPI.Features.UserFriends.Services
             {
                 long userID = long.Parse(tokenService.GetTokenClaim(token, "ID"));
 
-                await mongoDBService.Connect();
+                await database.Connect();
 
-                Models.UserFriends userFriends = (await mongoDBService.Get(new EqualityFilter<long>("userID",
+                Models.UserFriends userFriends = (await database.Get(new EqualityFilter<long>("userID",
                     userID))).FirstOrDefault();
 
-                await mongoDBService.Update(userFriends, new[] { "SubscriptionsID" });
+                await database.Update(userFriends, new[] { "SubscriptionsID" });
             }
             catch (DatabaseException ex)
             {
@@ -174,10 +174,10 @@ namespace SentenceAPI.Features.UserFriends.Services
         {
             try
             {
-                await mongoDBService.Connect();
+                await database.Connect();
 
                 List<Subscriber> subscribers = new List<Subscriber>();
-                Models.UserFriends userFriends = (await mongoDBService.Get(new EqualityFilter<long>("userID",
+                Models.UserFriends userFriends = (await database.Get(new EqualityFilter<long>("userID",
                     userID))).FirstOrDefault();
 
                 if (userFriends == null)
@@ -230,10 +230,10 @@ namespace SentenceAPI.Features.UserFriends.Services
         {
             try
             {
-                await mongoDBService.Connect();
+                await database.Connect();
 
                 List<Subscription> subscriptions = new List<Subscription>();
-                Models.UserFriends userFriends = (await mongoDBService.Get(new EqualityFilter<long>("userID",
+                Models.UserFriends userFriends = (await database.Get(new EqualityFilter<long>("userID",
                     userID))).FirstOrDefault();
 
                 if (userFriends == null)

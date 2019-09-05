@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace SentenceAPI.Serialization
 {
-    interface ISerializer<T>
+    interface ISerializer<in T>
     {
         string Serialize();
     }

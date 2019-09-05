@@ -1,6 +1,7 @@
 ﻿using System;
 
 using SentenceAPI.FactoriesManager.Models;
+using SentenceAPI.KernelInterfaces;
 
 namespace SentenceAPI.FactoriesManager.Interfaces
 {
@@ -9,6 +10,6 @@ namespace SentenceAPI.FactoriesManager.Interfaces
         void AddFactory(FactoryInfo factory);
         bool RemoveFactory(Type factoryInfo);
 
-        FactoryInfo this[Type factoryInfo] { get; }
+        WeakReference<IType> GetService<IType>() where IType : class;
     }
 }

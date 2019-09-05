@@ -1,6 +1,7 @@
 ﻿using MongoDB.Bson.Serialization.Attributes;
+
 using SentenceAPI.Attributes;
-using SentenceAPI.KernelModels;
+
 using System;
 using System.Collections.Generic;
 using System.Dynamic;

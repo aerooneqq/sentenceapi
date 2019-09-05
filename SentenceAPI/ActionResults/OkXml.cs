@@ -38,10 +38,11 @@ namespace SentenceAPI.ActionResults
             return Task.Run(() =>
             {
                 responseBuilder = new HttpResponseBuilder(context.HttpContext.Response, encoding);
-                responseBuilder.SetStatusCode(200)
+
+                responseBuilder.SetStatusCode((int)HttpResponseCodes.OK)
                                .SetContentType(ContentTypes.ApplicationXml)
                                .SetContent(serializer.Serialize())
-                               .SetContentLength();
+                               .SetContentLength().SetCORSHeaders();
             });
         }
     }

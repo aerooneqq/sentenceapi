@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace SentenceAPI.Features.Email.Interfaces
 {
-    public interface IEmailServiceFactory : IFactory
+    public interface IEmailServiceFactory : IServiceFactory
     {
-        IEmailService GetService(); 
+        IEmailService GetService();
     }
 }

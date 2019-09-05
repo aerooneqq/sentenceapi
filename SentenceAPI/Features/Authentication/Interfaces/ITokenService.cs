@@ -7,7 +7,6 @@ using Microsoft.IdentityModel.Tokens;
 using SentenceAPI.Features.Authentication.Models;
 using SentenceAPI.Features.Users.Models;
 using SentenceAPI.KernelInterfaces;
-using SentenceAPI.KernelModels;
 
 namespace SentenceAPI.Features.Authentication.Interfaces
 {   

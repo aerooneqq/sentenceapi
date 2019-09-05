@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SentenceAPI.Features.UserActivity.Interfaces
 {
-    public interface IUserActivityServiceFactory : IFactory
+    public interface IUserActivityServiceFactory : IServiceFactory
     {
         IUserActivityService GetService();
     }

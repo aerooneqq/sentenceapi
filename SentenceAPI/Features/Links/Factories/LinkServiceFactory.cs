@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 
 using SentenceAPI.Features.Links.Interfaces;
 using SentenceAPI.Features.Links.Services;
+using SentenceAPI.KernelInterfaces;
 
 namespace SentenceAPI.Features.Links.Factories
 {
