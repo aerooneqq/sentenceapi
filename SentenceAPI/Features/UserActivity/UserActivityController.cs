@@ -66,7 +66,7 @@ namespace SentenceAPI.Features.UserActivity
             }
             catch (Exception ex)
             {
-                await exceptionLogger.Log(new ApplicationError(ex.Message));
+                await exceptionLogger.Log(new ApplicationError(ex));
                 return new InternalServerError();
             }
         }

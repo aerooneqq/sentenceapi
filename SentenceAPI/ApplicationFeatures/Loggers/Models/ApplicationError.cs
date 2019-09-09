@@ -20,17 +20,20 @@ namespace SentenceAPI.ApplicationFeatures.Loggers.Models
         [BsonElement("configuration"), JsonProperty("configuration")]
         public LogConfiguration LogConfiguration { get; set; }
 
-        #region Constructors
-        public ApplicationError(string message)
-        {
-            ErrorDate = DateTime.UtcNow;
-            Message = message;
-        }
+        [BsonElement("stackTrace"), JsonProperty("stackTrace")]
+        public string StackTrace { get; set; }
 
+        [BsonElement("source"), JsonProperty("source")]
+        public string Source { get; set; }
+
+
+        #region Constructors
         public ApplicationError(Exception ex)
         {
             ErrorDate = DateTime.UtcNow;
             Message = ex.Message;
+            StackTrace = ex.Message;
+            Source = ex.Message;
         }
         #endregion
     }

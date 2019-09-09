@@ -8,8 +8,8 @@ namespace SentenceAPI.Features.UserFeed.Interfaces
 {
     public interface IUserFeedService : IService
     {
-        Task<IEnumerable<Models.UserFeed>> GetUserFeed(string token);
-        Task<IEnumerable<Models.UserFeed>> GetUserFeed(long userID);
+        Task<IEnumerable<dynamic>> GetUserFeed(string token);
+        Task<IEnumerable<dynamic>> GetUserFeed(long userID);
 
         Task InsertUserPost(Models.UserFeed userFeed);
         Task InsertUserPost(string token, string message);

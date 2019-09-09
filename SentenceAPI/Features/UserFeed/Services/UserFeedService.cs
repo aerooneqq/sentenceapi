@@ -20,6 +20,10 @@ using DataAccessLayer.DatabasesManager;
 using DataAccessLayer.Configuration;
 using DataAccessLayer.Filters;
 using DataAccessLayer.Exceptions;
+using SentenceAPI.Features.Users.Models;
+using SentenceAPI.Features.Users.Interfaces;
+using DataAccessLayer.Interfaces.Aggregations;
+using DataAccessLayer.Aggregations;
 
 namespace SentenceAPI.Features.UserFeed.Services
 {
@@ -39,6 +43,7 @@ namespace SentenceAPI.Features.UserFeed.Services
         private IUserFriendsService userFriendsService;
         private ILogger<ApplicationError> exceptionLogger;
         private ITokenService tokenService;
+        private IUserService<UserInfo> userService; 
         #endregion
 
         #region Factories
@@ -56,9 +61,10 @@ namespace SentenceAPI.Features.UserFeed.Services
             factoriesManager.GetService<ILogger<ApplicationError>>().TryGetTarget(out exceptionLogger);
             factoriesManager.GetService<IUserFriendsService>().TryGetTarget(out userFriendsService);
             factoriesManager.GetService<ITokenService>().TryGetTarget(out tokenService);
+            factoriesManager.GetService<IUserService<UserInfo>>().TryGetTarget(out userService);
         }
 
-        public async Task<IEnumerable<Models.UserFeed>> GetUserFeed(long userID)
+        public async Task<IEnumerable<dynamic>> GetUserFeed(long userID)
         {
             try
             {
@@ -66,18 +72,21 @@ namespace SentenceAPI.Features.UserFeed.Services
                     .Select(uf => uf.UserID).ToList();
                 subscriptionsID.Add(userID);
 
+                //IDictionary<long, List<byte>> usersPhotoes = await GetUsersPhotoes(subscriptionsID);
+
                 await database.Connect();
-                return database.Get(new InFilter<long>("userID", subscriptionsID))
-                    .GetAwaiter().GetResult().OrderBy(uf => uf.PublicationDate);
+                return await database.GetCombined(new InFilter<long>("userID", subscriptionsID), "userID",
+                    (typeof(UserInfo), "_id", new[] { "name", "surname" }), 
+                    (typeof(UserPhoto.Models.UserPhoto), "userID", new[] { "photo" }));
             }
             catch (Exception ex) when (ex.GetType() != typeof(DatabaseException))
             {
-                await exceptionLogger.Log(new ApplicationError(ex.Message));
+                await exceptionLogger.Log(new ApplicationError(ex));
                 throw new DatabaseException("Error occured while getting user feed");
             }
         }
 
-        public async Task<IEnumerable<Models.UserFeed>> GetUserFeed(string token)
+        public async Task<IEnumerable<dynamic>> GetUserFeed(string token)
         {
             try
             {
@@ -87,7 +96,7 @@ namespace SentenceAPI.Features.UserFeed.Services
             }
             catch (Exception ex) when (ex.GetType() != typeof(DatabaseException))
             {
-                await exceptionLogger.Log(new ApplicationError(ex.Message));
+                await exceptionLogger.Log(new ApplicationError(ex));
                 throw new DatabaseException("Error occured while getting user feed");
             }
         }
@@ -101,7 +110,7 @@ namespace SentenceAPI.Features.UserFeed.Services
             }
             catch (Exception ex) when (ex.GetType() != typeof(DatabaseException))
             {
-                await exceptionLogger.Log(new ApplicationError(ex.Message));
+                await exceptionLogger.Log(new ApplicationError(ex));
                 throw new DatabaseException("Error occured while inserting new post");
             }
         }
@@ -120,7 +129,7 @@ namespace SentenceAPI.Features.UserFeed.Services
             }
             catch (Exception ex) when (ex.GetType() != typeof(DatabaseException))
             {
-                await exceptionLogger.Log(new ApplicationError(ex.Message));
+                await exceptionLogger.Log(new ApplicationError(ex));
                 throw new DatabaseException("Error occured while inserting new post");
             }
         }

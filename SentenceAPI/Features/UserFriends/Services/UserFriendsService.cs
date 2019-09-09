@@ -16,6 +16,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using SentenceAPI.FactoriesManager.Interfaces;
 
 namespace SentenceAPI.Features.UserFriends.Services
 {
@@ -23,6 +24,11 @@ namespace SentenceAPI.Features.UserFriends.Services
     {
         #region Static fields
         private static readonly string databaseConfigFile = "mongo_database_config.json";
+        private static readonly LogConfiguration logConfiguration = new LogConfiguration()
+        {
+            ServiceName = "UserFriendsService",
+            ControllerName = string.Empty,
+        };
         #endregion
 
         #region Databases
@@ -38,11 +44,7 @@ namespace SentenceAPI.Features.UserFriends.Services
         #endregion
 
         #region Factories
-        private FactoriesManager.FactoriesManager factoriesManager = FactoriesManager.FactoriesManager.Instance;
-
-        private ITokenServiceFactory tokenServiceFactory;
-        private IUserServiceFactory userServiceFactory;
-        private ILoggerFactory loggerFactory;
+        private IFactoriesManager factoriesManager = FactoriesManager.FactoriesManager.Instance;
         #endregion
 
         public UserFriendsService()
@@ -75,7 +77,7 @@ namespace SentenceAPI.Features.UserFriends.Services
             }
             catch (Exception ex)
             {
-                await exceptionLogger.Log(new ApplicationError(ex.Message));
+                await exceptionLogger.Log(new ApplicationError(ex));
                 throw new DatabaseException("Error occured while adding a new subscriber.");
             }
         }
@@ -97,7 +99,7 @@ namespace SentenceAPI.Features.UserFriends.Services
             }
             catch (Exception ex)
             {
-                await exceptionLogger.Log(new ApplicationError(ex.Message));
+                await exceptionLogger.Log(new ApplicationError(ex));
                 throw new DatabaseException("Error occured while adding a new subscription.");
             }
         }
@@ -123,7 +125,7 @@ namespace SentenceAPI.Features.UserFriends.Services
             }
             catch (Exception ex)
             {
-                await exceptionLogger.Log(new ApplicationError(ex.Message));
+                await exceptionLogger.Log(new ApplicationError(ex));
                 throw new DatabaseException("Error occured while deleting the subscriber.");
             }
         }
@@ -139,6 +141,8 @@ namespace SentenceAPI.Features.UserFriends.Services
                 Models.UserFriends userFriends = (await database.Get(new EqualityFilter<long>("userID",
                     userID))).FirstOrDefault();
 
+                userFriends.SubscriptionsID.Remove(subscriptionID);
+
                 await database.Update(userFriends, new[] { "SubscriptionsID" });
             }
             catch (DatabaseException ex)
@@ -147,7 +151,7 @@ namespace SentenceAPI.Features.UserFriends.Services
             }
             catch (Exception ex)
             {
-                await exceptionLogger.Log(new ApplicationError(ex.Message));
+                await exceptionLogger.Log(new ApplicationError(ex));
                 throw new DatabaseException("Error occured while deleting the subscription");
             }
         }
@@ -165,7 +169,7 @@ namespace SentenceAPI.Features.UserFriends.Services
             }
             catch (Exception ex)
             {
-                await exceptionLogger.Log(new ApplicationError(ex.Message));
+                await exceptionLogger.Log(new ApplicationError(ex));
                 throw new DatabaseException("Error occured while getting the subscribers");
             }
         }
@@ -203,7 +207,7 @@ namespace SentenceAPI.Features.UserFriends.Services
             }
             catch (Exception ex)
             {
-                await exceptionLogger.Log(new ApplicationError(ex.Message));
+                await exceptionLogger.Log(new ApplicationError(ex));
                 throw new DatabaseException("Error occured while getting the subscribers");
             }
         }
@@ -221,7 +225,7 @@ namespace SentenceAPI.Features.UserFriends.Services
             }
             catch (Exception ex)
             {
-                await exceptionLogger.Log(new ApplicationError(ex.Message));
+                await exceptionLogger.Log(new ApplicationError(ex));
                 throw new DatabaseException("Error occured while getting the subscriptions");
             }
         }
@@ -259,7 +263,7 @@ namespace SentenceAPI.Features.UserFriends.Services
             }
             catch (Exception ex)
             {
-                await exceptionLogger.Log(new ApplicationError(ex.Message));
+                await exceptionLogger.Log(new ApplicationError(ex));
                 throw new DatabaseException("Error occured while getting the subscriptions");
             }
         }

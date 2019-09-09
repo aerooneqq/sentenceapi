@@ -91,7 +91,7 @@ namespace SentenceAPI.Features.Email.Services
             }
             catch (Exception ex)
             {
-                await exceptionLogger.Log(new ApplicationError(ex.Message));
+                await exceptionLogger.Log(new ApplicationError(ex));
                 throw new DatabaseException("Error occured while working with the database");
             }
         }

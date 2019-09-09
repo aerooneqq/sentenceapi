@@ -59,8 +59,8 @@ namespace SentenceAPI.Middlewares.RequestLoggerMiddleware
 
             try
             {
-                await database.Connect();
-                await database.Insert(requestLog);
+                await database.Connect().ConfigureAwait(false);
+                await database.Insert(requestLog).ConfigureAwait(false);
             }
             catch
             {
@@ -74,7 +74,7 @@ namespace SentenceAPI.Middlewares.RequestLoggerMiddleware
             }
             finally
             {
-                await nextMiddlewareDel.Invoke(httpContext);
+                await nextMiddlewareDel.Invoke(httpContext).ConfigureAwait(false);
             }
         }
     }

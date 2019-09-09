@@ -1,0 +1,17 @@
+C:\Users\Aero\Desktop\Sentence\sentenceapi\SentenceAPI\bin\Release\netcoreapp2.1\SentenceAPI.deps.json
+C:\Users\Aero\Desktop\Sentence\sentenceapi\SentenceAPI\bin\Release\netcoreapp2.1\SentenceAPI.runtimeconfig.json
+C:\Users\Aero\Desktop\Sentence\sentenceapi\SentenceAPI\bin\Release\netcoreapp2.1\SentenceAPI.runtimeconfig.dev.json
+C:\Users\Aero\Desktop\Sentence\sentenceapi\SentenceAPI\bin\Release\netcoreapp2.1\SentenceAPI.dll
+C:\Users\Aero\Desktop\Sentence\sentenceapi\SentenceAPI\bin\Release\netcoreapp2.1\SentenceAPI.pdb
+C:\Users\Aero\Desktop\Sentence\sentenceapi\SentenceAPI\bin\Release\netcoreapp2.1\DataAccessLayer.dll
+C:\Users\Aero\Desktop\Sentence\sentenceapi\SentenceAPI\bin\Release\netcoreapp2.1\DataAccessLayer.pdb
+C:\Users\Aero\Desktop\Sentence\sentenceapi\SentenceAPI\obj\Release\netcoreapp2.1\SentenceAPI.csprojAssemblyReference.cache
+C:\Users\Aero\Desktop\Sentence\sentenceapi\SentenceAPI\obj\Release\netcoreapp2.1\SentenceAPI.csproj.CoreCompileInputs.cache
+C:\Users\Aero\Desktop\Sentence\sentenceapi\SentenceAPI\obj\Release\netcoreapp2.1\SentenceAPI.RazorAssemblyInfo.cache
+C:\Users\Aero\Desktop\Sentence\sentenceapi\SentenceAPI\obj\Release\netcoreapp2.1\SentenceAPI.RazorAssemblyInfo.cs
+C:\Users\Aero\Desktop\Sentence\sentenceapi\SentenceAPI\obj\Release\netcoreapp2.1\SentenceAPI.AssemblyInfoInputs.cache
+C:\Users\Aero\Desktop\Sentence\sentenceapi\SentenceAPI\obj\Release\netcoreapp2.1\SentenceAPI.AssemblyInfo.cs
+C:\Users\Aero\Desktop\Sentence\sentenceapi\SentenceAPI\obj\Release\netcoreapp2.1\SentenceAPI.RazorTargetAssemblyInfo.cache
+C:\Users\Aero\Desktop\Sentence\sentenceapi\SentenceAPI\obj\Release\netcoreapp2.1\SentenceAPI.csproj.CopyComplete
+C:\Users\Aero\Desktop\Sentence\sentenceapi\SentenceAPI\obj\Release\netcoreapp2.1\SentenceAPI.dll
+C:\Users\Aero\Desktop\Sentence\sentenceapi\SentenceAPI\obj\Release\netcoreapp2.1\SentenceAPI.pdb

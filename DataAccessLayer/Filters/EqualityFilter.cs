@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using MongoDB.Bson;
 using MongoDB.Driver;
 
 namespace DataAccessLayer.Filters
@@ -17,6 +18,11 @@ namespace DataAccessLayer.Filters
         {
             this.propertyName = propertyName;
             this.value = value;
+        }
+
+        public BsonDocument ToMongoBsonDocument()
+        {
+            return new BsonDocument(new Dictionary<string, object>() { { propertyName, value } });
         }
 
         public FilterDefinition<DataType> ToMongoFilter<DataType>()

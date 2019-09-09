@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
-using System.Web.Http;
+using System.Web;
 using System.IdentityModel.Tokens.Jwt;
 
 using Newtonsoft.Json;
@@ -75,14 +75,14 @@ namespace SentenceAPI.Features.Authentication
 
                 UserInfo user = await userService.Get(email, password);
 
-                if (user == null)
+                if (user == null || user.IsAccountDeleted)
                 {
                     return Unauthorized();
                 }
 
                 var (encodedToken, securityToken) = tokenService.CreateEncodedToken(user);
 
-                await tokenService.InsertTokenInDB(new JwtToken(securityToken, user));
+                await tokenService.InsertTokenInDB(new JwtToken(securityToken, user)).ConfigureAwait(false);
 
                 DefferedTasksManager.AddTask(new Action(() => userActivityService.AddSingleActivity(user.ID,
                     new UserActivity.Models.SingleUserActivity()
@@ -95,12 +95,12 @@ namespace SentenceAPI.Features.Authentication
             }
             catch (DatabaseException ex)
             {
-                await exceptionLogger.Log(new ApplicationError(ex.Message));
+                await exceptionLogger.Log(new ApplicationError(ex));
                 return new InternalServerError(ex.Message);
             }
             catch (Exception ex)
             {
-                await exceptionLogger.Log(new ApplicationError(ex.Message));
+                await exceptionLogger.Log(new ApplicationError(ex));
                 return new InternalServerError();
             }
         }

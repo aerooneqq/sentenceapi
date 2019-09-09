@@ -77,8 +77,8 @@ namespace SentenceAPI.ApplicationFeatures.Loggers
 
             try
             {
-                await database.Connect();
-                await database.Insert(logObject);
+                await database.Connect().ConfigureAwait(false);
+                await database.Insert(logObject).ConfigureAwait(false);
             }
             catch
             {

@@ -31,6 +31,11 @@ using SentenceAPI.Features.Codes.Interfaces;
 using SentenceAPI.ApplicationFeatures.Requests.Factories;
 using SentenceAPI.ApplicationFeatures.Requests.Interfaces;
 using SentenceAPI.ApplicationFeatures.DefferedExecution;
+using SentenceAPI.Features.Workplace.DocumentsDeskState.Factories;
+using SentenceAPI.Features.Workplace.DocumentsDeskState.Interfaces;
+using System.Threading;
+using SentenceAPI.Features.UserPhoto.Factories;
+using SentenceAPI.Features.UserPhoto.Interfaces;
 
 namespace SentenceAPI
 {
@@ -78,20 +83,14 @@ namespace SentenceAPI
                     };
                 });
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddMemoryCache();
+
+            services.AddMvc(options => options.EnableEndpointRouting = false).
+                SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
         }
 
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-            else
-            {
-                app.UseHsts();
-            }
-
             app.UseMiddleware<RequestLogger>();
 
             app.UseHttpsRedirection();
@@ -135,6 +134,10 @@ namespace SentenceAPI
                 typeof(ICodesServiceFactory)));
             factoriesManager.AddFactory(new FactoryInfo(new RequestServiceFactory(),
                 typeof(IRequestServiceFactory)));
+            factoriesManager.AddFactory(new FactoryInfo(new DocumentDeskStateServiceFactory(),
+                typeof(IDocumentDeskStateServiceFactory)));
+            factoriesManager.AddFactory(new FactoryInfo(new UserPhotoServiceFactory(),
+                typeof(IUserPhotoServiceFactory)));
         }
     }
 }

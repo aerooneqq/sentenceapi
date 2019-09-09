@@ -15,7 +15,7 @@ namespace SentenceAPI.Features.Users.Interfaces
 
         Task<long> CreateNewUser(string email, string password);
 
-        void Delete(long id);
+        Task Delete(long id);
 
         Task Update(T user);
         Task Update(T user, IEnumerable<string> properties);

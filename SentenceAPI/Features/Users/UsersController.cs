@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.IO;
 using System.Text;
-using System.Web.Http;
+using System.Web;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -28,6 +28,7 @@ using SentenceAPI.Features.Codes.Models;
 using SentenceAPI.Features.Codes.Interfaces;
 using Microsoft.AspNetCore.Http;
 using SentenceAPI.ApplicationFeatures.Requests.Interfaces;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace SentenceAPI.Features.Users
 {
@@ -47,6 +48,7 @@ namespace SentenceAPI.Features.Users
         private ILogger<ApplicationError> exceptionLogger;
         private ICodesService codesService;
         private IRequestService requestService;
+        private IMemoryCache memoryCacheService;
         #endregion
 
         #region Factories
@@ -54,7 +56,7 @@ namespace SentenceAPI.Features.Users
             FactoriesManager.FactoriesManager.Instance;
         #endregion
 
-        public UsersController()
+        public UsersController(IMemoryCache memoryCacheService)
         {
             factoriesManager.GetService<IUserService<UserInfo>>().TryGetTarget(out userService);
             factoriesManager.GetService<ILinkService>().TryGetTarget(out linkService);
@@ -62,6 +64,8 @@ namespace SentenceAPI.Features.Users
             factoriesManager.GetService<ILogger<ApplicationError>>().TryGetTarget(out exceptionLogger);
             factoriesManager.GetService<ICodesService>().TryGetTarget(out codesService);
             factoriesManager.GetService<IRequestService>().TryGetTarget(out requestService);
+
+            this.memoryCacheService = memoryCacheService;
 
             exceptionLogger.LogConfiguration = LogConfiguration;
         }
@@ -217,7 +221,7 @@ namespace SentenceAPI.Features.Users
         {
             try
             {
-                var updatedFields = requestService.GetRequestBody<Dictionary<string, object>>(Request);
+                var updatedFields = await requestService.GetRequestBody<Dictionary<string, object>>(Request);
                 UserInfo user = new UserInfo(updatedFields);
 
                 await userService.Update(user, updatedFields.Keys.Select(propName =>

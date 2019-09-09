@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using MongoDB.Bson;
 using MongoDB.Driver;
 
 namespace DataAccessLayer.Filters
@@ -18,6 +19,11 @@ namespace DataAccessLayer.Filters
         {
             this.regexPattern = regexPattern;
             this.propertyName = propertyName;
+        }
+
+        public BsonDocument ToMongoBsonDocument()
+        {
+            throw new NotImplementedException();
         }
 
         public FilterDefinition<DataType> ToMongoFilter<DataType>()

@@ -13,23 +13,21 @@ namespace SentenceAPI.ApplicationFeatures.Requests
 {
     public class RequestService : IRequestService
     {
-        public string GetRequestBody(HttpRequest request)
+        public async Task<string> GetRequestBody(HttpRequest request)
         {
             using (StreamReader sr = new StreamReader(request.Body, Encoding.UTF8, true, 1024, true))
             {
-                return sr.ReadToEnd();
+                return await sr.ReadToEndAsync();
             }
         }
 
-        public T GetRequestBody<T>(HttpRequest request)
-        {
-            using (StreamReader sr = new StreamReader(request.Body, Encoding.UTF8, true, 1024, true))
-            {
-                string body = sr.ReadToEnd();
+        public async Task<T> GetRequestBody<T>(HttpRequest request)
+        { 
+            using StreamReader sr = new StreamReader(request.Body, Encoding.UTF8, true, 1024, true);
+            string body = await sr.ReadToEndAsync().ConfigureAwait(false);
 
-                IDeserializer<T> deserializer = new JsonDeserializer<T>(body);
-                return deserializer.Deserialize();
-            }
+            IDeserializer<T> deserializer = new JsonDeserializer<T>(body);
+            return deserializer.Deserialize();
         }
 
         public string GetToken(HttpRequest request)

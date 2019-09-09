@@ -1,4 +1,5 @@
-﻿using MongoDB.Driver;
+﻿using MongoDB.Bson;
+using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,5 +13,6 @@ namespace DataAccessLayer.Filters
     public interface IFilter
     {
         FilterDefinition<DataType> ToMongoFilter<DataType>();
+        BsonDocument ToMongoBsonDocument();
     }
 }

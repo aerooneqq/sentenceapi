@@ -66,9 +66,29 @@ namespace SentenceAPI.Features.Users.Services
         }
         #endregion
 
-        public void Delete(long id)
+        public async Task Delete(long id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                await database.Connect();
+
+                var user = (await database.Get(new EqualityFilter<long>(typeof(UserInfo).GetBsonPropertyName("ID"), id))
+                    .ConfigureAwait(false)).FirstOrDefault();
+
+                if (!(user is UserInfo))
+                {
+                    throw new ArgumentException($"Can not delete the user with the ID ({id}), which does not exist");
+                }
+
+                user.IsAccountDeleted = true;
+
+                await database.Update(user, new[] { "isAccountDeleted" });
+            }
+            catch (Exception ex)
+            {
+                await exceptionLogger.Log(new ApplicationError(ex));
+                throw new DatabaseException("The error occured while deleting account");
+            }
         }
 
         public async Task<UserInfo> Get(string token)
@@ -78,14 +98,14 @@ namespace SentenceAPI.Features.Users.Services
                 JwtSecurityToken jwtSecurityToken = new JwtSecurityTokenHandler().ReadToken(token) as JwtSecurityToken;
                 string email = jwtSecurityToken.Claims.ToList().Find(c => c.Type == "Email").Value;
 
-                await database.Connect();
+                await database.Connect().ConfigureAwait(false);
 
                 var filter = new EqualityFilter<string>("email", email);
                 return (await database.Get(filter)).FirstOrDefault();
             }
             catch (Exception ex)
             {
-                await exceptionLogger.Log(new ApplicationError(ex.Message));
+                await exceptionLogger.Log(new ApplicationError(ex));
                 throw new DatabaseException("Error occured while working with the database");
             }
         }
@@ -113,7 +133,7 @@ namespace SentenceAPI.Features.Users.Services
             }
             catch (Exception ex) when (ex.GetType() != typeof(DatabaseException))
             {
-                await exceptionLogger.Log(new ApplicationError(ex.Message));
+                await exceptionLogger.Log(new ApplicationError(ex));
                 throw new DatabaseException("Error occured while working with the database");
             }
         }
@@ -129,7 +149,7 @@ namespace SentenceAPI.Features.Users.Services
             }
             catch (Exception ex)
             {
-                await exceptionLogger.Log(new ApplicationError(ex.Message));
+                await exceptionLogger.Log(new ApplicationError(ex));
                 throw new DatabaseException("Error occured while working with the database");
             }
         }
@@ -143,7 +163,7 @@ namespace SentenceAPI.Features.Users.Services
             }
             catch (Exception ex)
             {
-                await exceptionLogger.Log(new ApplicationError(ex.Message));
+                await exceptionLogger.Log(new ApplicationError(ex));
                 throw new DatabaseException("Error occured while ipdating record in the database");
             }
         }
@@ -180,7 +200,7 @@ namespace SentenceAPI.Features.Users.Services
             }
             catch (Exception ex)
             {
-                await exceptionLogger.Log(new ApplicationError(ex.Message));
+                await exceptionLogger.Log(new ApplicationError(ex));
                 throw new DatabaseException("Error occured when inserting a user in the database");
             }
         }
@@ -198,7 +218,7 @@ namespace SentenceAPI.Features.Users.Services
             }
             catch (Exception ex)
             {
-                await exceptionLogger.Log(new ApplicationError(ex.Message));
+                await exceptionLogger.Log(new ApplicationError(ex));
                 throw new DatabaseException("Error occured when inserting a user in the database");
             }
         }
@@ -226,7 +246,7 @@ namespace SentenceAPI.Features.Users.Services
             }
             catch (Exception ex)
             {
-                await exceptionLogger.Log(new ApplicationError(ex.Message));
+                await exceptionLogger.Log(new ApplicationError(ex));
                 throw new DatabaseException("Error occured while checking the user");
             }
         }

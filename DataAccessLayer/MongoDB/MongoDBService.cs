@@ -17,10 +17,12 @@ using DataAccessLayer.Filters;
 using DataAccessLayer.Filters.Interfaces;
 using DataAccessLayer.Configuration.Interfaces;
 using DataAccessLayer.Configuration;
+using DataAccessLayer.Interfaces.Aggregations;
+using DataAccessLayer.Aggregations;
 
 namespace DataAccessLayer.MongoDB
 {
-    public class MongoDBService<DataType> : IMongoDBService<DataType>
+    internal class MongoDBService<DataType> : IMongoDBService<DataType>
         where DataType : UniqueEntity
     {
         #region Static fields
@@ -30,7 +32,6 @@ namespace DataAccessLayer.MongoDB
         #endregion
 
         #region Fields
-        private MongoClient mongoClient;
         private IMongoDatabase database;
         private IMongoCollection<DataType> mongoCollection;
         private IMongoCollection<CollectionProperties> supportMongoCollection;
@@ -63,8 +64,8 @@ namespace DataAccessLayer.MongoDB
         {
             return Task.Run(() =>
             {
-                mongoClient = new MongoClient(Configuration.ConnectionString);
-                database = mongoClient.GetDatabase(Configuration.DatabaseName);
+                MongoDBConnectionManager.ConnectionString = Configuration.ConnectionString;
+                database = MongoDBConnectionManager.GetDatabase(Configuration.DatabaseName);
             });
         }
 
@@ -92,7 +93,7 @@ namespace DataAccessLayer.MongoDB
 
                 if (resList.Count > 1)
                 {
-                    #warning handle the exception when there is more then 1 docs with a same ID
+#warning handle the exception when there is more then 1 docs with a same ID
                     throw new DatabaseException("Fatal error happened.");
                 }
 
@@ -165,7 +166,8 @@ namespace DataAccessLayer.MongoDB
         /// Tries to update the record. Only the properties which are listed in the "properties"
         /// dictionary will be updated.
         /// </summary>
-        public Task Update(DataType entity, IEnumerable<string> properties)
+        public Task Update(DataType entity,
+                           IEnumerable<string> properties)
         {
             return Task.Run(() =>
             {
@@ -258,12 +260,61 @@ namespace DataAccessLayer.MongoDB
                 return mongoCollection.Find(filterCollection.ToMongoFilter<DataType>()).ToEnumerable();
             });
         }
+
+        /// <summary>
+        /// Performs an aggregate + lookup operations in mongo db. In other words this method unites collections,
+        /// depending on the "Primary" and "Foreign" keys, which are localField and first tuple value in the
+        /// extra Collections dictionaty,
+        /// and returns the result of this unite.
+        /// </summary>
+        /// <param name="filter">This filter is used to select records in the MAIN collection</param>
+        /// <param name="localField">
+        /// This is the "Primary" key in the main collection, for instance,
+        /// the property UserID in the UserFeed entity.
+        /// </param>
+        /// <param name="extraEntitiesTypes">
+        /// The types of the entities, with which we want to aggregate the main collection. From this types
+        /// the extraCollections dictionary is obtained.
+        /// </param>
+        /// <returns></returns>
+        public Task<IEnumerable<dynamic>> GetCombined(IFilter filter, string localField,
+            params (Type entityType, string foreignField, IEnumerable<string> requestedFields)[] extraEntitiesTypes)
+        {
+            return Task.Run(() =>
+            {
+                mongoCollection = database.GetCollection<DataType>(CollectionName);
+
+                Dictionary<string, (string, IEnumerable<string>)> extraCollections =
+                    new Dictionary<string, (string, IEnumerable<string>)>();
+
+                foreach ((Type entityType, string foreignField, IEnumerable<string> requestedFields) in extraEntitiesTypes)
+                {
+                    extraCollections.Add(entityType.Name + collectionPostfix, (foreignField, requestedFields));
+                }
+
+                IAggregationFilter aggregationFilter = new AggregationFilter(
+                    new Aggregation
+                    (
+                        typeof(DataType),
+                        localField,
+                        extraCollections
+                    ));
+
+                var pipeline = new List<BsonDocument>()
+                {
+                    new BsonDocument("$match", filter.ToMongoBsonDocument())
+                };
+
+                pipeline.AddRange(aggregationFilter.ToBsonDocument());
+
+                return mongoCollection.Aggregate<dynamic>(pipeline).ToEnumerable();
+            });
+        }
         #endregion
 
         #region IDisposable implementation
         public void Dispose()
         {
-            mongoClient = null;
             mongoCollection = null;
             supportMongoCollection = null;
         }

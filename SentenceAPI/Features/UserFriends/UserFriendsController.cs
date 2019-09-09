@@ -97,7 +97,14 @@ namespace SentenceAPI.Features.UserFriends
             {
                 string token = requestService.GetToken(Request);
 
-                await userFriendsService.AddSubscriber(token, subscriberID);
+                var subscribers = await userFriendsService.GetSubscribers(token);
+
+                if (subscribers.Any(s => s.UserID == subscriberID))
+                {
+                    return new BadSendedRequest<string>("The subscriber has been already added");
+                }
+
+                await userFriendsService.AddSubscriber(token, subscriberID).ConfigureAwait(false);
 
                 return new Ok();
             }
@@ -119,6 +126,13 @@ namespace SentenceAPI.Features.UserFriends
             {
                 string token = requestService.GetToken(Request);
 
+                var subscriptions = await userFriendsService.GetSubscriptions(token).ConfigureAwait(false);
+
+                if (subscriptions.Any(s => s.UserID == subscriptionID))
+                {
+                    return new BadSendedRequest<string>("The subscription has been already added");
+                }
+
                 await userFriendsService.AddSubscription(token, subscriptionID);
 
                 return new Ok();
@@ -129,7 +143,7 @@ namespace SentenceAPI.Features.UserFriends
             }
             catch (Exception ex)
             {
-                await exceptionLogger.Log(new ApplicationError(ex.Message));
+                await exceptionLogger.Log(new ApplicationError(ex));
                 return new InternalServerError();
             }
         }
@@ -151,7 +165,7 @@ namespace SentenceAPI.Features.UserFriends
             }
             catch (Exception ex)
             {
-                await exceptionLogger.Log(new ApplicationError(ex.Message));
+                await exceptionLogger.Log(new ApplicationError(ex));
                 return new InternalServerError();
             }
         }
@@ -173,7 +187,7 @@ namespace SentenceAPI.Features.UserFriends
             }
             catch (Exception ex)
             {
-                await exceptionLogger.Log(new ApplicationError(ex.Message));
+                await exceptionLogger.Log(new ApplicationError(ex));
                 return new InternalServerError();
             }
         }

@@ -5,7 +5,7 @@ using DataAccessLayer.DatabasesManager;
 using DataAccessLayer.Exceptions;
 using DataAccessLayer.Filters;
 using DataAccessLayer.Filters.Interfaces;
-using Microsoft.AspNetCore.Http;
+
 using SentenceAPI.Extensions;
 using SentenceAPI.Features.Authentication.Interfaces;
 using SentenceAPI.Features.Codes.Interfaces;
@@ -14,7 +14,6 @@ using SentenceAPI.ApplicationFeatures.Loggers.Interfaces;
 using SentenceAPI.ApplicationFeatures.Loggers.Models;
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -104,17 +103,17 @@ namespace SentenceAPI.Features.Codes.Services
         {
             try
             {
-                await database.Connect();
+                await database.Connect().ConfigureAwait(false);
 
                 IFilter filter = new EqualityFilter<long>(typeof(ActivationCode).GetBsonPropertyName("UserID"),
                     activationCode.ID);
 
-                await database.Delete(filter);
-                await database.Insert(activationCode);
+                await database.Delete(filter).ConfigureAwait(false);
+                await database.Insert(activationCode).ConfigureAwait(false);
             }
             catch (Exception ex)
             {
-                await exceptionLogger.Log(new ApplicationError(ex));
+                await exceptionLogger.Log(new ApplicationError(ex)).ConfigureAwait(false);
                 throw new DatabaseException("The error happened inserting the activation code");
             }
         }
@@ -123,17 +122,20 @@ namespace SentenceAPI.Features.Codes.Services
         {
             try
             {
-                IFilter codeFilter = new EqualityFilter<string>(typeof(ActivationCode).GetBsonPropertyName("Code"), code);
-                IFilter usedFilter = new EqualityFilter<bool>(typeof(ActivationCode).GetBsonPropertyName("Used"), false);
+                IFilter codeFilter = new EqualityFilter<string>(typeof(ActivationCode)
+                    .GetBsonPropertyName("Code"), code);
+                IFilter usedFilter = new EqualityFilter<bool>(typeof(ActivationCode)
+                    .GetBsonPropertyName("Used"), false);
 
                 IFilterCollection filterCollection = new FilterCollection(new[]
                 {
                     codeFilter, usedFilter
                 });
 
-                await database.Connect();
-                ActivationCode activationCode = (await database.Get(filterCollection).ConfigureAwait(false)).FirstOrDefault();
-                
+                await database.Connect().ConfigureAwait(false);
+                ActivationCode activationCode = (await database.Get(filterCollection)
+                    .ConfigureAwait(false)).FirstOrDefault();
+
                 if (activationCode == null)
                 {
                     throw new DatabaseException("Such a code does not exist");
@@ -142,11 +144,11 @@ namespace SentenceAPI.Features.Codes.Services
                 activationCode.Used = true;
                 activationCode.UsageDate = DateTime.UtcNow;
 
-                await database.Update(activationCode, new[] { "Used", "UsageDate" });
+                await database.Update(activationCode, new[] { "Used", "UsageDate" }).ConfigureAwait(false);
             }
             catch (Exception ex) when (ex.GetType() != typeof(DatabaseException))
             {
-                await exceptionLogger.Log(new ApplicationError(ex));
+                await exceptionLogger.Log(new ApplicationError(ex)).ConfigureAwait(false);
                 throw new DatabaseException("THe error happened while activating the code");
             }
         }

@@ -3,11 +3,15 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using DataAccessLayer.Exceptions;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+
 using Newtonsoft.Json;
+
+using DataAccessLayer.Exceptions;
+
 using SentenceAPI.ActionResults;
 using SentenceAPI.FactoriesManager.Interfaces;
 using SentenceAPI.ApplicationFeatures.Loggers.Interfaces;
@@ -34,10 +38,6 @@ namespace SentenceAPI.Features.UserFeed
 
         #region Factories
         private readonly IFactoriesManager factoriesManager = FactoriesManager.FactoriesManager.Instance;
-
-        private ILoggerFactory loggerFactory;
-        private IUserFeedServiceFactory userFeedServiceFactory;
-        private IRequestServiceFactory requestServiceFactory;
         #endregion
 
         public UserFeedController()
@@ -58,7 +58,7 @@ namespace SentenceAPI.Features.UserFeed
 
                 var userFeed = await userFeedService.GetUserFeed(token);
 
-                return new OkJson<IEnumerable<Models.UserFeed>>(userFeed);
+                return new OkJson<IEnumerable<dynamic>>(userFeed);
             }
             catch (DatabaseException ex)
             {
@@ -78,7 +78,7 @@ namespace SentenceAPI.Features.UserFeed
             {
                 string token = requestService.GetToken(Request);
 
-                string message = requestService.GetRequestBody(Request);
+                string message = await requestService.GetRequestBody(Request);
 
                 await userFeedService.InsertUserPost(token, message);
 
@@ -90,7 +90,7 @@ namespace SentenceAPI.Features.UserFeed
             }
             catch (Exception ex)
             {
-                await exceptionLogger.Log(new ApplicationError(ex.Message));
+                await exceptionLogger.Log(new ApplicationError(ex));
                 return new InternalServerError();
             }
         }

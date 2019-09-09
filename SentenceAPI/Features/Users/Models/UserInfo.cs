@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 
 using MongoDB.Bson.Serialization.Attributes;
 
-using SentenceAPI.Attributes;
+using DataAccessLayer.Attributes;
 using SentenceAPI.Extensions;
 
 using DataAccessLayer.KernelModels;
@@ -43,9 +43,6 @@ namespace SentenceAPI.Features.Users.Models
 
         [BsonElement("city"), JsonProperty("city")]
         public string City { get; set; }
-
-        [BsonElement("photo"), JsonProperty("photo")]
-        public byte[] Photo { get; set; }
         #endregion
 
         [BsonElement("birthDate"), JsonProperty("birthDate")]
@@ -59,6 +56,9 @@ namespace SentenceAPI.Features.Users.Models
         #region System properties
         [BsonElement("isAccountVerified"), JsonProperty("isAccountVerified")]
         public bool IsAccountVerified { get; set; }
+
+        [BsonElement("isAccountDeleted"), JsonProperty("isAccountDeleted")]
+        public bool IsAccountDeleted { get; set; }
         #endregion
 
         #region Constructors
@@ -66,8 +66,6 @@ namespace SentenceAPI.Features.Users.Models
 
         public UserInfo(Dictionary<string, object> propertiesValues)
         {
-            PropertyInfo[] properties = typeof(UserInfo).GetTypeInfo().GetProperties();
-
             foreach ((string propName, object value) in propertiesValues)
             {
                 var newValue = value;
@@ -78,7 +76,8 @@ namespace SentenceAPI.Features.Users.Models
                 }
 
                 PropertyInfo property = typeof(UserInfo).GetPropertyFromJsonName(propName);
-                property.SetValue(this, ((JArray)newValue).ToObject(property.PropertyType));
+                property.SetValue(this, newValue is JArray ? 
+                    ((JArray)newValue).ToObject(property.PropertyType) : newValue);
             }
         }
 

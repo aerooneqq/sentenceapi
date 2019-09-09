@@ -8,9 +8,9 @@ namespace SentenceAPI.ApplicationFeatures.Requests.Interfaces
 {
     interface IRequestService
     {
-        T GetRequestBody<T>(HttpRequest request);
+        Task<T> GetRequestBody<T>(HttpRequest request);
 
-        string GetRequestBody(HttpRequest request);
+        Task<string> GetRequestBody(HttpRequest request);
 
         string GetToken(HttpRequest request);
     }
