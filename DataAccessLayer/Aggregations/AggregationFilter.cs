@@ -11,6 +11,9 @@ using MongoDB.Bson.Serialization.Attributes;
 
 namespace DataAccessLayer.Aggregations
 {
+    /// <summary>
+    /// Transform the aggregation query to the request to a perticular database.
+    /// </summary>
     public class AggregationFilter : IAggregationFilter
     {
         public IAggregation Aggregation { get; }

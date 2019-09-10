@@ -5,6 +5,9 @@ using System.Text;
 
 namespace DataAccessLayer.Aggregations
 {
+    /// <summary>
+    /// Class which stores data for the aggregation proccess
+    /// </summary>
     public class Aggregation : IAggregation
     {
         public Type MainType { get; }

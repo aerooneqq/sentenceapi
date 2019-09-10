@@ -1,7 +1,7 @@
 ﻿using DataAccessLayer.Configuration.Interfaces;
 using DataAccessLayer.Filters;
 using DataAccessLayer.Filters.Interfaces;
-using DataAccessLayer.Interfaces.Aggregations;
+using DataAccessLayer.Aggregations.Interfaces;
 using DataAccessLayer.KernelModels;
 using System;
 using System.Collections.Generic;
