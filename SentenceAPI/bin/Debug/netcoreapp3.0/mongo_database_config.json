@@ -1,8 +1,0 @@
-{
-  "mongoDBConStr": "mongodb+srv://SentenceAPI:Aero@sentencecluster-fwt4x.mongodb.net/test?retryWrites=true&w=majority",
-  "user_name": "SentenceAPI",
-  "password": "Aero",
-  "auth_mechanism": "SCRAM-SHA-1",
-  "database_name": "SentenceDatabase",
-  "server_name": "SentenceAPI"
-} 
