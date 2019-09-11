@@ -31,6 +31,8 @@ using SentenceAPI.ApplicationFeatures.Requests.Interfaces;
 using Microsoft.Extensions.Caching.Memory;
 using SentenceAPI.ApplicationFeatures.DefferedExecution;
 using SentenceAPI.Features.Authentication.Interfaces;
+using SentenceAPI.Events;
+using SentenceAPI.Features.Users.Events;
 
 namespace SentenceAPI.Features.Users
 {
@@ -79,7 +81,7 @@ namespace SentenceAPI.Features.Users
         {
             try
             {
-                return new OkJson<IEnumerable<UserSearchResult>>((await userService.FindUsersWithLogin(login))
+                return new OkJson<IEnumerable<UserSearchResult>>((await userService.FindUsersWithLogin(login).ConfigureAwait(false))
                     .Select(user => new UserSearchResult(user)));
             }
             catch (DatabaseException ex)
@@ -88,7 +90,7 @@ namespace SentenceAPI.Features.Users
             }
             catch (Exception ex)
             {
-                await exceptionLogger.Log(new ApplicationError(ex));
+                await exceptionLogger.Log(new ApplicationError(ex)).ConfigureAwait(false);
                 return new InternalServerError();
             }
         }
@@ -98,10 +100,7 @@ namespace SentenceAPI.Features.Users
         {
             try
             {
-                string authorization = Request.Headers["Authorization"];
-                string token = authorization.Split()[1];
-
-                var user = await userService.Get(token);
+                var user = await userService.Get(requestService.GetToken(Request)).ConfigureAwait(false);
 
                 return new OkJson<UserInfo>(user);
             }
@@ -111,7 +110,7 @@ namespace SentenceAPI.Features.Users
             }
             catch (Exception ex)
             {
-                await exceptionLogger.Log(new ApplicationError(ex));
+                await exceptionLogger.Log(new ApplicationError(ex)).ConfigureAwait(false);
                 return new InternalServerError();
             }
         }
@@ -127,10 +126,9 @@ namespace SentenceAPI.Features.Users
         {
             try
             {
-                string authorization = Request.Headers["Authorization"];
-                string token = authorization.Split()[1];
+                string token = requestService.GetToken(Request);
 
-                return new OkJson<Dictionary<string, object>>((await userService.Get(token))
+                return new OkJson<Dictionary<string, object>>((await userService.Get(token).ConfigureAwait(false))
                     .ConfigureNewObject(properties.Split(',', ';', StringSplitOptions.RemoveEmptyEntries)));
             }
             catch (DatabaseException ex)
@@ -139,7 +137,7 @@ namespace SentenceAPI.Features.Users
             }
             catch (Exception ex)
             {
-                await exceptionLogger.Log(new ApplicationError(ex));
+                await exceptionLogger.Log(new ApplicationError(ex)).ConfigureAwait(false);
                 return new InternalServerError();
             }
         }
@@ -149,7 +147,7 @@ namespace SentenceAPI.Features.Users
         {
             try
             {
-                return new OkJson<UserInfo>(await userService.Get(id));
+                return new OkJson<UserInfo>(await userService.Get(id).ConfigureAwait(false));
             }
             catch (DatabaseException ex)
             {
@@ -157,7 +155,7 @@ namespace SentenceAPI.Features.Users
             }
             catch (Exception ex)
             {
-                await exceptionLogger.Log(new ApplicationError(ex));
+                await exceptionLogger.Log(new ApplicationError(ex)).ConfigureAwait(false);
                 return new InternalServerError();
             }
         }
@@ -180,12 +178,12 @@ namespace SentenceAPI.Features.Users
 
                 if (!(await userService.DoesUserExist(email).ConfigureAwait(false)))
                 {
-                    long id = await userService.CreateNewUser(email, password);
+                    long id = await userService.CreateNewUser(email, password).ConfigureAwait(false);
 
                     ActivationCode activationCode = codesService.CreateActivationCode(id);
                     await codesService.InsertCodeInDatabase(activationCode).ConfigureAwait(false);
 
-                    await emailService.SendConfirmationEmail(activationCode.Code, email);
+                    await emailService.SendConfirmationEmail(activationCode.Code, email).ConfigureAwait(false);
 
                     return new Created();
                 }
@@ -198,7 +196,7 @@ namespace SentenceAPI.Features.Users
             }
             catch (Exception ex)
             {
-                await exceptionLogger.Log(new ApplicationError(ex));
+                await exceptionLogger.Log(new ApplicationError(ex)).ConfigureAwait(false);
                 return new InternalServerError();
             }
         }
@@ -221,25 +219,26 @@ namespace SentenceAPI.Features.Users
         {
             try
             {
-                var updatedFields = await requestService.GetRequestBody<Dictionary<string, object>>(Request);
+                var updatedFields = await requestService.GetRequestBody<Dictionary<string, object>>(Request)
+                    .ConfigureAwait(false);
                 long userID = long.Parse(tokenService.GetTokenClaim(requestService.GetToken(Request), "ID"));
 
-                UserInfo user = new UserInfo(updatedFields);
-                user.ID = userID;
+                UserInfo user = new UserInfo(updatedFields)
+                {
+                    ID = userID
+                };
 
                 if (updatedFields.Keys.Contains("email"))
                 {
                     user.IsAccountVerified = false;
+                    updatedFields.Add(typeof(UserInfo).GetBsonPropertyName("IsAccountVerified"), false);
 
-                    var activationCode = codesService.CreateActivationCode(user.ID);
-                    await codesService.InsertCodeInDatabase(activationCode).ConfigureAwait(false);
-
-                    await emailService.SendConfirmationEmail(activationCode.Code, user.Email).ConfigureAwait(false);
+                    await EventManager.Raise(new UserEmailChangedEvent(user.Email, user.ID));
                 }
 
                 await userService.Update(user, updatedFields.Keys.Select(propName =>
                 {
-                    return typeof(UserInfo).GetPropertyFromJsonName(propName).Name;
+                    return typeof(UserInfo).GetPropertyFromBSONName(propName).Name;
                 }));
 
                 return new Ok();
@@ -250,7 +249,31 @@ namespace SentenceAPI.Features.Users
             }
             catch (Exception ex)
             {
-                await exceptionLogger.Log(new ApplicationError(ex));
+                await exceptionLogger.Log(new ApplicationError(ex)).ConfigureAwait(false);
+                return new InternalServerError();
+            }
+        }
+
+        [HttpDelete]
+        public async Task<IActionResult> DeleteAccount()
+        {
+            try
+            {
+                UserInfo user = await userService.Get(requestService.GetToken(Request)).ConfigureAwait(false);
+                user.IsAccountDeleted = true;
+
+                await userService.Update(user, new[] { "IsAccountDeleted" })
+                    .ConfigureAwait(false);
+
+                return new Ok();
+            }
+            catch (DatabaseException ex)
+            {
+                return new InternalServerError(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                await exceptionLogger.Log(new ApplicationError(ex)).ConfigureAwait(false);
                 return new InternalServerError();
             }
         }

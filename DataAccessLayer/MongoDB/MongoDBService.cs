@@ -166,8 +166,7 @@ namespace DataAccessLayer.MongoDB
         /// Tries to update the record. Only the properties which are listed in the "properties"
         /// dictionary will be updated.
         /// </summary>
-        public Task Update(DataType entity,
-                           IEnumerable<string> properties)
+        public Task Update(DataType entity, IEnumerable<string> properties)
         {
             return Task.Run(() =>
             {

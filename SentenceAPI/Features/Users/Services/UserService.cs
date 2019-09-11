@@ -224,7 +224,7 @@ namespace SentenceAPI.Features.Users.Services
         }
 
         /// <summary>
-        /// Checks if user with a given email exists in the database.
+        /// Checks if user with a given email exists in the database.   
         /// </summary>
         public async Task<bool> DoesUserExist(string email)
         {

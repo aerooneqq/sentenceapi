@@ -18,6 +18,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using SentenceAPI.ApplicationFeatures.Requests.Interfaces;
 
 namespace SentenceAPI.Features.Codes
 {
@@ -44,14 +45,16 @@ namespace SentenceAPI.Features.Codes
         private ILogger<ApplicationError> exceptionLogger;
         private IUserService<UserInfo> userService;
         private ICodesService codesService;
+        private IRequestService requestService;
         #endregion
 
         public CodesController()
         {
             factoriesManager.GetService<ILogger<ApplicationError>>().TryGetTarget(out exceptionLogger);
             factoriesManager.GetService<ICodesService>().TryGetTarget(out codesService);
-            factoriesManager.GetService<IUserService<UserInfo>>().TryGetTarget(out userService);
+            factoriesManager.GetService<IRequestService>().TryGetTarget(out requestService);
 
+            factoriesManager.GetService<IUserService<UserInfo>>().TryGetTarget(out userService);
             exceptionLogger.LogConfiguration = logConfiguration;
         }
 
@@ -60,8 +63,9 @@ namespace SentenceAPI.Features.Codes
         {
             try
             {
-                await codesService.ActivateCode(GetRequestBody(Request)).ConfigureAwait(false);
-                UserInfo user = await userService.Get(GetToken(Request)).ConfigureAwait(false);
+                await codesService.ActivateCode(await requestService.GetRequestBody(Request)
+                    .ConfigureAwait(false)).ConfigureAwait(false);
+                UserInfo user = await userService.Get(requestService.GetToken(Request)).ConfigureAwait(false);
 
                 user.IsAccountVerified = true;
                 await userService.Update(user).ConfigureAwait(false);
@@ -77,20 +81,6 @@ namespace SentenceAPI.Features.Codes
                 await exceptionLogger.Log(new ApplicationError(ex));
                 return new InternalServerError();
             }
-        }
-
-        private string GetRequestBody(HttpRequest request)
-        {
-            using (StreamReader sr = new StreamReader(request.Body, Encoding.UTF8, true, 1024, true))
-            {
-                return sr.ReadToEnd();
-            }
-        }
-
-        private string GetToken(HttpRequest request)
-        {
-            string authHeader = request.Headers["Authorization"];
-            return authHeader.Split()[1];
         }
     }
 }
