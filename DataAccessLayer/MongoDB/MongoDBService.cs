@@ -17,7 +17,7 @@ using DataAccessLayer.Filters;
 using DataAccessLayer.Filters.Interfaces;
 using DataAccessLayer.Configuration.Interfaces;
 using DataAccessLayer.Configuration;
-using DataAccessLayer.Interfaces.Aggregations;
+using DataAccessLayer.Aggregations.Interfaces;
 using DataAccessLayer.Aggregations;
 
 namespace DataAccessLayer.MongoDB

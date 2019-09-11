@@ -22,7 +22,7 @@ using DataAccessLayer.Filters;
 using DataAccessLayer.Exceptions;
 using SentenceAPI.Features.Users.Models;
 using SentenceAPI.Features.Users.Interfaces;
-using DataAccessLayer.Interfaces.Aggregations;
+using DataAccessLayer.Aggregations.Interfaces;
 using DataAccessLayer.Aggregations;
 
 namespace SentenceAPI.Features.UserFeed.Services

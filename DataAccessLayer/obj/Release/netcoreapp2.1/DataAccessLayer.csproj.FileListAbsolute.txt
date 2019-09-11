@@ -1,9 +1,0 @@
-C:\Users\Aero\Desktop\Sentence\sentenceapi\DataAccessLayer\bin\Release\netcoreapp2.1\DataAccessLayer.deps.json
-C:\Users\Aero\Desktop\Sentence\sentenceapi\DataAccessLayer\bin\Release\netcoreapp2.1\DataAccessLayer.dll
-C:\Users\Aero\Desktop\Sentence\sentenceapi\DataAccessLayer\bin\Release\netcoreapp2.1\DataAccessLayer.pdb
-C:\Users\Aero\Desktop\Sentence\sentenceapi\DataAccessLayer\obj\Release\netcoreapp2.1\DataAccessLayer.csprojAssemblyReference.cache
-C:\Users\Aero\Desktop\Sentence\sentenceapi\DataAccessLayer\obj\Release\netcoreapp2.1\DataAccessLayer.csproj.CoreCompileInputs.cache
-C:\Users\Aero\Desktop\Sentence\sentenceapi\DataAccessLayer\obj\Release\netcoreapp2.1\DataAccessLayer.AssemblyInfoInputs.cache
-C:\Users\Aero\Desktop\Sentence\sentenceapi\DataAccessLayer\obj\Release\netcoreapp2.1\DataAccessLayer.AssemblyInfo.cs
-C:\Users\Aero\Desktop\Sentence\sentenceapi\DataAccessLayer\obj\Release\netcoreapp2.1\DataAccessLayer.dll
-C:\Users\Aero\Desktop\Sentence\sentenceapi\DataAccessLayer\obj\Release\netcoreapp2.1\DataAccessLayer.pdb
