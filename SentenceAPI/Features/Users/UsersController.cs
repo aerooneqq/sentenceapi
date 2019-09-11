@@ -29,6 +29,8 @@ using SentenceAPI.Features.Codes.Interfaces;
 using Microsoft.AspNetCore.Http;
 using SentenceAPI.ApplicationFeatures.Requests.Interfaces;
 using Microsoft.Extensions.Caching.Memory;
+using SentenceAPI.ApplicationFeatures.DefferedExecution;
+using SentenceAPI.Features.Authentication.Interfaces;
 
 namespace SentenceAPI.Features.Users
 {
@@ -49,6 +51,7 @@ namespace SentenceAPI.Features.Users
         private ICodesService codesService;
         private IRequestService requestService;
         private IMemoryCache memoryCacheService;
+        private ITokenService tokenService;
         #endregion
 
         #region Factories
@@ -64,6 +67,7 @@ namespace SentenceAPI.Features.Users
             factoriesManager.GetService<ILogger<ApplicationError>>().TryGetTarget(out exceptionLogger);
             factoriesManager.GetService<ICodesService>().TryGetTarget(out codesService);
             factoriesManager.GetService<IRequestService>().TryGetTarget(out requestService);
+            factoriesManager.GetService<ITokenService>().TryGetTarget(out tokenService);
 
             this.memoryCacheService = memoryCacheService;
 
@@ -197,10 +201,6 @@ namespace SentenceAPI.Features.Users
                 await exceptionLogger.Log(new ApplicationError(ex));
                 return new InternalServerError();
             }
-            finally
-            {
-                GC.Collect();
-            }
         }
 
         private (bool, IEnumerable<string>) ValidateEmailAndPassword(string email, string password)
@@ -222,7 +222,20 @@ namespace SentenceAPI.Features.Users
             try
             {
                 var updatedFields = await requestService.GetRequestBody<Dictionary<string, object>>(Request);
+                long userID = long.Parse(tokenService.GetTokenClaim(requestService.GetToken(Request), "ID"));
+
                 UserInfo user = new UserInfo(updatedFields);
+                user.ID = userID;
+
+                if (updatedFields.Keys.Contains("email"))
+                {
+                    user.IsAccountVerified = false;
+
+                    var activationCode = codesService.CreateActivationCode(user.ID);
+                    await codesService.InsertCodeInDatabase(activationCode).ConfigureAwait(false);
+
+                    await emailService.SendConfirmationEmail(activationCode.Code, user.Email).ConfigureAwait(false);
+                }
 
                 await userService.Update(user, updatedFields.Keys.Select(propName =>
                 {
