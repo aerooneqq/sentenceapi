@@ -8,7 +8,6 @@
   <ItemGroup>
     <Folder Include="Attributes\" />
     <Folder Include="Features\Email\Models\" />
-    <Folder Include="Features\Workplace\DocumentsStorage\" />
     <Folder Include="wwwroot\" />
   </ItemGroup>
 
