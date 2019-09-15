@@ -10,5 +10,6 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage.Interfaces
     {
         Task<IEnumerable<DocumentFile>> GetFiles(long userID, long parentFolderID);
         Task CreateNewFile(long userID, long parentFileID, string fileName);
+        Task DeleteFile(long fileID);
     }
 }

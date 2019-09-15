@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace SentenceAPI.Features.Workplace.DocumentsStorage.Interfaces
 {
-    interface IFolderServiceFactory : IServiceFactory
+    interface IFolderSystemServiceFactory : IServiceFactory
     {
         IFolderService GetFolderService();
 

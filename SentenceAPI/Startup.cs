@@ -36,6 +36,8 @@ using SentenceAPI.Features.Workplace.DocumentsDeskState.Interfaces;
 using System.Threading;
 using SentenceAPI.Features.UserPhoto.Factories;
 using SentenceAPI.Features.UserPhoto.Interfaces;
+using SentenceAPI.Features.Workplace.DocumentsStorage.Factories;
+using SentenceAPI.Features.Workplace.DocumentsStorage.Interfaces;
 
 namespace SentenceAPI
 {
@@ -138,6 +140,8 @@ namespace SentenceAPI
                 typeof(IDocumentDeskStateServiceFactory)));
             factoriesManager.AddFactory(new FactoryInfo(new UserPhotoServiceFactory(),
                 typeof(IUserPhotoServiceFactory)));
+            factoriesManager.AddFactory(new FactoryInfo(new FolderSystemServiceFactory(),
+                typeof(IFolderSystemServiceFactory)));
         }
     }
 }

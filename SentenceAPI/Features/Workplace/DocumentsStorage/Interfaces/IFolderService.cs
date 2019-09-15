@@ -9,6 +9,10 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage.Interfaces
     interface IFolderService
     {
         Task<IEnumerable<DocumentFolder>> GetFolders(long userID, long parentFolderID);
+        Task<DocumentFolder> GetFolderData(long folderID);
+
         Task CreateFolder(long userID, long parentFolderID, string folderName);
+        Task DeleteFolder(long folderID);
+        Task RenameFolder(long folderID, string newFolderName);
     }
 }

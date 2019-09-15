@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace SentenceAPI.Features.Workplace.DocumentsStorage.Factories
 {
-    class FolderSystemServiceFactory : IFolderServiceFactory
+    class FolderSystemServiceFactory : IFolderSystemServiceFactory
     {
         public IFileService GetFileSystem()
         {

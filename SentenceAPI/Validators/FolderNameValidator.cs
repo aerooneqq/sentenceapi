@@ -12,7 +12,7 @@ namespace SentenceAPI.Validators
         #region Error messages
         private static readonly string lengthIsOutsideBorders = "The length of the folder name must be between 5 and 25";
         private static readonly string unacceptableSymbolInName = "The name must contain only English and Russian letters";
-        private static readonly string firstCharIsNumber = "The folder name must start with a number";
+        private static readonly string firstCharIsNumber = "The folder name must not start with a number ot other symbol";
         #endregion
 
         #region Folder name properties
@@ -20,6 +20,7 @@ namespace SentenceAPI.Validators
         private static readonly int maxLength = 25;
         private static readonly string englishLowerLetters = "qwertyuiopasdfghjklzxcvbnm";
         private static readonly string russianLowerLetters = "йцукенгшщзхъфывапролджэячсмитьбю";
+        private static readonly string acceptableSymbols = " -_";
         private static readonly string numbers = "1234567890";
         #endregion
 
@@ -39,7 +40,7 @@ namespace SentenceAPI.Validators
 
             folderName = folderName.ToLower();
 
-            if (numbers.IndexOf(folderName[0]) > -1)
+            if (numbers.IndexOf(folderName[0]) > -1 || acceptableSymbols.IndexOf(folderName[0]) > - 1)
             {
                 return (false, firstCharIsNumber);
             }
@@ -47,7 +48,8 @@ namespace SentenceAPI.Validators
             for (int i = 0; i < folderName.Length; i++)
             {
                 if (englishLowerLetters.IndexOf(folderName[i]) == -1 && 
-                    russianLowerLetters.IndexOf(folderName[i]) == -1)
+                    russianLowerLetters.IndexOf(folderName[i]) == -1 &&
+                    acceptableSymbols.IndexOf(folderName[i]) == -1)
                 {
                     return (false, unacceptableSymbolInName);
                 }

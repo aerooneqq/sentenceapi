@@ -63,6 +63,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage.Services
             try
             {
                 await database.Connect().ConfigureAwait(false);
+
                 var filters = new FilterCollection(new IFilter[]
                 {
                     new EqualityFilter<long>(typeof(DocumentFile).GetBsonPropertyName("UserID"), userID),
@@ -97,6 +98,24 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage.Services
             {
                 await exceptionLogger.Log(new ApplicationError(ex)).ConfigureAwait(false);
                 throw new DatabaseException("The error occured while creating new files");
+            }
+        }
+
+        public async Task DeleteFile(long fileID)
+        {
+            try
+            {
+                await database.Connect().ConfigureAwait(false);
+
+                var deletionFilter = new EqualityFilter<long>(typeof(DocumentFile).GetBsonPropertyName("ID"),
+                    fileID);
+
+                await database.Delete(deletionFilter).ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                await exceptionLogger.Log(new ApplicationError(ex)).ConfigureAwait(false);
+                throw new DatabaseException("The error occured while deleting the file");
             }
         }
     }

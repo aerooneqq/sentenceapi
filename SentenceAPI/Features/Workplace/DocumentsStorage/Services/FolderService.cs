@@ -1,14 +1,17 @@
 ﻿using DataAccessLayer.CommonInterfaces;
+using DataAccessLayer.Configuration;
 using DataAccessLayer.Configuration.Interfaces;
 using DataAccessLayer.DatabasesManager;
 using DataAccessLayer.Exceptions;
 using DataAccessLayer.Filters;
+
 using SentenceAPI.ApplicationFeatures.Loggers.Interfaces;
 using SentenceAPI.ApplicationFeatures.Loggers.Models;
 using SentenceAPI.Extensions;
 using SentenceAPI.FactoriesManager.Interfaces;
 using SentenceAPI.Features.Workplace.DocumentsStorage.Interfaces;
 using SentenceAPI.Features.Workplace.DocumentsStorage.Models;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -43,6 +46,12 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage.Services
 
         public FolderService()
         {
+            databasesManager.MongoDBFactory.GetDatabase<DocumentFolder>().TryGetTarget(out database);
+
+            configurationBuilder = new MongoConfigurationBuilder(database.Configuration);
+            configurationBuilder.SetConfigurationFilePath(databaseConfigFile).SetAuthMechanism()
+                    .SetUserName().SetPassword().SetDatabaseName().SetServerName().SetConnectionString();
+
             factoriesManager.GetService<ILogger<ApplicationError>>().TryGetTarget(out exceptionLogger);
             exceptionLogger.LogConfiguration = logConfiguration;
         }
@@ -88,6 +97,67 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage.Services
             {
                 await exceptionLogger.Log(new ApplicationError(ex)).ConfigureAwait(false);
                 throw new DatabaseException("The error occured while creating new folder");
+            }
+        }
+
+        public async Task DeleteFolder(long folderID)
+        {
+            try
+            {
+                await database.Connect().ConfigureAwait(false);
+
+                var deletionFilter = new EqualityFilter<long>(typeof(DocumentFolder).GetBsonPropertyName("ID"),
+                    folderID);
+
+                await database.Delete(deletionFilter).ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                await exceptionLogger.Log(new ApplicationError(ex)).ConfigureAwait(false);
+                throw new DatabaseException("The error occured while deleting the folder");
+            }
+        }
+
+        public async Task RenameFolder(long folderID, string newFolderName)
+        {
+            try
+            {
+                await database.Connect().ConfigureAwait(false);
+
+                var getFilter = new EqualityFilter<long>(typeof(DocumentFolder).GetBsonPropertyName("ID"), folderID);
+
+                DocumentFolder documentFolder = (await database.Get(getFilter).ConfigureAwait(false)).FirstOrDefault();
+
+                if (documentFolder == null)
+                {
+                    throw new ArgumentException();
+                }
+
+                documentFolder.FolderName = newFolderName;
+
+                await database.Update(documentFolder).ConfigureAwait(false);
+            }
+            catch (Exception ex) when (ex.GetType() != typeof(ArgumentException))
+            {
+                await exceptionLogger.Log(new ApplicationError(ex)).ConfigureAwait(false);
+                throw new DatabaseException("The error occured while renaming the folder");
+            }
+        }
+
+        public async Task<DocumentFolder> GetFolderData(long folderID)
+        {
+            try
+            {
+                await database.Connect().ConfigureAwait(false);
+
+                var getFilter = new EqualityFilter<long>(typeof(DocumentFolder).GetBsonPropertyName("ID"), folderID);
+
+                return (await database.Get(getFilter).ConfigureAwait(false)).FirstOrDefault();
+            }
+            catch (Exception ex)
+            {
+                await exceptionLogger.Log(new ApplicationError(ex)).ConfigureAwait(false);
+                throw new DatabaseException("The error occured while getting the folder data");
             }
         }
     }

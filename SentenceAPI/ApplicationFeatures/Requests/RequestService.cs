@@ -15,10 +15,9 @@ namespace SentenceAPI.ApplicationFeatures.Requests
     {
         public async Task<string> GetRequestBody(HttpRequest request)
         {
-            using (StreamReader sr = new StreamReader(request.Body, Encoding.UTF8, true, 1024, true))
-            {
-                return await sr.ReadToEndAsync();
-            }
+            using StreamReader sr = new StreamReader(request.Body, Encoding.UTF8, true, 1024, true);
+
+            return await sr.ReadToEndAsync();
         }
 
         public async Task<T> GetRequestBody<T>(HttpRequest request)
