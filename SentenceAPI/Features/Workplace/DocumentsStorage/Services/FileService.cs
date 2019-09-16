@@ -118,5 +118,68 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage.Services
                 throw new DatabaseException("The error occured while deleting the file");
             }
         }
+
+        public async Task<IEnumerable<DocumentFile>> GetFiles(long userID, string searchQuery)
+        {
+            try
+            {
+                await database.Connect().ConfigureAwait(false);
+
+                FilterCollection filterCollection = new FilterCollection(new IFilter[]
+                {
+                    new EqualityFilter<long>(typeof(DocumentFile).GetBsonPropertyName("ID"), userID),
+                    new RegexFilter(typeof(DocumentFile).GetBsonPropertyName("FileName"), $"/{searchQuery}/")
+                });
+
+                return await database.Get(filterCollection).ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                await exceptionLogger.Log(new ApplicationError(ex)).ConfigureAwait(false);
+                throw new DatabaseException("The error occured while searching for the files");
+            }
+        }
+
+        public async Task<DocumentFile> GetFile(long fileID)
+        {
+            try
+            {
+                await database.Connect().ConfigureAwait(false);
+                IFilter getFilter = new EqualityFilter<long>(typeof(DocumentFile).
+                    GetBsonPropertyName("ID"), fileID);
+                
+                return (await database.Get(getFilter).ConfigureAwait(false)).FirstOrDefault();
+            }
+            catch (Exception ex)
+            {
+                await exceptionLogger.Log(new ApplicationError(ex)).ConfigureAwait(false);
+                throw new DatabaseException("The error occured while getting the file data");
+            }
+        }
+
+        public async Task RenameFile(long fileID, string newFileName)
+        {
+            try
+            {
+                await database.Connect().ConfigureAwait(false);
+
+                IFilter getFilter = new EqualityFilter<long>("ID", fileID);
+                DocumentFile file = (await database.Get(getFilter).ConfigureAwait(false)).FirstOrDefault();
+
+                if (!(file is DocumentFile))
+                {
+                    throw new ArgumentException("The file with such an id does not exist");
+                }
+
+                file.FileName = newFileName;
+
+                await database.Update(file).ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                await exceptionLogger.Log(new ApplicationError(ex)).ConfigureAwait(false);
+                throw new DatabaseException("The error occured while renaming file");
+            }
+        }
     }
 }

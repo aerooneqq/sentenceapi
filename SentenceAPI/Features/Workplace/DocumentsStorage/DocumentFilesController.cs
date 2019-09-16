@@ -84,6 +84,26 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage
             }
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetFile([FromQuery]long fileID)
+        {
+            try
+            {
+                DocumentFile file = await fileService.GetFile(fileID).ConfigureAwait(false);
+
+                return new OkJson<DocumentFile>(file);
+            }
+            catch (DatabaseException ex)
+            {
+                return new InternalServerError(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                await exceptionLogger.Log(new ApplicationError(ex)).ConfigureAwait(false);
+                return new InternalServerError();
+            }
+        }
+
         [HttpDelete]
         public async Task<IActionResult> DeleteFile([FromQuery]long fileID)
         {
@@ -92,6 +112,40 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage
                 await fileService.DeleteFile(fileID).ConfigureAwait(false);
 
                 return new Ok();
+            }
+            catch (DatabaseException ex)
+            {
+                return new InternalServerError(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                await exceptionLogger.Log(new ApplicationError(ex)).ConfigureAwait(false);
+                return new InternalServerError();
+            }
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> RenameFile()
+        {
+            try
+            {
+                FileRenameDto fileRenameDto = await requestService.GetRequestBody<FileRenameDto>(Request)
+                    .ConfigureAwait(false);
+
+                var (result, errorMsg) = new FileNameValidator(fileRenameDto.FileName).Validate();
+                if (!result)
+                {
+                    return new BadSendedRequest<string>(errorMsg);
+                }
+
+                await fileService.RenameFile(fileRenameDto.FolderID, fileRenameDto.FileName)
+                    .ConfigureAwait(false);
+
+                return new Ok();
+            }
+            catch (ArgumentException)
+            {
+                return new BadSendedRequest<string>("Such file does not exist");
             }
             catch (DatabaseException ex)
             {

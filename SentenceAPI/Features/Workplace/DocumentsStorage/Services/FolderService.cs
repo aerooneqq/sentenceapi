@@ -160,5 +160,26 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage.Services
                 throw new DatabaseException("The error occured while getting the folder data");
             }
         }
+
+        public async Task<IEnumerable<DocumentFolder>> GetFolders(long userID, string searchQuery)
+        {
+            try
+            {
+                await database.Connect().ConfigureAwait(false);
+
+                FilterCollection filterCollection = new FilterCollection(new IFilter[]
+                {
+                    new EqualityFilter<long>(typeof(DocumentFolder).GetBsonPropertyName("ID"), userID),
+                    new RegexFilter(typeof(DocumentFolder).GetBsonPropertyName("FolderName"), $"/{searchQuery}/")
+                });
+
+                return await database.Get(filterCollection).ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                await exceptionLogger.Log(new ApplicationError(ex)).ConfigureAwait(false);
+                throw new DatabaseException("The error occured while searching for folders");
+            }
+        }
     }
 }

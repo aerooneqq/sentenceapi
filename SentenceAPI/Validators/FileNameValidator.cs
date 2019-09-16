@@ -18,6 +18,7 @@ namespace SentenceAPI.Validators
         #region File name properties
         private static readonly string englishLowerLetters = "qwertyuiopasdfghjklzxcvbnm";
         private static readonly string russianLowerLetters = "йцукенгшщзхъфывапролджэячсмитьбю";
+        private static readonly string specialSymbols = " _-";
         private static readonly string numbers = "0123456789";
         private static readonly int minLength = 5;
         private static readonly int maxLength = 25;
@@ -29,7 +30,6 @@ namespace SentenceAPI.Validators
         {
             this.fileName = fileName;
         }
-
 
         public (bool result, string errorMessage) Validate()
         {
@@ -47,8 +47,10 @@ namespace SentenceAPI.Validators
 
             for (int i = 0; i < fileName.Length; i++)
             {
-                if (englishLowerLetters.IndexOf(fileName[i]) == -1)
-                {
+                if (englishLowerLetters.IndexOf(fileName[i]) == -1 &&
+                    russianLowerLetters.IndexOf(fileName[i]) == -1 &&
+                    specialSymbols.IndexOf(fileName[i]) == -1)
+                {   
                     return (false, unacceptedSymbolInFileName);
                 }
             }

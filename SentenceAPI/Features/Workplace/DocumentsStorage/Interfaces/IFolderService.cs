@@ -14,5 +14,6 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage.Interfaces
         Task CreateFolder(long userID, long parentFolderID, string folderName);
         Task DeleteFolder(long folderID);
         Task RenameFolder(long folderID, string newFolderName);
+        Task<IEnumerable<DocumentFolder>> GetFolders(long userID, string searchQuery);
     }
 }

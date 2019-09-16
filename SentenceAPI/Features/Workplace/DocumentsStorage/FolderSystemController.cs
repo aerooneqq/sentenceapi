@@ -76,5 +76,34 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage
                 return new InternalServerError();
             }
         }
+
+        /// <summary>
+        /// Searches for the files and folders which satisfy the given query.
+        /// </summary>
+        [HttpGet, Route("search")]
+        public async Task<IActionResult> GetFodlersAndFiles([FromQuery]string query)
+        {
+            try
+            {
+                long userID = long.Parse(tokenService.GetTokenClaim(requestService.GetToken(Request), "ID"));
+
+                IEnumerable<DocumentFile> files = await fileService.GetFiles(userID, query)
+                    .ConfigureAwait(false);
+
+                IEnumerable<DocumentFolder> folders = await folderService.GetFolders(userID, query)
+                    .ConfigureAwait(false);
+
+                return new OkJson<FolderSystemDto>(new FolderSystemDto(files, folders));
+            }
+            catch (DatabaseException ex)
+            {
+                return new InternalServerError(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                await exceptionLogger.Log(new ApplicationError(ex)).ConfigureAwait(false);
+                return new InternalServerError();
+            }
+        }
     }
 }
