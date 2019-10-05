@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SentenceAPI.ActionResults;
+using SentenceAPI.ApplicationFeatures.Date.Interfaces;
 using SentenceAPI.ApplicationFeatures.Loggers.Interfaces;
 using SentenceAPI.ApplicationFeatures.Loggers.Models;
 using SentenceAPI.ApplicationFeatures.Requests.Interfaces;
@@ -34,6 +35,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage
         private ILogger<ApplicationError> exceptionLogger;
         private IFileService fileService;
         private IFolderService folderService;
+        private IDateService dateService;
         #endregion
 
         #region Factories
@@ -46,6 +48,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage
             factoriesManager.GetService<IRequestService>().TryGetTarget(out requestService);
             factoriesManager.GetService<IFileService>().TryGetTarget(out fileService);
             factoriesManager.GetService<IFolderService>().TryGetTarget(out folderService);
+            factoriesManager.GetService<IDateService>().TryGetTarget(out dateService);
 
             factoriesManager.GetService<ILogger<ApplicationError>>().TryGetTarget(out exceptionLogger);
             exceptionLogger.LogConfiguration = logConfiguration;
@@ -94,6 +97,80 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage
                     .ConfigureAwait(false);
 
                 return new OkJson<FolderSystemDto>(new FolderSystemDto(files, folders));
+            }
+            catch (DatabaseException ex)
+            {
+                return new InternalServerError(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                await exceptionLogger.Log(new ApplicationError(ex)).ConfigureAwait(false);
+                return new InternalServerError();
+            }
+        }
+
+        /// <summary>
+        /// Places the second folder in the first folder.
+        /// </summary>
+        [HttpPut, Route("replaceFolder")]
+        public async Task<IActionResult> PutFolderIntoAnotherFolder([FromQuery]long firstFolderID,
+                                                                    [FromQuery]long secondFolderID)
+        {
+            try
+            {
+                if (firstFolderID == secondFolderID)
+                {
+                    return new BadSendedRequest<string>("Folders can not be the same");
+                }
+
+                var firstFolder = await folderService.GetFolderData(firstFolderID).ConfigureAwait(false);
+                var secondFolder = await folderService.GetFolderData(secondFolderID).ConfigureAwait(false);
+
+                if (firstFolder is null || secondFolder is null)
+                {
+                    return new BadSendedRequest<string>("Folders with such ids do not exist");
+                }
+
+                secondFolder.ParentFolderID = firstFolder.ID;
+
+                secondFolder.LastUpdateDate = dateService.GetCurrentDate();
+                firstFolder.LastUpdateDate = dateService.GetCurrentDate();
+
+                await folderService.Update(secondFolder);
+
+                return new Ok();
+            }
+            catch (DatabaseException ex)
+            {
+                return new InternalServerError(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                await exceptionLogger.Log(new ApplicationError(ex)).ConfigureAwait(false);
+                return new InternalServerError();
+            }
+        }
+
+        [HttpPut, Route("replaceFile")]
+        public async Task<IActionResult> PutFileInFolder([FromQuery]long fileID, [FromQuery]long folderID)
+        {
+            try
+            {
+                var file = await fileService.GetFile(fileID).ConfigureAwait(false);
+                var folder = await folderService.GetFolderData(folderID).ConfigureAwait(false);
+
+                if (file is null || folder is null)
+                {
+                    return new BadSendedRequest<string>("The file or folder with such and id does not exist");
+                }
+
+                file.ParentFolderID = folder.ID;
+                file.LastUpdateDate = folder.LastUpdateDate = dateService.GetCurrentDate();
+
+                await fileService.Update(file).ConfigureAwait(false);
+                await folderService.Update(folder).ConfigureAwait(false);
+
+                return new Ok();
             }
             catch (DatabaseException ex)
             {

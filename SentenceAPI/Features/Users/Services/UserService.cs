@@ -21,6 +21,8 @@ using DataAccessLayer.Configuration;
 using DataAccessLayer.Filters;
 using DataAccessLayer.Exceptions;
 using DataAccessLayer.Hashes;
+using DataAccessLayer.Filters.Base;
+using DataAccessLayer.Filters.Interfaces;
 
 namespace SentenceAPI.Features.Users.Services
 {
@@ -48,7 +50,6 @@ namespace SentenceAPI.Features.Users.Services
         #region Factories
         private readonly FactoriesManager.FactoriesManager factoriesManager =
             FactoriesManager.FactoriesManager.Instance;
-        private readonly ILoggerFactory loggerFactory;
         #endregion
 
         #region Constructors
@@ -116,13 +117,12 @@ namespace SentenceAPI.Features.Users.Services
             {
                 await database.Connect();
 
-                IEnumerable<IFilter> filters = new[]
-                {
-                    new EqualityFilter<string>(typeof(UserInfo).GetBsonPropertyName("Email"), email),
-                    new EqualityFilter<string>(typeof(UserInfo).GetBsonPropertyName("Password"), password)
-                };
+                FilterBase emailFilter = new EqualityFilter<string>(
+                    typeof(UserInfo).GetBsonPropertyName("Email"), email);
+                FilterBase passwordFilter = new EqualityFilter<string>(
+                    typeof(UserInfo).GetBsonPropertyName("Password"), password);
 
-                var users = (await database.Get(new FilterCollection(filters))).ToList();
+                var users = (await database.Get(emailFilter & passwordFilter)).ToList();
 
                 if (users.Count != 1)
                 {

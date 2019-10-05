@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace DataAccessLayer.Filters
+namespace DataAccessLayer.Filters.Interfaces
 {
     /// <summary>
     /// IFilter is used to select suitable data from the database. 

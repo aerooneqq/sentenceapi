@@ -62,7 +62,7 @@ namespace SentenceAPI.Features.Users
         #endregion
 
         public UsersController(IMemoryCache memoryCacheService)
-        {
+        { 
             factoriesManager.GetService<IUserService<UserInfo>>().TryGetTarget(out userService);
             factoriesManager.GetService<ILinkService>().TryGetTarget(out linkService);
             factoriesManager.GetService<IEmailService>().TryGetTarget(out emailService);

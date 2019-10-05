@@ -3,12 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+
+using DataAccessLayer.Filters.Base;
+
 using MongoDB.Bson;
 using MongoDB.Driver;
 
 namespace DataAccessLayer.Filters
 {
-    public class RegexFilter : IFilter
+    public class RegexFilter : FilterBase
     {
         #region Fields
         private readonly string propertyName;
@@ -21,12 +24,12 @@ namespace DataAccessLayer.Filters
             this.propertyName = propertyName;
         }
 
-        public BsonDocument ToMongoBsonDocument()
+        public override BsonDocument ToMongoBsonDocument()
         {
             throw new NotImplementedException();
         }
 
-        public FilterDefinition<DataType> ToMongoFilter<DataType>()
+        public override FilterDefinition<DataType> ToMongoFilter<DataType>()
         {
             return Builders<DataType>.Filter.Regex(propertyName, regexPattern);
         }

@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
+using DataAccessLayer.Filters.Base;
+
 using MongoDB.Bson;
 using MongoDB.Driver;
 
 namespace DataAccessLayer.Filters
 {
-    public class EqualityFilter<EntityType> : IFilter
+    public class EqualityFilter<EntityType> : FilterBase
     {
         #region Fields
         private readonly string propertyName;
@@ -20,12 +23,12 @@ namespace DataAccessLayer.Filters
             this.value = value;
         }
 
-        public BsonDocument ToMongoBsonDocument()
+        public override BsonDocument ToMongoBsonDocument()
         {
             return new BsonDocument(new Dictionary<string, object>() { { propertyName, value } });
         }
 
-        public FilterDefinition<DataType> ToMongoFilter<DataType>()
+        public override FilterDefinition<DataType> ToMongoFilter<DataType>()
         {
             return Builders<DataType>.Filter.Eq(propertyName, value);
         }

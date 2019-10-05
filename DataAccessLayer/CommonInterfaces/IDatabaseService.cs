@@ -34,7 +34,6 @@ namespace DataAccessLayer.CommonInterfaces
 
         Task<IEnumerable<DataType>> Get(IFilter filter);
 
-        Task<IEnumerable<DataType>> Get(IFilterCollection filterCollection);
         Task<IEnumerable<dynamic>> GetCombined(IFilter filter, string localField,
             params (Type entityType, string foreignField, IEnumerable<string> requestedFields)[] extraEntitiesTypes);
 

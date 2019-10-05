@@ -250,16 +250,6 @@ namespace DataAccessLayer.MongoDB
             });
         }
 
-        public Task<IEnumerable<DataType>> Get(IFilterCollection filterCollection)
-        {
-            return Task.Run(() =>
-            {
-                mongoCollection = database.GetCollection<DataType>(CollectionName);
-
-                return mongoCollection.Find(filterCollection.ToMongoFilter<DataType>()).ToEnumerable();
-            });
-        }
-
         /// <summary>
         /// Performs an aggregate + lookup operations in mongo db. In other words this method unites collections,
         /// depending on the "Primary" and "Foreign" keys, which are localField and first tuple value in the

@@ -4,7 +4,7 @@ using DataAccessLayer.Configuration.Interfaces;
 using DataAccessLayer.DatabasesManager;
 using DataAccessLayer.Exceptions;
 using DataAccessLayer.Filters;
-
+using DataAccessLayer.Filters.Base;
 using SentenceAPI.ApplicationFeatures.Loggers.Interfaces;
 using SentenceAPI.ApplicationFeatures.Loggers.Models;
 using SentenceAPI.Extensions;
@@ -62,13 +62,10 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage.Services
             {
                 await database.Connect().ConfigureAwait(false);
 
-                var filters = new FilterCollection(new IFilter[]
-                {
-                    new EqualityFilter<long>(typeof(DocumentFolder).GetBsonPropertyName("UserID"), userID),
-                    new EqualityFilter<long>(typeof(DocumentFolder).GetBsonPropertyName("ParentFolderID"), parentFolderID)
-                });
+                FilterBase userIDFilter = new EqualityFilter<long>(typeof(DocumentFolder).GetBsonPropertyName("UserID"), userID);
+                FilterBase parentFolderFilter = new EqualityFilter<long>(typeof(DocumentFolder).GetBsonPropertyName("ParentFolderID"), parentFolderID);
 
-                return await database.Get(filters).ConfigureAwait(false);
+                return await database.Get(userIDFilter & parentFolderFilter).ConfigureAwait(false);
             }
             catch (Exception ex)
             {
@@ -97,6 +94,21 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage.Services
             {
                 await exceptionLogger.Log(new ApplicationError(ex)).ConfigureAwait(false);
                 throw new DatabaseException("The error occured while creating new folder");
+            }
+        }
+
+        public async Task Update(DocumentFolder folder)
+        {
+            try
+            {
+                await database.Connect().ConfigureAwait(false);
+
+                await database.Update(folder);
+            }
+            catch (Exception ex)
+            {
+                await exceptionLogger.Log(new ApplicationError(ex));
+                throw new DatabaseException("The error happened while updating the folder");
             }
         }
 
@@ -167,13 +179,10 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage.Services
             {
                 await database.Connect().ConfigureAwait(false);
 
-                FilterCollection filterCollection = new FilterCollection(new IFilter[]
-                {
-                    new EqualityFilter<long>(typeof(DocumentFolder).GetBsonPropertyName("ID"), userID),
-                    new RegexFilter(typeof(DocumentFolder).GetBsonPropertyName("FolderName"), $"/{searchQuery}/")
-                });
+                FilterBase idFilter = new EqualityFilter<long>(typeof(DocumentFolder).GetBsonPropertyName("ID"), userID);
+                FilterBase folderNameFilter = new RegexFilter(typeof(DocumentFolder).GetBsonPropertyName("FolderName"), $"/{searchQuery}/");
 
-                return await database.Get(filterCollection).ConfigureAwait(false);
+                return await database.Get(idFilter & folderNameFilter).ConfigureAwait(false);
             }
             catch (Exception ex)
             {
