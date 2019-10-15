@@ -9,7 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SentenceApiTests", "Sentenc
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataAccessLayer", "DataAccessLayer\DataAccessLayer.csproj", "{0DE61EEF-83BD-4F7A-99F3-B21AE68C6EB9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataAccessLayerTests", "DataAccessLayerTests\DataAccessLayerTests.csproj", "{A86E7FFB-2B45-4178-BEAF-19373288E8EE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataAccessLayerTests", "DataAccessLayerTests\DataAccessLayerTests.csproj", "{A86E7FFB-2B45-4178-BEAF-19373288E8EE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DocumentsAPI", "DocumentsAPI\DocumentsAPI.csproj", "{4BB23436-1FA8-48F2-9462-C062EAC9A5E7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{A86E7FFB-2B45-4178-BEAF-19373288E8EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A86E7FFB-2B45-4178-BEAF-19373288E8EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A86E7FFB-2B45-4178-BEAF-19373288E8EE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4BB23436-1FA8-48F2-9462-C062EAC9A5E7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4BB23436-1FA8-48F2-9462-C062EAC9A5E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4BB23436-1FA8-48F2-9462-C062EAC9A5E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4BB23436-1FA8-48F2-9462-C062EAC9A5E7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

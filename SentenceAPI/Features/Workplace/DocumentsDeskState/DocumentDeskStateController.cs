@@ -1,23 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-
-using Newtonsoft.Json;
 
 using DataAccessLayer.Exceptions;
 
 using SentenceAPI.ActionResults;
-using SentenceAPI.FactoriesManager.Interfaces;
 using SentenceAPI.ApplicationFeatures.Loggers.Interfaces;
 using SentenceAPI.ApplicationFeatures.Loggers.Models;
 using SentenceAPI.ApplicationFeatures.Requests.Interfaces;
-using SentenceAPI.Features.UserFeed.Interfaces;
 using SentenceAPI.Features.Workplace.DocumentsDeskState.Interfaces;
 using SentenceAPI.Features.Workplace.DocumentsDeskState.Models;
 

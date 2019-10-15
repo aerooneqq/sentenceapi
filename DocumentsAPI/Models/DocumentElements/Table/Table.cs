@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace SentenceAPI.KernelInterfaces
+namespace DocumentsAPI.Models.DocumentElements.Table
 {
-    interface IQuery<Tin, TOut> : IHandler<Tin, TOut>
-    {
-    }
+    public class Table : DocumentElement { }
 }

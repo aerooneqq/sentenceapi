@@ -33,7 +33,6 @@ using SentenceAPI.ApplicationFeatures.Requests.Interfaces;
 using SentenceAPI.ApplicationFeatures.DefferedExecution;
 using SentenceAPI.Features.Workplace.DocumentsDeskState.Factories;
 using SentenceAPI.Features.Workplace.DocumentsDeskState.Interfaces;
-using System.Threading;
 using SentenceAPI.Features.UserPhoto.Factories;
 using SentenceAPI.Features.UserPhoto.Interfaces;
 using SentenceAPI.Features.Workplace.DocumentsStorage.Factories;
