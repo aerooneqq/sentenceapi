@@ -16,6 +16,7 @@ using SentenceAPI.ApplicationFeatures.Loggers.Models;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using DataAccessLayer.Filters.Base;
 
 namespace SentenceAPI.Features.Codes.Services
 {
@@ -122,18 +123,13 @@ namespace SentenceAPI.Features.Codes.Services
         {
             try
             {
-                IFilter codeFilter = new EqualityFilter<string>(typeof(ActivationCode)
+                FilterBase codeFilter = new EqualityFilter<string>(typeof(ActivationCode)
                     .GetBsonPropertyName("Code"), code);
-                IFilter usedFilter = new EqualityFilter<bool>(typeof(ActivationCode)
+                FilterBase usedFilter = new EqualityFilter<bool>(typeof(ActivationCode)
                     .GetBsonPropertyName("Used"), false);
 
-                IFilterCollection filterCollection = new FilterCollection(new[]
-                {
-                    codeFilter, usedFilter
-                });
-
                 await database.Connect().ConfigureAwait(false);
-                ActivationCode activationCode = (await database.Get(filterCollection)
+                ActivationCode activationCode = (await database.Get(codeFilter & usedFilter)
                     .ConfigureAwait(false)).FirstOrDefault();
 
                 if (activationCode == null)

@@ -37,6 +37,8 @@ using SentenceAPI.Features.UserPhoto.Factories;
 using SentenceAPI.Features.UserPhoto.Interfaces;
 using SentenceAPI.Features.Workplace.DocumentsStorage.Factories;
 using SentenceAPI.Features.Workplace.DocumentsStorage.Interfaces;
+using SentenceAPI.ApplicationFeatures.Date.Factories;
+using SentenceAPI.ApplicationFeatures.Date.Interfaces;
 
 namespace SentenceAPI
 {
@@ -141,6 +143,7 @@ namespace SentenceAPI
                 typeof(IUserPhotoServiceFactory)));
             factoriesManager.AddFactory(new FactoryInfo(new FolderSystemServiceFactory(),
                 typeof(IFolderSystemServiceFactory)));
+            factoriesManager.AddFactory(new FactoryInfo(new DateServiceFactory(), typeof(IDateServiceFactory)));
         }
     }
 }

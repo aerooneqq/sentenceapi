@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 using SentenceAPI.ActionResults;
+using SentenceAPI.ApplicationFeatures.Date.Interfaces;
 using SentenceAPI.ApplicationFeatures.Loggers.Interfaces;
 using SentenceAPI.ApplicationFeatures.Loggers.Models;
 using SentenceAPI.ApplicationFeatures.Requests.Interfaces;
@@ -37,6 +38,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage
         private readonly ITokenService tokenService;
         private readonly ILogger<ApplicationError> exceptionLogger;
         private readonly IFolderService folderService;
+        private readonly IDateService dateService;
         #endregion
 
         #region Factories
@@ -48,6 +50,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage
             factoriesManager.GetService<ITokenService>().TryGetTarget(out tokenService);
             factoriesManager.GetService<IRequestService>().TryGetTarget(out requestService);
             factoriesManager.GetService<IFolderService>().TryGetTarget(out folderService);
+            factoriesManager.GetService<IDateService>().TryGetTarget(out dateService);
 
             factoriesManager.GetService<ILogger<ApplicationError>>().TryGetTarget(out exceptionLogger);
             exceptionLogger.LogConfiguration = logConfiguration;

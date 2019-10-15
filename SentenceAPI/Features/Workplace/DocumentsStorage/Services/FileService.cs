@@ -4,7 +4,8 @@ using DataAccessLayer.Configuration.Interfaces;
 using DataAccessLayer.DatabasesManager;
 using DataAccessLayer.Exceptions;
 using DataAccessLayer.Filters;
-
+using DataAccessLayer.Filters.Base;
+using DataAccessLayer.Filters.Interfaces;
 using SentenceAPI.ApplicationFeatures.Loggers.Interfaces;
 using SentenceAPI.ApplicationFeatures.Loggers.Models;
 using SentenceAPI.Extensions;
@@ -64,13 +65,12 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage.Services
             {
                 await database.Connect().ConfigureAwait(false);
 
-                var filters = new FilterCollection(new IFilter[]
-                {
-                    new EqualityFilter<long>(typeof(DocumentFile).GetBsonPropertyName("UserID"), userID),
-                    new EqualityFilter<long>(typeof(DocumentFile).GetBsonPropertyName("ParentFolderID"), parentFolderID)
-                });
+                FilterBase userIDFilter = new EqualityFilter<long>(typeof(DocumentFile).GetBsonPropertyName(
+                    "UserID"), userID);
+                FilterBase parentFolderIDFilter = new EqualityFilter<long>(typeof(DocumentFile).GetBsonPropertyName(
+                    "ParentFolderID"), parentFolderID);
 
-                return await database.Get(filters).ConfigureAwait(false);
+                return await database.Get(userIDFilter & parentFolderIDFilter).ConfigureAwait(false);
             }
             catch (Exception ex)
             {
@@ -125,13 +125,13 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage.Services
             {
                 await database.Connect().ConfigureAwait(false);
 
-                FilterCollection filterCollection = new FilterCollection(new IFilter[]
-                {
-                    new EqualityFilter<long>(typeof(DocumentFile).GetBsonPropertyName("ID"), userID),
-                    new RegexFilter(typeof(DocumentFile).GetBsonPropertyName("FileName"), $"/{searchQuery}/")
-                });
 
-                return await database.Get(filterCollection).ConfigureAwait(false);
+                FilterBase idFilter = new EqualityFilter<long>(typeof(DocumentFile).
+                    GetBsonPropertyName("ID"), userID);
+                FilterBase fileNameFilter = new RegexFilter(typeof(DocumentFile).GetBsonPropertyName(
+                    "FileName"), $"/{searchQuery}/");
+
+                return await database.Get(idFilter & fileNameFilter).ConfigureAwait(false);
             }
             catch (Exception ex)
             {
@@ -154,6 +154,20 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage.Services
             {
                 await exceptionLogger.Log(new ApplicationError(ex)).ConfigureAwait(false);
                 throw new DatabaseException("The error occured while getting the file data");
+            }
+        }
+
+        public async Task Update(DocumentFile documentFile)
+        {
+            try
+            {
+                await database.Connect().ConfigureAwait(false);
+                await database.Update(documentFile).ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                await exceptionLogger.Log(new ApplicationError(ex)).ConfigureAwait(false);
+                throw new DatabaseException("The error occured while updating file");
             }
         }
 
