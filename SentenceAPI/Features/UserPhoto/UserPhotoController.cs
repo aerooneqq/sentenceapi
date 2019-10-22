@@ -47,7 +47,6 @@ namespace SentenceAPI.Features.UserPhoto
             exceptionLogger.LogConfiguration = logConfiguration;
 
             factoriesManager.GetService<IUserPhotoService>().TryGetTarget(out userPhotoService);
-            userPhotoService.MemoryCache = memoryCache;
 
             factoriesManager.GetService<IRequestService>().TryGetTarget(out requestService);
             factoriesManager.GetService<ITokenService>().TryGetTarget(out tokenService);

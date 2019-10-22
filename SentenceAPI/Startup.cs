@@ -15,7 +15,6 @@ using SentenceAPI.Features.Users.Factories;
 using SentenceAPI.Features.Authentication.Factories;
 using SentenceAPI.ApplicationFeatures.Loggers.Factories;
 using SentenceAPI.ApplicationFeatures.Loggers.Interfaces;
-using SentenceAPI.Middlewares.RequestLoggerMiddleware;
 using SentenceAPI.Features.Email.Interfaces;
 using SentenceAPI.Features.Email.Factories;
 using SentenceAPI.Features.Links.Factories;
@@ -33,13 +32,14 @@ using SentenceAPI.ApplicationFeatures.Requests.Interfaces;
 using SentenceAPI.ApplicationFeatures.DefferedExecution;
 using SentenceAPI.Features.Workplace.DocumentsDeskState.Factories;
 using SentenceAPI.Features.Workplace.DocumentsDeskState.Interfaces;
-using System.Threading;
 using SentenceAPI.Features.UserPhoto.Factories;
 using SentenceAPI.Features.UserPhoto.Interfaces;
 using SentenceAPI.Features.Workplace.DocumentsStorage.Factories;
 using SentenceAPI.Features.Workplace.DocumentsStorage.Interfaces;
 using SentenceAPI.ApplicationFeatures.Date.Factories;
 using SentenceAPI.ApplicationFeatures.Date.Interfaces;
+
+using SharedLibrary.Middlewares.RequestLogger;
 
 namespace SentenceAPI
 {

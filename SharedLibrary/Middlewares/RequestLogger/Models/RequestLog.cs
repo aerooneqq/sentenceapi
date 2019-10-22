@@ -12,7 +12,7 @@ using Newtonsoft.Json;
 using DataAccessLayer.KernelModels;
 using Microsoft.AspNetCore.Http;
 
-namespace SentenceAPI.Features.Middlewares.RequestLoggerMiddleware.Models
+namespace SharedLibrary.Middlewares.RequestLogger.Models
 {
     public class RequestLog : UniqueEntity
     {

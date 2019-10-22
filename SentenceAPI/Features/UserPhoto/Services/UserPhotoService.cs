@@ -14,6 +14,7 @@ using SentenceAPI.Features.Authentication.Interfaces;
 using SentenceAPI.Features.UserPhoto.Interfaces;
 
 using SentenceAPI.Features.UserPhoto.Models;
+using SharedLibrary.Caching;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -42,22 +43,12 @@ namespace SentenceAPI.Features.UserPhoto.Services
         #region Services
         private readonly ILogger<ApplicationError> exceptionLogger;
         private readonly ITokenService tokenService;
+        private readonly ICacheService cacheService = CacheService.Service;
         #endregion
 
         #region Factories
         private readonly FactoriesManager.FactoriesManager factoriesManager = FactoriesManager.FactoriesManager.Instance;
         #endregion
-
-        #region Properties
-        private IMemoryCache memoryCache;
-        public IMemoryCache MemoryCache
-        {
-            set
-            {
-                memoryCache = value;
-            }
-        }
-        #endregion 
 
         public UserPhotoService()
         {
@@ -101,17 +92,17 @@ namespace SentenceAPI.Features.UserPhoto.Services
         {
             try
             {
-                if (memoryCache.TryGetValue(GetUserPhotoCacheKey(userID), out object photo))
+                if (cacheService.Contains(GetUserPhotoCacheKey(userID)))
                 {
-                    return new Models.UserPhoto(userID, (string)photo);
+                    return new Models.UserPhoto(userID, (string)cacheService.GetValue(GetUserPhotoCacheKey(userID)));
                 }
-  
+
                 await database.Connect().ConfigureAwait(false);
 
                 var filter = new EqualityFilter<long>(typeof(Models.UserPhoto).GetBsonPropertyName("UserID"), userID);
                 var userPhoto = (await database.Get(filter).ConfigureAwait(false)).FirstOrDefault();
 
-                memoryCache.Set(GetUserPhotoCacheKey(userID), userPhoto.Photo);
+                cacheService.TryInsert(GetUserPhotoCacheKey(userID), userPhoto.Photo);
 
                 return userPhoto;
             }
@@ -122,7 +113,7 @@ namespace SentenceAPI.Features.UserPhoto.Services
             }
         }
 
-        private object GetUserPhotoCacheKey(long userID)
+        private string GetUserPhotoCacheKey(long userID)
         {
             return userPhotoCacheKey + userID;
         }
@@ -160,8 +151,6 @@ namespace SentenceAPI.Features.UserPhoto.Services
                 oldUserPhoto.Photo = userPhoto.Photo;
 
                 await database.Update(oldUserPhoto).ConfigureAwait(false);
-
-                memoryCache.Set(GetUserPhotoCacheKey(userPhoto.UserID), userPhoto.Photo);
             }
             catch (Exception ex)
             {

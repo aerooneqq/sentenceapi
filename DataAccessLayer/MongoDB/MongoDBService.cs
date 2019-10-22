@@ -266,7 +266,7 @@ namespace DataAccessLayer.MongoDB
         /// the extraCollections dictionary is obtained.
         /// </param>
         /// <returns></returns>
-        public Task<IEnumerable<dynamic>> GetCombined(IFilter filter, string localField,
+        public Task<IEnumerable<object>> GetCombined(IFilter filter, string localField,
             params (Type entityType, string foreignField, IEnumerable<string> requestedFields)[] extraEntitiesTypes)
         {
             return Task.Run(() =>
@@ -296,7 +296,7 @@ namespace DataAccessLayer.MongoDB
 
                 pipeline.AddRange(aggregationFilter.ToBsonDocument());
 
-                return mongoCollection.Aggregate<dynamic>(pipeline).ToEnumerable();
+                return mongoCollection.Aggregate<object>(pipeline).ToEnumerable();
             });
         }
         #endregion

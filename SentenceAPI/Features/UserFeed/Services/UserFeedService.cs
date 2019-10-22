@@ -24,6 +24,7 @@ using SentenceAPI.Features.Users.Models;
 using SentenceAPI.Features.Users.Interfaces;
 using DataAccessLayer.Aggregations.Interfaces;
 using DataAccessLayer.Aggregations;
+using SentenceAPI.Features.UserPhoto.Interfaces;
 
 namespace SentenceAPI.Features.UserFeed.Services
 {
@@ -40,10 +41,11 @@ namespace SentenceAPI.Features.UserFeed.Services
         #endregion
 
         #region Services
-        private IUserFriendsService userFriendsService;
-        private ILogger<ApplicationError> exceptionLogger;
-        private ITokenService tokenService;
-        private IUserService<UserInfo> userService; 
+        private readonly IUserFriendsService userFriendsService;
+        private readonly ILogger<ApplicationError> exceptionLogger;
+        private readonly ITokenService tokenService;
+        private readonly IUserService<UserInfo> userService;
+        private readonly IUserPhotoService userPhotoService;
         #endregion
 
         #region Factories
@@ -62,9 +64,10 @@ namespace SentenceAPI.Features.UserFeed.Services
             factoriesManager.GetService<IUserFriendsService>().TryGetTarget(out userFriendsService);
             factoriesManager.GetService<ITokenService>().TryGetTarget(out tokenService);
             factoriesManager.GetService<IUserService<UserInfo>>().TryGetTarget(out userService);
+            factoriesManager.GetService<IUserPhotoService>().TryGetTarget(out userPhotoService);
         }
 
-        public async Task<IEnumerable<dynamic>> GetUserFeed(long userID)
+        public async Task<UsersFeedDto> GetUserFeed(long userID)
         {
             try
             {
@@ -72,12 +75,13 @@ namespace SentenceAPI.Features.UserFeed.Services
                     .Select(uf => uf.UserID).ToList();
                 subscriptionsID.Add(userID);
 
-                //IDictionary<long, List<byte>> usersPhotoes = await GetUsersPhotoes(subscriptionsID);
+                Dictionary<long, string> usersPhotoes = await GetUsersPhotoes(subscriptionsID);
 
-                await database.Connect();
-                return await database.GetCombined(new InFilter<long>("userID", subscriptionsID), "userID",
-                    (typeof(UserInfo), "_id", new[] { "name", "surname" }), 
-                    (typeof(UserPhoto.Models.UserPhoto), "userID", new[] { "photo" }));
+                await database.Connect().ConfigureAwait(false);
+                var usersFeed = await database.GetCombined(new InFilter<long>("userID", subscriptionsID), "userID",
+                    (typeof(UserInfo), "_id", new[] { "name", "surname" })).ConfigureAwait(false);
+
+                return new UsersFeedDto(usersFeed.ToList(), usersPhotoes);
             }
             catch (Exception ex) when (ex.GetType() != typeof(DatabaseException))
             {
@@ -86,7 +90,19 @@ namespace SentenceAPI.Features.UserFeed.Services
             }
         }
 
-        public async Task<IEnumerable<dynamic>> GetUserFeed(string token)
+        private async Task<Dictionary<long, string>> GetUsersPhotoes(IEnumerable<long> userIDs)
+        {
+            Dictionary<long, string> userPhotoes = new Dictionary<long, string>();
+
+            foreach (long userID in userIDs)
+            {
+                userPhotoes.Add(userID, (await userPhotoService.GetPhoto(userID).ConfigureAwait(false)).Photo);
+            }
+
+            return userPhotoes;
+        }
+
+        public async Task<UsersFeedDto> GetUserFeed(string token)
         {
             try
             {

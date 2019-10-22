@@ -18,6 +18,7 @@ using SentenceAPI.ApplicationFeatures.Loggers.Interfaces;
 using SentenceAPI.ApplicationFeatures.Loggers.Models;
 using SentenceAPI.ApplicationFeatures.Requests.Interfaces;
 using SentenceAPI.Features.UserFeed.Interfaces;
+using SentenceAPI.Features.UserFeed.Models;
 
 namespace SentenceAPI.Features.UserFeed
 {
@@ -58,7 +59,7 @@ namespace SentenceAPI.Features.UserFeed
 
                 var userFeed = await userFeedService.GetUserFeed(token);
 
-                return new OkJson<IEnumerable<dynamic>>(userFeed);
+                return new OkJson<UsersFeedDto>(userFeed);
             }
             catch (DatabaseException ex)
             {

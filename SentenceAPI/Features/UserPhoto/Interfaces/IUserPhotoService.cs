@@ -8,10 +8,6 @@ namespace SentenceAPI.Features.UserPhoto.Interfaces
 {
     interface IUserPhotoService
     {
-        #region Properties
-        IMemoryCache MemoryCache { set; }
-        #endregion
-
         #region Methods
         Task<Models.UserPhoto> GetPhoto(long userID);
         Task<Models.UserPhoto> GetPhoto(string token);

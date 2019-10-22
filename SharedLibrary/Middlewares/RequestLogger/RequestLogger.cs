@@ -6,15 +6,16 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.IO;
 
-using SentenceAPI.Features.Middlewares.RequestLoggerMiddleware.Models;
+using SharedLibrary.Middlewares.RequestLogger.Models;
 
 using Newtonsoft.Json;
+
 using DataAccessLayer.CommonInterfaces;
 using DataAccessLayer.Configuration.Interfaces;
 using DataAccessLayer.DatabasesManager;
 using DataAccessLayer.Configuration;
 
-namespace SentenceAPI.Middlewares.RequestLoggerMiddleware
+namespace SharedLibrary.Middlewares.RequestLogger
 {
     /// <summary>
     /// Class which represents the middleware request logger.

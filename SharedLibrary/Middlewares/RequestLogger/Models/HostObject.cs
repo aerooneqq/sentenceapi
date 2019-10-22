@@ -8,7 +8,7 @@ using Newtonsoft.Json;
 using MongoDB.Bson.Serialization.Attributes;
 using Microsoft.AspNetCore.Http;
 
-namespace SentenceAPI.Features.Middlewares.RequestLoggerMiddleware.Models
+namespace SharedLibrary.Middlewares.RequestLogger.Models
 {
     public class HostObject
     {
