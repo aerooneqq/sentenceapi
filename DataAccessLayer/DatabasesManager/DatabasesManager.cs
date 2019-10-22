@@ -1,4 +1,5 @@
 ﻿using DataAccessLayer.CommonInterfaces;
+using DataAccessLayer.DatabasesManager.Interfaces;
 using DataAccessLayer.KernelModels;
 using DataAccessLayer.MongoDB.Factories;
 using DataAccessLayer.MongoDB.Interfaces;
@@ -8,7 +9,7 @@ using System.Text;
 
 namespace DataAccessLayer.DatabasesManager
 {
-    public class DatabasesManager
+    public class DatabasesManager : IDatabaseManager
     {
         #region Factories
         public IDatabaseFactory MongoDBFactory { get; }

@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace SentenceAPI.Features.Workplace.DocumentsStorage.Events
 {
+    /// <summary>
+    /// When the file is created the corresponding document must be also created.
+    /// </summary>
     class FileCreationEvent : IDomainEvent
     {
         #region Event properties

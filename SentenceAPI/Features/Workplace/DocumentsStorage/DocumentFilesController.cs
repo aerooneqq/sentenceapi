@@ -14,8 +14,6 @@ using SentenceAPI.Features.Workplace.DocumentsStorage.Models;
 using SentenceAPI.Validators;
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace SentenceAPI.Features.Workplace.DocumentsStorage
