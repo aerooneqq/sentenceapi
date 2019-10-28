@@ -53,8 +53,8 @@ namespace SentenceAPI.Features.Users.Events
 
             factoriesManager.GetService<IEmailService>().TryGetTarget(out emailService);
             factoriesManager.GetService<ICodesService>().TryGetTarget(out codesService);
-
             factoriesManager.GetService<ILogger<ApplicationError>>().TryGetTarget(out exceptionLogger);
+            
             exceptionLogger.LogConfiguration =logConfiguration;
         }
 

@@ -1,11 +1,14 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using SharedLibrary.ActionResults.ResponseBuilder;
-using SharedLibrary.Serialization;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
+using SharedLibrary.ActionResults.ResponseBuilder;
+using SharedLibrary.Serialization;
+using SharedLibrary.Serialization.Json;
 
 namespace SharedLibrary.ActionResults
 {
@@ -26,6 +29,7 @@ namespace SharedLibrary.ActionResults
             this.statusCode = statusCode;
             this.obj = obj;
             this.encoding = encoding;
+            this.serializer = new JsonSerializer<T>(obj);
         }
 
         public StatusCode(int statusCode, T obj) : this(statusCode, obj, Encoding.UTF8) { }

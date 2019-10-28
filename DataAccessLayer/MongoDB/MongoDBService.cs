@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.IO;
 using System.Reflection;
 
 using MongoDB.Bson;
@@ -11,9 +10,7 @@ using MongoDB.Bson.Serialization.Attributes;
 
 using DataAccessLayer.Exceptions;
 using DataAccessLayer.KernelModels;
-using DataAccessLayer.CommonInterfaces;
 using DataAccessLayer.MongoDB.Interfaces;
-using DataAccessLayer.Filters;
 using DataAccessLayer.Filters.Interfaces;
 using DataAccessLayer.Configuration.Interfaces;
 using DataAccessLayer.Configuration;

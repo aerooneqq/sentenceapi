@@ -54,8 +54,7 @@ namespace SentenceAPI
         #endregion
 
         #region Factories
-        private readonly IFactoriesManager factoriesManager = 
-            ManagersDictionary.Instance.GetManager(ApiName);
+        private readonly IFactoriesManager factoriesManager;
         #endregion
 
         public IConfiguration Configuration { get; set; }
@@ -66,6 +65,9 @@ namespace SentenceAPI
 
             DefferedTasksManager.Initialize();
             DefferedTasksManager.Start();
+
+            ManagersDictionary.Instance.AddManager(ApiName);
+            factoriesManager = ManagersDictionary.Instance.GetManager(ApiName);
         }
 
         public void ConfigureServices(IServiceCollection services)

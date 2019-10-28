@@ -13,7 +13,10 @@ namespace SharedLibrary.FactoriesManager
 
         #region Singleton
         static ManagersDictionary() { }
-        private ManagersDictionary() { }
+        private ManagersDictionary() 
+        { 
+            managers = new Dictionary<string, IFactoriesManager>();
+        }
 
         private static ManagersDictionary managersDictionary;
         public static ManagersDictionary Instance 
@@ -30,7 +33,7 @@ namespace SharedLibrary.FactoriesManager
         }
         #endregion
 
-        public ManagersDictionary AddFactoriesManager(string name)
+        public ManagersDictionary AddManager(string name)
         { 
             if (name is null)
             {
