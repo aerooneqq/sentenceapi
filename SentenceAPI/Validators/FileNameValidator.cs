@@ -1,4 +1,4 @@
-﻿using SentenceAPI.KernelInterfaces;
+﻿using SharedLibrary.KernelInterfaces;
 
 using System;
 using System.Collections.Generic;

@@ -1,24 +1,35 @@
-C:\Users\Aero\Desktop\Sentence\sentenceapi\SharedLibrary\bin\Debug\netcoreapp2.1\SharedLibrary.deps.json
-C:\Users\Aero\Desktop\Sentence\sentenceapi\SharedLibrary\bin\Debug\netcoreapp2.1\SharedLibrary.dll
-C:\Users\Aero\Desktop\Sentence\sentenceapi\SharedLibrary\bin\Debug\netcoreapp2.1\DataAccessLayer.dll
-C:\Users\Aero\Desktop\Sentence\sentenceapi\SharedLibrary\bin\Debug\netcoreapp2.1\DataAccessLayer.pdb
-C:\Users\Aero\Desktop\Sentence\sentenceapi\SharedLibrary\obj\Debug\netcoreapp2.1\SharedLibrary.csprojAssemblyReference.cache
-C:\Users\Aero\Desktop\Sentence\sentenceapi\SharedLibrary\obj\Debug\netcoreapp2.1\SharedLibrary.csproj.CoreCompileInputs.cache
-C:\Users\Aero\Desktop\Sentence\sentenceapi\SharedLibrary\obj\Debug\netcoreapp2.1\SharedLibrary.AssemblyInfoInputs.cache
-C:\Users\Aero\Desktop\Sentence\sentenceapi\SharedLibrary\obj\Debug\netcoreapp2.1\SharedLibrary.AssemblyInfo.cs
-C:\Users\Aero\Desktop\Sentence\sentenceapi\SharedLibrary\obj\Debug\netcoreapp2.1\SharedLibrary.csproj.CopyComplete
-C:\Users\Aero\Desktop\Sentence\sentenceapi\SharedLibrary\bin\Debug\netcoreapp2.1\SharedLibrary.pdb
-C:\Users\Aero\Desktop\Sentence\sentenceapi\SharedLibrary\obj\Debug\netcoreapp2.1\SharedLibrary.dll
-C:\Users\Aero\Desktop\Sentence\sentenceapi\SharedLibrary\obj\Debug\netcoreapp2.1\SharedLibrary.pdb
-C:\Users\evgen\OneDrive\Рабочий стол\Sentence\SentenceAPI\SharedLibrary\bin\Debug\netcoreapp2.1\SharedLibrary.deps.json
-C:\Users\evgen\OneDrive\Рабочий стол\Sentence\SentenceAPI\SharedLibrary\bin\Debug\netcoreapp2.1\SharedLibrary.dll
-C:\Users\evgen\OneDrive\Рабочий стол\Sentence\SentenceAPI\SharedLibrary\bin\Debug\netcoreapp2.1\SharedLibrary.pdb
-C:\Users\evgen\OneDrive\Рабочий стол\Sentence\SentenceAPI\SharedLibrary\bin\Debug\netcoreapp2.1\DataAccessLayer.dll
-C:\Users\evgen\OneDrive\Рабочий стол\Sentence\SentenceAPI\SharedLibrary\bin\Debug\netcoreapp2.1\DataAccessLayer.pdb
-C:\Users\evgen\OneDrive\Рабочий стол\Sentence\SentenceAPI\SharedLibrary\obj\Debug\netcoreapp2.1\SharedLibrary.csprojAssemblyReference.cache
-C:\Users\evgen\OneDrive\Рабочий стол\Sentence\SentenceAPI\SharedLibrary\obj\Debug\netcoreapp2.1\SharedLibrary.csproj.CoreCompileInputs.cache
-C:\Users\evgen\OneDrive\Рабочий стол\Sentence\SentenceAPI\SharedLibrary\obj\Debug\netcoreapp2.1\SharedLibrary.AssemblyInfoInputs.cache
-C:\Users\evgen\OneDrive\Рабочий стол\Sentence\SentenceAPI\SharedLibrary\obj\Debug\netcoreapp2.1\SharedLibrary.AssemblyInfo.cs
-C:\Users\evgen\OneDrive\Рабочий стол\Sentence\SentenceAPI\SharedLibrary\obj\Debug\netcoreapp2.1\SharedLibrary.csproj.CopyComplete
-C:\Users\evgen\OneDrive\Рабочий стол\Sentence\SentenceAPI\SharedLibrary\obj\Debug\netcoreapp2.1\SharedLibrary.dll
-C:\Users\evgen\OneDrive\Рабочий стол\Sentence\SentenceAPI\SharedLibrary\obj\Debug\netcoreapp2.1\SharedLibrary.pdb
+C:/Users/Aero/Desktop/Sentence/sentenceapi/SharedLibrary/bin/Debug/netcoreapp2.1/SharedLibrary.deps.json
+C:/Users/Aero/Desktop/Sentence/sentenceapi/SharedLibrary/bin/Debug/netcoreapp2.1/SharedLibrary.dll
+C:/Users/Aero/Desktop/Sentence/sentenceapi/SharedLibrary/bin/Debug/netcoreapp2.1/DataAccessLayer.dll
+C:/Users/Aero/Desktop/Sentence/sentenceapi/SharedLibrary/bin/Debug/netcoreapp2.1/DataAccessLayer.pdb
+C:/Users/Aero/Desktop/Sentence/sentenceapi/SharedLibrary/obj/Debug/netcoreapp2.1/SharedLibrary.csprojAssemblyReference.cache
+C:/Users/Aero/Desktop/Sentence/sentenceapi/SharedLibrary/obj/Debug/netcoreapp2.1/SharedLibrary.csproj.CoreCompileInputs.cache
+C:/Users/Aero/Desktop/Sentence/sentenceapi/SharedLibrary/obj/Debug/netcoreapp2.1/SharedLibrary.AssemblyInfoInputs.cache
+C:/Users/Aero/Desktop/Sentence/sentenceapi/SharedLibrary/obj/Debug/netcoreapp2.1/SharedLibrary.AssemblyInfo.cs
+C:/Users/Aero/Desktop/Sentence/sentenceapi/SharedLibrary/obj/Debug/netcoreapp2.1/SharedLibrary.csproj.CopyComplete
+C:/Users/Aero/Desktop/Sentence/sentenceapi/SharedLibrary/bin/Debug/netcoreapp2.1/SharedLibrary.pdb
+C:/Users/Aero/Desktop/Sentence/sentenceapi/SharedLibrary/obj/Debug/netcoreapp2.1/SharedLibrary.dll
+C:/Users/Aero/Desktop/Sentence/sentenceapi/SharedLibrary/obj/Debug/netcoreapp2.1/SharedLibrary.pdb
+C:/Users/evgen/OneDrive/Рабочий стол/Sentence/SentenceAPI/SharedLibrary/bin/Debug/netcoreapp2.1/SharedLibrary.deps.json
+C:/Users/evgen/OneDrive/Рабочий стол/Sentence/SentenceAPI/SharedLibrary/bin/Debug/netcoreapp2.1/SharedLibrary.dll
+C:/Users/evgen/OneDrive/Рабочий стол/Sentence/SentenceAPI/SharedLibrary/bin/Debug/netcoreapp2.1/SharedLibrary.pdb
+C:/Users/evgen/OneDrive/Рабочий стол/Sentence/SentenceAPI/SharedLibrary/bin/Debug/netcoreapp2.1/DataAccessLayer.dll
+C:/Users/evgen/OneDrive/Рабочий стол/Sentence/SentenceAPI/SharedLibrary/bin/Debug/netcoreapp2.1/DataAccessLayer.pdb
+C:/Users/evgen/OneDrive/Рабочий стол/Sentence/SentenceAPI/SharedLibrary/obj/Debug/netcoreapp2.1/SharedLibrary.csprojAssemblyReference.cache
+C:/Users/evgen/OneDrive/Рабочий стол/Sentence/SentenceAPI/SharedLibrary/obj/Debug/netcoreapp2.1/SharedLibrary.csproj.CoreCompileInputs.cache
+C:/Users/evgen/OneDrive/Рабочий стол/Sentence/SentenceAPI/SharedLibrary/obj/Debug/netcoreapp2.1/SharedLibrary.AssemblyInfoInputs.cache
+C:/Users/evgen/OneDrive/Рабочий стол/Sentence/SentenceAPI/SharedLibrary/obj/Debug/netcoreapp2.1/SharedLibrary.AssemblyInfo.cs
+C:/Users/evgen/OneDrive/Рабочий стол/Sentence/SentenceAPI/SharedLibrary/obj/Debug/netcoreapp2.1/SharedLibrary.csproj.CopyComplete
+C:/Users/evgen/OneDrive/Рабочий стол/Sentence/SentenceAPI/SharedLibrary/obj/Debug/netcoreapp2.1/SharedLibrary.dll
+C:/Users/evgen/OneDrive/Рабочий стол/Sentence/SentenceAPI/SharedLibrary/obj/Debug/netcoreapp2.1/SharedLibrary.pdb
+/home/aero/Programming/Sentence/sentenceapi/SharedLibrary/bin/Debug/netcoreapp2.1/SharedLibrary.deps.json
+/home/aero/Programming/Sentence/sentenceapi/SharedLibrary/bin/Debug/netcoreapp2.1/SharedLibrary.dll
+/home/aero/Programming/Sentence/sentenceapi/SharedLibrary/bin/Debug/netcoreapp2.1/SharedLibrary.pdb
+/home/aero/Programming/Sentence/sentenceapi/SharedLibrary/bin/Debug/netcoreapp2.1/DataAccessLayer.dll
+/home/aero/Programming/Sentence/sentenceapi/SharedLibrary/bin/Debug/netcoreapp2.1/DataAccessLayer.pdb
+/home/aero/Programming/Sentence/sentenceapi/SharedLibrary/obj/Debug/netcoreapp2.1/SharedLibrary.csprojAssemblyReference.cache
+/home/aero/Programming/Sentence/sentenceapi/SharedLibrary/obj/Debug/netcoreapp2.1/SharedLibrary.AssemblyInfoInputs.cache
+/home/aero/Programming/Sentence/sentenceapi/SharedLibrary/obj/Debug/netcoreapp2.1/SharedLibrary.AssemblyInfo.cs
+/home/aero/Programming/Sentence/sentenceapi/SharedLibrary/obj/Debug/netcoreapp2.1/SharedLibrary.csproj.CopyComplete
+/home/aero/Programming/Sentence/sentenceapi/SharedLibrary/obj/Debug/netcoreapp2.1/SharedLibrary.dll
+/home/aero/Programming/Sentence/sentenceapi/SharedLibrary/obj/Debug/netcoreapp2.1/SharedLibrary.pdb

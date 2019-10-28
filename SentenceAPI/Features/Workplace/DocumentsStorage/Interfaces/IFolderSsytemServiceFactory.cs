@@ -1,5 +1,6 @@
 ﻿using SentenceAPI.Features.Workplace.DocumentsStorage.Services;
-using SentenceAPI.KernelInterfaces;
+
+using SharedLibrary.KernelInterfaces;
 
 using System;
 using System.Collections.Generic;

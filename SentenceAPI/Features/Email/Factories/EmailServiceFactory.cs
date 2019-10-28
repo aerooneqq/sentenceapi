@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 using SentenceAPI.Features.Email.Interfaces;
 using SentenceAPI.Features.Email.Services;
-using SentenceAPI.KernelInterfaces;
+using SharedLibrary.KernelInterfaces;
 
 namespace SentenceAPI.Features.Email.Factories
 {

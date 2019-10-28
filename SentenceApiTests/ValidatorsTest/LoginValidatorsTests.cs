@@ -5,7 +5,7 @@ using System.Text;
 using NUnit.Framework;
 
 using SentenceAPI.Validators;
-using SentenceAPI.KernelInterfaces;
+using SharedLibrary.KernelInterfaces;
 
 namespace SentenceApiTests.ValidatorsTest
 {

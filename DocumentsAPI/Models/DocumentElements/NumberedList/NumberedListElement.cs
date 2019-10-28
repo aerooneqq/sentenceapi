@@ -8,6 +8,7 @@ namespace DocumentsAPI.Models.DocumentElements.NumberedList
 {
     public class NumberedListElement : UniqueEntity
     {
-        public object Content { get; set; }
+        public List<NumberedListElement> InnerElements { get; set; }
+        public string Content { get; set; }
     }
 }

@@ -3,11 +3,10 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-using SentenceAPI.ActionResults;
+using SharedLibrary.ActionResults;
 using SentenceAPI.ApplicationFeatures.Loggers.Interfaces;
 using SentenceAPI.ApplicationFeatures.Loggers.Models;
 using SentenceAPI.ApplicationFeatures.Requests.Interfaces;
-using SentenceAPI.FactoriesManager.Interfaces;
 using SentenceAPI.Features.Authentication.Interfaces;
 using SentenceAPI.Features.Workplace.DocumentsStorage.Interfaces;
 using SentenceAPI.Features.Workplace.DocumentsStorage.Models;
@@ -15,6 +14,9 @@ using SentenceAPI.Validators;
 
 using System;
 using System.Threading.Tasks;
+
+using SharedLibrary.FactoriesManager.Interfaces;
+using SharedLibrary.FactoriesManager;
 
 namespace SentenceAPI.Features.Workplace.DocumentsStorage
 {
@@ -37,7 +39,8 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage
         #endregion
 
         #region Factories
-        private readonly IFactoriesManager factoriesManager = FactoriesManager.FactoriesManager.Instance;
+        private readonly IFactoriesManager factoriesManager = 
+            ManagersDictionary.Instance.GetManager(Startup.ApiName);
         #endregion
 
         public DocumentFilesController()

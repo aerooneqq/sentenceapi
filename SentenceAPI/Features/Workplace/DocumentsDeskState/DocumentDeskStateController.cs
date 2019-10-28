@@ -6,7 +6,10 @@ using Microsoft.AspNetCore.Mvc;
 
 using DataAccessLayer.Exceptions;
 
-using SentenceAPI.ActionResults;
+using SharedLibrary.ActionResults;
+using SharedLibrary.FactoriesManager.Interfaces;
+using SharedLibrary.FactoriesManager;
+
 using SentenceAPI.ApplicationFeatures.Loggers.Interfaces;
 using SentenceAPI.ApplicationFeatures.Loggers.Models;
 using SentenceAPI.ApplicationFeatures.Requests.Interfaces;
@@ -25,7 +28,8 @@ namespace SentenceAPI.Features.Workplace.DocumentsDeskState
         };
 
         #region Factories
-        private FactoriesManager.FactoriesManager factoriesManager = FactoriesManager.FactoriesManager.Instance;
+        private IFactoriesManager factoriesManager = 
+            ManagersDictionary.Instance.GetManager(Startup.ApiName);
         #endregion
 
         #region Services

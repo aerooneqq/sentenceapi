@@ -1,9 +1,10 @@
 ﻿using DataAccessLayer.Exceptions;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+
 using Newtonsoft.Json;
-using SentenceAPI.ActionResults;
-using SentenceAPI.FactoriesManager.Interfaces;
+
 using SentenceAPI.ApplicationFeatures.Loggers.Interfaces;
 using SentenceAPI.ApplicationFeatures.Loggers.Models;
 using SentenceAPI.ApplicationFeatures.Requests.Interfaces;
@@ -14,6 +15,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+
+using SharedLibrary.ActionResults;
+using SharedLibrary.FactoriesManager.Interfaces;
+using SharedLibrary.FactoriesManager;
 
 namespace SentenceAPI.Features.UserFriends
 {
@@ -33,7 +38,8 @@ namespace SentenceAPI.Features.UserFriends
         #endregion
 
         #region Factories
-        private IFactoriesManager factoriesManager = FactoriesManager.FactoriesManager.Instance;
+        private readonly IFactoriesManager factoriesManager = 
+            ManagersDictionary.Instance.GetManager(Startup.ApiName);
         #endregion
 
         public UserFriendsController()

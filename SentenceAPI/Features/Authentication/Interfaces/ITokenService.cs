@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.IdentityModel.Tokens;
 using SentenceAPI.Features.Authentication.Models;
 using SentenceAPI.Features.Users.Models;
-using SentenceAPI.KernelInterfaces;
+using SharedLibrary.KernelInterfaces;
 
 namespace SentenceAPI.Features.Authentication.Interfaces
 {   

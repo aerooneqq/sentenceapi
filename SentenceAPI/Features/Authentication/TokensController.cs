@@ -10,9 +10,9 @@ using Newtonsoft.Json;
 
 using Microsoft.AspNetCore.Mvc;
 
-using SentenceAPI.FactoriesManager.Interfaces;
+using SharedLibrary.FactoriesManager.Interfaces;
 using SentenceAPI.Features.Users.Interfaces;
-using SentenceAPI.FactoriesManager;
+using SharedLibrary.FactoriesManager;
 using SentenceAPI.Features.Users.Models;
 using SentenceAPI.Features.Authentication.Interfaces;
 using SentenceAPI.Features.Authentication.Models;
@@ -22,7 +22,7 @@ using SentenceAPI.ApplicationFeatures.Loggers.Models;
 
 using DataAccessLayer.Exceptions;
 using DataAccessLayer.Hashes;
-using SentenceAPI.ActionResults;
+using SharedLibrary.ActionResults;
 using SentenceAPI.ApplicationFeatures.DefferedExecution;
 using SentenceAPI.Features.UserActivity.Interfaces;
 
@@ -39,7 +39,8 @@ namespace SentenceAPI.Features.Authentication
         };
 
         #region Factories
-        private readonly IFactoriesManager factoriesManager = FactoriesManager.FactoriesManager.Instance;
+        private readonly IFactoriesManager factoriesManager = 
+            ManagersDictionary.Instance.GetManager(Startup.ApiName);
         #endregion
 
         #region Services
@@ -67,10 +68,15 @@ namespace SentenceAPI.Features.Authentication
         /// the jwt token for this user.
         /// </summary>
         [HttpGet]
-        public async Task<IActionResult> Get(string email, string password)
+        public async Task<IActionResult> Get([FromQuery]string email, [FromQuery]string password)
         {
             try
             {
+                if (email is null || password is null) 
+                { 
+                    return new BadSendedRequest<string>("Email and password must be defined");
+                }
+                
                 password = password.GetMD5Hash();
 
                 UserInfo user = await userService.Get(email, password);

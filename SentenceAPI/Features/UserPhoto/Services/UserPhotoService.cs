@@ -12,13 +12,16 @@ using SentenceAPI.ApplicationFeatures.Loggers.Models;
 using SentenceAPI.Extensions;
 using SentenceAPI.Features.Authentication.Interfaces;
 using SentenceAPI.Features.UserPhoto.Interfaces;
-
 using SentenceAPI.Features.UserPhoto.Models;
-using SharedLibrary.Caching;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
+using SharedLibrary.Caching;
+using SharedLibrary.FactoriesManager; 
+using SharedLibrary.FactoriesManager.Interfaces;
 
 namespace SentenceAPI.Features.UserPhoto.Services
 {
@@ -47,7 +50,8 @@ namespace SentenceAPI.Features.UserPhoto.Services
         #endregion
 
         #region Factories
-        private readonly FactoriesManager.FactoriesManager factoriesManager = FactoriesManager.FactoriesManager.Instance;
+        private readonly IFactoriesManager factoriesManager = 
+            ManagersDictionary.Instance.GetManager(Startup.ApiName);
         #endregion
 
         public UserPhotoService()

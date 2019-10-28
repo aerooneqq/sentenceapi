@@ -12,8 +12,10 @@ using Newtonsoft.Json;
 
 using DataAccessLayer.Exceptions;
 
-using SentenceAPI.ActionResults;
-using SentenceAPI.FactoriesManager.Interfaces;
+using SharedLibrary.ActionResults;
+using SharedLibrary.FactoriesManager.Interfaces;
+using SharedLibrary.FactoriesManager;
+
 using SentenceAPI.ApplicationFeatures.Loggers.Interfaces;
 using SentenceAPI.ApplicationFeatures.Loggers.Models;
 using SentenceAPI.ApplicationFeatures.Requests.Interfaces;
@@ -38,7 +40,8 @@ namespace SentenceAPI.Features.UserFeed
         #endregion
 
         #region Factories
-        private readonly IFactoriesManager factoriesManager = FactoriesManager.FactoriesManager.Instance;
+        private readonly IFactoriesManager factoriesManager = 
+            ManagersDictionary.Instance.GetManager(Startup.ApiName);
         #endregion
 
         public UserFeedController()

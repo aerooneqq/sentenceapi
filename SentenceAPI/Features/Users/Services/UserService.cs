@@ -24,6 +24,9 @@ using DataAccessLayer.Hashes;
 using DataAccessLayer.Filters.Base;
 using DataAccessLayer.Filters.Interfaces;
 
+using SharedLibrary.FactoriesManager.Interfaces; 
+using SharedLibrary.FactoriesManager;
+
 namespace SentenceAPI.Features.Users.Services
 {
     public class UserService : IUserService<UserInfo>
@@ -48,8 +51,8 @@ namespace SentenceAPI.Features.Users.Services
         #endregion
 
         #region Factories
-        private readonly FactoriesManager.FactoriesManager factoriesManager =
-            FactoriesManager.FactoriesManager.Instance;
+        private readonly IFactoriesManager factoriesManager =
+            ManagersDictionary.Instance.GetManager(Startup.ApiName);
         #endregion
 
         #region Constructors

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 
 using NUnit.Framework;
-using SentenceAPI.KernelInterfaces;
+using SharedLibrary.KernelInterfaces;
 using SentenceAPI.Validators;
 
 namespace SentenceApiTests.ValidatorsTest

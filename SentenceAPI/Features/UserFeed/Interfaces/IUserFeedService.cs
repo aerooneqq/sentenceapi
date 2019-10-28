@@ -1,9 +1,11 @@
-﻿using SentenceAPI.Features.UserFeed.Models;
-using SentenceAPI.KernelInterfaces;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
+using SharedLibrary.KernelInterfaces;
+
+using SentenceAPI.Features.UserFeed.Models;
 
 namespace SentenceAPI.Features.UserFeed.Interfaces
 {

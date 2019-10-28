@@ -1,6 +1,7 @@
 ﻿using SentenceAPI.Features.UserFriends.Models;
 using SentenceAPI.Features.Users.Models;
-using SentenceAPI.KernelInterfaces;
+
+using SharedLibrary.KernelInterfaces;
 
 using System;
 using System.Collections.Generic;

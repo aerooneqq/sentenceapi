@@ -5,10 +5,14 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.HttpOverrides;
+
+using SharedLibrary.FactoriesManager;
+using SharedLibrary.FactoriesManager.Models;
+using SharedLibrary.FactoriesManager.Interfaces;
+using SharedLibrary.Middlewares.RequestLogger;
 
 using SentenceAPI.Features.Authentication.Models;
-using SentenceAPI.FactoriesManager.Models;
-using SentenceAPI.FactoriesManager.Interfaces;
 using SentenceAPI.Features.Users.Interfaces;
 using SentenceAPI.Features.Authentication.Interfaces;
 using SentenceAPI.Features.Users.Factories;
@@ -39,18 +43,19 @@ using SentenceAPI.Features.Workplace.DocumentsStorage.Interfaces;
 using SentenceAPI.ApplicationFeatures.Date.Factories;
 using SentenceAPI.ApplicationFeatures.Date.Interfaces;
 
-using SharedLibrary.Middlewares.RequestLogger;
-
 namespace SentenceAPI
 {
     public class Startup
     {
+        public static string ApiName => "SentenceAPI";
+
         #region Services
         private ITokenService tokenService;
         #endregion
 
         #region Factories
-        private readonly FactoriesManager.FactoriesManager factoriesManager = FactoriesManager.FactoriesManager.Instance;
+        private readonly IFactoriesManager factoriesManager = 
+            ManagersDictionary.Instance.GetManager(ApiName);
         #endregion
 
         public IConfiguration Configuration { get; set; }
@@ -87,8 +92,6 @@ namespace SentenceAPI
                     };
                 });
 
-            services.AddMemoryCache();
-
             services.AddMvc(options => options.EnableEndpointRouting = false).
                 SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
         }
@@ -97,8 +100,12 @@ namespace SentenceAPI
         {
             app.UseMiddleware<RequestLogger>();
 
-            app.UseHttpsRedirection();
             app.UseAuthentication();
+
+            app.UseForwardedHeaders(new ForwardedHeadersOptions() 
+            { 
+                ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+            });
 
             app.UseCors(builder =>
             {
@@ -116,8 +123,6 @@ namespace SentenceAPI
         /// </summary>
         private void ConfigureCustomServices()
         {
-            IFactoriesManager factoriesManager = FactoriesManager.FactoriesManager.Instance;
-
             factoriesManager.AddFactory(new FactoryInfo(new UserServiceFactory(),
                 typeof(IUserServiceFactory)));
             factoriesManager.AddFactory(new FactoryInfo(new TokenServiceFactory(),

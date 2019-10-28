@@ -40,7 +40,6 @@ namespace DataAccessLayer.Tests.DatabaseFactory
             serviceWeakRef.TryGetTarget(out databaseService);
 
             Assert.NotNull(databaseService);
-            Assert.True(databaseService.GetType() == typeof(MongoDBService<TestModel>));
             Assert.True(databaseService.GetType().GetInterfaces().Contains(typeof(IDatabaseService<TestModel>)));
         }
     }

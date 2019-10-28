@@ -5,5 +5,8 @@ using System.Threading.Tasks;
 
 namespace DocumentsAPI.Models.DocumentElements.NumberedList
 {
-    public class NumberedList : DocumentElement { }
+    public class NumberedList : DocumentElement 
+    { 
+        public List<NumberedListElement> Elements { get; set; }
+    }
 }

@@ -4,7 +4,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 
-using SentenceAPI.ActionResults;
+using SharedLibrary.ActionResults;
+using SharedLibrary.FactoriesManager.Interfaces;
+using SharedLibrary.FactoriesManager;
+
 using SentenceAPI.ApplicationFeatures.Loggers.Interfaces;
 using SentenceAPI.ApplicationFeatures.Loggers.Models;
 using SentenceAPI.ApplicationFeatures.Requests.Interfaces;
@@ -37,8 +40,8 @@ namespace SentenceAPI.Features.UserPhoto
         #endregion
 
         #region Factories
-        private readonly FactoriesManager.FactoriesManager factoriesManager =
-            FactoriesManager.FactoriesManager.Instance;
+        private readonly IFactoriesManager factoriesManager =
+            ManagersDictionary.Instance.GetManager(Startup.ApiName);
         #endregion
 
         public UserPhotoController(IMemoryCache memoryCache)

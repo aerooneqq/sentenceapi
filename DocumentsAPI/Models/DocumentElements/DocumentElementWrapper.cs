@@ -49,7 +49,8 @@ namespace DocumentsAPI.Models.DocumentElements
         {
             get
             {
-                DocumentElement documentElement = (DocumentElement)new BinaryFormatter().Deserialize(new MemoryStream(DocumentElementRaw));
+                DocumentElement documentElement = (DocumentElement)new BinaryFormatter().
+                    Deserialize(new MemoryStream(DocumentElementRaw));
 
                 switch (Type)
                 {

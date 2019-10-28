@@ -5,6 +5,7 @@ using DataAccessLayer.DatabasesManager;
 using DataAccessLayer.Exceptions;
 using DataAccessLayer.Filters;
 using DataAccessLayer.Filters.Interfaces;
+using DataAccessLayer.Filters.Base;
 
 using SentenceAPI.Extensions;
 using SentenceAPI.Features.Authentication.Interfaces;
@@ -13,10 +14,12 @@ using SentenceAPI.Features.Codes.Models;
 using SentenceAPI.ApplicationFeatures.Loggers.Interfaces;
 using SentenceAPI.ApplicationFeatures.Loggers.Models;
 
+using SharedLibrary.FactoriesManager;
+using SharedLibrary.FactoriesManager.Interfaces;
+
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using DataAccessLayer.Filters.Base;
 
 namespace SentenceAPI.Features.Codes.Services
 {
@@ -45,8 +48,8 @@ namespace SentenceAPI.Features.Codes.Services
         #endregion
 
         #region Factories
-        private FactoriesManager.FactoriesManager factoriesManager =
-            FactoriesManager.FactoriesManager.Instance;
+        private IFactoriesManager factoriesManager = 
+            ManagersDictionary.Instance.GetManager(Startup.ApiName);
         #endregion
 
         public CodesService()

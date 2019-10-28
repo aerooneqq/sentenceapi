@@ -5,7 +5,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-using SentenceAPI.ActionResults;
+using SharedLibrary.ActionResults;
+using SharedLibrary.FactoriesManager;
+using SharedLibrary.FactoriesManager.Interfaces;
+
 using SentenceAPI.Features.Codes.Interfaces;
 using SentenceAPI.ApplicationFeatures.Loggers.Interfaces;
 using SentenceAPI.ApplicationFeatures.Loggers.Models;
@@ -34,7 +37,8 @@ namespace SentenceAPI.Features.Codes
         #endregion
 
         #region Factories
-        private FactoriesManager.FactoriesManager factoriesManager = FactoriesManager.FactoriesManager.Instance;
+        private IFactoriesManager factoriesManager = 
+            ManagersDictionary.Instance.GetManager(Startup.ApiName);
 
         private ILoggerFactory loggerFactory;
         private ICodesServiceFactory codesServiceFactory;

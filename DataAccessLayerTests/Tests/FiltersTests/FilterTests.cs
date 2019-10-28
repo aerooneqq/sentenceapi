@@ -15,7 +15,6 @@ namespace DataAccessLayer.Tests.FiltersTests
     class FilterTests
     {
         private IFilter filter;
-        private IFilterCollection filterCollection;
 
         private IMongoClient mongoClient;
         private IMongoDatabase database;
@@ -94,37 +93,6 @@ namespace DataAccessLayer.Tests.FiltersTests
             {
                 if (!customFilterResults[i].Numbers.Contains(1) ||
                     !nativeFilterResults[i].Numbers.Contains(1))
-                {
-                    Assert.Fail();
-                }
-            }
-        }
-
-        [Test]
-        public void TestFilterCollection()
-        {
-            filterCollection = new FilterCollection(new IFilter[]
-            {
-                new RegexFilter("name", @"\Евген\"),
-                new InFilter<int>("numbers", new[] { 1 }),
-            });
-
-            FilterDefinition<FilterTestModel> nativeFilter = Builders<FilterTestModel>.Filter.Regex("name", @"\Евген\");
-            nativeFilter = Builders<FilterTestModel>.Filter.And(nativeFilter,
-                Builders<FilterTestModel>.Filter.In<int>("numbers", new [] { 1 }));
-
-            FilterDefinition<FilterTestModel> customFilter = filterCollection.ToMongoFilter<FilterTestModel>();
-
-            Assert.NotNull(nativeFilter);
-            Assert.NotNull(customFilter);
-
-            var customFilterResults = collection.Find(customFilter).ToList();
-            var nativeFilterResults = collection.Find(nativeFilter).ToList();
-
-            for (int i = 0; i < customFilterResults.Count; i++)
-            {
-                if (customFilterResults[i].Name != nativeFilterResults[i].Name ||
-                    !customFilterResults[i].Numbers.Contains(1) || !nativeFilterResults[i].Numbers.Contains(1))
                 {
                     Assert.Fail();
                 }

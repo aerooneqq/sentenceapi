@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
 using SentenceAPI.ApplicationFeatures.Loggers.Models;
-using SentenceAPI.KernelInterfaces;
+
+using SharedLibrary.KernelInterfaces;
 
 namespace SentenceAPI.ApplicationFeatures.Loggers.Interfaces
 {

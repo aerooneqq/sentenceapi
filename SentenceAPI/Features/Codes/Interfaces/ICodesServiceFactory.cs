@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-using SentenceAPI.KernelInterfaces;
+using SharedLibrary.KernelInterfaces;
 
 namespace SentenceAPI.Features.Codes.Interfaces
 {

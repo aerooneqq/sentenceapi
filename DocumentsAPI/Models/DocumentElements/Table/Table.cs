@@ -5,5 +5,8 @@ using System.Threading.Tasks;
 
 namespace DocumentsAPI.Models.DocumentElements.Table
 {
-    public class Table : DocumentElement { }
+    public class Table : DocumentElement
+    {
+        public List<TableCell> Cells { get; set; }
+    }
 }

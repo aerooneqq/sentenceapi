@@ -4,16 +4,18 @@ using System.Text;
 
 using NUnit.Framework;
 
-using SentenceAPI.FactoriesManager;
-using SentenceAPI.KernelInterfaces;
-using SentenceAPI.FactoriesManager.Models;
+using SharedLibrary.FactoriesManager;
+using SharedLibrary.FactoriesManager.Interfaces;
+using SharedLibrary.KernelInterfaces;
+using SharedLibrary.FactoriesManager.Models;
 
 namespace SentenceApiTests.FactoriesManagerTest
 {
     [TestFixture]
     public class FactoriesManagerTest
     {
-        private FactoriesManager factoriesManager = FactoriesManager.Instance;
+        private readonly IFactoriesManager factoriesManager =
+            ManagersDictionary.Instance.GetManager("TestSentenceAPI");
 
         /// <summary>
         /// Add the Service factory which provides access to the interfaces IServiceA, IServiceB.

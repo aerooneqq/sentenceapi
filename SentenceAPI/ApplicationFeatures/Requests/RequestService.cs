@@ -1,7 +1,10 @@
 ﻿using Microsoft.AspNetCore.Http;
+
 using SentenceAPI.ApplicationFeatures.Requests.Interfaces;
-using SentenceAPI.Serialization;
-using SentenceAPI.Serialization.Json;
+
+using SharedLibrary.Serialization;
+using SharedLibrary.Serialization.Json;
+
 using System;
 using System.Collections.Generic;
 using System.IO;

@@ -7,14 +7,16 @@ using SentenceAPI.Features.Authentication.Interfaces;
 using SentenceAPI.ApplicationFeatures.Loggers.Interfaces;
 using SentenceAPI.ApplicationFeatures.Loggers.Models;
 using SentenceAPI.Features.UserActivity.Interfaces;
-using SentenceAPI.FactoriesManager;
+
+using SharedLibrary.FactoriesManager.Interfaces;
+using SharedLibrary.FactoriesManager;
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using DataAccessLayer.Exceptions;
-using SentenceAPI.ActionResults;
+using SharedLibrary.ActionResults;
 
 namespace SentenceAPI.Features.UserActivity
 {
@@ -34,7 +36,8 @@ namespace SentenceAPI.Features.UserActivity
         #endregion
 
         #region Factories
-        private FactoriesManager.FactoriesManager factoriesManager = FactoriesManager.FactoriesManager.Instance;
+        private IFactoriesManager factoriesManager = 
+            ManagersDictionary.Instance.GetManager(Startup.ApiName);
         #endregion
 
         public UserActivitiesController()

@@ -2,12 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.IO;
-using System.Text;
-using System.Web;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 
 using SentenceAPI.Features.Users.Interfaces;
 using SentenceAPI.Features.Users.Models;
@@ -17,22 +15,18 @@ using SentenceAPI.Features.Email.Interfaces;
 using SentenceAPI.Features.Links.Interfaces;
 using SentenceAPI.Validators;
 using SentenceAPI.Extensions;
-
-using Newtonsoft.Json;
-
-using SentenceAPI.ActionResults;
-
-using DataAccessLayer.Exceptions;
-using SentenceAPI.KernelInterfaces;
 using SentenceAPI.Features.Codes.Models;
 using SentenceAPI.Features.Codes.Interfaces;
-using Microsoft.AspNetCore.Http;
 using SentenceAPI.ApplicationFeatures.Requests.Interfaces;
-using Microsoft.Extensions.Caching.Memory;
-using SentenceAPI.ApplicationFeatures.DefferedExecution;
 using SentenceAPI.Features.Authentication.Interfaces;
 using SentenceAPI.Events;
 using SentenceAPI.Features.Users.Events;
+
+using SharedLibrary.ActionResults;
+using SharedLibrary.FactoriesManager.Interfaces;
+using SharedLibrary.FactoriesManager;
+
+using DataAccessLayer.Exceptions;
 
 namespace SentenceAPI.Features.Users
 {
@@ -46,19 +40,19 @@ namespace SentenceAPI.Features.Users
         };
 
         #region Services
-        private ILinkService linkService;
-        private IEmailService emailService;
-        private IUserService<UserInfo> userService;
-        private ILogger<ApplicationError> exceptionLogger;
-        private ICodesService codesService;
-        private IRequestService requestService;
-        private IMemoryCache memoryCacheService;
-        private ITokenService tokenService;
+        private readonly ILinkService linkService;
+        private readonly IEmailService emailService;
+        private readonly IUserService<UserInfo> userService;
+        private readonly ILogger<ApplicationError> exceptionLogger;
+        private readonly ICodesService codesService;
+        private readonly IRequestService requestService;
+        private readonly IMemoryCache memoryCacheService;
+        private readonly ITokenService tokenService;
         #endregion
 
         #region Factories
-        private FactoriesManager.FactoriesManager factoriesManager =
-            FactoriesManager.FactoriesManager.Instance;
+        private readonly IFactoriesManager factoriesManager =
+            ManagersDictionary.Instance.GetManager(Startup.ApiName);
         #endregion
 
         public UsersController(IMemoryCache memoryCacheService)

@@ -2,8 +2,9 @@
 /SentenceAPI/log.txt
 /SentenceAPI/mongo_database_config.json
 /.vs
-/SentenceAPI/bin
-/SentenceAPI/obj
+/.vscode
+/SentenceAPI/bin/
+/SentenceAPI/obj/
 /DataAccessLayer/bin
 /DataAccessLayerTests/bin
 /SentenceApiTests/bin

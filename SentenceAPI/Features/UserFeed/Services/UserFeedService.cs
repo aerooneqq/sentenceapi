@@ -1,12 +1,14 @@
 ﻿using MongoDB.Driver;
 
 using SentenceAPI.Features.Authentication.Interfaces;
-using SentenceAPI.FactoriesManager.Interfaces;
 using SentenceAPI.ApplicationFeatures.Loggers.Interfaces;
 using SentenceAPI.ApplicationFeatures.Loggers.Models;
 using SentenceAPI.Features.UserFeed.Interfaces;
 using SentenceAPI.Features.UserFeed.Models;
 using SentenceAPI.Features.UserFriends.Interfaces;
+using SentenceAPI.Features.Users.Models;
+using SentenceAPI.Features.Users.Interfaces;
+using SentenceAPI.Features.UserPhoto.Interfaces;
 
 using System;
 using System.Collections.Generic;
@@ -20,11 +22,11 @@ using DataAccessLayer.DatabasesManager;
 using DataAccessLayer.Configuration;
 using DataAccessLayer.Filters;
 using DataAccessLayer.Exceptions;
-using SentenceAPI.Features.Users.Models;
-using SentenceAPI.Features.Users.Interfaces;
 using DataAccessLayer.Aggregations.Interfaces;
 using DataAccessLayer.Aggregations;
-using SentenceAPI.Features.UserPhoto.Interfaces;
+
+using SharedLibrary.FactoriesManager.Interfaces;
+using SharedLibrary.FactoriesManager;
 
 namespace SentenceAPI.Features.UserFeed.Services
 {
@@ -49,7 +51,8 @@ namespace SentenceAPI.Features.UserFeed.Services
         #endregion
 
         #region Factories
-        IFactoriesManager factoriesManager = FactoriesManager.FactoriesManager.Instance;
+        private readonly IFactoriesManager factoriesManager = 
+            ManagersDictionary.Instance.GetManager(Startup.ApiName);
         #endregion
 
         public UserFeedService()

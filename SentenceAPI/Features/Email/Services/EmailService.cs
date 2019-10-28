@@ -5,10 +5,14 @@ using System.Threading.Tasks;
 using System.Net.Mail;
 using System.Net;
 
+using SharedLibrary.FactoriesManager.Interfaces;
+using SharedLibrary.FactoriesManager;
+
 using SentenceAPI.Features.Email.Interfaces;
 using SentenceAPI.ApplicationFeatures.Loggers.Models;
 using SentenceAPI.ApplicationFeatures.Loggers.Interfaces;
 using SentenceAPI.Features.Users.Models;
+
 using DataAccessLayer.CommonInterfaces;
 using DataAccessLayer.Configuration.Interfaces;
 using DataAccessLayer.DatabasesManager;
@@ -45,8 +49,8 @@ namespace SentenceAPI.Features.Email.Services
         #endregion
 
         #region Factories
-        private FactoriesManager.FactoriesManager factoriesManager = 
-            FactoriesManager.FactoriesManager.Instance;
+        private IFactoriesManager factoriesManager = 
+            ManagersDictionary.Instance.GetManager(Startup.ApiName);
         #endregion
 
         public EmailService()

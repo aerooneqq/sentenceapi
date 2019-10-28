@@ -1,10 +1,11 @@
-﻿using SentenceAPI.KernelInterfaces;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 using SentenceAPI.Features.UserActivity.Models;
+
+using SharedLibrary.KernelInterfaces;
 
 namespace SentenceAPI.Features.UserActivity.Interfaces
 {

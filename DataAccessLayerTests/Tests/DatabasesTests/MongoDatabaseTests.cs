@@ -49,7 +49,7 @@ namespace DataAccessLayer.Tests.DatabasesTests
         [SetUp]
         public void SetUp()
         {
-            databaseService = new MongoDBService<TestModel>();
+            DatabasesManager.DatabasesManager.Manager.MongoDBFactory.GetDatabase<TestModel>().TryGetTarget(out databaseService);
             configurationBuilder = new MongoConfigurationBuilder(databaseService.Configuration);
 
             configurationBuilder.SetConfigurationFilePath(databaseConfigFile).SetUserName().SetPassword()

@@ -10,10 +10,12 @@ using SentenceAPI.ApplicationFeatures.Loggers.Interfaces;
 using SentenceAPI.ApplicationFeatures.Loggers.Models;
 
 using DataAccessLayer.CommonInterfaces;
-using DataAccessLayer.MongoDB.Interfaces;
 using DataAccessLayer.DatabasesManager;
 using DataAccessLayer.Configuration.Interfaces;
 using DataAccessLayer.Configuration;
+
+using SharedLibrary.FactoriesManager;
+using SharedLibrary.FactoriesManager.Interfaces;
 
 namespace SentenceAPI.ApplicationFeatures.Loggers
 {
@@ -31,8 +33,8 @@ namespace SentenceAPI.ApplicationFeatures.Loggers
         #endregion
 
         #region Factories
-        private FactoriesManager.FactoriesManager factoriesManager = 
-            FactoriesManager.FactoriesManager.Instance;
+        private readonly IFactoriesManager factoriesManager = 
+            ManagersDictionary.Instance.GetManager(Startup.ApiName);
         #endregion
 
         #region Properties

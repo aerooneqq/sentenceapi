@@ -8,7 +8,6 @@ namespace DocumentsAPI.Models.DocumentElements.Table
 {
     public class TableCell : UniqueEntity
     {
-        public object Content { get; set; }
-        public long ParentTableID { get; set; }
+        public string Content { get; set; }
     }
 }

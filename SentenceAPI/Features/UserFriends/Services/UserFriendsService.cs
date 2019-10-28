@@ -16,7 +16,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using SentenceAPI.FactoriesManager.Interfaces;
+
+using SharedLibrary.FactoriesManager.Interfaces;
+using SharedLibrary.FactoriesManager;
 
 namespace SentenceAPI.Features.UserFriends.Services
 {
@@ -44,7 +46,8 @@ namespace SentenceAPI.Features.UserFriends.Services
         #endregion
 
         #region Factories
-        private IFactoriesManager factoriesManager = FactoriesManager.FactoriesManager.Instance;
+        private readonly IFactoriesManager factoriesManager =
+            ManagersDictionary.Instance.GetManager(Startup.ApiName);
         #endregion
 
         public UserFriendsService()

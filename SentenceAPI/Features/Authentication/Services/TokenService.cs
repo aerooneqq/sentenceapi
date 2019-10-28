@@ -14,7 +14,7 @@ using SentenceAPI.Features.Users.Models;
 using DataAccessLayer.MongoDB;
 using DataAccessLayer.CommonInterfaces;
 
-using SentenceAPI.FactoriesManager.Models;
+using SharedLibrary.FactoriesManager.Models;
 using DataAccessLayer.DatabasesManager;
 using DataAccessLayer.Configuration.Interfaces;
 using DataAccessLayer.Configuration;
