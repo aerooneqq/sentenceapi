@@ -11,6 +11,5 @@ namespace DataAccessLayer.Attributes
     [AttributeUsage(AttributeTargets.Property)]
     public sealed class SecretAttribute : Attribute
     {
-
     }
 }

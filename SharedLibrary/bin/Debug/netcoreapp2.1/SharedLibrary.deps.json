@@ -898,6 +898,19 @@
           }
         }
       },
+      "MongoDB.Driver.GridFS/2.9.1": {
+        "dependencies": {
+          "MongoDB.Bson": "2.9.1",
+          "MongoDB.Driver": "2.9.1",
+          "MongoDB.Driver.Core": "2.9.1"
+        },
+        "runtime": {
+          "lib/netstandard1.5/MongoDB.Driver.GridFS.dll": {
+            "assemblyVersion": "2.9.1.0",
+            "fileVersion": "2.9.1.0"
+          }
+        }
+      },
       "Newtonsoft.Json/12.0.2": {
         "runtime": {
           "lib/netstandard2.0/Newtonsoft.Json.dll": {
@@ -1862,6 +1875,7 @@
       "DataAccessLayer/1.0.0": {
         "dependencies": {
           "MongoDB.Driver": "2.9.1",
+          "MongoDB.Driver.GridFS": "2.9.1",
           "Newtonsoft.Json": "12.0.2"
         },
         "runtime": {
@@ -2379,6 +2393,13 @@
       "sha512": "sha512-ns0rmDypEsUvRW7M/PW5wqdKoTJjeXKiGSwx0IJM1Rv2XJE6aqTRoI81sINqpABwcNhI6ZbXnkUuNAlwtYPITg==",
       "path": "mongodb.driver.core/2.9.1",
       "hashPath": "mongodb.driver.core.2.9.1.nupkg.sha512"
+    },
+    "MongoDB.Driver.GridFS/2.9.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-85PT4F9N45wIPAIjz//gIwFxNvm3fsuur9VzdUdxuV5klXiWiWhhtZJphVNoCHN2tUbCta4HyZ585XtilCpzng==",
+      "path": "mongodb.driver.gridfs/2.9.1",
+      "hashPath": "mongodb.driver.gridfs.2.9.1.nupkg.sha512"
     },
     "Newtonsoft.Json/12.0.2": {
       "type": "package",

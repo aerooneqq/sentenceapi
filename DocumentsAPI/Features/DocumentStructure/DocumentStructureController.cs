@@ -1,6 +1,8 @@
 using System;
 using System.Threading.Tasks;
 
+using DataAccessLayer.Exceptions;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -21,11 +23,13 @@ namespace DocumentsAPI.Features.DocumentStructure
         [HttpGet]
         public async Task<IActionResult> GetDocumentStructure([FromQuery]long documentID)
         { 
+            return null;
+
             try 
             { 
-
+                
             }
-            catch (DatabaseException)
+            catch (DatabaseException ex)
             {
 
             }

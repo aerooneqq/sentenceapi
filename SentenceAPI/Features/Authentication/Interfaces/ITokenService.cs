@@ -14,7 +14,6 @@ namespace SentenceAPI.Features.Authentication.Interfaces
     {
         bool CheckToken(string encodedToken);
         (string encodedToken, JwtSecurityToken securityToken) CreateEncodedToken(UserInfo user);
-        LifetimeValidator GetLifeTimeValidationDel();
         Task InsertTokenInDB(JwtToken token);
         string GetTokenClaim(string token, string claimType);
     }

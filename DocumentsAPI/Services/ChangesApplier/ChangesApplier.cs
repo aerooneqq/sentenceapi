@@ -24,7 +24,7 @@ namespace DocumentsAPI.Services.ChangesApplier
 
         public byte[] ApplyChanges()
         {
-
+            throw new NotImplementedException();
         }
     }
 }

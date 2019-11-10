@@ -1,30 +1,25 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\evgen\\OneDrive\\Рабочий стол\\Sentence\\SentenceAPI\\DocumentsAPI\\DocumentsAPI.csproj": {}
+    "/home/aero/Programming/Sentence/sentenceapi/DocumentsAPI/DocumentsAPI.csproj": {}
   },
   "projects": {
-    "C:\\Users\\evgen\\OneDrive\\Рабочий стол\\Sentence\\SentenceAPI\\DataAccessLayer\\DataAccessLayer.csproj": {
+    "/home/aero/Programming/Sentence/sentenceapi/DataAccessLayer/DataAccessLayer.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\evgen\\OneDrive\\Рабочий стол\\Sentence\\SentenceAPI\\DataAccessLayer\\DataAccessLayer.csproj",
+        "projectUniqueName": "/home/aero/Programming/Sentence/sentenceapi/DataAccessLayer/DataAccessLayer.csproj",
         "projectName": "DataAccessLayer",
-        "projectPath": "C:\\Users\\evgen\\OneDrive\\Рабочий стол\\Sentence\\SentenceAPI\\DataAccessLayer\\DataAccessLayer.csproj",
-        "packagesPath": "C:\\Users\\evgen\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\evgen\\OneDrive\\Рабочий стол\\Sentence\\SentenceAPI\\DataAccessLayer\\obj\\",
+        "projectPath": "/home/aero/Programming/Sentence/sentenceapi/DataAccessLayer/DataAccessLayer.csproj",
+        "packagesPath": "/home/aero/.nuget/packages/",
+        "outputPath": "/home/aero/Programming/Sentence/sentenceapi/DataAccessLayer/obj/",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
-        ],
         "configFilePaths": [
-          "C:\\Users\\evgen\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "/home/aero/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "netcoreapp2.1"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -65,38 +60,37 @@
             "net48"
           ],
           "assetTargetFallback": true,
-          "warn": true
+          "warn": true,
+          "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/3.0.100/RuntimeIdentifierGraph.json"
         }
       }
     },
-    "C:\\Users\\evgen\\OneDrive\\Рабочий стол\\Sentence\\SentenceAPI\\DocumentsAPI\\DocumentsAPI.csproj": {
+    "/home/aero/Programming/Sentence/sentenceapi/DocumentsAPI/DocumentsAPI.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\evgen\\OneDrive\\Рабочий стол\\Sentence\\SentenceAPI\\DocumentsAPI\\DocumentsAPI.csproj",
+        "projectUniqueName": "/home/aero/Programming/Sentence/sentenceapi/DocumentsAPI/DocumentsAPI.csproj",
         "projectName": "DocumentsAPI",
-        "projectPath": "C:\\Users\\evgen\\OneDrive\\Рабочий стол\\Sentence\\SentenceAPI\\DocumentsAPI\\DocumentsAPI.csproj",
-        "packagesPath": "C:\\Users\\evgen\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\evgen\\OneDrive\\Рабочий стол\\Sentence\\SentenceAPI\\DocumentsAPI\\obj\\",
+        "projectPath": "/home/aero/Programming/Sentence/sentenceapi/DocumentsAPI/DocumentsAPI.csproj",
+        "packagesPath": "/home/aero/.nuget/packages/",
+        "outputPath": "/home/aero/Programming/Sentence/sentenceapi/DocumentsAPI/obj/",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
-        ],
         "configFilePaths": [
-          "C:\\Users\\evgen\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "/home/aero/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "netcoreapp3.0"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "netcoreapp3.0": {
             "projectReferences": {
-              "C:\\Users\\evgen\\OneDrive\\Рабочий стол\\Sentence\\SentenceAPI\\DataAccessLayer\\DataAccessLayer.csproj": {
-                "projectPath": "C:\\Users\\evgen\\OneDrive\\Рабочий стол\\Sentence\\SentenceAPI\\DataAccessLayer\\DataAccessLayer.csproj"
+              "/home/aero/Programming/Sentence/sentenceapi/DataAccessLayer/DataAccessLayer.csproj": {
+                "projectPath": "/home/aero/Programming/Sentence/sentenceapi/DataAccessLayer/DataAccessLayer.csproj"
+              },
+              "/home/aero/Programming/Sentence/sentenceapi/SharedLibrary/SharedLibrary.csproj": {
+                "projectPath": "/home/aero/Programming/Sentence/sentenceapi/SharedLibrary/SharedLibrary.csproj"
               }
             }
           }
@@ -113,7 +107,7 @@
             "Microsoft.AspNetCore.Razor.Design": {
               "suppressParent": "All",
               "target": "Package",
-              "version": "[2.1.2, )"
+              "version": "[2.2.0, )"
             }
           },
           "imports": [
@@ -126,10 +120,80 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
-          "frameworkReferences": [
-            "Microsoft.AspNetCore.App",
-            "Microsoft.NETCore.App"
+          "frameworkReferences": {
+            "Microsoft.AspNetCore.App": {
+              "privateAssets": "none"
+            },
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/3.0.100/RuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "/home/aero/Programming/Sentence/sentenceapi/SharedLibrary/SharedLibrary.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/home/aero/Programming/Sentence/sentenceapi/SharedLibrary/SharedLibrary.csproj",
+        "projectName": "SharedLibrary",
+        "projectPath": "/home/aero/Programming/Sentence/sentenceapi/SharedLibrary/SharedLibrary.csproj",
+        "packagesPath": "/home/aero/.nuget/packages/",
+        "outputPath": "/home/aero/Programming/Sentence/sentenceapi/SharedLibrary/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/home/aero/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "netcoreapp2.1"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "netcoreapp2.1": {
+            "projectReferences": {
+              "/home/aero/Programming/Sentence/sentenceapi/DataAccessLayer/DataAccessLayer.csproj": {
+                "projectPath": "/home/aero/Programming/Sentence/sentenceapi/DataAccessLayer/DataAccessLayer.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
           ]
+        }
+      },
+      "frameworks": {
+        "netcoreapp2.1": {
+          "dependencies": {
+            "Microsoft.AspNetCore.Http": {
+              "target": "Package",
+              "version": "[2.2.2, )"
+            },
+            "Microsoft.AspNetCore.Mvc": {
+              "target": "Package",
+              "version": "[2.2.0, )"
+            },
+            "Microsoft.NETCore.App": {
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[2.1.0, )",
+              "autoReferenced": true
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/3.0.100/RuntimeIdentifierGraph.json"
         }
       }
     }

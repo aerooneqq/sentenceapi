@@ -42,16 +42,13 @@ using SentenceAPI.Features.Workplace.DocumentsStorage.Factories;
 using SentenceAPI.Features.Workplace.DocumentsStorage.Interfaces;
 using SentenceAPI.ApplicationFeatures.Date.Factories;
 using SentenceAPI.ApplicationFeatures.Date.Interfaces;
+using SentenceAPI.Extensions;
 
 namespace SentenceAPI
 {
     public class Startup
     {
         public static string ApiName => "SentenceAPI";
-
-        #region Services
-        private ITokenService tokenService;
-        #endregion
 
         #region Factories
         private readonly IFactoriesManager factoriesManager;
@@ -74,48 +71,16 @@ namespace SentenceAPI
         {
             ConfigureCustomServices();
 
-            factoriesManager.GetService<ITokenService>().TryGetTarget(out tokenService);
-
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(
-                options =>
-                {
-                    options.RequireHttpsMetadata = true;
-                    options.TokenValidationParameters = new TokenValidationParameters()
-                    {
-                        ValidateIssuer = true,
-                        ValidIssuer = AuthOptions.ISSUER,
-                        ValidateAudience = true,
-                        ValidAudience = AuthOptions.AUDIENCE,
-                        ValidateLifetime = true,
-                        LifetimeValidator = tokenService.GetLifeTimeValidationDel(),
-
-                        IssuerSigningKey = AuthOptions.GetSymmetricSecurityKey(),
-                        ValidateIssuerSigningKey = true
-                    };
-                });
-
-            services.AddMvc(options => options.EnableEndpointRouting = false).
-                SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
+            services.SetAuthentication();
+            services.SetMvc();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             app.UseMiddleware<RequestLogger>();
-
             app.UseAuthentication();
-
-            app.UseForwardedHeaders(new ForwardedHeadersOptions() 
-            { 
-                ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
-            });
-
-            app.UseCors(builder =>
-            {
-                builder.AllowAnyOrigin();
-                builder.AllowAnyMethod();
-                builder.AllowAnyHeader();
-            });
-
+            app.SetForwardedHeaders();
+            app.SetCors();
             app.UseMvc();
         }
 

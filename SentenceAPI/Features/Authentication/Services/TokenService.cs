@@ -18,6 +18,7 @@ using SharedLibrary.FactoriesManager.Models;
 using DataAccessLayer.DatabasesManager;
 using DataAccessLayer.Configuration.Interfaces;
 using DataAccessLayer.Configuration;
+using SentenceAPI.Extensions.Models;
 
 namespace SentenceAPI.Features.Authentication.Services
 {
@@ -75,21 +76,6 @@ namespace SentenceAPI.Features.Authentication.Services
 
             var encodedToken = new JwtSecurityTokenHandler().WriteToken(jwtToken);
             return (encodedToken, jwtToken);
-        }
-
-        public LifetimeValidator GetLifeTimeValidationDel()
-        {
-            return (notBefore, exp, token, parameters) =>
-            {
-                var now = DateTime.UtcNow;
-
-                if (now < notBefore)
-                    return false;
-                if (now > exp)
-                    return false;
-
-                return true;
-            };
         }
 
         private ClaimsIdentity GetUserIdentity(UserInfo user)

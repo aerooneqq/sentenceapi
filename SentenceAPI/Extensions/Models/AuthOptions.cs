@@ -1,7 +1,8 @@
 ﻿using Microsoft.IdentityModel.Tokens;
+using System;
 using System.Text;
 
-namespace SentenceAPI.Features.Authentication.Models
+namespace SentenceAPI.Extensions.Models
 {
     /// <summary>
     /// Class where authentication parameters are stored
@@ -23,5 +24,21 @@ namespace SentenceAPI.Features.Authentication.Models
         {
             return new SymmetricSecurityKey(Encoding.ASCII.GetBytes(SecretKey));
         }
+
+        public static LifetimeValidator GetLifeTimeValidationDel()
+        {
+            return (notBefore, exp, token, parameters) =>
+            {
+                var now = DateTime.UtcNow;
+
+                if (now < notBefore)
+                    return false;
+                if (now > exp)
+                    return false;
+
+                return true;
+            };
+        }
+
     }
 }

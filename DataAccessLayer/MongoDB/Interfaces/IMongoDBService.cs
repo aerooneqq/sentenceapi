@@ -16,5 +16,9 @@ namespace DataAccessLayer.MongoDB.Interfaces
         string SupportCollectionName { get; set; }
         string SupportDocumentName { get; set; }
         #endregion
+
+        #region Bridges
+        IGridFSService GridFS { get; }
+        #endregion
     }
 }

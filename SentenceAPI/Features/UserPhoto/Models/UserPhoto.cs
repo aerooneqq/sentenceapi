@@ -1,4 +1,5 @@
 ﻿using DataAccessLayer.KernelModels;
+using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using Newtonsoft.Json;
 using System;
@@ -14,19 +15,20 @@ namespace SentenceAPI.Features.UserPhoto.Models
         [BsonElement("userID"), JsonProperty("userID")]
         public long UserID { get; set; }
 
-        [BsonElement("photo"), JsonProperty("photo")]
-        public string Photo { get; set; }
+        [BsonElement("photoGridFSId"), JsonProperty("photoGridFSId")]
+        public ObjectId PhotoGridFSId { get; set; }
+
+        [BsonElement("fileName"), JsonProperty("fileName")]
+        public string FileName { get; set; }
 
         #region Constructors
         public UserPhoto() { }
 
-        public UserPhoto(long userID, byte[] photo)
-            :this(userID, Convert.ToBase64String(photo)) { }
-
-        public UserPhoto(long userID, string photo)
-        {
+        public UserPhoto(long userID) : this(userID, ObjectId.Empty) { }
+        public UserPhoto(long userID, ObjectId objectId)
+        { 
             UserID = userID;
-            Photo = photo;
+            PhotoGridFSId = objectId;
         }
         #endregion
     }

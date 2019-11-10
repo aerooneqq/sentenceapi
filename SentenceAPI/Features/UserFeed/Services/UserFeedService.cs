@@ -99,7 +99,7 @@ namespace SentenceAPI.Features.UserFeed.Services
 
             foreach (long userID in userIDs)
             {
-                userPhotoes.Add(userID, (await userPhotoService.GetPhoto(userID).ConfigureAwait(false)).Photo);
+                //userPhotoes.Add(userID, (await userPhotoService.GetPhotoAsync(userID).ConfigureAwait(false)).Photo);
             }
 
             return userPhotoes;

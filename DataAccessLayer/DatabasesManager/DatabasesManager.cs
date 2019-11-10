@@ -21,6 +21,7 @@ namespace DataAccessLayer.DatabasesManager
         }
 
         #region Singleton
+        static DatabasesManager() { }
         private static DatabasesManager databasesManager;
 
         public static DatabasesManager Manager

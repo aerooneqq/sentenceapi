@@ -12,6 +12,7 @@ using Newtonsoft.Json;
 using SentenceAPI.Features.Users.Models;
 
 using DataAccessLayer.KernelModels;
+using SentenceAPI.Extensions.Models;
 
 namespace SentenceAPI.Features.Authentication.Models
 {

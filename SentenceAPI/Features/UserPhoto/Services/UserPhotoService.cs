@@ -4,6 +4,7 @@ using DataAccessLayer.Configuration.Interfaces;
 using DataAccessLayer.DatabasesManager;
 using DataAccessLayer.Exceptions;
 using DataAccessLayer.Filters;
+using DataAccessLayer.MongoDB.Interfaces;
 
 using Microsoft.Extensions.Caching.Memory;
 
@@ -22,6 +23,7 @@ using System.Threading.Tasks;
 using SharedLibrary.Caching;
 using SharedLibrary.FactoriesManager; 
 using SharedLibrary.FactoriesManager.Interfaces;
+using MongoDB.Bson;
 
 namespace SentenceAPI.Features.UserPhoto.Services
 {
@@ -68,7 +70,7 @@ namespace SentenceAPI.Features.UserPhoto.Services
             factoriesManager.GetService<ITokenService>().TryGetTarget(out tokenService);
         }
 
-        public async Task CreateUserPhoto(long userID)
+        public async Task CreateUserPhotoAsync(long userID)
         {
             try
             {
@@ -83,7 +85,7 @@ namespace SentenceAPI.Features.UserPhoto.Services
                         $" photo already exists. ID: {userID}");
                 }
 
-                await database.Insert(new Models.UserPhoto(userID, string.Empty)).ConfigureAwait(false);
+                await database.Insert(new Models.UserPhoto(userID)).ConfigureAwait(false);
             }
             catch (Exception ex)
             {
@@ -92,21 +94,37 @@ namespace SentenceAPI.Features.UserPhoto.Services
             }
         }
 
-        public async Task<Models.UserPhoto> GetPhoto(long userID)
+        public async Task<byte[]> GetRawPhotoAsync(ObjectId gridFSPhotoID)
+        { 
+            try
+            {
+                await database.Connect().ConfigureAwait(false);
+
+                IMongoDBService<Models.UserPhoto> mongoDatabase = (IMongoDBService<Models.UserPhoto>)database;
+                byte[] rawPhoto = await mongoDatabase.GridFS.GetFile(gridFSPhotoID).ConfigureAwait(false);
+
+                return rawPhoto;
+            }
+            catch (Exception ex)
+            {
+                await exceptionLogger.Log(new ApplicationError(ex));
+                throw new DatabaseException("The error occured while getting raw photo");
+            }
+        }
+
+        public async Task<Models.UserPhoto> GetPhotoAsync(long userID)
         {
             try
             {
-                if (cacheService.Contains(GetUserPhotoCacheKey(userID)))
-                {
-                    return new Models.UserPhoto(userID, (string)cacheService.GetValue(GetUserPhotoCacheKey(userID)));
-                }
-
                 await database.Connect().ConfigureAwait(false);
 
                 var filter = new EqualityFilter<long>(typeof(Models.UserPhoto).GetBsonPropertyName("UserID"), userID);
                 var userPhoto = (await database.Get(filter).ConfigureAwait(false)).FirstOrDefault();
 
-                cacheService.TryInsert(GetUserPhotoCacheKey(userID), userPhoto.Photo);
+                if (userPhoto is null) 
+                {
+                    return null;
+                }
 
                 return userPhoto;
             }
@@ -122,11 +140,11 @@ namespace SentenceAPI.Features.UserPhoto.Services
             return userPhotoCacheKey + userID;
         }
 
-        public async Task<Models.UserPhoto> GetPhoto(string token)
+        public async Task<Models.UserPhoto> GetPhotoAsync(string token)
         {
             try
             {
-                return await GetPhoto(long.Parse(tokenService.GetTokenClaim(token, "ID")))
+                return await GetPhotoAsync(long.Parse(tokenService.GetTokenClaim(token, "ID")))
                     .ConfigureAwait(false);
             }
             catch (Exception ex) when (ex.GetType() != typeof(DatabaseException))
@@ -136,25 +154,37 @@ namespace SentenceAPI.Features.UserPhoto.Services
             }
         }
 
-        public async Task UpdatePhoto(Models.UserPhoto userPhoto)
+        public async Task InsertUserPhotoModel(Models.UserPhoto userPhoto)
+        {
+            try
+            {
+                await database.Connect().ConfigureAwait(false);
+                await database.Insert(userPhoto).ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                await exceptionLogger.Log(new ApplicationError(ex)).ConfigureAwait(false);
+                throw new DatabaseException("The error occured while creating new user photo model");
+            }
+        }
+
+        public async Task<ObjectId> UpdatePhotoAsync(Models.UserPhoto userPhoto, 
+                                                     byte[] newPhoto,
+                                                     string fileName)
         {
             try
             {
                 await database.Connect().ConfigureAwait(false);
 
-                var oldUserPhoto = (await database.Get(new EqualityFilter<long>(
-                    typeof(UserPhoto.Models.UserPhoto).GetBsonPropertyName("UserID"), userPhoto.UserID)).
-                    ConfigureAwait(false)).FirstOrDefault();
+                IMongoDBService<Models.UserPhoto> mongoDatabase = (IMongoDBService<Models.UserPhoto>)database;
+                
+                //await mongoDatabase.GridFS.DeleteFile(userPhoto.PhotoGridFSId).ConfigureAwait(false);
+                ObjectId newPhotoID = await mongoDatabase.GridFS.AddFile(newPhoto, fileName).ConfigureAwait(false);
 
-                if (oldUserPhoto == null)
-                {
-                    await database.Insert(userPhoto);
-                    return;
-                }
+                userPhoto.PhotoGridFSId = newPhotoID;
+                await database.Update(userPhoto, new string[] {"PhotoGridFSId"});
 
-                oldUserPhoto.Photo = userPhoto.Photo;
-
-                await database.Update(oldUserPhoto).ConfigureAwait(false);
+                return newPhotoID;
             }
             catch (Exception ex)
             {

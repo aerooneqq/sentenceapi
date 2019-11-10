@@ -1,6 +1,10 @@
 using System;
-using DataAccessLayer.Models;
+using System.Collections.Generic;
+
+using DataAccessLayer.KernelModels;
+
 using MongoDB.Bson.Serialization.Attributes;
+
 using Newtonsoft.Json;
 
 namespace DocumentsAPI.Models.DocumentStructure 
@@ -13,9 +17,6 @@ namespace DocumentsAPI.Models.DocumentStructure
         [BsonElement("documentID"), JsonProperty("documentID")]
         public long DocumentID { get; set;}
 
-        [BsonElement("parentItemID"), JsonProperty("parentItemID")]
-        public long ParentItemID { get; set;}
-
         [BsonElement("name"), JsonProperty("name")]
         public string Name { get; set; }
 
@@ -27,5 +28,8 @@ namespace DocumentsAPI.Models.DocumentStructure
 
         [BsonElement("updatedAt"), JsonProperty("updatedAt")]
         public DateTime UpdatedAt { get; set; }
+
+        [BsonElement("items"), JsonProperty("items")]
+        public List<Item> Items { get; set; }
     }
 }

@@ -18,6 +18,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Text;
+
+using MongoDB.Bson;
 
 namespace SentenceAPI.Features.UserPhoto
 {
@@ -56,13 +59,21 @@ namespace SentenceAPI.Features.UserPhoto
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetPhoto()
+        public async Task<IActionResult> GetPhotoAsync()
         {
             try
             {
-                var userPhoto = await userPhotoService.GetPhoto(requestService.GetToken(Request)).ConfigureAwait(false);
+                var userPhoto = await userPhotoService.GetPhotoAsync(requestService.GetToken(Request)).
+                    ConfigureAwait(false);
 
-                return new OkJson<Models.UserPhoto>(userPhoto);
+                if (userPhoto is null)
+                {
+                    return new BadSendedRequest<string>("Upload your photo firstly!");
+                }
+
+                byte[] photo = await userPhotoService.GetRawPhotoAsync(userPhoto.PhotoGridFSId);
+
+                return new OkJson<byte[]>(photo, Encoding.UTF8);
             }
             catch (DatabaseException ex)
             {
@@ -76,15 +87,23 @@ namespace SentenceAPI.Features.UserPhoto
         }
 
         [HttpPut]
-        public async Task<IActionResult> UpdatePhoto()
+        public async Task<IActionResult> UpdatePhotoAsync()
         {
             try
             {
-                var photo = await requestService.GetRequestBody<byte[]>(Request).ConfigureAwait(false);
-                var userID = long.Parse(tokenService.GetTokenClaim(requestService.GetToken(Request), "ID"));
+                byte[] photo = await requestService.GetRequestBody<byte[]>(Request).ConfigureAwait(false);
+                long userID = long.Parse(tokenService.GetTokenClaim(requestService.GetToken(Request), "ID"));
+                Models.UserPhoto userPhoto = await userPhotoService.GetPhotoAsync(userID);
 
-                await userPhotoService.UpdatePhoto(new Models.UserPhoto(userID, photo)).ConfigureAwait(false);
-
+                if (userPhoto is null)
+                {
+                    userPhoto = new Models.UserPhoto(userID, ObjectId.Empty);
+                    await userPhotoService.InsertUserPhotoModel(userPhoto);
+                }
+                
+                ObjectId newPhotoID = await userPhotoService.UpdatePhotoAsync(userPhoto, photo,
+                    userPhotoService.GetUserPhotoName(userID)).ConfigureAwait(false);
+                
                 return new Ok();
             }
             catch (DatabaseException ex)

@@ -41,6 +41,13 @@ namespace DataAccessLayer.MongoDB
         public IDatabaseConfiguration Configuration { get; set; }
         #endregion
 
+        #region Bridges
+        /// <summary>
+        /// 
+        /// </summary>
+        public IGridFSService GridFS { get; private set; }
+        #endregion
+
         #region Constructors
         public MongoDBService()
         {
@@ -63,6 +70,7 @@ namespace DataAccessLayer.MongoDB
             {
                 MongoDBConnectionManager.ConnectionString = Configuration.ConnectionString;
                 database = MongoDBConnectionManager.GetDatabase(Configuration.DatabaseName);
+                GridFS = new GridFSService(database);
             });
         }
 
@@ -90,7 +98,7 @@ namespace DataAccessLayer.MongoDB
 
                 if (resList.Count > 1)
                 {
-#warning handle the exception when there is more then 1 docs with a same ID
+                    #warning handle the exception when there is more then 1 docs with a same ID
                     throw new DatabaseException("Fatal error happened.");
                 }
 
