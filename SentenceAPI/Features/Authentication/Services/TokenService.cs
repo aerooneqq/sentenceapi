@@ -50,7 +50,7 @@ namespace SentenceAPI.Features.Authentication.Services
             throw new NotImplementedException();
         }
 
-        public Task InsertTokenInDB(JwtToken token)
+        public Task InsertTokenInDBAsync(JwtToken token)
         {
             return mongoDBService.Connect().ContinueWith((t) => mongoDBService.Insert(token));
         }

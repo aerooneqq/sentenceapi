@@ -15,8 +15,6 @@ using SentenceAPI.Features.Authentication.Interfaces;
 using SentenceAPI.Features.UserPhoto.Interfaces;
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Text;
 
@@ -71,7 +69,7 @@ namespace SentenceAPI.Features.UserPhoto
                     return new BadSendedRequest<string>("Upload your photo firstly!");
                 }
 
-                byte[] photo = await userPhotoService.GetRawPhotoAsync(userPhoto.PhotoGridFSId);
+                byte[] photo = await userPhotoService.GetRawPhotoAsync(userPhoto.CurrentPhotoID).ConfigureAwait(false);
 
                 return new OkJson<byte[]>(photo, Encoding.UTF8);
             }
@@ -92,13 +90,19 @@ namespace SentenceAPI.Features.UserPhoto
             try
             {
                 byte[] photo = await requestService.GetRequestBody<byte[]>(Request).ConfigureAwait(false);
+
+                if (photo is null || photo.Length == 0)
+                { 
+                    return new BadSendedRequest<string>("There is no photo");
+                }
+
                 long userID = long.Parse(tokenService.GetTokenClaim(requestService.GetToken(Request), "ID"));
-                Models.UserPhoto userPhoto = await userPhotoService.GetPhotoAsync(userID);
+                Models.UserPhoto userPhoto = await userPhotoService.GetPhotoAsync(userID).ConfigureAwait(false);
 
                 if (userPhoto is null)
                 {
-                    userPhoto = new Models.UserPhoto(userID, ObjectId.Empty);
-                    await userPhotoService.InsertUserPhotoModel(userPhoto);
+                    userPhoto = new Models.UserPhoto(userID);
+                    await userPhotoService.InsertUserPhotoModel(userPhoto).ConfigureAwait(false);
                 }
                 
                 ObjectId newPhotoID = await userPhotoService.UpdatePhotoAsync(userPhoto, photo,

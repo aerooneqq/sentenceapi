@@ -8,13 +8,13 @@ namespace SentenceAPI.Features.Workplace.DocumentsDeskState.Interfaces
 {
     public interface IDocumentDeskStateService
     {
-        Task<DocumentDeskState> GetDeskState(long userID);
-        Task<DocumentDeskState> GetDeskState(string token);
+        Task<DocumentDeskState> GetDeskStateAsync(long userID);
+        Task<DocumentDeskState> GetDeskStateAsync(string token);
 
-        Task UpdateDeskState(DocumentDeskState documentDeskState);
+        Task UpdateDeskStateAsync(DocumentDeskState documentDeskState);
 
-        Task CreateDeskState(long userID);
+        Task CreateDeskStateAsync(long userID);
 
-        Task DeleteDeskState(long userID);
+        Task DeleteDeskStateAsync(long userID);
     }
 }

@@ -8,6 +8,8 @@ using System.Dynamic;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace SentenceAPI.Extensions
 {

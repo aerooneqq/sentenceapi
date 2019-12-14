@@ -12,23 +12,32 @@ namespace SentenceAPI.Features.UserPhoto.Models
 {
     public class UserPhoto : UniqueEntity
     {
+        #region Properties
         [BsonElement("userID"), JsonProperty("userID")]
         public long UserID { get; set; }
 
-        [BsonElement("photoGridFSId"), JsonProperty("photoGridFSId")]
-        public ObjectId PhotoGridFSId { get; set; }
+        [BsonElement("gridFSPhotoes"), JsonProperty("gridFSPhotoes")]
+        public Dictionary<string, string> GridFSPhotoes { get; set; }
 
         [BsonElement("fileName"), JsonProperty("fileName")]
         public string FileName { get; set; }
 
-        #region Constructors
-        public UserPhoto() { }
+        [BsonElement("updatedAt"), JsonProperty("updatedAt")]
+        public DateTime UpdatedAt { get; set; }
 
-        public UserPhoto(long userID) : this(userID, ObjectId.Empty) { }
-        public UserPhoto(long userID, ObjectId objectId)
+        [BsonElement("currentPhotoPointer"), JsonProperty("currentPhotoPointer")]
+        public ObjectId CurrentPhotoID { get; set; }
+        #endregion
+
+        #region Constructors
+        public UserPhoto() 
+        { 
+            GridFSPhotoes = new Dictionary<string, string>();
+        }
+
+        public UserPhoto(long userID) : this()
         { 
             UserID = userID;
-            PhotoGridFSId = objectId;
         }
         #endregion
     }

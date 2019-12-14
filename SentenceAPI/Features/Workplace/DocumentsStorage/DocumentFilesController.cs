@@ -69,7 +69,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage
                     return new BadSendedRequest<string>(errorMessage);
                 }
 
-                await fileService.CreateNewFile(userID, newFile.ParentFolderID, newFile.FileName)
+                await fileService.CreateNewFileAsync(userID, newFile.ParentFolderID, newFile.FileName)
                     .ConfigureAwait(false);
 
                 return new Ok();
@@ -90,7 +90,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage
         {
             try
             {
-                DocumentFile file = await fileService.GetFile(fileID).ConfigureAwait(false);
+                DocumentFile file = await fileService.GetFileAsync(fileID).ConfigureAwait(false);
 
                 return new OkJson<DocumentFile>(file);
             }
@@ -110,7 +110,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage
         {
             try
             {
-                await fileService.DeleteFile(fileID).ConfigureAwait(false);
+                await fileService.DeleteFileAsync(fileID).ConfigureAwait(false);
 
                 return new Ok();
             }
@@ -139,7 +139,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage
                     return new BadSendedRequest<string>(errorMsg);
                 }
 
-                await fileService.RenameFile(fileRenameDto.FolderID, fileRenameDto.FileName)
+                await fileService.RenameFileAsync(fileRenameDto.FolderID, fileRenameDto.FileName)
                     .ConfigureAwait(false);
 
                 return new Ok();

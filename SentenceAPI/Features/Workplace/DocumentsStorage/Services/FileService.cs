@@ -63,7 +63,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage.Services
         /// <summary>
         /// Gets all files from the parent folder, for a given user
         /// </summary>
-        public async Task<IEnumerable<DocumentFile>> GetFiles(long userID, long parentFolderID)
+        public async Task<IEnumerable<DocumentFile>> GetFilesAsync(long userID, long parentFolderID)
         {
             try
             {
@@ -83,7 +83,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage.Services
             }
         }
 
-        public async Task CreateNewFile(long userID, long parentFolderID, string fileName)
+        public async Task CreateNewFileAsync(long userID, long parentFolderID, string fileName)
         {
             try
             {
@@ -101,11 +101,11 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage.Services
             catch (Exception ex)
             {
                 await exceptionLogger.Log(new ApplicationError(ex)).ConfigureAwait(false);
-                throw new DatabaseException("The error occured while creating new files");
+                throw new DatabaseException("The error occured while creating new files", ex);
             }
         }
 
-        public async Task DeleteFile(long fileID)
+        public async Task DeleteFileAsync(long fileID)
         {
             try
             {
@@ -119,11 +119,11 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage.Services
             catch (Exception ex)
             {
                 await exceptionLogger.Log(new ApplicationError(ex)).ConfigureAwait(false);
-                throw new DatabaseException("The error occured while deleting the file");
+                throw new DatabaseException("The error occured while deleting the file", ex);
             }
         }
 
-        public async Task<IEnumerable<DocumentFile>> GetFiles(long userID, string searchQuery)
+        public async Task<IEnumerable<DocumentFile>> GetFilesAsync(long userID, string searchQuery)
         {
             try
             {
@@ -140,11 +140,11 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage.Services
             catch (Exception ex)
             {
                 await exceptionLogger.Log(new ApplicationError(ex)).ConfigureAwait(false);
-                throw new DatabaseException("The error occured while searching for the files");
+                throw new DatabaseException("The error occured while searching for the files", ex);
             }
         }
 
-        public async Task<DocumentFile> GetFile(long fileID)
+        public async Task<DocumentFile> GetFileAsync(long fileID)
         {
             try
             {
@@ -157,11 +157,11 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage.Services
             catch (Exception ex)
             {
                 await exceptionLogger.Log(new ApplicationError(ex)).ConfigureAwait(false);
-                throw new DatabaseException("The error occured while getting the file data");
+                throw new DatabaseException("The error occured while getting the file data", ex);
             }
         }
 
-        public async Task Update(DocumentFile documentFile)
+        public async Task UpdateAsync(DocumentFile documentFile)
         {
             try
             {
@@ -171,11 +171,11 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage.Services
             catch (Exception ex)
             {
                 await exceptionLogger.Log(new ApplicationError(ex)).ConfigureAwait(false);
-                throw new DatabaseException("The error occured while updating file");
+                throw new DatabaseException("The error occured while updating file", ex);
             }
         }
 
-        public async Task RenameFile(long fileID, string newFileName)
+        public async Task RenameFileAsync(long fileID, string newFileName)
         {
             try
             {
@@ -196,7 +196,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage.Services
             catch (Exception ex)
             {
                 await exceptionLogger.Log(new ApplicationError(ex)).ConfigureAwait(false);
-                throw new DatabaseException("The error occured while renaming file");
+                throw new DatabaseException("The error occured while renaming file", ex);
             }
         }
     }

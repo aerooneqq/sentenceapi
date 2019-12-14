@@ -62,7 +62,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsDeskState.Services
             factoriesManager.GetService<ITokenService>().TryGetTarget(out tokenService);
         }
 
-        public async Task CreateDeskState(long userID)
+        public async Task CreateDeskStateAsync(long userID)
         {
             try
             {
@@ -82,7 +82,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsDeskState.Services
             }
         }
 
-        public async Task DeleteDeskState(long userID)
+        public async Task DeleteDeskStateAsync(long userID)
         {
             try
             {
@@ -98,11 +98,11 @@ namespace SentenceAPI.Features.Workplace.DocumentsDeskState.Services
             }
         }
 
-        public async Task<DocumentDeskState> GetDeskState(string token)
+        public async Task<DocumentDeskState> GetDeskStateAsync(string token)
         {
             try
             {
-                return await GetDeskState(long.Parse(tokenService.GetTokenClaim("ID", token))).ConfigureAwait(false);
+                return await GetDeskStateAsync(long.Parse(tokenService.GetTokenClaim("ID", token))).ConfigureAwait(false);
             }
             catch (Exception ex) when (ex.GetType() != typeof(DatabaseException))
             {
@@ -111,7 +111,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsDeskState.Services
             }
         }
 
-        public async Task<DocumentDeskState> GetDeskState(long userID)
+        public async Task<DocumentDeskState> GetDeskStateAsync(long userID)
         {
             try
             {
@@ -123,11 +123,11 @@ namespace SentenceAPI.Features.Workplace.DocumentsDeskState.Services
             catch (Exception ex)
             {
                 await exceptionLogger.Log(new ApplicationError(ex)).ConfigureAwait(false);
-                throw new DatabaseException("The error occured while getting the desk state");
+                throw new DatabaseException("The error occured while getting the desk state", ex);
             }
         }
 
-        public async Task UpdateDeskState(DocumentDeskState documentDeskState)
+        public async Task UpdateDeskStateAsync(DocumentDeskState documentDeskState)
         {
             try
             {
@@ -137,11 +137,11 @@ namespace SentenceAPI.Features.Workplace.DocumentsDeskState.Services
             catch (Exception ex)
             {
                 await exceptionLogger.Log(new ApplicationError(ex)).ConfigureAwait(false);
-                throw new DatabaseException("The error occured while updating the desk state");
+                throw new DatabaseException("The error occured while updating the desk state", ex);
             }
         }
 
-        public async Task Update(DocumentDeskState documentDeskState, IEnumerable<string> properties)
+        public async Task UpdateAsync(DocumentDeskState documentDeskState, IEnumerable<string> properties)
         {
             try
             {

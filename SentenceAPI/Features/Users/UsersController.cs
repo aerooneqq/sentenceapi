@@ -75,8 +75,10 @@ namespace SentenceAPI.Features.Users
         {
             try
             {
-                return new OkJson<IEnumerable<UserSearchResult>>((await userService.FindUsersWithLogin(login).ConfigureAwait(false))
-                    .Select(user => new UserSearchResult(user)));
+                var userInfoResult = await userService.FindUsersWithLoginAsync(login).ConfigureAwait(false);
+                var userSearchResult = userInfoResult.Select(user => new UserSearchResult(user));
+
+                return new OkJson<IEnumerable<UserSearchResult>>(userSearchResult);
             }
             catch (DatabaseException ex)
             {
@@ -94,7 +96,7 @@ namespace SentenceAPI.Features.Users
         {
             try
             {
-                var user = await userService.Get(requestService.GetToken(Request)).ConfigureAwait(false);
+                var user = await userService.GetAsync(requestService.GetToken(Request)).ConfigureAwait(false);
 
                 return new OkJson<UserInfo>(user);
             }
@@ -122,7 +124,7 @@ namespace SentenceAPI.Features.Users
             {
                 string token = requestService.GetToken(Request);
 
-                return new OkJson<Dictionary<string, object>>((await userService.Get(token).ConfigureAwait(false))
+                return new OkJson<Dictionary<string, object>>((await userService.GetAsync(token).ConfigureAwait(false))
                     .ConfigureNewObject(properties.Split(',', ';', StringSplitOptions.RemoveEmptyEntries)));
             }
             catch (DatabaseException ex)
@@ -141,7 +143,7 @@ namespace SentenceAPI.Features.Users
         {
             try
             {
-                return new OkJson<UserInfo>(await userService.Get(id).ConfigureAwait(false));
+                return new OkJson<UserInfo>(await userService.GetAsync(id).ConfigureAwait(false));
             }
             catch (DatabaseException ex)
             {
@@ -170,14 +172,14 @@ namespace SentenceAPI.Features.Users
                     return new BadSendedRequest<IEnumerable<string>>(errors);
                 }
 
-                if (!(await userService.DoesUserExist(email).ConfigureAwait(false)))
+                if (!(await userService.DoesUserExistAsync(email).ConfigureAwait(false)))
                 {
-                    long id = await userService.CreateNewUser(email, password).ConfigureAwait(false);
+                    long id = await userService.CreateNewUserAsync(email, password).ConfigureAwait(false);
 
                     ActivationCode activationCode = codesService.CreateActivationCode(id);
-                    await codesService.InsertCodeInDatabase(activationCode).ConfigureAwait(false);
+                    await codesService.InsertCodeInDatabaseAsync(activationCode).ConfigureAwait(false);
 
-                    await emailService.SendConfirmationEmail(activationCode.Code, email).ConfigureAwait(false);
+                    await emailService.SendConfirmationEmailAsync(activationCode.Code, email).ConfigureAwait(false);
 
                     return new Created();
                 }
@@ -230,7 +232,7 @@ namespace SentenceAPI.Features.Users
                     await EventManager.Raise(new UserEmailChangedEvent(user.Email, user.ID));
                 }
 
-                await userService.Update(user, updatedFields.Keys.Select(propName =>
+                await userService.UpdateAsync(user, updatedFields.Keys.Select(propName =>
                 {
                     return typeof(UserInfo).GetPropertyFromBSONName(propName).Name;
                 }));
@@ -253,10 +255,10 @@ namespace SentenceAPI.Features.Users
         {
             try
             {
-                UserInfo user = await userService.Get(requestService.GetToken(Request)).ConfigureAwait(false);
+                UserInfo user = await userService.GetAsync(requestService.GetToken(Request)).ConfigureAwait(false);
                 user.IsAccountDeleted = true;
 
-                await userService.Update(user, new[] { "IsAccountDeleted" })
+                await userService.UpdateAsync(user, new[] { "IsAccountDeleted" })
                     .ConfigureAwait(false);
 
                 return new Ok();

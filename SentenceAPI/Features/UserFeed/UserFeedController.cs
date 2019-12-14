@@ -60,7 +60,7 @@ namespace SentenceAPI.Features.UserFeed
             {
                 string token = requestService.GetToken(Request);
 
-                var userFeed = await userFeedService.GetUserFeed(token);
+                var userFeed = await userFeedService.GetUserFeedAsync(token);
 
                 return new OkJson<UsersFeedDto>(userFeed);
             }
@@ -84,7 +84,7 @@ namespace SentenceAPI.Features.UserFeed
 
                 string message = await requestService.GetRequestBody(Request);
 
-                await userFeedService.InsertUserPost(token, message);
+                await userFeedService.InsertUserPostAsync(token, message);
 
                 return new Ok();
             }

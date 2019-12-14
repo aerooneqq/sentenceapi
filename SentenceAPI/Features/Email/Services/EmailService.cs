@@ -68,7 +68,7 @@ namespace SentenceAPI.Features.Email.Services
             emailLogger.LogConfiguration = LogConfiguration; 
         }
 
-        public async Task SendConfirmationEmail(string code, string email)
+        public async Task SendConfirmationEmailAsync(string code, string email)
         {
             try
             {

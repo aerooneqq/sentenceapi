@@ -11,10 +11,10 @@ namespace SentenceAPI.Features.UserFeed.Interfaces
 {
     public interface IUserFeedService : IService
     {
-        Task<UsersFeedDto> GetUserFeed(string token);
-        Task<UsersFeedDto> GetUserFeed(long userID);
+        Task<UsersFeedDto> GetUserFeedAsync(string token);
+        Task<UsersFeedDto> GetUserFeedAsync(long userID);
 
-        Task InsertUserPost(Models.UserFeed userFeed);
-        Task InsertUserPost(string token, string message);
+        Task InsertUserPostAsync(Models.UserFeed userFeed);
+        Task InsertUserPostAsync(string token, string message);
     }
 }

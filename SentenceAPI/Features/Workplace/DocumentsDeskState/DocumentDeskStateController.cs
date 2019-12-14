@@ -52,7 +52,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsDeskState
         {
             try
             {
-                var deskState = await deskStateService.GetDeskState(requestService.GetToken(Request))
+                var deskState = await deskStateService.GetDeskStateAsync(requestService.GetToken(Request))
                     .ConfigureAwait(false);
 
                 return new OkJson<DocumentDeskState>(deskState);

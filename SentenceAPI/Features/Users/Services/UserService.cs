@@ -70,7 +70,7 @@ namespace SentenceAPI.Features.Users.Services
         }
         #endregion
 
-        public async Task Delete(long id)
+        public async Task DeleteAsync(long id)
         {
             try
             {
@@ -95,7 +95,7 @@ namespace SentenceAPI.Features.Users.Services
             }
         }
 
-        public async Task<UserInfo> Get(string token)
+        public async Task<UserInfo> GetAsync(string token)
         {
             try
             {
@@ -114,7 +114,7 @@ namespace SentenceAPI.Features.Users.Services
             }
         }
 
-        public async Task<UserInfo> Get(string email, string password)
+        public async Task<UserInfo> GetAsync(string email, string password)
         {
             try
             {
@@ -141,7 +141,7 @@ namespace SentenceAPI.Features.Users.Services
             }
         }
 
-        public async Task<UserInfo> Get(long id)
+        public async Task<UserInfo> GetAsync(long id)
         {
             try
             {
@@ -157,7 +157,7 @@ namespace SentenceAPI.Features.Users.Services
             }
         }
 
-        public async Task Update(UserInfo user)
+        public async Task UpdateAsync(UserInfo user)
         {
             try
             {
@@ -171,7 +171,7 @@ namespace SentenceAPI.Features.Users.Services
             }
         }
 
-        public async Task Update(UserInfo user, IEnumerable<string> properties)
+        public async Task UpdateAsync(UserInfo user, IEnumerable<string> properties)
         {
             try
             {
@@ -185,7 +185,7 @@ namespace SentenceAPI.Features.Users.Services
             }
         }
 
-        public async Task<long> CreateNewUser(string email, string password)
+        public async Task<long> CreateNewUserAsync(string email, string password)
         {
             try
             {
@@ -208,7 +208,7 @@ namespace SentenceAPI.Features.Users.Services
             }
         }
 
-        public async Task<IEnumerable<UserInfo>> FindUsersWithLogin(string login)
+        public async Task<IEnumerable<UserInfo>> FindUsersWithLoginAsync(string login)
         {
             try
             {
@@ -229,7 +229,7 @@ namespace SentenceAPI.Features.Users.Services
         /// <summary>
         /// Checks if user with a given email exists in the database.   
         /// </summary>
-        public async Task<bool> DoesUserExist(string email)
+        public async Task<bool> DoesUserExistAsync(string email)
         {
             try
             {

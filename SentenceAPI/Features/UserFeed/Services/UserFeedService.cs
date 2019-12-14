@@ -27,6 +27,7 @@ using DataAccessLayer.Aggregations;
 
 using SharedLibrary.FactoriesManager.Interfaces;
 using SharedLibrary.FactoriesManager;
+using MongoDB.Bson;
 
 namespace SentenceAPI.Features.UserFeed.Services
 {
@@ -70,21 +71,22 @@ namespace SentenceAPI.Features.UserFeed.Services
             factoriesManager.GetService<IUserPhotoService>().TryGetTarget(out userPhotoService);
         }
 
-        public async Task<UsersFeedDto> GetUserFeed(long userID)
+        public async Task<UsersFeedDto> GetUserFeedAsync(long userID)
         {
             try
             {
-                List<long> subscriptionsID = (await userFriendsService.GetSubscriptions(userID))
+                List<long> subscriptionsID = (await userFriendsService.GetSubscriptionsAsync(userID))
                     .Select(uf => uf.UserID).ToList();
                 subscriptionsID.Add(userID);
 
-                Dictionary<long, string> usersPhotoes = await GetUsersPhotoes(subscriptionsID);
+                Dictionary<long, ObjectId> usersPhotoes = await GetUsersPhotoesAsync(subscriptionsID).ConfigureAwait(false);
+                Dictionary<long, string> usersRawPhotoes = await GetUsersRawPhotoesAsync(usersPhotoes).ConfigureAwait(false);
 
                 await database.Connect().ConfigureAwait(false);
                 var usersFeed = await database.GetCombined(new InFilter<long>("userID", subscriptionsID), "userID",
                     (typeof(UserInfo), "_id", new[] { "name", "surname" })).ConfigureAwait(false);
 
-                return new UsersFeedDto(usersFeed.ToList(), usersPhotoes);
+                return new UsersFeedDto(usersFeed.ToList(), usersRawPhotoes);
             }
             catch (Exception ex) when (ex.GetType() != typeof(DatabaseException))
             {
@@ -93,25 +95,40 @@ namespace SentenceAPI.Features.UserFeed.Services
             }
         }
 
-        private async Task<Dictionary<long, string>> GetUsersPhotoes(IEnumerable<long> userIDs)
+        private async Task<Dictionary<long, string>> GetUsersRawPhotoesAsync(Dictionary<long, ObjectId> userPhotoes)
         {
-            Dictionary<long, string> userPhotoes = new Dictionary<long, string>();
+            Dictionary<long, string> userRawPhotoes = new Dictionary<long, string>();
+
+            foreach (var (userID, photoID) in userPhotoes)
+            {
+                byte[] currentPhoto = await userPhotoService.GetRawPhotoAsync(photoID).ConfigureAwait(false);
+                
+                userRawPhotoes.Add(userID, Convert.ToBase64String(currentPhoto));
+            }
+
+            return userRawPhotoes;
+        }
+
+        private async Task<Dictionary<long, ObjectId>> GetUsersPhotoesAsync(IEnumerable<long> userIDs)
+        {
+            Dictionary<long, ObjectId> userPhotoes = new Dictionary<long, ObjectId>();
 
             foreach (long userID in userIDs)
             {
-                //userPhotoes.Add(userID, (await userPhotoService.GetPhotoAsync(userID).ConfigureAwait(false)).Photo);
+                ObjectId id = (await userPhotoService.GetPhotoAsync(userID).ConfigureAwait(false)).CurrentPhotoID;
+                userPhotoes.Add(userID, id);
             }
 
             return userPhotoes;
         }
 
-        public async Task<UsersFeedDto> GetUserFeed(string token)
+        public async Task<UsersFeedDto> GetUserFeedAsync(string token)
         {
             try
             {
                 long userID = long.Parse(tokenService.GetTokenClaim(token, "ID"));
 
-                return await GetUserFeed(userID);
+                return await GetUserFeedAsync(userID);
             }
             catch (Exception ex) when (ex.GetType() != typeof(DatabaseException))
             {
@@ -120,7 +137,7 @@ namespace SentenceAPI.Features.UserFeed.Services
             }
         }
 
-        public async Task InsertUserPost(Models.UserFeed userFeed)
+        public async Task InsertUserPostAsync(Models.UserFeed userFeed)
         {
             try
             {
@@ -134,12 +151,12 @@ namespace SentenceAPI.Features.UserFeed.Services
             }
         }
 
-        public async Task InsertUserPost(string token, string message)
+        public async Task InsertUserPostAsync(string token, string message)
         {
             try
             {
                 long userID = long.Parse(tokenService.GetTokenClaim(token, "ID"));
-                await InsertUserPost(new Models.UserFeed()
+                await InsertUserPostAsync(new Models.UserFeed()
                 {
                     UserID = userID,
                     Message = message,

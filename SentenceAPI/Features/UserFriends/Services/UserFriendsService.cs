@@ -64,7 +64,7 @@ namespace SentenceAPI.Features.UserFriends.Services
         }
 
         #region IUserFriendsService implementation
-        public async Task AddSubscriber(string token, long subscriberID)
+        public async Task AddSubscriberAsync(string token, long subscriberID)
         {
             try
             {
@@ -85,7 +85,7 @@ namespace SentenceAPI.Features.UserFriends.Services
             }
         }
 
-        public async Task AddSubscription(string token, long subscriptionID)
+        public async Task AddSubscriptionAsync(string token, long subscriptionID)
         {
             try
             {
@@ -107,7 +107,7 @@ namespace SentenceAPI.Features.UserFriends.Services
             }
         }
 
-        public async Task DeleteSubscriber(string token, long subscriberID)
+        public async Task DeleteSubscriberAsync(string token, long subscriberID)
         {
             try
             {
@@ -133,7 +133,7 @@ namespace SentenceAPI.Features.UserFriends.Services
             }
         }
 
-        public async Task DeleteSubscription(string token, long subscriptionID)
+        public async Task DeleteSubscriptionAsync(string token, long subscriptionID)
         {
             try
             {
@@ -159,12 +159,12 @@ namespace SentenceAPI.Features.UserFriends.Services
             }
         }
 
-        public async Task<IEnumerable<Subscriber>> GetSubscribers(string token)
+        public async Task<IEnumerable<Subscriber>> GetSubscribersAsync(string token)
         {
             try
             {
                 long userID = long.Parse(tokenService.GetTokenClaim(token, "ID"));
-                return await GetSubscribers(userID);
+                return await GetSubscribersAsync(userID);
             }
             catch (DatabaseException ex)
             {
@@ -177,7 +177,7 @@ namespace SentenceAPI.Features.UserFriends.Services
             }
         }
 
-        public async Task<IEnumerable<Subscriber>> GetSubscribers(long userID)
+        public async Task<IEnumerable<Subscriber>> GetSubscribersAsync(long userID)
         {
             try
             {
@@ -194,7 +194,7 @@ namespace SentenceAPI.Features.UserFriends.Services
 
                 foreach (long subscriberID in userFriends.SubscribersID)
                 {
-                    UserInfo subUser = await userService.Get(subscriberID);
+                    UserInfo subUser = await userService.GetAsync(subscriberID);
                     subscribers.Add(new Subscriber()
                     {
                         BirthDate = subUser.BirthDate,
@@ -215,12 +215,12 @@ namespace SentenceAPI.Features.UserFriends.Services
             }
         }
 
-        public async Task<IEnumerable<Subscription>> GetSubscriptions(string token)
+        public async Task<IEnumerable<Subscription>> GetSubscriptionsAsync(string token)
         {
             try
             {
                 long userID = long.Parse(tokenService.GetTokenClaim(token, "ID"));
-                return await GetSubscriptions(userID);
+                return await GetSubscriptionsAsync(userID);
             }
             catch (DatabaseException ex)
             {
@@ -233,7 +233,7 @@ namespace SentenceAPI.Features.UserFriends.Services
             }
         }
 
-        public async Task<IEnumerable<Subscription>> GetSubscriptions(long userID)
+        public async Task<IEnumerable<Subscription>> GetSubscriptionsAsync(long userID)
         {
             try
             {
@@ -250,7 +250,7 @@ namespace SentenceAPI.Features.UserFriends.Services
 
                 foreach (long subscriptionID in userFriends.SubscriptionsID)
                 {
-                    UserInfo subUser = await userService.Get(subscriptionID);
+                    UserInfo subUser = await userService.GetAsync(subscriptionID);
                     subscriptions.Add(new Subscription()
                     {
                         BirthDate = subUser.BirthDate,

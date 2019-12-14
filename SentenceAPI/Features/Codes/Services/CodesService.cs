@@ -103,7 +103,7 @@ namespace SentenceAPI.Features.Codes.Services
         /// <exception cref="DatabaseException">
         /// Fires when error happens while working with the database.
         /// </exception>
-        public async Task InsertCodeInDatabase(ActivationCode activationCode)
+        public async Task InsertCodeInDatabaseAsync(ActivationCode activationCode)
         {
             try
             {
@@ -122,7 +122,7 @@ namespace SentenceAPI.Features.Codes.Services
             }
         }
 
-        public async Task ActivateCode(string code)
+        public async Task ActivateCodeAsync(string code)
         {
             try
             {

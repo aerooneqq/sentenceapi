@@ -10,18 +10,18 @@ namespace SentenceAPI.Features.Users.Interfaces
 {
     public interface IUserService<T> : IService where T : UniqueEntity
     {
-        Task<T> Get(string email, string password);
-        Task<T> Get(long id);
-        Task<T> Get(string token);
+        Task<T> GetAsync(string email, string password);
+        Task<T> GetAsync(long id);
+        Task<T> GetAsync(string token);
 
-        Task<long> CreateNewUser(string email, string password);
+        Task<long> CreateNewUserAsync(string email, string password);
 
-        Task Delete(long id);
+        Task DeleteAsync(long id);
 
-        Task Update(T user);
-        Task Update(T user, IEnumerable<string> properties);
+        Task UpdateAsync(T user);
+        Task UpdateAsync(T user, IEnumerable<string> properties);
 
-        Task<IEnumerable<T>> FindUsersWithLogin(string login);
-        Task<bool> DoesUserExist(string email);
+        Task<IEnumerable<T>> FindUsersWithLoginAsync(string login);
+        Task<bool> DoesUserExistAsync(string email);
     }
 }

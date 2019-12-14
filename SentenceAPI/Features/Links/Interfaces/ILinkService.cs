@@ -8,7 +8,7 @@ namespace SentenceAPI.Features.Links.Interfaces
 {
     public interface ILinkService
     {
-        Task<string> CreateVerificationLink(UserInfo user);
-        Task<bool?> ActivateLink(string link);
+        Task<string> CreateVerificationLinkAsync(UserInfo user);
+        Task<bool?> ActivateLinkAsync(string link);
     }
 }

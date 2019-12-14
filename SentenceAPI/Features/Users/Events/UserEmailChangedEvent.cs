@@ -72,9 +72,9 @@ namespace SentenceAPI.Features.Users.Events
             try
             {
                 ActivationCode activationCode = codesService.CreateActivationCode(userID);
-                await codesService.InsertCodeInDatabase(activationCode).ConfigureAwait(false);
+                await codesService.InsertCodeInDatabaseAsync(activationCode).ConfigureAwait(false);
 
-                await emailService.SendConfirmationEmail(activationCode.Code, email).ConfigureAwait(false);
+                await emailService.SendConfirmationEmailAsync(activationCode.Code, email).ConfigureAwait(false);
             }
             catch (Exception ex)
             {

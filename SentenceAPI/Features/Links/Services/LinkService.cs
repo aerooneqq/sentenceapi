@@ -62,7 +62,7 @@ namespace SentenceAPI.Features.Links.Services
         }
 
         #region ILinkService implementation
-        public async Task<string> CreateVerificationLink(UserInfo user)
+        public async Task<string> CreateVerificationLinkAsync(UserInfo user)
         {
             try
             {
@@ -88,7 +88,7 @@ namespace SentenceAPI.Features.Links.Services
         /// If the link is already activated the method returns false.
         /// If the link exists and was not activated the method returns true.
         /// </returns>
-        public async Task<bool?> ActivateLink(string link)
+        public async Task<bool?> ActivateLinkAsync(string link)
         {
             try
             {

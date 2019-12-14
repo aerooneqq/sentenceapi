@@ -67,12 +67,12 @@ namespace SentenceAPI.Features.Codes
         {
             try
             {
-                await codesService.ActivateCode(await requestService.GetRequestBody(Request)
+                await codesService.ActivateCodeAsync(await requestService.GetRequestBody(Request)
                     .ConfigureAwait(false)).ConfigureAwait(false);
-                UserInfo user = await userService.Get(requestService.GetToken(Request)).ConfigureAwait(false);
+                UserInfo user = await userService.GetAsync(requestService.GetToken(Request)).ConfigureAwait(false);
 
                 user.IsAccountVerified = true;
-                await userService.Update(user).ConfigureAwait(false);
+                await userService.UpdateAsync(user).ConfigureAwait(false);
 
                 return new Ok();
             }

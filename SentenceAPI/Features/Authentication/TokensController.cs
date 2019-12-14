@@ -79,7 +79,7 @@ namespace SentenceAPI.Features.Authentication
                 
                 password = password.GetMD5Hash();
 
-                UserInfo user = await userService.Get(email, password);
+                UserInfo user = await userService.GetAsync(email, password);
 
                 if (user == null || user.IsAccountDeleted)
                 {
@@ -88,9 +88,9 @@ namespace SentenceAPI.Features.Authentication
 
                 var (encodedToken, securityToken) = tokenService.CreateEncodedToken(user);
 
-                await tokenService.InsertTokenInDB(new JwtToken(securityToken, user)).ConfigureAwait(false);
+                await tokenService.InsertTokenInDBAsync(new JwtToken(securityToken, user)).ConfigureAwait(false);
 
-                DefferedTasksManager.AddTask(new Action(() => userActivityService.AddSingleActivity(user.ID,
+                DefferedTasksManager.AddTask(new Action(() => userActivityService.AddSingleActivityAsync(user.ID,
                     new UserActivity.Models.SingleUserActivity()
                     {
                         ActivityDate = DateTime.Now,

@@ -68,7 +68,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage
             {
                 long userID = long.Parse(tokenService.GetTokenClaim(requestService.GetToken(Request), "ID"));
 
-                IEnumerable<DocumentFile> documentFiles = (await fileService.GetFiles(userID, folderID)
+                IEnumerable<DocumentFile> documentFiles = (await fileService.GetFilesAsync(userID, folderID)
                     .ConfigureAwait(false));
 
                 IEnumerable<DocumentFolder> documentFolders = (await folderService.GetFolders(userID, folderID)
@@ -97,7 +97,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage
             {
                 long userID = long.Parse(tokenService.GetTokenClaim(requestService.GetToken(Request), "ID"));
 
-                IEnumerable<DocumentFile> files = await fileService.GetFiles(userID, query)
+                IEnumerable<DocumentFile> files = await fileService.GetFilesAsync(userID, query)
                     .ConfigureAwait(false);
 
                 IEnumerable<DocumentFolder> folders = await folderService.GetFolders(userID, query)
@@ -163,7 +163,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage
         {
             try
             {
-                var file = await fileService.GetFile(fileID).ConfigureAwait(false);
+                var file = await fileService.GetFileAsync(fileID).ConfigureAwait(false);
                 var folder = await folderService.GetFolderData(folderID).ConfigureAwait(false);
 
                 if (file is null || folder is null)
@@ -174,7 +174,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage
                 file.ParentFolderID = folder.ID;
                 file.LastUpdateDate = folder.LastUpdateDate = dateService.GetCurrentDate();
 
-                await fileService.Update(file).ConfigureAwait(false);
+                await fileService.UpdateAsync(file).ConfigureAwait(false);
                 await folderService.Update(folder).ConfigureAwait(false);
 
                 return new Ok();

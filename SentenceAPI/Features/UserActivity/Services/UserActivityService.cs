@@ -48,7 +48,7 @@ namespace SentenceAPI.Features.UserActivity.Services
         /// <exception cref="DatabaseException">
         /// When the error occurs while working with the database. Provides the meaningful description of the error.
         /// </exception>
-        public async Task AddSingleActivity(long userID, SingleUserActivity singleUserActivity)
+        public async Task AddSingleActivityAsync(long userID, SingleUserActivity singleUserActivity)
         {
             await database.Connect();
 
@@ -58,7 +58,7 @@ namespace SentenceAPI.Features.UserActivity.Services
 
             if (userActivity == null)
             {
-                await CreateUserActivity(userID);
+                await CreateUserActivityAsync(userID).ConfigureAwait(false);
             }
 
             userActivity = (await database.Get(filter).ConfigureAwait(false))
@@ -80,7 +80,7 @@ namespace SentenceAPI.Features.UserActivity.Services
         /// <summary>
         /// Creates the user activity record in the database.
         /// </summary>
-        private async Task CreateUserActivity(long userID)
+        private async Task CreateUserActivityAsync(long userID)
         {
             await database.Insert(new Models.UserActivity()
             {
@@ -98,7 +98,7 @@ namespace SentenceAPI.Features.UserActivity.Services
         /// <returns>
         /// Can return null if theere is no user with a given ID.
         /// </returns>
-        public async Task<Models.UserActivity> GetUserActivity(long userID)
+        public async Task<Models.UserActivity> GetUserActivityAsync(long userID)
         {
             await database.Connect();
 
@@ -112,7 +112,7 @@ namespace SentenceAPI.Features.UserActivity.Services
         /// <returns>
         /// Can return null if the user with a given ID does not exist.
         /// </returns>
-        public async Task<IEnumerable<SingleUserActivity>> GetUserSingleActivities(long userID)
+        public async Task<IEnumerable<SingleUserActivity>> GetUserSingleActivitiesAsync(long userID)
         {
             await database.Connect();
             var filter = new EqualityFilter<long>("userID", userID);
@@ -125,7 +125,7 @@ namespace SentenceAPI.Features.UserActivity.Services
         /// <param name="properties">
         /// The array of properties which must be updated.
         /// </param>
-        public async Task UpdateActivity(Models.UserActivity userActivity, IEnumerable<string> properties)
+        public async Task UpdateActivityAsync(Models.UserActivity userActivity, IEnumerable<string> properties)
         {
             await database.Connect();
             await database.Update(userActivity, properties);

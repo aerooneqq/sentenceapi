@@ -36,8 +36,7 @@ namespace SentenceAPI.Features.UserActivity
         #endregion
 
         #region Factories
-        private IFactoriesManager factoriesManager = 
-            ManagersDictionary.Instance.GetManager(Startup.ApiName);
+        private IFactoriesManager factoriesManager = ManagersDictionary.Instance.GetManager(Startup.ApiName);
         #endregion
 
         public UserActivitiesController()
@@ -59,7 +58,7 @@ namespace SentenceAPI.Features.UserActivity
 
                 long id = long.Parse(tokenService.GetTokenClaim(token, "ID"));
 
-                var userActivities = await userActivityService.GetUserActivity(id);
+                var userActivities = await userActivityService.GetUserActivityAsync(id).ConfigureAwait(false);
 
                 return new OkJson<Models.UserActivity>(userActivities);
             }

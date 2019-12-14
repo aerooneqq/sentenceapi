@@ -10,7 +10,7 @@ namespace SentenceAPI.Features.Codes.Interfaces
     {
         ActivationCode CreateActivationCode(long userID);
 
-        Task InsertCodeInDatabase(ActivationCode activationCode);
-        Task ActivateCode(string code);
+        Task InsertCodeInDatabaseAsync(ActivationCode activationCode);
+        Task ActivateCodeAsync(string code);
     }
 }

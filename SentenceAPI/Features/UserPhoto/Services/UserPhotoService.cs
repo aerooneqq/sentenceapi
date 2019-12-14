@@ -23,6 +23,7 @@ using System.Threading.Tasks;
 using SharedLibrary.Caching;
 using SharedLibrary.FactoriesManager; 
 using SharedLibrary.FactoriesManager.Interfaces;
+
 using MongoDB.Bson;
 
 namespace SentenceAPI.Features.UserPhoto.Services
@@ -119,14 +120,14 @@ namespace SentenceAPI.Features.UserPhoto.Services
                 await database.Connect().ConfigureAwait(false);
 
                 var filter = new EqualityFilter<long>(typeof(Models.UserPhoto).GetBsonPropertyName("UserID"), userID);
-                var userPhoto = (await database.Get(filter).ConfigureAwait(false)).FirstOrDefault();
+                var userPhotoes = (await database.Get(filter).ConfigureAwait(false)).ToList();
 
-                if (userPhoto is null) 
+                if (userPhotoes is null || userPhotoes.Count < 1)
                 {
                     return null;
                 }
 
-                return userPhoto;
+                return userPhotoes[0];
             }
             catch (Exception ex) 
             {
@@ -168,21 +169,34 @@ namespace SentenceAPI.Features.UserPhoto.Services
             }
         }
 
+        /// <summary>
+        /// This method updates the user's photo. If the photo's hash already in the GridFSPhotoes,
+        /// then we just need to return it's id, otherwise we upload the new file (user photo),
+        /// and update the UserPhoto model.
+        /// </summary>
         public async Task<ObjectId> UpdatePhotoAsync(Models.UserPhoto userPhoto, 
                                                      byte[] newPhoto,
                                                      string fileName)
         {
             try
             {
-                await database.Connect().ConfigureAwait(false);
+                string photoHash = newPhoto.GetMD5Hash();
+                var (checkResult, existingPhotoID) = CheckIfHashInPhotoes(userPhoto, photoHash);
+
+                if (checkResult)
+                { 
+                    return existingPhotoID;
+                }
 
                 IMongoDBService<Models.UserPhoto> mongoDatabase = (IMongoDBService<Models.UserPhoto>)database;
-                
-                //await mongoDatabase.GridFS.DeleteFile(userPhoto.PhotoGridFSId).ConfigureAwait(false);
+
+                await database.Connect().ConfigureAwait(false);
                 ObjectId newPhotoID = await mongoDatabase.GridFS.AddFile(newPhoto, fileName).ConfigureAwait(false);
 
-                userPhoto.PhotoGridFSId = newPhotoID;
-                await database.Update(userPhoto, new string[] {"PhotoGridFSId"});
+                userPhoto.GridFSPhotoes.Add(newPhotoID.ToString(), photoHash);
+                userPhoto.CurrentPhotoID = newPhotoID;
+
+                await database.Update(userPhoto).ConfigureAwait(false);
 
                 return newPhotoID;
             }
@@ -191,6 +205,22 @@ namespace SentenceAPI.Features.UserPhoto.Services
                 await exceptionLogger.Log(new ApplicationError(ex)).ConfigureAwait(false);
                 throw new DatabaseException("Error occured while updating the photo");
             }
+        }
+
+        /// <summary>
+        /// Checks if the wanted hash is in the dictionary of UserPhoto object (id - hash dictionary)
+        /// </summary>
+        private (bool result, ObjectId photoID) CheckIfHashInPhotoes(Models.UserPhoto userPhoto, string wantedHash)
+        {
+            foreach (var (id, hash) in userPhoto.GridFSPhotoes)
+            {
+                if (hash == wantedHash)
+                {
+                    return (true, ObjectId.Parse(id));
+                }
+            }
+
+            return (false, ObjectId.Empty);
         }
     }
 }
