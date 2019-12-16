@@ -33,12 +33,6 @@ namespace SentenceAPI.Features.Users
     [Route("api/[controller]"), ApiController]
     public class UsersController : ControllerBase
     {
-        public static LogConfiguration LogConfiguration { get; } = new LogConfiguration()
-        {
-            ControllerName = string.Empty,
-            ServiceName = "UsersController"
-        };
-
         #region Services
         private readonly ILinkService linkService;
         private readonly IEmailService emailService;
@@ -67,7 +61,7 @@ namespace SentenceAPI.Features.Users
 
             this.memoryCacheService = memoryCacheService;
 
-            exceptionLogger.LogConfiguration = LogConfiguration;
+            exceptionLogger.LogConfiguration = new LogConfiguration(this.GetType());
         }
 
         [HttpGet, Route("search/login"), Authorize]

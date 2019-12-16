@@ -27,11 +27,6 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage.Services
     {
         #region Static fields
         private static readonly string databaseConfigFile = "mongo_database_config.json";
-        private static readonly LogConfiguration logConfiguration = new LogConfiguration()
-        {
-            ServiceName = typeof(FileService).Name,
-            ControllerName = string.Empty
-        };
         #endregion
 
         #region Databases
@@ -58,6 +53,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage.Services
                     .SetUserName().SetPassword().SetDatabaseName().SetServerName().SetConnectionString();
 
             factoriesManager.GetService<ILogger<ApplicationError>>().TryGetTarget(out exceptionLogger);
+            exceptionLogger.LogConfiguration = new LogConfiguration(this.GetType());
         }
 
         /// <summary>

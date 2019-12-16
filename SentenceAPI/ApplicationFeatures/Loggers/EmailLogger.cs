@@ -76,7 +76,7 @@ namespace SentenceAPI.ApplicationFeatures.Loggers
         public async Task Log(EmailLog logObject)
         {
             logObject.LogConfiguration = LogConfiguration;
-
+            
             try
             {
                 await database.Connect().ConfigureAwait(false);

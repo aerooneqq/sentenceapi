@@ -25,11 +25,6 @@ namespace SentenceAPI.Features.Workplace.DocumentsDeskState.Services
     public class DocumentDeskStateService : IDocumentDeskStateService
     {
         private static readonly string databaseConfigFileName = "mongo_database_config.json";
-        private static readonly LogConfiguration logConfiguration = new LogConfiguration()
-        {
-            ControllerName = string.Empty,
-            ServiceName = "DocumentDeskStateService"
-        };
 
         #region Databases
         private IDatabaseService<DocumentDeskState> database;
@@ -57,7 +52,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsDeskState.Services
                                 .SetUserName().SetPassword().SetDatabaseName().SetServerName().SetConnectionString();
 
             factoriesManager.GetService<ILogger<ApplicationError>>().TryGetTarget(out exceptionLogger);
-            exceptionLogger.LogConfiguration = logConfiguration;
+            exceptionLogger.LogConfiguration = new LogConfiguration(typeof(DocumentDeskStateService));
 
             factoriesManager.GetService<ITokenService>().TryGetTarget(out tokenService);
         }

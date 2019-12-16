@@ -25,12 +25,6 @@ namespace SentenceAPI.Features.UserFriends
     [Authorize, ApiController, Route("api/[controller]")]
     public class UserFriendsController : Controller
     {
-        private static LogConfiguration LogConfiguration => new LogConfiguration()
-        {
-            ControllerName = "UserFriendsController",
-            ServiceName = string.Empty,
-        };
-
         #region Services
         private ILogger<ApplicationError> exceptionLogger;
         private IUserFriendsService userFriendsService;
@@ -49,7 +43,7 @@ namespace SentenceAPI.Features.UserFriends
             factoriesManager.GetService<ILogger<ApplicationError>>().TryGetTarget(out exceptionLogger);
             factoriesManager.GetService<IRequestService>().TryGetTarget(out requestService);
             
-            exceptionLogger.LogConfiguration = LogConfiguration;
+            exceptionLogger.LogConfiguration = new LogConfiguration(this.GetType());
         }
 
         [HttpGet, Route("subscribers")]

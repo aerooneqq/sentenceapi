@@ -25,11 +25,6 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage.Services
     public class FolderService : IFolderService
     {
         #region Static fields
-        private static readonly LogConfiguration logConfiguration = new LogConfiguration()
-        {
-            ServiceName = typeof(FolderService).Name,
-            ControllerName = string.Empty
-        };
         private static readonly string databaseConfigFile = "mongo_database_config.json";
         #endregion
 
@@ -57,7 +52,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage.Services
                     .SetUserName().SetPassword().SetDatabaseName().SetServerName().SetConnectionString();
 
             factoriesManager.GetService<ILogger<ApplicationError>>().TryGetTarget(out exceptionLogger);
-            exceptionLogger.LogConfiguration = logConfiguration;
+            exceptionLogger.LogConfiguration = new LogConfiguration(this.GetType());
         }
 
         public async Task<IEnumerable<DocumentFolder>> GetFolders(long userID, long parentFolderID)

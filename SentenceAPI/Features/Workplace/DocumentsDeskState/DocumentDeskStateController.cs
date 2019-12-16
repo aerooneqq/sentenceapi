@@ -21,12 +21,6 @@ namespace SentenceAPI.Features.Workplace.DocumentsDeskState
     [ApiController, Route("api/[controller]"), Authorize]
     public class DocumentDeskStateController : ControllerBase
     {
-        private static readonly LogConfiguration logConfiguration = new LogConfiguration()
-        {
-            ControllerName = "DocumentDeskStateController",
-            ServiceName = string.Empty
-        };
-
         #region Factories
         private IFactoriesManager factoriesManager = 
             ManagersDictionary.Instance.GetManager(Startup.ApiName);
@@ -44,7 +38,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsDeskState
             factoriesManager.GetService<IDocumentDeskStateService>().TryGetTarget(out deskStateService);
             factoriesManager.GetService<IRequestService>().TryGetTarget(out requestService);
 
-            exceptionLogger.LogConfiguration = logConfiguration;
+            exceptionLogger.LogConfiguration = new LogConfiguration(this.GetType());
         }
 
         [HttpGet]

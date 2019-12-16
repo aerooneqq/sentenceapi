@@ -27,12 +27,6 @@ namespace SentenceAPI.Features.UserFeed
     [Route("api/[controller]"), Authorize, ApiController]
     public class UserFeedController : Controller
     {
-        private static LogConfiguration LogConfiguration => new LogConfiguration()
-        {
-            ControllerName = "UserFeedController",
-            ServiceName = string.Empty
-        };
-
         #region Services
         private ILogger<ApplicationError> exceptionLogger;
         private IUserFeedService userFeedService;
@@ -50,7 +44,7 @@ namespace SentenceAPI.Features.UserFeed
             factoriesManager.GetService<ILogger<ApplicationError>>().TryGetTarget(out exceptionLogger);
             factoriesManager.GetService<IRequestService>().TryGetTarget(out requestService);
 
-            exceptionLogger.LogConfiguration = LogConfiguration;
+            exceptionLogger.LogConfiguration = new LogConfiguration(this.GetType());
         }
 
         [HttpGet]

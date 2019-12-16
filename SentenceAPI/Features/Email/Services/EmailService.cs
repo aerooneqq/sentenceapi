@@ -25,11 +25,6 @@ namespace SentenceAPI.Features.Email.Services
     {
         #region Static properties
         private static readonly string databaseConfigFile = "mongo_database_config.json";
-        private static LogConfiguration LogConfiguration { get; } = new LogConfiguration()
-        {
-            ControllerName = string.Empty,
-            ServiceName = "EmailService"
-        };
         #endregion
 
         #region Constants
@@ -64,8 +59,8 @@ namespace SentenceAPI.Features.Email.Services
             factoriesManager.GetService<ILogger<ApplicationError>>().TryGetTarget(out exceptionLogger);
             factoriesManager.GetService<ILogger<EmailLog>>().TryGetTarget(out emailLogger);
 
-            exceptionLogger.LogConfiguration = LogConfiguration;
-            emailLogger.LogConfiguration = LogConfiguration; 
+            exceptionLogger.LogConfiguration = new LogConfiguration(this.GetType());
+            emailLogger.LogConfiguration = new LogConfiguration(this.GetType()); 
         }
 
         public async Task SendConfirmationEmailAsync(string code, string email)

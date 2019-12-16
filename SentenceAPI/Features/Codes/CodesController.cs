@@ -28,21 +28,9 @@ namespace SentenceAPI.Features.Codes
     [Authorize, ApiController, Route("api/[controller]")]
     public class CodesController : Controller
     {
-        #region Static fields
-        private static readonly LogConfiguration logConfiguration = new LogConfiguration()
-        {
-            ControllerName = "CodesController",
-            ServiceName = string.Empty
-        };
-        #endregion
-
         #region Factories
         private IFactoriesManager factoriesManager = 
             ManagersDictionary.Instance.GetManager(Startup.ApiName);
-
-        private ILoggerFactory loggerFactory;
-        private ICodesServiceFactory codesServiceFactory;
-        private IUserServiceFactory userServiceFactory;
         #endregion
 
         #region Services
@@ -59,7 +47,7 @@ namespace SentenceAPI.Features.Codes
             factoriesManager.GetService<IRequestService>().TryGetTarget(out requestService);
 
             factoriesManager.GetService<IUserService<UserInfo>>().TryGetTarget(out userService);
-            exceptionLogger.LogConfiguration = logConfiguration;
+            exceptionLogger.LogConfiguration = new LogConfiguration(this.GetType());
         }
 
         [HttpPut]
@@ -82,7 +70,7 @@ namespace SentenceAPI.Features.Codes
             }
             catch (Exception ex)
             {
-                await exceptionLogger.Log(new ApplicationError(ex));
+                await exceptionLogger.Log(new ApplicationError(ex)).ConfigureAwait(false);
                 return new InternalServerError();
             }
         }

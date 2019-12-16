@@ -25,14 +25,6 @@ namespace SentenceAPI.Features.UserPhoto
     [ApiController, Route("api/[controller]"), Authorize]
     public class UserPhotoController : ControllerBase
     {
-        #region Static fields
-        private static readonly LogConfiguration logConfiguration = new LogConfiguration()
-        {
-            ControllerName = "UserPhotoController",
-            ServiceName = string.Empty
-        };
-        #endregion
-
         #region Services
         private ILogger<ApplicationError> exceptionLogger;
         private IUserPhotoService userPhotoService;
@@ -48,7 +40,7 @@ namespace SentenceAPI.Features.UserPhoto
         public UserPhotoController(IMemoryCache memoryCache)
         {
             factoriesManager.GetService<ILogger<ApplicationError>>().TryGetTarget(out exceptionLogger);
-            exceptionLogger.LogConfiguration = logConfiguration;
+            exceptionLogger.LogConfiguration = new LogConfiguration(this.GetType());
 
             factoriesManager.GetService<IUserPhotoService>().TryGetTarget(out userPhotoService);
 

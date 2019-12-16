@@ -32,8 +32,8 @@ namespace SentenceAPI.ApplicationFeatures.Loggers.Models
         {
             ErrorDate = DateTime.UtcNow;
             Message = ex.Message;
-            StackTrace = ex.Message;
-            Source = ex.Message;
+            StackTrace = ex.StackTrace;
+            Source = ex.Source;
         }
         #endregion
     }

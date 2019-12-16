@@ -25,11 +25,6 @@ namespace SentenceAPI.Features.Links.Services
     {
         #region Static fields
         private static Random Random { get; } = new Random();
-        private static LogConfiguration LogConfiguration { get; } = new LogConfiguration()
-        {
-            ControllerName = string.Empty,
-            ServiceName = "LinkService"
-        };
         private static readonly string databaseConfigFile = "mongo_database_config.json";
         #endregion
 
@@ -58,7 +53,7 @@ namespace SentenceAPI.Features.Links.Services
 
             factoriesManager.GetService<ILogger<ApplicationError>>().TryGetTarget(out exceptionLogger);
 
-            exceptionLogger.LogConfiguration = LogConfiguration;
+            exceptionLogger.LogConfiguration = new LogConfiguration(this.GetType());
         }
 
         #region ILinkService implementation

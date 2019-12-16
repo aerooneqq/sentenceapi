@@ -23,12 +23,6 @@ namespace SentenceAPI.Features.UserActivity
     [Route("api/[controller]"), Authorize, ApiController]
     public class UserActivitiesController : Controller
     {
-        private static LogConfiguration LogConfiguration => new LogConfiguration()
-        {
-            ControllerName = "UserActivitiesController",
-            ServiceName = string.Empty
-        };
-
         #region Services
         private ITokenService tokenService;
         private ILogger<ApplicationError> exceptionLogger;
@@ -45,7 +39,7 @@ namespace SentenceAPI.Features.UserActivity
             factoriesManager.GetService<ILogger<ApplicationError>>().TryGetTarget(out exceptionLogger);
             factoriesManager.GetService<ITokenService>().TryGetTarget(out tokenService);
 
-            exceptionLogger.LogConfiguration = LogConfiguration;
+            exceptionLogger.LogConfiguration = new LogConfiguration(this.GetType());
         }
 
         [HttpGet]

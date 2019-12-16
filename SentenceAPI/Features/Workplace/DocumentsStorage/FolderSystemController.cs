@@ -27,14 +27,6 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage
     [Route("api/[controller]"), ApiController, Authorize]
     public class FolderSystemController : ControllerBase
     {
-        #region Static fields
-        private static LogConfiguration logConfiguration = new LogConfiguration()
-        {
-            ControllerName = "DocumentFolderSystemController",
-            ServiceName = string.Empty
-        };
-        #endregion
-
         #region Services
         private IRequestService requestService;
         private ITokenService tokenService;
@@ -58,7 +50,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage
             factoriesManager.GetService<IDateService>().TryGetTarget(out dateService);
 
             factoriesManager.GetService<ILogger<ApplicationError>>().TryGetTarget(out exceptionLogger);
-            exceptionLogger.LogConfiguration = logConfiguration;
+            exceptionLogger.LogConfiguration = new LogConfiguration(this.GetType());
         }
 
         [HttpGet]

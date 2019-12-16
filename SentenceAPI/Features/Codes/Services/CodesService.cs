@@ -28,12 +28,6 @@ namespace SentenceAPI.Features.Codes.Services
         #region Static fields
         private static Random random = new Random();
         private static int codeLength = 6;
-
-        private static readonly LogConfiguration logConfiguration = new LogConfiguration()
-        {
-            ControllerName = string.Empty,
-            ServiceName = "CodesService"
-        };
         private static readonly string databaseConfigFile = "mongo_database_config.json";
         #endregion
 
@@ -63,7 +57,7 @@ namespace SentenceAPI.Features.Codes.Services
             factoriesManager.GetService<ILogger<ApplicationError>>().TryGetTarget(out exceptionLogger);
             factoriesManager.GetService<ITokenService>().TryGetTarget(out tokenService);
 
-            exceptionLogger.LogConfiguration = logConfiguration;
+            exceptionLogger.LogConfiguration = new LogConfiguration(this.GetType());
         }
 
         public ActivationCode CreateActivationCode(long userID)

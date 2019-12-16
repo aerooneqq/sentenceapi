@@ -22,14 +22,6 @@ namespace SentenceAPI.Features.Users.Events
     /// </summary>
     public class UserEmailChangedEvent : IDomainEvent
     {
-        #region Static fields
-        private static readonly LogConfiguration logConfiguration = new LogConfiguration()
-        {
-            ServiceName = "UserEmailChangedEvent",
-            ControllerName = string.Empty
-        };
-        #endregion
-
         #region Fields
         private readonly string email;
         private readonly long userID;
@@ -55,7 +47,7 @@ namespace SentenceAPI.Features.Users.Events
             factoriesManager.GetService<ICodesService>().TryGetTarget(out codesService);
             factoriesManager.GetService<ILogger<ApplicationError>>().TryGetTarget(out exceptionLogger);
             
-            exceptionLogger.LogConfiguration =logConfiguration;
+            exceptionLogger.LogConfiguration = new LogConfiguration(this.GetType());
         }
 
         #region IDomainEvent implementation 
