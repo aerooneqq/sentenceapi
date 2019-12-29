@@ -1,0 +1,18 @@
+[2019-12-28T21:55:59.3853426Z][Information][Middleware]
+{"ContentLength":538,"StatusCode":200,"ContentType":"application/json","Body":null,"Headers":{"Connection":["close"],"Date":["Sat, 28 Dec 2019 21:55:58 GMT"],"Content-Type":["application/json"],"Server":["Kestrel"],"Access-Control-Allow-Origin":["*"],"Content-Length":["538"]}}
+
+[2019-12-28T21:56:10.5666515Z][Information][Middleware]
+{"ContentLength":0,"StatusCode":204,"ContentType":null,"Body":null,"Headers":{"Access-Control-Allow-Headers":["authorization"],"Access-Control-Allow-Methods":["GET"],"Access-Control-Allow-Origin":["*"]}}
+
+[2019-12-28T21:56:13.8826201Z][Information][Middleware]
+{"ContentLength":0,"StatusCode":204,"ContentType":null,"Body":null,"Headers":{"Access-Control-Allow-Headers":["authorization"],"Access-Control-Allow-Methods":["GET"],"Access-Control-Allow-Origin":["*"]}}
+
+[2019-12-28T21:56:14.0297596Z][Information][Middleware]
+{"ContentLength":0,"StatusCode":204,"ContentType":null,"Body":null,"Headers":{"Access-Control-Allow-Headers":["authorization"],"Access-Control-Allow-Methods":["GET"],"Access-Control-Allow-Origin":["*"]}}
+
+[2019-12-28T21:56:15.7642452Z][Information][Middleware]
+{"ContentLength":349532,"StatusCode":200,"ContentType":"application/json","Body":null,"Headers":{"Connection":["close"],"Date":["Sat, 28 Dec 2019 21:56:14 GMT"],"Content-Type":["application/json"],"Server":["Kestrel"],"Access-Control-Allow-Origin":["*"],"Content-Length":["349532"]}}
+
+[2019-12-28T21:56:16.2590326Z][Information][Middleware]
+{"ContentLength":347790,"StatusCode":200,"ContentType":"application/json","Body":null,"Headers":{"Connection":["close"],"Date":["Sat, 28 Dec 2019 21:56:15 GMT"],"Content-Type":["application/json"],"Server":["Kestrel"],"Access-Control-Allow-Origin":["*"],"Content-Length":["347790"]}}
+

@@ -19,6 +19,7 @@ using System.Threading.Tasks;
 
 using SharedLibrary.FactoriesManager.Interfaces;
 using SharedLibrary.FactoriesManager;
+using SentenceAPI.ApplicationFeatures.Loggers.Configuration;
 
 namespace SentenceAPI.Features.UserFriends.Services
 {
@@ -77,7 +78,7 @@ namespace SentenceAPI.Features.UserFriends.Services
             }
             catch (Exception ex)
             {
-                await exceptionLogger.Log(new ApplicationError(ex));
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
                 throw new DatabaseException("Error occured while adding a new subscriber.");
             }
         }
@@ -99,7 +100,7 @@ namespace SentenceAPI.Features.UserFriends.Services
             }
             catch (Exception ex)
             {
-                await exceptionLogger.Log(new ApplicationError(ex));
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
                 throw new DatabaseException("Error occured while adding a new subscription.");
             }
         }
@@ -125,7 +126,7 @@ namespace SentenceAPI.Features.UserFriends.Services
             }
             catch (Exception ex)
             {
-                await exceptionLogger.Log(new ApplicationError(ex));
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
                 throw new DatabaseException("Error occured while deleting the subscriber.");
             }
         }
@@ -151,7 +152,7 @@ namespace SentenceAPI.Features.UserFriends.Services
             }
             catch (Exception ex)
             {
-                await exceptionLogger.Log(new ApplicationError(ex));
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
                 throw new DatabaseException("Error occured while deleting the subscription");
             }
         }
@@ -169,7 +170,7 @@ namespace SentenceAPI.Features.UserFriends.Services
             }
             catch (Exception ex)
             {
-                await exceptionLogger.Log(new ApplicationError(ex));
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
                 throw new DatabaseException("Error occured while getting the subscribers");
             }
         }
@@ -207,7 +208,7 @@ namespace SentenceAPI.Features.UserFriends.Services
             }
             catch (Exception ex)
             {
-                await exceptionLogger.Log(new ApplicationError(ex));
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
                 throw new DatabaseException("Error occured while getting the subscribers");
             }
         }
@@ -225,7 +226,7 @@ namespace SentenceAPI.Features.UserFriends.Services
             }
             catch (Exception ex)
             {
-                await exceptionLogger.Log(new ApplicationError(ex));
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
                 throw new DatabaseException("Error occured while getting the subscriptions");
             }
         }
@@ -263,7 +264,7 @@ namespace SentenceAPI.Features.UserFriends.Services
             }
             catch (Exception ex)
             {
-                await exceptionLogger.Log(new ApplicationError(ex));
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
                 throw new DatabaseException("Error occured while getting the subscriptions");
             }
         }

@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using SentenceAPI.ApplicationFeatures.Loggers.Configuration;
 
 namespace SentenceAPI.Features.Workplace.DocumentsStorage
 {
@@ -74,7 +75,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage
             }
             catch (Exception ex)
             {
-                await exceptionLogger.Log(new ApplicationError(ex)).ConfigureAwait(false);
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
                 return new InternalServerError();
             }
         }
@@ -103,7 +104,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage
             }
             catch (Exception ex)
             {
-                await exceptionLogger.Log(new ApplicationError(ex)).ConfigureAwait(false);
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
                 return new InternalServerError();
             }
         }
@@ -145,7 +146,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage
             }
             catch (Exception ex)
             {
-                await exceptionLogger.Log(new ApplicationError(ex)).ConfigureAwait(false);
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
                 return new InternalServerError();
             }
         }
@@ -177,7 +178,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage
             }
             catch (Exception ex)
             {
-                await exceptionLogger.Log(new ApplicationError(ex)).ConfigureAwait(false);
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
                 return new InternalServerError();
             }
         }

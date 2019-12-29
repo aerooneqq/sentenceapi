@@ -6,8 +6,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-using SentenceAPI.Features.UserActivity.Factories;
-
 using DataAccessLayer.DatabasesManager;
 using DataAccessLayer.CommonInterfaces;
 using DataAccessLayer.Configuration.Interfaces;
@@ -116,6 +114,7 @@ namespace SentenceAPI.Features.UserActivity.Services
         {
             await database.Connect();
             var filter = new EqualityFilter<long>("userID", userID);
+            
             return (await database.Get(filter).ConfigureAwait(false)).FirstOrDefault()?.Activities;
         }
 
@@ -127,8 +126,8 @@ namespace SentenceAPI.Features.UserActivity.Services
         /// </param>
         public async Task UpdateActivityAsync(Models.UserActivity userActivity, IEnumerable<string> properties)
         {
-            await database.Connect();
-            await database.Update(userActivity, properties);
+            await database.Connect().ConfigureAwait(false);
+            await database.Update(userActivity, properties).ConfigureAwait(false);
         }
         #endregion
     }

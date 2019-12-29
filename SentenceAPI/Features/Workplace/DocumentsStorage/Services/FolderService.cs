@@ -11,6 +11,7 @@ using SentenceAPI.ApplicationFeatures.Loggers.Models;
 using SentenceAPI.Extensions;
 using SentenceAPI.Features.Workplace.DocumentsStorage.Interfaces;
 using SentenceAPI.Features.Workplace.DocumentsStorage.Models;
+using SentenceAPI.ApplicationFeatures.Loggers.Configuration;
 
 using System;
 using System.Collections.Generic;
@@ -19,6 +20,7 @@ using System.Threading.Tasks;
 
 using SharedLibrary.FactoriesManager.Interfaces;
 using SharedLibrary.FactoriesManager;
+
 
 namespace SentenceAPI.Features.Workplace.DocumentsStorage.Services
 {
@@ -68,7 +70,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage.Services
             }
             catch (Exception ex)
             {
-                await exceptionLogger.Log(new ApplicationError(ex)).ConfigureAwait(false);
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
                 throw new DatabaseException("The error occured while getting your folders");
             }
         }
@@ -91,7 +93,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage.Services
             }
             catch (Exception ex)
             {
-                await exceptionLogger.Log(new ApplicationError(ex)).ConfigureAwait(false);
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
                 throw new DatabaseException("The error occured while creating new folder");
             }
         }
@@ -106,7 +108,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage.Services
             }
             catch (Exception ex)
             {
-                await exceptionLogger.Log(new ApplicationError(ex));
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
                 throw new DatabaseException("The error happened while updating the folder");
             }
         }
@@ -124,7 +126,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage.Services
             }
             catch (Exception ex)
             {
-                await exceptionLogger.Log(new ApplicationError(ex)).ConfigureAwait(false);
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
                 throw new DatabaseException("The error occured while deleting the folder");
             }
         }
@@ -150,7 +152,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage.Services
             }
             catch (Exception ex) when (ex.GetType() != typeof(ArgumentException))
             {
-                await exceptionLogger.Log(new ApplicationError(ex)).ConfigureAwait(false);
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
                 throw new DatabaseException("The error occured while renaming the folder");
             }
         }
@@ -167,7 +169,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage.Services
             }
             catch (Exception ex)
             {
-                await exceptionLogger.Log(new ApplicationError(ex)).ConfigureAwait(false);
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
                 throw new DatabaseException("The error occured while getting the folder data");
             }
         }
@@ -185,7 +187,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage.Services
             }
             catch (Exception ex)
             {
-                await exceptionLogger.Log(new ApplicationError(ex)).ConfigureAwait(false);
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
                 throw new DatabaseException("The error occured while searching for folders");
             }
         }

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -9,7 +8,7 @@ using SentenceAPI.ApplicationFeatures.Loggers.Interfaces;
 using SentenceAPI.ApplicationFeatures.Loggers.Models;
 using SentenceAPI.Features.Users.Models;
 
-using SharedLibrary.FactoriesManager; 
+using SharedLibrary.FactoriesManager;
 using SharedLibrary.FactoriesManager.Interfaces;
 
 using DataAccessLayer.DatabasesManager;
@@ -18,6 +17,7 @@ using DataAccessLayer.Exceptions;
 using DataAccessLayer.Filters;
 using DataAccessLayer.Configuration.Interfaces;
 using DataAccessLayer.Configuration;
+using SentenceAPI.ApplicationFeatures.Loggers.Configuration;
 
 namespace SentenceAPI.Features.Links.Services
 {
@@ -70,7 +70,7 @@ namespace SentenceAPI.Features.Links.Services
             }
             catch (Exception ex)
             {
-                await exceptionLogger.Log(new ApplicationError(ex));
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
                 throw new DatabaseException("Error occured while working with the database");
             }
         }
@@ -107,7 +107,7 @@ namespace SentenceAPI.Features.Links.Services
             }
             catch (Exception ex)
             {
-                await exceptionLogger.Log(new ApplicationError(ex));
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
                 throw new DatabaseException("Error occured while working with the database");
             }
         }

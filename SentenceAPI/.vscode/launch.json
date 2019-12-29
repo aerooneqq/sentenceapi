@@ -12,6 +12,7 @@
             "program": "${workspaceFolder}/bin/Debug/netcoreapp3.0/SentenceAPI.dll",
             "args": [],
             "cwd": "${workspaceFolder}",
+            "requireExactSource": false,
             "stopAtEntry": false,
             "serverReadyAction": {
                 "action": "openExternally",

@@ -21,6 +21,7 @@ using SentenceAPI.ApplicationFeatures.Loggers.Models;
 using SentenceAPI.ApplicationFeatures.Requests.Interfaces;
 using SentenceAPI.Features.UserFeed.Interfaces;
 using SentenceAPI.Features.UserFeed.Models;
+using SentenceAPI.ApplicationFeatures.Loggers.Configuration;
 
 namespace SentenceAPI.Features.UserFeed
 {
@@ -64,7 +65,7 @@ namespace SentenceAPI.Features.UserFeed
             }
             catch (Exception ex)
             {
-                await exceptionLogger.Log(new ApplicationError(ex));
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
                 return new InternalServerError();
             }
         }
@@ -88,7 +89,7 @@ namespace SentenceAPI.Features.UserFeed
             }
             catch (Exception ex)
             {
-                await exceptionLogger.Log(new ApplicationError(ex));
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
                 return new InternalServerError();
             }
         }

@@ -1,18 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Threading;
 
 using SentenceAPI.ApplicationFeatures.Loggers;
 using SentenceAPI.ApplicationFeatures.Loggers.Interfaces;
 using SentenceAPI.ApplicationFeatures.Loggers.Models;
+using SentenceAPI.ApplicationFeatures.Loggers.Configuration;
 
 namespace SentenceAPI.ApplicationFeatures.DefferedExecution
 {
     /// <summary>
     /// The deffered tasks manager is used when we want to perform an action, but this action is not so critical,
-    /// and can be done after some time after the client got a resposne from server. This manager has a queue for
+    /// and can be done after some time after the client got a resposne from the server. This manager has a queue for
     /// such deffered actions, and a thread, which always monitors the state of the queue. if the queue is not empty,
     /// then the Action from the queue is invoked. From any part of the programm such actions can be inserted in the queue.
     /// </summary>
@@ -78,7 +77,7 @@ namespace SentenceAPI.ApplicationFeatures.DefferedExecution
                     }
                     catch (Exception ex)
                     {
-                        exceptionLogger.Log(new ApplicationError(ex));
+                        exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
                     }
 
                     Thread.Sleep(100); 

@@ -26,6 +26,7 @@ using DataAccessLayer.Filters.Interfaces;
 
 using SharedLibrary.FactoriesManager.Interfaces; 
 using SharedLibrary.FactoriesManager;
+using SentenceAPI.ApplicationFeatures.Loggers.Configuration;
 
 namespace SentenceAPI.Features.Users.Services
 {
@@ -85,7 +86,7 @@ namespace SentenceAPI.Features.Users.Services
             }
             catch (Exception ex)
             {
-                await exceptionLogger.Log(new ApplicationError(ex));
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
                 throw new DatabaseException("The error occured while deleting account");
             }
         }
@@ -104,7 +105,7 @@ namespace SentenceAPI.Features.Users.Services
             }
             catch (Exception ex)
             {
-                await exceptionLogger.Log(new ApplicationError(ex));
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
                 throw new DatabaseException("Error occured while working with the database");
             }
         }
@@ -131,7 +132,7 @@ namespace SentenceAPI.Features.Users.Services
             }
             catch (Exception ex) when (ex.GetType() != typeof(DatabaseException))
             {
-                await exceptionLogger.Log(new ApplicationError(ex));
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
                 throw new DatabaseException("Error occured while working with the database");
             }
         }
@@ -140,14 +141,14 @@ namespace SentenceAPI.Features.Users.Services
         {
             try
             {
-                await database.Connect();
+                await database.Connect().ConfigureAwait(false);
 
                 return (await database.Get(new EqualityFilter<long>
                     (typeof(UserInfo).GetBsonPropertyName("ID"), id))).FirstOrDefault();
             }
             catch (Exception ex)
             {
-                await exceptionLogger.Log(new ApplicationError(ex));
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
                 throw new DatabaseException("Error occured while working with the database");
             }
         }
@@ -161,7 +162,7 @@ namespace SentenceAPI.Features.Users.Services
             }
             catch (Exception ex)
             {
-                await exceptionLogger.Log(new ApplicationError(ex));
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
                 throw new DatabaseException("Error occured while ipdating record in the database");
             }
         }
@@ -175,7 +176,7 @@ namespace SentenceAPI.Features.Users.Services
             }
             catch (Exception ex)
             {
-                await exceptionLogger.Log(new ApplicationError(ex));
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
                 throw new DatabaseException("The error occured while updating the user.");
             }
         }
@@ -198,7 +199,7 @@ namespace SentenceAPI.Features.Users.Services
             }
             catch (Exception ex)
             {
-                await exceptionLogger.Log(new ApplicationError(ex));
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
                 throw new DatabaseException("Error occured when inserting a user in the database");
             }
         }
@@ -216,7 +217,7 @@ namespace SentenceAPI.Features.Users.Services
             }
             catch (Exception ex)
             {
-                await exceptionLogger.Log(new ApplicationError(ex));
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
                 throw new DatabaseException("Error occured when inserting a user in the database");
             }
         }
@@ -244,7 +245,7 @@ namespace SentenceAPI.Features.Users.Services
             }
             catch (Exception ex)
             {
-                await exceptionLogger.Log(new ApplicationError(ex));
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
                 throw new DatabaseException("Error occured while checking the user");
             }
         }

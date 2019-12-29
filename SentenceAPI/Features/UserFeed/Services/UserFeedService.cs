@@ -12,7 +12,6 @@ using SentenceAPI.Features.UserPhoto.Interfaces;
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -22,12 +21,11 @@ using DataAccessLayer.DatabasesManager;
 using DataAccessLayer.Configuration;
 using DataAccessLayer.Filters;
 using DataAccessLayer.Exceptions;
-using DataAccessLayer.Aggregations.Interfaces;
-using DataAccessLayer.Aggregations;
 
 using SharedLibrary.FactoriesManager.Interfaces;
 using SharedLibrary.FactoriesManager;
 using MongoDB.Bson;
+using SentenceAPI.ApplicationFeatures.Loggers.Configuration;
 
 namespace SentenceAPI.Features.UserFeed.Services
 {
@@ -90,7 +88,7 @@ namespace SentenceAPI.Features.UserFeed.Services
             }
             catch (Exception ex) when (ex.GetType() != typeof(DatabaseException))
             {
-                await exceptionLogger.Log(new ApplicationError(ex));
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
                 throw new DatabaseException("Error occured while getting user feed");
             }
         }
@@ -132,7 +130,7 @@ namespace SentenceAPI.Features.UserFeed.Services
             }
             catch (Exception ex) when (ex.GetType() != typeof(DatabaseException))
             {
-                await exceptionLogger.Log(new ApplicationError(ex));
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
                 throw new DatabaseException("Error occured while getting user feed");
             }
         }
@@ -146,7 +144,7 @@ namespace SentenceAPI.Features.UserFeed.Services
             }
             catch (Exception ex) when (ex.GetType() != typeof(DatabaseException))
             {
-                await exceptionLogger.Log(new ApplicationError(ex));
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
                 throw new DatabaseException("Error occured while inserting new post");
             }
         }
@@ -165,7 +163,7 @@ namespace SentenceAPI.Features.UserFeed.Services
             }
             catch (Exception ex) when (ex.GetType() != typeof(DatabaseException))
             {
-                await exceptionLogger.Log(new ApplicationError(ex));
+                 exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
                 throw new DatabaseException("Error occured while inserting new post");
             }
         }

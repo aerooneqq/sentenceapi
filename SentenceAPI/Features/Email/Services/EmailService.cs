@@ -18,6 +18,7 @@ using DataAccessLayer.Configuration.Interfaces;
 using DataAccessLayer.DatabasesManager;
 using DataAccessLayer.Configuration;
 using DataAccessLayer.Exceptions;
+using SentenceAPI.ApplicationFeatures.Loggers.Configuration;
 
 namespace SentenceAPI.Features.Email.Services
 {
@@ -83,14 +84,14 @@ namespace SentenceAPI.Features.Email.Services
                         EnableSsl = true
                     })
                     {
-                        await smtpClient.SendMailAsync(mailMessage);
-                        await emailLogger.Log(new EmailLog(email, mailMessage.Body));
+                        await smtpClient.SendMailAsync(mailMessage).ConfigureAwait(false);
+                        emailLogger.Log(new EmailLog(email, mailMessage.Body), LogLevel.Information);
                     }
                 }
             }
             catch (Exception ex)
             {
-                await exceptionLogger.Log(new ApplicationError(ex));
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
                 throw new DatabaseException("Error occured while working with the database");
             }
         }

@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-using Newtonsoft.Json;
-
 using SentenceAPI.Features.Authentication.Interfaces;
 using SentenceAPI.ApplicationFeatures.Loggers.Interfaces;
 using SentenceAPI.ApplicationFeatures.Loggers.Models;
@@ -12,11 +10,10 @@ using SharedLibrary.FactoriesManager.Interfaces;
 using SharedLibrary.FactoriesManager;
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using DataAccessLayer.Exceptions;
 using SharedLibrary.ActionResults;
+using SentenceAPI.ApplicationFeatures.Loggers.Configuration;
 
 namespace SentenceAPI.Features.UserActivity
 {
@@ -62,7 +59,7 @@ namespace SentenceAPI.Features.UserActivity
             }
             catch (Exception ex)
             {
-                await exceptionLogger.Log(new ApplicationError(ex));
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
                 return new InternalServerError();
             }
         }

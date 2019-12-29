@@ -20,6 +20,7 @@ using SharedLibrary.FactoriesManager.Interfaces;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using SentenceAPI.ApplicationFeatures.Loggers.Configuration;
 
 namespace SentenceAPI.Features.Codes.Services
 {
@@ -111,7 +112,7 @@ namespace SentenceAPI.Features.Codes.Services
             }
             catch (Exception ex)
             {
-                await exceptionLogger.Log(new ApplicationError(ex)).ConfigureAwait(false);
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
                 throw new DatabaseException("The error happened inserting the activation code");
             }
         }
@@ -141,7 +142,7 @@ namespace SentenceAPI.Features.Codes.Services
             }
             catch (Exception ex) when (ex.GetType() != typeof(DatabaseException))
             {
-                await exceptionLogger.Log(new ApplicationError(ex)).ConfigureAwait(false);
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
                 throw new DatabaseException("THe error happened while activating the code");
             }
         }

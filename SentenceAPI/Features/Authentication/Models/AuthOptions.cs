@@ -2,12 +2,12 @@
 using System;
 using System.Text;
 
-namespace SentenceAPI.Extensions.Models
+namespace SentenceAPI.Features.Authentication.Models
 {
     /// <summary>
     /// Class where authentication parameters are stored
     /// </summary>
-    public class AuthOptions
+    public static class AuthOptions
     {
         #region Public constants
         public const string ISSUER = "SentenceKernel";

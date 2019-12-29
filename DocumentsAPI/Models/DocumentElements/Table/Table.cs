@@ -7,6 +7,6 @@ namespace DocumentsAPI.Models.DocumentElements.Table
 {
     public class Table : DocumentElement
     {
-        public List<TableCell> Cells { get; set; }
+        public int[,] Cells { get; set; }
     }
 }

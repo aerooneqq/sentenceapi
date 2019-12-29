@@ -1,83 +1,53 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Threading;
+﻿using System.Threading.Tasks;
 using System.IO;
 
 using SentenceAPI.ApplicationFeatures.Loggers.Models;
 using SentenceAPI.ApplicationFeatures.Loggers.Interfaces;
-
+using SentenceAPI.ApplicationFeatures.Loggers.Configuration;
+using System;
 using Newtonsoft.Json;
-using DataAccessLayer.CommonInterfaces;
-using DataAccessLayer.Configuration.Interfaces;
-using DataAccessLayer.DatabasesManager;
-using DataAccessLayer.Configuration;
 
 namespace SentenceAPI.ApplicationFeatures.Loggers
 {
     public class ExceptionLogger : ILogger<ApplicationError>
     {
-        private static readonly object fileLocker = new object();
-        private static readonly string databaseConfigFile = "mongo_database_config.json";
-
-        #region Databases
-        private IDatabaseService<ApplicationError> database;
-        private IConfigurationBuilder configurationBuilder;
-        private DatabasesManager databasesManager = DatabasesManager.Manager;
-        #endregion
+        private static string logConfigurationFilePath = Path.Combine(Startup.CurrDirectory, "log", 
+            "app_log", "log_conf.conf");
+        private static InnerLogger innerLogger = new InnerLogger(logConfigurationFilePath, "app_log", 3);
 
         #region Properties
         /// <summary>
         /// This property must be initialized before logging
         /// </summary>
         public LogConfiguration LogConfiguration { get; set; }
-
-        public string FileName { get; }
         #endregion
 
         #region Constructors
-        public ExceptionLogger()
+        public ExceptionLogger() 
         {
-            databasesManager.MongoDBFactory.GetDatabase<ApplicationError>().TryGetTarget(out database);
-
-            configurationBuilder = new MongoConfigurationBuilder(database.Configuration);
-            configurationBuilder.SetConfigurationFilePath(databaseConfigFile).SetAuthMechanism()
-                                .SetUserName().SetPassword().SetDatabaseName().SetServerName().SetConnectionString();
-
-            FileName = "log.txt";
+            LogConfiguration = new LogConfiguration(typeof(object))
+            {
+                ClassName = string.Empty, 
+                ComponentType = ComponentType.Undefined
+            };
         }
         #endregion
 
         #region ILogger implmentation
-        public void WriteLogToFile(ApplicationError logObject)
+        public void Log(ApplicationError logObject, LogLevel logLevel)
         {
-            lock (fileLocker)
+            Log log = new Log() 
             {
-                using (FileStream fs = new FileStream(FileName, FileMode.Append, FileAccess.Write))
-                {
-                    string applicationErrorJson = JsonConvert.SerializeObject(logObject);
-                    using (StreamWriter sw = new StreamWriter(fs))
-                    {
-                        sw.WriteLine(applicationErrorJson);
-                    }
-                }
-            }
-        }
+                Base64Data = null, 
+                Date = DateTime.UtcNow, 
+                JsonData = JsonConvert.SerializeObject(logObject),
+                LogLevel = logLevel, 
+                Message = logObject.Message, 
+                Place = LogConfiguration.ComponentType,
+                XMLData = null
+            };
 
-        public async Task Log(ApplicationError logObject)
-        {
-            logObject.LogConfiguration = LogConfiguration;
-            
-            try
-            {
-                await database.Connect().ConfigureAwait(false);
-                await database.Insert(logObject).ConfigureAwait(false);
-            }
-            catch
-            {
-                new Thread(new ThreadStart(() => WriteLogToFile(logObject))).Start();
-            }
+            innerLogger.QueueLog(log);
         }
         #endregion
     }

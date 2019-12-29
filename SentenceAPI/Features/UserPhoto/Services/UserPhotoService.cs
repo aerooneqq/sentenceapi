@@ -6,25 +6,23 @@ using DataAccessLayer.Exceptions;
 using DataAccessLayer.Filters;
 using DataAccessLayer.MongoDB.Interfaces;
 
-using Microsoft.Extensions.Caching.Memory;
-
 using SentenceAPI.ApplicationFeatures.Loggers.Interfaces;
 using SentenceAPI.ApplicationFeatures.Loggers.Models;
 using SentenceAPI.Extensions;
 using SentenceAPI.Features.Authentication.Interfaces;
 using SentenceAPI.Features.UserPhoto.Interfaces;
-using SentenceAPI.Features.UserPhoto.Models;
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 using SharedLibrary.Caching;
-using SharedLibrary.FactoriesManager; 
+using SharedLibrary.FactoriesManager;
 using SharedLibrary.FactoriesManager.Interfaces;
 
 using MongoDB.Bson;
+using SentenceAPI.ApplicationFeatures.Loggers.Configuration;
+
 
 namespace SentenceAPI.Features.UserPhoto.Services
 {
@@ -85,7 +83,7 @@ namespace SentenceAPI.Features.UserPhoto.Services
             }
             catch (Exception ex)
             {
-                await exceptionLogger.Log(new ApplicationError(ex));
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
                 throw new DatabaseException("The error occured while creating photo-record");
             }
         }
@@ -103,7 +101,7 @@ namespace SentenceAPI.Features.UserPhoto.Services
             }
             catch (Exception ex)
             {
-                await exceptionLogger.Log(new ApplicationError(ex));
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
                 throw new DatabaseException("The error occured while getting raw photo");
             }
         }
@@ -126,7 +124,7 @@ namespace SentenceAPI.Features.UserPhoto.Services
             }
             catch (Exception ex) 
             {
-                await exceptionLogger.Log(new ApplicationError(ex));
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
                 throw new DatabaseException("The error occured while getting your photo");
             }
         }
@@ -145,7 +143,7 @@ namespace SentenceAPI.Features.UserPhoto.Services
             }
             catch (Exception ex) when (ex.GetType() != typeof(DatabaseException))
             {
-                await exceptionLogger.Log(new ApplicationError(ex)).ConfigureAwait(false);
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
                 throw new DatabaseException("The error occured while getting the photo");
             }
         }
@@ -159,7 +157,7 @@ namespace SentenceAPI.Features.UserPhoto.Services
             }
             catch (Exception ex)
             {
-                await exceptionLogger.Log(new ApplicationError(ex)).ConfigureAwait(false);
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
                 throw new DatabaseException("The error occured while creating new user photo model");
             }
         }
@@ -197,7 +195,7 @@ namespace SentenceAPI.Features.UserPhoto.Services
             }
             catch (Exception ex)
             {
-                await exceptionLogger.Log(new ApplicationError(ex)).ConfigureAwait(false);
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
                 throw new DatabaseException("Error occured while updating the photo");
             }
         }

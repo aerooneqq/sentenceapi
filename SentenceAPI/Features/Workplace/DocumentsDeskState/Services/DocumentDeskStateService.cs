@@ -19,6 +19,7 @@ using System.Threading.Tasks;
 
 using SharedLibrary.FactoriesManager.Interfaces;
 using SharedLibrary.FactoriesManager;
+using SentenceAPI.ApplicationFeatures.Loggers.Configuration;
 
 namespace SentenceAPI.Features.Workplace.DocumentsDeskState.Services
 {
@@ -72,7 +73,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsDeskState.Services
             }
             catch (Exception ex)
             {
-                await exceptionLogger.Log(new ApplicationError(ex)).ConfigureAwait(false);
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
                 throw new DatabaseException("The error occured while creating new document desk state");
             }
         }
@@ -88,7 +89,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsDeskState.Services
             }
             catch (Exception ex)
             {
-                await exceptionLogger.Log(new ApplicationError(ex)).ConfigureAwait(false);
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
                 throw new DatabaseException("The error occured while creating new document desk state");
             }
         }
@@ -101,7 +102,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsDeskState.Services
             }
             catch (Exception ex) when (ex.GetType() != typeof(DatabaseException))
             {
-                await exceptionLogger.Log(new ApplicationError(ex)).ConfigureAwait(false);
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
                 throw new DatabaseException("Error occured while getting the desk state");
             }
         }
@@ -117,7 +118,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsDeskState.Services
             }
             catch (Exception ex)
             {
-                await exceptionLogger.Log(new ApplicationError(ex)).ConfigureAwait(false);
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
                 throw new DatabaseException("The error occured while getting the desk state", ex);
             }
         }
@@ -131,7 +132,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsDeskState.Services
             }
             catch (Exception ex)
             {
-                await exceptionLogger.Log(new ApplicationError(ex)).ConfigureAwait(false);
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
                 throw new DatabaseException("The error occured while updating the desk state", ex);
             }
         }
@@ -145,7 +146,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsDeskState.Services
             }
             catch (Exception ex)
             {
-                await exceptionLogger.Log(new ApplicationError(ex)).ConfigureAwait(false);
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
                 throw new DatabaseException("The error occured while updating the desk state");
             }
         }

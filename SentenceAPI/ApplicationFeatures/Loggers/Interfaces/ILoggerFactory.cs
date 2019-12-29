@@ -13,5 +13,7 @@ namespace SentenceAPI.ApplicationFeatures.Loggers.Interfaces
     {
         ILogger<ApplicationError> GetExceptionLogger();
         ILogger<EmailLog> GetEmailLogger();
+        ILogger<RequestLog> GetRequestLog();
+        ILogger<ResponseLog> GetResponseLog();
     }
 }

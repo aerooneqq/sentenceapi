@@ -1,8 +1,6 @@
-﻿using DataAccessLayer.DatabasesManager;
-using DataAccessLayer.Exceptions;
+﻿using DataAccessLayer.Exceptions;
 
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 using SharedLibrary.ActionResults;
@@ -14,14 +12,12 @@ using SentenceAPI.ApplicationFeatures.Loggers.Interfaces;
 using SentenceAPI.ApplicationFeatures.Loggers.Models;
 using SentenceAPI.Features.Users.Interfaces;
 using SentenceAPI.Features.Users.Models;
+using SentenceAPI.ApplicationFeatures.Requests.Interfaces;
+using SentenceAPI.ApplicationFeatures.Loggers.Configuration;
 
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using SentenceAPI.ApplicationFeatures.Requests.Interfaces;
+
 
 namespace SentenceAPI.Features.Codes
 {
@@ -29,8 +25,7 @@ namespace SentenceAPI.Features.Codes
     public class CodesController : Controller
     {
         #region Factories
-        private IFactoriesManager factoriesManager = 
-            ManagersDictionary.Instance.GetManager(Startup.ApiName);
+        private IFactoriesManager factoriesManager = ManagersDictionary.Instance.GetManager(Startup.ApiName);
         #endregion
 
         #region Services
@@ -70,7 +65,7 @@ namespace SentenceAPI.Features.Codes
             }
             catch (Exception ex)
             {
-                await exceptionLogger.Log(new ApplicationError(ex)).ConfigureAwait(false);
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
                 return new InternalServerError();
             }
         }

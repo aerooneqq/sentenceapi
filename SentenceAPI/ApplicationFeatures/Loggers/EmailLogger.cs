@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 
 using SentenceAPI.ApplicationFeatures.Loggers.Interfaces;
 using SentenceAPI.ApplicationFeatures.Loggers.Models;
+using SentenceAPI;
 
 using DataAccessLayer.CommonInterfaces;
 using DataAccessLayer.DatabasesManager;
@@ -16,29 +17,19 @@ using DataAccessLayer.Configuration;
 
 using SharedLibrary.FactoriesManager;
 using SharedLibrary.FactoriesManager.Interfaces;
+using SentenceAPI.ApplicationFeatures.Loggers.Configuration;
 
 namespace SentenceAPI.ApplicationFeatures.Loggers
 {
     public class EmailLogger : ILogger<EmailLog>
     {
         #region Static fields
-        private static readonly string databaseConfigFile = "mongo_database_config.json";
-        private static readonly object fileLoceker = new object();
-        #endregion
-
-        #region Databases
-        private DatabasesManager databasesManager = DatabasesManager.Manager;
-        private IDatabaseService<EmailLog> database;
-        private IConfigurationBuilder configurationBuilder;
-        #endregion
-
-        #region Factories
-        private readonly IFactoriesManager factoriesManager = 
-            ManagersDictionary.Instance.GetManager(Startup.ApiName);
+        private static string logConfigurationFilePath = Path.Combine(Startup.CurrDirectory, "log", 
+            "email_log", "log_conf.conf");
+        private static InnerLogger innerLogger = new InnerLogger(logConfigurationFilePath, "email_log", 3);
         #endregion
 
         #region Properties
-        public string FileName { get; }
 
         /// <summary>
         /// This property must be initialized befote each logging
@@ -48,44 +39,28 @@ namespace SentenceAPI.ApplicationFeatures.Loggers
 
         public EmailLogger()
         {
-            databasesManager.MongoDBFactory.GetDatabase<EmailLog>().TryGetTarget(out database);
-
-            configurationBuilder = new MongoConfigurationBuilder(database.Configuration);
-            configurationBuilder.SetConfigurationFilePath(databaseConfigFile).SetAuthMechanism()
-                                .SetUserName().SetPassword().SetDatabaseName().SetServerName().SetConnectionString();
-
-            FileName = "email_log.txt";
+            LogConfiguration = new LogConfiguration(typeof(object))
+            {
+                ClassName = string.Empty, 
+                ComponentType = ComponentType.Undefined
+            };
         }
 
         #region ILogger implementation
-        public void WriteLogToFile(EmailLog logObject)
+        public void Log(EmailLog logObject, LogLevel logLevel)
         {
-            lock (fileLoceker)
+            Log log = new Log()
             {
-                using (FileStream fs = new FileStream(FileName, FileMode.Append, FileAccess.Write))
-                {
-                    string applicationErrorJson = JsonConvert.SerializeObject(logObject);
-                    using (StreamWriter sw = new StreamWriter(fs))
-                    {
-                        sw.WriteLine(applicationErrorJson);
-                    }
-                }
-            }
-        }
+                LogLevel = logLevel,
+                Date = DateTime.UtcNow,
+                JsonData = JsonConvert.SerializeObject(logObject),
+                Place = LogConfiguration.ComponentType,
+                Message = string.Empty,
+                Base64Data = null,
+                XMLData = null,
+            }; 
 
-        public async Task Log(EmailLog logObject)
-        {
-            logObject.LogConfiguration = LogConfiguration;
-            
-            try
-            {
-                await database.Connect().ConfigureAwait(false);
-                await database.Insert(logObject).ConfigureAwait(false);
-            }
-            catch
-            {
-                WriteLogToFile(logObject);
-            }
+            innerLogger.QueueLog(log);
         }
         #endregion
     }

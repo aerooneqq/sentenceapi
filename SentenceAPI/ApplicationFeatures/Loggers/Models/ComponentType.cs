@@ -7,6 +7,7 @@ namespace SentenceAPI.ApplicationFeatures.Loggers.Models
         Factory,
         Validator,
         Middleware,
+        
         Undefined
     }
 }

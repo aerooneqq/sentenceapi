@@ -1,20 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using System.IO;
 using System.Text;
+
+using Microsoft.AspNetCore.Http;
 
 using MongoDB.Bson.Serialization.Attributes;
 
 using Newtonsoft.Json;
 
-using DataAccessLayer.KernelModels;
-using Microsoft.AspNetCore.Http;
 
-namespace SharedLibrary.Middlewares.RequestLogger.Models
+namespace SentenceAPI.ApplicationFeatures.Loggers.Models
 {
-    public class RequestLog : UniqueEntity
+    public class RequestLog
     {
         [BsonElement("queryString"), JsonProperty("queryString")]
         public string QueryString { get; set; }
@@ -39,12 +35,12 @@ namespace SharedLibrary.Middlewares.RequestLogger.Models
 
         public RequestLog(HttpRequest request)
         {
-            /*using (StreamReader sr = new StreamReader(request.Body, Encoding.UTF8, true, 1024, true))
-            {
-                Body = sr.ReadToEnd();
-            }
+            // using (StreamReader sr = new StreamReader(request.Body, Encoding.UTF8, true, 1024, true))
+            // {
+            //     Body = sr.ReadLineAsync().GetAwaiter().GetResult();
+            // }
 
-            request.Body.Position = 0;*/
+            // request.Body.Seek(0, SeekOrigin.Begin);
 
             QueryString = request.QueryString.Value;
             ContentType = request.ContentType;

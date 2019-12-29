@@ -19,6 +19,7 @@ using System.Threading.Tasks;
 using SharedLibrary.ActionResults;
 using SharedLibrary.FactoriesManager.Interfaces;
 using SharedLibrary.FactoriesManager;
+using SentenceAPI.ApplicationFeatures.Loggers.Configuration;
 
 namespace SentenceAPI.Features.UserFriends
 {
@@ -63,7 +64,7 @@ namespace SentenceAPI.Features.UserFriends
             }
             catch (Exception ex)
             {
-                await exceptionLogger.Log(new ApplicationError(ex));
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
                 return new InternalServerError();
             }
         }
@@ -85,7 +86,7 @@ namespace SentenceAPI.Features.UserFriends
             }
             catch (Exception ex)
             {
-                await exceptionLogger.Log(new ApplicationError(ex));
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
                 return new InternalServerError();
             }
         }
@@ -114,7 +115,7 @@ namespace SentenceAPI.Features.UserFriends
             }
             catch (Exception ex)
             {
-                await exceptionLogger.Log(new ApplicationError(ex));
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
                 return new InternalServerError();
             }
         }
@@ -143,7 +144,7 @@ namespace SentenceAPI.Features.UserFriends
             }
             catch (Exception ex)
             {
-                await exceptionLogger.Log(new ApplicationError(ex));
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
                 return new InternalServerError();
             }
         }
@@ -165,7 +166,7 @@ namespace SentenceAPI.Features.UserFriends
             }
             catch (Exception ex)
             {
-                await exceptionLogger.Log(new ApplicationError(ex));
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
                 return new InternalServerError();
             }
         }
@@ -187,7 +188,7 @@ namespace SentenceAPI.Features.UserFriends
             }
             catch (Exception ex)
             {
-                await exceptionLogger.Log(new ApplicationError(ex));
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
                 return new InternalServerError();
             }
         }

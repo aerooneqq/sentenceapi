@@ -19,6 +19,8 @@ using System.Threading.Tasks;
 using System.Text;
 
 using MongoDB.Bson;
+using SentenceAPI.ApplicationFeatures.Loggers.Configuration;
+
 
 namespace SentenceAPI.Features.UserPhoto
 {
@@ -71,7 +73,7 @@ namespace SentenceAPI.Features.UserPhoto
             }
             catch (Exception ex)
             {
-                await exceptionLogger.Log(new ApplicationError(ex)).ConfigureAwait(false);
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
                 return new InternalServerError();
             }
         }
@@ -108,7 +110,7 @@ namespace SentenceAPI.Features.UserPhoto
             }
             catch (Exception ex)
             {
-                await exceptionLogger.Log(new ApplicationError(ex)).ConfigureAwait(false);
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
                 return new InternalServerError();
             }
         }

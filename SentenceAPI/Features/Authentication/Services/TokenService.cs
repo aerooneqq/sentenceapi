@@ -18,7 +18,7 @@ using SharedLibrary.FactoriesManager.Models;
 using DataAccessLayer.DatabasesManager;
 using DataAccessLayer.Configuration.Interfaces;
 using DataAccessLayer.Configuration;
-using SentenceAPI.Extensions.Models;
+
 
 namespace SentenceAPI.Features.Authentication.Services
 {

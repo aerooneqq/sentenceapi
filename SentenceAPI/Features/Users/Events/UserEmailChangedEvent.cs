@@ -8,12 +8,12 @@ using SentenceAPI.Features.Codes.Models;
 using SentenceAPI.Features.Email.Interfaces;
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 using SharedLibrary.FactoriesManager.Interfaces;
 using SharedLibrary.FactoriesManager;
+using SentenceAPI.ApplicationFeatures.Loggers.Configuration;
+
 
 namespace SentenceAPI.Features.Users.Events
 {
@@ -70,7 +70,7 @@ namespace SentenceAPI.Features.Users.Events
             }
             catch (Exception ex)
             {
-                await exceptionLogger.Log(new ApplicationError(ex)).ConfigureAwait(false);
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
                 throw new DatabaseException("The error occured while sending confirmation email");
             }
         }

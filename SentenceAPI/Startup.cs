@@ -1,18 +1,14 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.IdentityModel.Tokens;
 using Microsoft.Extensions.Configuration;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.HttpOverrides;
+
+using System.IO;
 
 using SharedLibrary.FactoriesManager;
 using SharedLibrary.FactoriesManager.Models;
 using SharedLibrary.FactoriesManager.Interfaces;
-using SharedLibrary.Middlewares.RequestLogger;
 
-using SentenceAPI.Features.Authentication.Models;
 using SentenceAPI.Features.Users.Interfaces;
 using SentenceAPI.Features.Authentication.Interfaces;
 using SentenceAPI.Features.Users.Factories;
@@ -43,12 +39,14 @@ using SentenceAPI.Features.Workplace.DocumentsStorage.Interfaces;
 using SentenceAPI.ApplicationFeatures.Date.Factories;
 using SentenceAPI.ApplicationFeatures.Date.Interfaces;
 using SentenceAPI.Extensions;
+using SentenceAPI.ApplicationFeatures.Middlewares;
 
 namespace SentenceAPI
 {
     public class Startup
     {
         public static string ApiName => "SentenceAPI";
+        public static string CurrDirectory => Directory.GetCurrentDirectory();
 
         #region Factories
         private readonly IFactoriesManager factoriesManager;
@@ -77,7 +75,9 @@ namespace SentenceAPI
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            app.UseMiddleware<RequestLogger>();
+            app.UseMiddleware<ResponseLoggerMiddleware>();
+            app.UseMiddleware<RequestLoggerMiddleware>();
+
             app.UseAuthentication();
             app.SetForwardedHeaders();
             app.SetCors();

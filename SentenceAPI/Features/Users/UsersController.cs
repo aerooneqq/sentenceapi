@@ -21,12 +21,14 @@ using SentenceAPI.ApplicationFeatures.Requests.Interfaces;
 using SentenceAPI.Features.Authentication.Interfaces;
 using SentenceAPI.Events;
 using SentenceAPI.Features.Users.Events;
+using SentenceAPI.ApplicationFeatures.Loggers.Configuration;
 
 using SharedLibrary.ActionResults;
 using SharedLibrary.FactoriesManager.Interfaces;
 using SharedLibrary.FactoriesManager;
 
 using DataAccessLayer.Exceptions;
+
 
 namespace SentenceAPI.Features.Users
 {
@@ -80,7 +82,7 @@ namespace SentenceAPI.Features.Users
             }
             catch (Exception ex)
             {
-                await exceptionLogger.Log(new ApplicationError(ex)).ConfigureAwait(false);
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
                 return new InternalServerError();
             }
         }
@@ -100,7 +102,7 @@ namespace SentenceAPI.Features.Users
             }
             catch (Exception ex)
             {
-                await exceptionLogger.Log(new ApplicationError(ex)).ConfigureAwait(false);
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
                 return new InternalServerError();
             }
         }
@@ -127,7 +129,7 @@ namespace SentenceAPI.Features.Users
             }
             catch (Exception ex)
             {
-                await exceptionLogger.Log(new ApplicationError(ex)).ConfigureAwait(false);
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
                 return new InternalServerError();
             }
         }
@@ -145,7 +147,7 @@ namespace SentenceAPI.Features.Users
             }
             catch (Exception ex)
             {
-                await exceptionLogger.Log(new ApplicationError(ex)).ConfigureAwait(false);
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
                 return new InternalServerError();
             }
         }
@@ -186,7 +188,7 @@ namespace SentenceAPI.Features.Users
             }
             catch (Exception ex)
             {
-                await exceptionLogger.Log(new ApplicationError(ex)).ConfigureAwait(false);
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
                 return new InternalServerError();
             }
         }
@@ -239,7 +241,7 @@ namespace SentenceAPI.Features.Users
             }
             catch (Exception ex)
             {
-                await exceptionLogger.Log(new ApplicationError(ex)).ConfigureAwait(false);
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
                 return new InternalServerError();
             }
         }
@@ -263,7 +265,7 @@ namespace SentenceAPI.Features.Users
             }
             catch (Exception ex)
             {
-                await exceptionLogger.Log(new ApplicationError(ex)).ConfigureAwait(false);
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
                 return new InternalServerError();
             }
         }

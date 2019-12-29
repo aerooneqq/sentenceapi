@@ -15,6 +15,7 @@ using SentenceAPI.ApplicationFeatures.Loggers.Models;
 using SentenceAPI.ApplicationFeatures.Requests.Interfaces;
 using SentenceAPI.Features.Workplace.DocumentsDeskState.Interfaces;
 using SentenceAPI.Features.Workplace.DocumentsDeskState.Models;
+using SentenceAPI.ApplicationFeatures.Loggers.Configuration;
 
 namespace SentenceAPI.Features.Workplace.DocumentsDeskState
 {
@@ -57,7 +58,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsDeskState
             }
             catch (Exception ex)
             {
-                await exceptionLogger.Log(new ApplicationError(ex)).ConfigureAwait(false);
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
                 return new InternalServerError();
             }
         }

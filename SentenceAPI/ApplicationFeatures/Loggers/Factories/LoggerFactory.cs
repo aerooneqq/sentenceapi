@@ -20,5 +20,15 @@ namespace SentenceAPI.ApplicationFeatures.Loggers.Factories
         {
             return new EmailLogger();
         }
+
+        public ILogger<RequestLog> GetRequestLog()
+        {
+            return new RequestLogger();
+        }
+
+        public ILogger<ResponseLog> GetResponseLog()
+        {
+            return new ResponseLogger();
+        }
     }
 }

@@ -25,6 +25,7 @@ using DataAccessLayer.Hashes;
 using SharedLibrary.ActionResults;
 using SentenceAPI.ApplicationFeatures.DefferedExecution;
 using SentenceAPI.Features.UserActivity.Interfaces;
+using SentenceAPI.ApplicationFeatures.Loggers.Configuration;
 
 namespace SentenceAPI.Features.Authentication
 {
@@ -33,8 +34,7 @@ namespace SentenceAPI.Features.Authentication
     public class TokensController : Controller
     {
         #region Factories
-        private readonly IFactoriesManager factoriesManager = 
-            ManagersDictionary.Instance.GetManager(Startup.ApiName);
+        private readonly IFactoriesManager factoriesManager = ManagersDictionary.Instance.GetManager(Startup.ApiName);
         #endregion
 
         #region Services
@@ -95,12 +95,12 @@ namespace SentenceAPI.Features.Authentication
             }
             catch (DatabaseException ex)
             {
-                await exceptionLogger.Log(new ApplicationError(ex));
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
                 return new InternalServerError(ex.Message);
             }
             catch (Exception ex)
             {
-                await exceptionLogger.Log(new ApplicationError(ex));
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
                 return new InternalServerError();
             }
         }
