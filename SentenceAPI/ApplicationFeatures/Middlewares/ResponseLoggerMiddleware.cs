@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Http;
-
+using SentenceAPI.ApplicationFeatures.Loggers;
 using SentenceAPI.ApplicationFeatures.Loggers.Configuration;
 using SentenceAPI.ApplicationFeatures.Loggers.Interfaces;
 using SentenceAPI.ApplicationFeatures.Loggers.Models;
@@ -39,7 +39,8 @@ namespace SentenceAPI.ApplicationFeatures.Middlewares
         {   
             await nextMiddlewareDel.Invoke(httpContext).ConfigureAwait(false);
             
-            responseLogger.Log(new ResponseLog(httpContext.Response), LogLevel.Information);
+            DefaultLogger.Log(new ResponseLog(httpContext.Response), LogLevel.Information);
+            //responseLogger.Log(new ResponseLog(httpContext.Response), LogLevel.Information);
         }
     }
 }

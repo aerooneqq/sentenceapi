@@ -5,7 +5,9 @@ using SentenceAPI.ApplicationFeatures.Loggers.Models;
 using SentenceAPI.ApplicationFeatures.Loggers.Interfaces;
 using SentenceAPI.ApplicationFeatures.Loggers.Configuration;
 using System;
+
 using Newtonsoft.Json;
+using System.Threading;
 
 namespace SentenceAPI.ApplicationFeatures.Loggers
 {
@@ -13,7 +15,7 @@ namespace SentenceAPI.ApplicationFeatures.Loggers
     {
         private static string logConfigurationFilePath = Path.Combine(Startup.CurrDirectory, "log", 
             "app_log", "log_conf.conf");
-        private static InnerLogger innerLogger = new InnerLogger(logConfigurationFilePath, "app_log", 3);
+        private volatile static InnerLogger innerLogger = new InnerLogger(logConfigurationFilePath, "app_log", 4);
 
         #region Properties
         /// <summary>

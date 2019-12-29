@@ -26,7 +26,7 @@ namespace SentenceAPI.ApplicationFeatures.Loggers
         #region Static fields
         private static string logConfigurationFilePath = Path.Combine(Startup.CurrDirectory, "log", 
             "email_log", "log_conf.conf");
-        private static InnerLogger innerLogger = new InnerLogger(logConfigurationFilePath, "email_log", 3);
+        private static InnerLogger innerLogger = new InnerLogger(logConfigurationFilePath, "email_log", 5);
         #endregion
 
         #region Properties

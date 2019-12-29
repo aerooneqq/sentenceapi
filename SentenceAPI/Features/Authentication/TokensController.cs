@@ -26,6 +26,8 @@ using SharedLibrary.ActionResults;
 using SentenceAPI.ApplicationFeatures.DefferedExecution;
 using SentenceAPI.Features.UserActivity.Interfaces;
 using SentenceAPI.ApplicationFeatures.Loggers.Configuration;
+using System.Threading;
+using SentenceAPI.ApplicationFeatures.Loggers;
 
 namespace SentenceAPI.Features.Authentication
 {
@@ -66,6 +68,7 @@ namespace SentenceAPI.Features.Authentication
         {
             try
             {
+                throw new Exception();
                 if (email is null || password is null) 
                 { 
                     return new BadSendedRequest<string>("Email and password must be defined");
@@ -100,7 +103,8 @@ namespace SentenceAPI.Features.Authentication
             }
             catch (Exception ex)
             {
-                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
+                //exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
+                DefaultLogger.Log(new ApplicationError(ex), LogLevel.Error);
                 return new InternalServerError();
             }
         }

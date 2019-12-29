@@ -11,21 +11,42 @@ using System.Threading;
 
 namespace SentenceAPI.ApplicationFeatures.Loggers
 {
-    public class LogTask
+    public class LogThread
     {
         private volatile string logFilePath;
         private volatile LoggerConfiguration loggerConfiguration;
         private volatile ConcurrentQueue<Log> logQueue;
+        private readonly Thread logThread; 
+        private readonly FileStream logFileStream;
+        private readonly StreamWriter logStreamWriter;
+    
 
-        public LogTask(string logFilePath, LoggerConfiguration loggerConfiguration, 
-                       ConcurrentQueue<Log> logQueue)
+        public LogThread(string logFilePath, LoggerConfiguration loggerConfiguration,
+                         ConcurrentQueue<Log> logQueue)
         {
             this.logFilePath = logFilePath;
             this.loggerConfiguration = loggerConfiguration;
             this.logQueue = logQueue;
+            
+            logFileStream = new FileStream(logFilePath, FileMode.Append, FileAccess.Write);
+            logStreamWriter = new StreamWriter(logFileStream);
 
-            Thread thread = new Thread(() => Log());
-            thread.Start();
+            logThread = new Thread(() => Log());
+            logThread.Priority = ThreadPriority.Normal;
+            
+            logThread.Start();
+        }
+
+        ~LogThread()
+        {
+            logStreamWriter.Dispose();
+            logFileStream.Dispose();
+        }
+
+
+        public void QueueLog(Log log)
+        {
+            logQueue.Enqueue(log);
         }
 
         private void Log()
@@ -34,8 +55,6 @@ namespace SentenceAPI.ApplicationFeatures.Loggers
 
             while (true)
             {
-                System.Console.WriteLine($"Thread {Thread.CurrentThread.ManagedThreadId}");
-
                 if (!logQueue.IsEmpty)
                 {
                     bool dequeResult = logQueue.TryDequeue(out log);
@@ -45,8 +64,10 @@ namespace SentenceAPI.ApplicationFeatures.Loggers
                         LogLogObject(log);
                     }
                 }
-
-                Thread.Sleep(100);
+                else
+                {
+                    Thread.Yield();
+                }
             } 
         }
 
@@ -56,13 +77,7 @@ namespace SentenceAPI.ApplicationFeatures.Loggers
 
             if (supportedLogLevels.Contains(log.LogLevel))
             {
-                using (FileStream fs = new FileStream(logFilePath, FileMode.Append, FileAccess.Write))
-                {
-                    using (StreamWriter sw = new StreamWriter(fs))
-                    {
-                        sw.WriteLine(CreateLogString(log));
-                    }
-                }
+                logStreamWriter.WriteLine(CreateLogString(log));
             }
         }
 

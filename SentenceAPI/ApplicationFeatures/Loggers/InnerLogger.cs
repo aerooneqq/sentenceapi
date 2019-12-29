@@ -11,8 +11,10 @@ namespace SentenceAPI.ApplicationFeatures.Loggers
 {
     public class InnerLogger
     {
+        private volatile IList<LogThread> logThreads;
+        private volatile int nextLogTaskIndex;
         private volatile ConcurrentQueue<Log> logQueue;
-        private IList<LogTask> logTasks;
+
 
         private string logConfigurationPath;
         public string LogConfigurationPath 
@@ -51,8 +53,8 @@ namespace SentenceAPI.ApplicationFeatures.Loggers
             FileCount = fileCount;
             LogConfigurationPath = logConfigurationPath;
             LoggerConfiguration = new LoggerConfiguration(LogConfigurationPath);
+            logThreads = new List<LogThread>();
             logQueue = new ConcurrentQueue<Log>();
-            logTasks = new List<LogTask>();
 
             string logDirectory = Path.GetDirectoryName(logConfigurationPath);
             for (int i = 0; i < fileCount; ++i)
@@ -69,14 +71,18 @@ namespace SentenceAPI.ApplicationFeatures.Loggers
             {
                 string logFilePath = Path.Combine(logDirectory, $"{logFileName}_{i}.log");
 
-                logTasks.Add(new LogTask(logFilePath, new LoggerConfiguration(LoggerConfiguration),
-                    logQueue));
+                logThreads.Add(new LogThread(logFilePath, new LoggerConfiguration(LoggerConfiguration), logQueue));
             }
         }
 
         public void QueueLog(Log log)
         {
             logQueue.Enqueue(log);
+            // lock (this)
+            // {
+            //     logThreads[nextLogTaskIndex].QueueLog(log);
+            //     nextLogTaskIndex = (nextLogTaskIndex + 1) % logThreads.Count;
+            // }
         }
     }
 }

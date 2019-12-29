@@ -14,7 +14,7 @@ namespace SentenceAPI.ApplicationFeatures.Loggers
     {
         private static string logConfigurationFilePath = Path.Combine(Startup.CurrDirectory, "log", 
             "response_log", "log_conf.conf");
-        private static InnerLogger innerLogger = new InnerLogger(logConfigurationFilePath, "response_log", 2);
+        private volatile static InnerLogger innerLogger = new InnerLogger(logConfigurationFilePath, "response_log", 4);
 
 
         /// <summary>

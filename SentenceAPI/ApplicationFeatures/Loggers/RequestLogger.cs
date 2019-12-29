@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.IO;
 
 using Newtonsoft.Json;
@@ -14,7 +15,7 @@ namespace SentenceAPI.ApplicationFeatures.Loggers
     {
         private static string logConfigurationFilePath = Path.Combine(Startup.CurrDirectory, "log", 
             "request_log", "log_conf.conf");
-        private static InnerLogger innerLogger = new InnerLogger(logConfigurationFilePath, "request_log", 2);
+        private volatile static InnerLogger innerLogger = new InnerLogger(logConfigurationFilePath, "request_log", 4);
             
 
         /// <summary>
@@ -31,6 +32,7 @@ namespace SentenceAPI.ApplicationFeatures.Loggers
                 ClassName = string.Empty,
             };
         }
+
 
         public void Log(RequestLog logObject, LogLevel logLevel)
         {

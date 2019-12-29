@@ -8,7 +8,7 @@ using SharedLibrary.FactoriesManager;
 using SentenceAPI.ApplicationFeatures.Loggers.Interfaces;
 using SentenceAPI.ApplicationFeatures.Loggers.Models;
 using SentenceAPI.ApplicationFeatures.Loggers.Configuration;
-
+using SentenceAPI.ApplicationFeatures.Loggers;
 
 namespace SentenceAPI.ApplicationFeatures.Middlewares
 {
@@ -37,7 +37,8 @@ namespace SentenceAPI.ApplicationFeatures.Middlewares
         /// </summary>
         public async Task InvokeAsync(HttpContext httpContext)
         {
-            requestLogger.Log(new RequestLog(httpContext.Request), LogLevel.Information);
+            //requestLogger.Log(new RequestLog(httpContext.Request), LogLevel.Information);
+            DefaultLogger.Log(new RequestLog(httpContext.Request), LogLevel.Error);
 
             await nextMiddlewareDel.Invoke(httpContext).ConfigureAwait(false);
         }
