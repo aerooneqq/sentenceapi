@@ -21,19 +21,16 @@ namespace SentenceAPI.ApplicationFeatures.Loggers
         private readonly StreamWriter logStreamWriter;
     
 
-        public LogThread(string logFilePath, LoggerConfiguration loggerConfiguration,
-                         ConcurrentQueue<Log> logQueue)
+        public LogThread(string logFilePath, LoggerConfiguration loggerConfiguration)
         {
             this.logFilePath = logFilePath;
             this.loggerConfiguration = loggerConfiguration;
-            this.logQueue = logQueue;
+            this.logQueue = new ConcurrentQueue<Log>();
             
             logFileStream = new FileStream(logFilePath, FileMode.Append, FileAccess.Write);
             logStreamWriter = new StreamWriter(logFileStream);
 
             logThread = new Thread(() => Log());
-            logThread.Priority = ThreadPriority.Normal;
-            
             logThread.Start();
         }
 
@@ -55,7 +52,7 @@ namespace SentenceAPI.ApplicationFeatures.Loggers
 
             while (true)
             {
-                if (!logQueue.IsEmpty)
+                if (logQueue.Count != 0)
                 {
                     bool dequeResult = logQueue.TryDequeue(out log);
 
@@ -63,10 +60,6 @@ namespace SentenceAPI.ApplicationFeatures.Loggers
                     {
                         LogLogObject(log);
                     }
-                }
-                else
-                {
-                    Thread.Yield();
                 }
             } 
         }

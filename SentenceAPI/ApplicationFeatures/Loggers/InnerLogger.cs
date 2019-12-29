@@ -71,7 +71,7 @@ namespace SentenceAPI.ApplicationFeatures.Loggers
             {
                 string logFilePath = Path.Combine(logDirectory, $"{logFileName}_{i}.log");
 
-                logThreads.Add(new LogThread(logFilePath, new LoggerConfiguration(LoggerConfiguration), logQueue));
+               // logThreads.Add(new LogThread(logFilePath, new LoggerConfiguration(LoggerConfiguration), logQueue));
             }
         }
 

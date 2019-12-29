@@ -15,7 +15,8 @@ namespace SentenceAPI.ApplicationFeatures.Loggers
     {
         private static string logConfigurationFilePath = Path.Combine(Startup.CurrDirectory, "log", 
             "app_log", "log_conf.conf");
-        private volatile static InnerLogger innerLogger = new InnerLogger(logConfigurationFilePath, "app_log", 4);
+        //private volatile static InnerLogger innerLogger = new InnerLogger(logConfigurationFilePath, "app_log", 4);
+        private LogThread logThread;
 
         #region Properties
         /// <summary>
@@ -25,8 +26,11 @@ namespace SentenceAPI.ApplicationFeatures.Loggers
         #endregion
 
         #region Constructors
-        public ExceptionLogger() 
+        public ExceptionLogger(int loggerID) 
         {
+            string logFilePath = Path.Combine(Path.GetDirectoryName(logConfigurationFilePath), $"app_log_{loggerID}.log");
+            logThread = new LogThread(logFilePath, new LoggerConfiguration(logConfigurationFilePath));
+
             LogConfiguration = new LogConfiguration(typeof(object))
             {
                 ClassName = string.Empty, 
@@ -49,7 +53,7 @@ namespace SentenceAPI.ApplicationFeatures.Loggers
                 XMLData = null
             };
 
-            innerLogger.QueueLog(log);
+            logThread.QueueLog(log);
         }
         #endregion
     }

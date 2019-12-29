@@ -25,7 +25,8 @@ namespace SentenceAPI.ApplicationFeatures.DefferedExecution
         public static void Initialize()
         {
             tasks = new Queue<Action>();
-            exceptionLogger = new ExceptionLogger();
+            #warning FIX THIS AFTER LOGGER TESTS
+            exceptionLogger = null;
         }
 
         /// <summary>

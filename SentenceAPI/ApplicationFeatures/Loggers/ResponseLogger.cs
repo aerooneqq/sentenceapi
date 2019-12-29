@@ -14,8 +14,8 @@ namespace SentenceAPI.ApplicationFeatures.Loggers
     {
         private static string logConfigurationFilePath = Path.Combine(Startup.CurrDirectory, "log", 
             "response_log", "log_conf.conf");
-        private volatile static InnerLogger innerLogger = new InnerLogger(logConfigurationFilePath, "response_log", 4);
-
+        //private volatile static InnerLogger innerLogger = new InnerLogger(logConfigurationFilePath, "response_log", 4);
+        private LogThread logThread;
 
         /// <summary>
         /// This property must be initialized befote each logging
@@ -23,8 +23,11 @@ namespace SentenceAPI.ApplicationFeatures.Loggers
         public LogConfiguration LogConfiguration { get; set; }
 
 
-        public ResponseLogger()
+        public ResponseLogger(int loggerID)
         {
+            string logFilePath = Path.Combine(Path.GetDirectoryName(logConfigurationFilePath), $"response_log_{loggerID}.log");
+            logThread = new LogThread(logFilePath, new LoggerConfiguration(logConfigurationFilePath));
+
             LogConfiguration = new LogConfiguration(typeof(object))
             {
                 ComponentType = ComponentType.Undefined,
@@ -46,7 +49,7 @@ namespace SentenceAPI.ApplicationFeatures.Loggers
                 XMLData = null
             };
 
-            innerLogger.QueueLog(log);
+            logThread.QueueLog(log);
         }
     }
 }
