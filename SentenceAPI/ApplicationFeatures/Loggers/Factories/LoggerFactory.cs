@@ -1,17 +1,24 @@
-﻿using SentenceAPI.ApplicationFeatures.Loggers.Interfaces;
-using SentenceAPI.ApplicationFeatures.Loggers;
-using SentenceAPI.ApplicationFeatures.Loggers.Models;
-
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+
+using SharedLibrary.Loggers.Interfaces;
+using SharedLibrary.Loggers;
+using SharedLibrary.Loggers.Models;
+using System.IO;
 
 namespace SentenceAPI.ApplicationFeatures.Loggers.Factories
 {
     public class LoggerFactory : ILoggerFactory
     {
         private static Random Random { get; } = new Random();
+
+        private IDictionary<Type, string> LoggersPaths = new Dictionary<Type, string>()
+        {
+            [typeof(ExceptionLogger)] = Path.Combine(Startup.CurrDirectory, "log", "app_log", "log_conf.conf"),
+            [typeof(RequestLog)] = Path.Combine(Startup.CurrDirectory, "log", "request_log", "log_conf.conf"),
+            [typeof(ResponseLogger)] = Path.Combine(Startup.CurrDirectory, "log", "response_log", "log_conf.conf"),
+            [typeof(EmailLogger)] = Path.Combine(Startup.CurrDirectory, "log", "email_log", "log_conf.conf"),
+        };
 
         private IList<ExceptionLogger> exceptionLoggers;
         private IList<RequestLogger> requestLoggers;
@@ -27,10 +34,10 @@ namespace SentenceAPI.ApplicationFeatures.Loggers.Factories
 
             for (int i = 0; i < 5; ++i)
             {
-                exceptionLoggers.Add(new ExceptionLogger(i));
-                responseLoggers.Add(new ResponseLogger(i));
-                requestLoggers.Add(new RequestLogger(i));
-                emailLoggers.Add(new EmailLogger(i));
+                exceptionLoggers.Add(new ExceptionLogger(LoggersPaths[typeof(ExceptionLogger)], i));
+                responseLoggers.Add(new ResponseLogger(LoggersPaths[typeof(ResponseLogger)], i));
+                requestLoggers.Add(new RequestLogger(LoggersPaths[typeof(RequestLogger)], i));
+                emailLoggers.Add(new EmailLogger(LoggersPaths[typeof(EmailLogger)], i));
             }
         }
 

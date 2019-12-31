@@ -10,15 +10,15 @@ using SentenceAPI.Features.Users.Models;
 using SentenceAPI.Features.Authentication.Interfaces;
 using SentenceAPI.Features.Authentication.Models;
 
-using SentenceAPI.ApplicationFeatures.Loggers.Interfaces;
-using SentenceAPI.ApplicationFeatures.Loggers.Models;
-
 using DataAccessLayer.Exceptions;
 using DataAccessLayer.Hashes;
 using SharedLibrary.ActionResults;
 using SentenceAPI.ApplicationFeatures.DefferedExecution;
 using SentenceAPI.Features.UserActivity.Interfaces;
-using SentenceAPI.ApplicationFeatures.Loggers.Configuration;
+
+using SharedLibrary.Loggers.Models;
+using SharedLibrary.Loggers.Interfaces;
+using SharedLibrary.Loggers.Configuration;
 
 namespace SentenceAPI.Features.Authentication
 {

@@ -1,7 +1,7 @@
 ﻿using DataAccessLayer.Exceptions;
 
-using SentenceAPI.ApplicationFeatures.Loggers.Interfaces;
-using SentenceAPI.ApplicationFeatures.Loggers.Models;
+using SharedLibrary.Loggers.Interfaces;
+using SharedLibrary.Loggers.Models;
 using SentenceAPI.Events.Interfaces;
 using SentenceAPI.Features.Codes.Interfaces;
 using SentenceAPI.Features.Codes.Models;
@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 using SharedLibrary.FactoriesManager.Interfaces;
 using SharedLibrary.FactoriesManager;
-using SentenceAPI.ApplicationFeatures.Loggers.Configuration;
+using SharedLibrary.Loggers.Configuration;
 
 
 namespace SentenceAPI.Features.Users.Events

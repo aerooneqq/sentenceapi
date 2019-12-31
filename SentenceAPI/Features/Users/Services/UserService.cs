@@ -10,8 +10,8 @@ using MongoDB.Bson.Serialization.Attributes;
 
 using SentenceAPI.Features.Users.Interfaces;
 using SentenceAPI.Features.Users.Models;
-using SentenceAPI.ApplicationFeatures.Loggers.Interfaces;
-using SentenceAPI.ApplicationFeatures.Loggers.Models;
+using SharedLibrary.Loggers.Interfaces;
+using SharedLibrary.Loggers.Models;
 using SentenceAPI.Extensions;
 
 using DataAccessLayer.CommonInterfaces;
@@ -26,7 +26,7 @@ using DataAccessLayer.Filters.Interfaces;
 
 using SharedLibrary.FactoriesManager.Interfaces; 
 using SharedLibrary.FactoriesManager;
-using SentenceAPI.ApplicationFeatures.Loggers.Configuration;
+using SharedLibrary.Loggers.Configuration;
 
 namespace SentenceAPI.Features.Users.Services
 {

@@ -1,7 +1,7 @@
 using System;
-using SentenceAPI.ApplicationFeatures.Loggers.Configuration;
+using SharedLibrary.Loggers.Configuration;
 
-namespace SentenceAPI.ApplicationFeatures.Loggers.Models
+namespace SharedLibrary.Loggers.Models
 {
     public class Log
     {

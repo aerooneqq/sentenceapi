@@ -3,13 +3,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using System.Runtime.Serialization.Formatters.Binary;
-
-using SentenceAPI.ApplicationFeatures.Loggers.Configuration;
-using SentenceAPI.ApplicationFeatures.Loggers.Interfaces;
-using SentenceAPI.ApplicationFeatures.Loggers.Models;
 using System.Threading;
+using SharedLibrary.Loggers.Configuration;
+using SharedLibrary.Loggers.Models;
 
-namespace SentenceAPI.ApplicationFeatures.Loggers
+namespace SharedLibrary.Loggers
 {
     public class LogThread
     {

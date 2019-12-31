@@ -7,12 +7,12 @@ using DataAccessLayer.Filters;
 using DataAccessLayer.Filters.Base;
 using DataAccessLayer.Filters.Interfaces;
 
-using SentenceAPI.ApplicationFeatures.Loggers.Interfaces;
-using SentenceAPI.ApplicationFeatures.Loggers.Models;
+using SharedLibrary.Loggers.Interfaces;
+using SharedLibrary.Loggers.Models;
 using SentenceAPI.Extensions;
 using SentenceAPI.Features.Workplace.DocumentsStorage.Interfaces;
 using SentenceAPI.Features.Workplace.DocumentsStorage.Models;
-using SentenceAPI.ApplicationFeatures.Loggers.Configuration;
+using SharedLibrary.Loggers.Configuration;
 
 using System;
 using System.Collections.Generic;

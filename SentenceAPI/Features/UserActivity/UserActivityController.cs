@@ -2,8 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 
 using SentenceAPI.Features.Authentication.Interfaces;
-using SentenceAPI.ApplicationFeatures.Loggers.Interfaces;
-using SentenceAPI.ApplicationFeatures.Loggers.Models;
+using SharedLibrary.Loggers.Interfaces;
+using SharedLibrary.Loggers.Models;
 using SentenceAPI.Features.UserActivity.Interfaces;
 
 using SharedLibrary.FactoriesManager.Interfaces;
@@ -13,7 +13,7 @@ using System;
 using System.Threading.Tasks;
 using DataAccessLayer.Exceptions;
 using SharedLibrary.ActionResults;
-using SentenceAPI.ApplicationFeatures.Loggers.Configuration;
+using SharedLibrary.Loggers.Configuration;
 
 namespace SentenceAPI.Features.UserActivity
 {

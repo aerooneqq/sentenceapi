@@ -5,8 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 
 using SharedLibrary.ActionResults;
 using SentenceAPI.ApplicationFeatures.Date.Interfaces;
-using SentenceAPI.ApplicationFeatures.Loggers.Interfaces;
-using SentenceAPI.ApplicationFeatures.Loggers.Models;
+using SharedLibrary.Loggers.Interfaces;
+using SharedLibrary.Loggers.Models;
 using SentenceAPI.ApplicationFeatures.Requests.Interfaces;
 using SentenceAPI.Features.Authentication.Interfaces;
 using SentenceAPI.Features.Workplace.DocumentsStorage.Interfaces;
@@ -20,7 +20,7 @@ using System.Threading.Tasks;
 
 using SharedLibrary.FactoriesManager.Interfaces;
 using SharedLibrary.FactoriesManager;
-using SentenceAPI.ApplicationFeatures.Loggers.Configuration;
+using SharedLibrary.Loggers.Configuration;
 
 namespace SentenceAPI.Features.Workplace.DocumentsStorage
 {

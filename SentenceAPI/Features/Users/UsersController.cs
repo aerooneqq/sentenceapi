@@ -9,8 +9,8 @@ using Microsoft.Extensions.Caching.Memory;
 
 using SentenceAPI.Features.Users.Interfaces;
 using SentenceAPI.Features.Users.Models;
-using SentenceAPI.ApplicationFeatures.Loggers.Interfaces;
-using SentenceAPI.ApplicationFeatures.Loggers.Models;
+using SharedLibrary.Loggers.Interfaces;
+using SharedLibrary.Loggers.Models;
 using SentenceAPI.Features.Email.Interfaces;
 using SentenceAPI.Features.Links.Interfaces;
 using SentenceAPI.Validators;
@@ -21,7 +21,7 @@ using SentenceAPI.ApplicationFeatures.Requests.Interfaces;
 using SentenceAPI.Features.Authentication.Interfaces;
 using SentenceAPI.Events;
 using SentenceAPI.Features.Users.Events;
-using SentenceAPI.ApplicationFeatures.Loggers.Configuration;
+using SharedLibrary.Loggers.Configuration;
 
 using SharedLibrary.ActionResults;
 using SharedLibrary.FactoriesManager.Interfaces;

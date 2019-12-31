@@ -44,7 +44,7 @@ namespace DocumentsAPI.Models.DocumentElements
         /// </summary>
         [BsonElement("documentElementRaw"), JsonIgnore]
         public byte[] DocumentElementRaw { get; set; }
-
+        
         /// <summary>
         /// Returns the string JSON representation of the document element, which is obtained from the DocumentElementRaw.
         /// </summary>

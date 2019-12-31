@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Threading;
 
 using SentenceAPI.ApplicationFeatures.Loggers;
-using SentenceAPI.ApplicationFeatures.Loggers.Interfaces;
-using SentenceAPI.ApplicationFeatures.Loggers.Models;
-using SentenceAPI.ApplicationFeatures.Loggers.Configuration;
+using SharedLibrary.Loggers.Interfaces;
+using SharedLibrary.Loggers.Models;
+using SharedLibrary.Loggers.Configuration;
 
 
 using System.Collections.Concurrent;

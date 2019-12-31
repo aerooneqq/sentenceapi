@@ -4,7 +4,7 @@ using System.Text;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 
-namespace SentenceAPI.ApplicationFeatures.Loggers.Models
+namespace SharedLibrary.Loggers.Models
 {
     public class ResponseLog
     {

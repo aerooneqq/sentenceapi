@@ -1,4 +1,4 @@
-namespace SentenceAPI.ApplicationFeatures.Loggers.Configuration
+namespace SharedLibrary.Loggers.Configuration
 {
     public enum LogLevel : byte
     {

@@ -1,10 +1,10 @@
-﻿using SentenceAPI.ApplicationFeatures.Loggers.Configuration;
-using SentenceAPI.ApplicationFeatures.Loggers.Models;
+﻿using SharedLibrary.Loggers.Configuration;
+using SharedLibrary.Loggers.Models;
 
 using SharedLibrary.KernelInterfaces;
 
 
-namespace SentenceAPI.ApplicationFeatures.Loggers.Interfaces
+namespace SharedLibrary.Loggers.Interfaces
 {
     public interface ILogger<LogType> : IService
     {

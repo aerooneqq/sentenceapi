@@ -1,8 +1,8 @@
 ﻿using MongoDB.Driver;
 
 using SentenceAPI.Features.Authentication.Interfaces;
-using SentenceAPI.ApplicationFeatures.Loggers.Interfaces;
-using SentenceAPI.ApplicationFeatures.Loggers.Models;
+using SharedLibrary.Loggers.Interfaces;
+using SharedLibrary.Loggers.Models;
 using SentenceAPI.Features.UserFeed.Interfaces;
 using SentenceAPI.Features.UserFeed.Models;
 using SentenceAPI.Features.UserFriends.Interfaces;
@@ -25,7 +25,7 @@ using DataAccessLayer.Exceptions;
 using SharedLibrary.FactoriesManager.Interfaces;
 using SharedLibrary.FactoriesManager;
 using MongoDB.Bson;
-using SentenceAPI.ApplicationFeatures.Loggers.Configuration;
+using SharedLibrary.Loggers.Configuration;
 
 namespace SentenceAPI.Features.UserFeed.Services
 {

@@ -14,6 +14,7 @@ namespace DocumentsAPI.Models.Document
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
         public string Description { get; set; }
+        public List<long> FileIDs { get; set; }
 
         public DocumentType DocumentType { get; set; }
     }

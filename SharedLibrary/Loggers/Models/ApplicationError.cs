@@ -7,7 +7,7 @@ using MongoDB.Bson.Serialization.Attributes;
 using Newtonsoft.Json;
 using DataAccessLayer.KernelModels;
 
-namespace SentenceAPI.ApplicationFeatures.Loggers.Models
+namespace SharedLibrary.Loggers.Models
 {
     public class ApplicationError : UniqueEntity
     {

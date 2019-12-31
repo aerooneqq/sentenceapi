@@ -5,8 +5,8 @@ using DataAccessLayer.DatabasesManager;
 using DataAccessLayer.Exceptions;
 using DataAccessLayer.Filters;
 using DataAccessLayer.Filters.Interfaces;
-using SentenceAPI.ApplicationFeatures.Loggers.Interfaces;
-using SentenceAPI.ApplicationFeatures.Loggers.Models;
+using SharedLibrary.Loggers.Interfaces;
+using SharedLibrary.Loggers.Models;
 using SentenceAPI.Extensions;
 using SentenceAPI.Features.Authentication.Interfaces;
 using SentenceAPI.Features.Workplace.DocumentsDeskState.Interfaces;
@@ -19,7 +19,7 @@ using System.Threading.Tasks;
 
 using SharedLibrary.FactoriesManager.Interfaces;
 using SharedLibrary.FactoriesManager;
-using SentenceAPI.ApplicationFeatures.Loggers.Configuration;
+using SharedLibrary.Loggers.Configuration;
 
 namespace SentenceAPI.Features.Workplace.DocumentsDeskState.Services
 {

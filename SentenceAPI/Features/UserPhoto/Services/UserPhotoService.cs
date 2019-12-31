@@ -6,8 +6,8 @@ using DataAccessLayer.Exceptions;
 using DataAccessLayer.Filters;
 using DataAccessLayer.MongoDB.Interfaces;
 
-using SentenceAPI.ApplicationFeatures.Loggers.Interfaces;
-using SentenceAPI.ApplicationFeatures.Loggers.Models;
+using SharedLibrary.Loggers.Interfaces;
+using SharedLibrary.Loggers.Models;
 using SentenceAPI.Extensions;
 using SentenceAPI.Features.Authentication.Interfaces;
 using SentenceAPI.Features.UserPhoto.Interfaces;
@@ -21,7 +21,7 @@ using SharedLibrary.FactoriesManager;
 using SharedLibrary.FactoriesManager.Interfaces;
 
 using MongoDB.Bson;
-using SentenceAPI.ApplicationFeatures.Loggers.Configuration;
+using SharedLibrary.Loggers.Configuration;
 
 
 namespace SentenceAPI.Features.UserPhoto.Services

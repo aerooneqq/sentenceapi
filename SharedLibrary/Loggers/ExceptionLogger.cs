@@ -1,21 +1,17 @@
 ﻿using System.Threading.Tasks;
 using System.IO;
-
-using SentenceAPI.ApplicationFeatures.Loggers.Models;
-using SentenceAPI.ApplicationFeatures.Loggers.Interfaces;
-using SentenceAPI.ApplicationFeatures.Loggers.Configuration;
 using System;
 
 using Newtonsoft.Json;
 using System.Threading;
+using SharedLibrary.Loggers.Interfaces;
+using SharedLibrary.Loggers.Models;
+using SharedLibrary.Loggers.Configuration;
 
-namespace SentenceAPI.ApplicationFeatures.Loggers
+namespace SharedLibrary.Loggers
 {
     public class ExceptionLogger : ILogger<ApplicationError>
     {
-        private static string logConfigurationFilePath = Path.Combine(Startup.CurrDirectory, "log", 
-            "app_log", "log_conf.conf");
-        //private volatile static InnerLogger innerLogger = new InnerLogger(logConfigurationFilePath, "app_log", 4);
         private LogThread logThread;
 
         #region Properties
@@ -26,7 +22,7 @@ namespace SentenceAPI.ApplicationFeatures.Loggers
         #endregion
 
         #region Constructors
-        public ExceptionLogger(int loggerID) 
+        public ExceptionLogger(string logConfigurationFilePath, int loggerID) 
         {
             string logFilePath = Path.Combine(Path.GetDirectoryName(logConfigurationFilePath), $"app_log_{loggerID}.log");
             logThread = new LogThread(logFilePath, new LoggerConfiguration(logConfigurationFilePath));

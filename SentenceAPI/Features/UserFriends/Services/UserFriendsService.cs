@@ -5,8 +5,8 @@ using DataAccessLayer.DatabasesManager;
 using DataAccessLayer.Exceptions;
 using DataAccessLayer.Filters;
 using SentenceAPI.Features.Authentication.Interfaces;
-using SentenceAPI.ApplicationFeatures.Loggers.Interfaces;
-using SentenceAPI.ApplicationFeatures.Loggers.Models;
+using SharedLibrary.Loggers.Interfaces;
+using SharedLibrary.Loggers.Models;
 using SentenceAPI.Features.UserFriends.Interfaces;
 using SentenceAPI.Features.UserFriends.Models;
 using SentenceAPI.Features.Users.Interfaces;
@@ -19,7 +19,7 @@ using System.Threading.Tasks;
 
 using SharedLibrary.FactoriesManager.Interfaces;
 using SharedLibrary.FactoriesManager;
-using SentenceAPI.ApplicationFeatures.Loggers.Configuration;
+using SharedLibrary.Loggers.Configuration;
 
 namespace SentenceAPI.Features.UserFriends.Services
 {

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using SharedLibrary.KernelInterfaces;
 using Microsoft.AspNetCore.Mvc;
 
-namespace SentenceAPI.ApplicationFeatures.Loggers.Models
+namespace SharedLibrary.Loggers.Models
 {
     public class LogConfiguration
     {

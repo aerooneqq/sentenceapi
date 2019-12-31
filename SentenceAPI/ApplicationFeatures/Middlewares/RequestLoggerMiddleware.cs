@@ -5,10 +5,10 @@ using Microsoft.AspNetCore.Http;
 using SharedLibrary.FactoriesManager.Interfaces;
 using SharedLibrary.FactoriesManager;
 
-using SentenceAPI.ApplicationFeatures.Loggers.Interfaces;
-using SentenceAPI.ApplicationFeatures.Loggers.Models;
-using SentenceAPI.ApplicationFeatures.Loggers.Configuration;
-using SentenceAPI.ApplicationFeatures.Loggers;
+using SharedLibrary.Loggers.Interfaces;
+using SharedLibrary.Loggers.Models;
+using SharedLibrary.Loggers.Configuration;
+
 
 namespace SentenceAPI.ApplicationFeatures.Middlewares
 {

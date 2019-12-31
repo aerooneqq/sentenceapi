@@ -11,8 +11,8 @@ using SentenceAPI.Extensions;
 using SentenceAPI.Features.Authentication.Interfaces;
 using SentenceAPI.Features.Codes.Interfaces;
 using SentenceAPI.Features.Codes.Models;
-using SentenceAPI.ApplicationFeatures.Loggers.Interfaces;
-using SentenceAPI.ApplicationFeatures.Loggers.Models;
+using SharedLibrary.Loggers.Interfaces;
+using SharedLibrary.Loggers.Models;
 
 using SharedLibrary.FactoriesManager;
 using SharedLibrary.FactoriesManager.Interfaces;
@@ -20,7 +20,7 @@ using SharedLibrary.FactoriesManager.Interfaces;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using SentenceAPI.ApplicationFeatures.Loggers.Configuration;
+using SharedLibrary.Loggers.Configuration;
 
 namespace SentenceAPI.Features.Codes.Services
 {

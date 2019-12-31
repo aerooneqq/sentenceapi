@@ -1,20 +1,17 @@
 using System;
 using System.IO;
 
+using SharedLibrary.Loggers.Configuration;
+using SharedLibrary.Loggers.Interfaces;
+using SharedLibrary.Loggers.Models;
+
 using Newtonsoft.Json;
 
-using SentenceAPI.ApplicationFeatures.Loggers.Configuration;
-using SentenceAPI.ApplicationFeatures.Loggers.Interfaces;
-using SentenceAPI.ApplicationFeatures.Loggers.Models;
 
-
-namespace SentenceAPI.ApplicationFeatures.Loggers
+namespace SharedLibrary.Loggers
 {
-    public class ResponseLogger : ILogger<ResponseLog>
+    public class RequestLogger : ILogger<RequestLog>
     {
-        private static string logConfigurationFilePath = Path.Combine(Startup.CurrDirectory, "log", 
-            "response_log", "log_conf.conf");
-        //private volatile static InnerLogger innerLogger = new InnerLogger(logConfigurationFilePath, "response_log", 4);
         private LogThread logThread;
 
         /// <summary>
@@ -23,9 +20,9 @@ namespace SentenceAPI.ApplicationFeatures.Loggers
         public LogConfiguration LogConfiguration { get; set; }
 
 
-        public ResponseLogger(int loggerID)
+        public RequestLogger(string logConfigurationFilePath, int loggerID) 
         {
-            string logFilePath = Path.Combine(Path.GetDirectoryName(logConfigurationFilePath), $"response_log_{loggerID}.log");
+            string logFilePath = Path.Combine(Path.GetDirectoryName(logConfigurationFilePath), $"request_log_{loggerID}.log");
             logThread = new LogThread(logFilePath, new LoggerConfiguration(logConfigurationFilePath));
 
             LogConfiguration = new LogConfiguration(typeof(object))
@@ -36,7 +33,7 @@ namespace SentenceAPI.ApplicationFeatures.Loggers
         }
 
 
-        public void Log(ResponseLog logObject, LogLevel logLevel)
+        public void Log(RequestLog logObject, LogLevel logLevel)
         {
             Log log = new Log() 
             {

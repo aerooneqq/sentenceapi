@@ -1,4 +1,4 @@
-namespace SentenceAPI.ApplicationFeatures.Loggers.Models
+namespace SharedLibrary.Loggers.Models
 {
     public enum ComponentType : byte
     {

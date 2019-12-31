@@ -4,8 +4,8 @@ using System.Threading.Tasks;
 
 using SentenceAPI.Features.Links.Interfaces;
 using SentenceAPI.Features.Links.Models;
-using SentenceAPI.ApplicationFeatures.Loggers.Interfaces;
-using SentenceAPI.ApplicationFeatures.Loggers.Models;
+using SharedLibrary.Loggers.Interfaces;
+using SharedLibrary.Loggers.Models;
 using SentenceAPI.Features.Users.Models;
 
 using SharedLibrary.FactoriesManager;
@@ -17,7 +17,7 @@ using DataAccessLayer.Exceptions;
 using DataAccessLayer.Filters;
 using DataAccessLayer.Configuration.Interfaces;
 using DataAccessLayer.Configuration;
-using SentenceAPI.ApplicationFeatures.Loggers.Configuration;
+using SharedLibrary.Loggers.Configuration;
 
 namespace SentenceAPI.Features.Links.Services
 {

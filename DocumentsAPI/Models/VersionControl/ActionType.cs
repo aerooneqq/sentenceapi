@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace DocumentsAPI.Models.VersionControl
 {
-    public enum ActionType
+    public enum ActionType : byte
     {
         Add = 0,
         Remove,

@@ -9,8 +9,8 @@ using SharedLibrary.FactoriesManager.Interfaces;
 using SharedLibrary.FactoriesManager;
 
 using SentenceAPI.Features.Email.Interfaces;
-using SentenceAPI.ApplicationFeatures.Loggers.Models;
-using SentenceAPI.ApplicationFeatures.Loggers.Interfaces;
+using SharedLibrary.Loggers.Models;
+using SharedLibrary.Loggers.Interfaces;
 using SentenceAPI.Features.Users.Models;
 
 using DataAccessLayer.CommonInterfaces;
@@ -18,7 +18,7 @@ using DataAccessLayer.Configuration.Interfaces;
 using DataAccessLayer.DatabasesManager;
 using DataAccessLayer.Configuration;
 using DataAccessLayer.Exceptions;
-using SentenceAPI.ApplicationFeatures.Loggers.Configuration;
+using SharedLibrary.Loggers.Configuration;
 
 namespace SentenceAPI.Features.Email.Services
 {

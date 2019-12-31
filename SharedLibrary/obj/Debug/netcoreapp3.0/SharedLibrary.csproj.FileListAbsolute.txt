@@ -1,0 +1,11 @@
+/home/aero/Programming/Sentence/sentenceapi/SharedLibrary/bin/Debug/netcoreapp3.0/SharedLibrary.deps.json
+/home/aero/Programming/Sentence/sentenceapi/SharedLibrary/bin/Debug/netcoreapp3.0/SharedLibrary.dll
+/home/aero/Programming/Sentence/sentenceapi/SharedLibrary/bin/Debug/netcoreapp3.0/SharedLibrary.pdb
+/home/aero/Programming/Sentence/sentenceapi/SharedLibrary/bin/Debug/netcoreapp3.0/DataAccessLayer.dll
+/home/aero/Programming/Sentence/sentenceapi/SharedLibrary/bin/Debug/netcoreapp3.0/DataAccessLayer.pdb
+/home/aero/Programming/Sentence/sentenceapi/SharedLibrary/obj/Debug/netcoreapp3.0/SharedLibrary.csprojAssemblyReference.cache
+/home/aero/Programming/Sentence/sentenceapi/SharedLibrary/obj/Debug/netcoreapp3.0/SharedLibrary.AssemblyInfoInputs.cache
+/home/aero/Programming/Sentence/sentenceapi/SharedLibrary/obj/Debug/netcoreapp3.0/SharedLibrary.AssemblyInfo.cs
+/home/aero/Programming/Sentence/sentenceapi/SharedLibrary/obj/Debug/netcoreapp3.0/SharedLibrary.csproj.CopyComplete
+/home/aero/Programming/Sentence/sentenceapi/SharedLibrary/obj/Debug/netcoreapp3.0/SharedLibrary.dll
+/home/aero/Programming/Sentence/sentenceapi/SharedLibrary/obj/Debug/netcoreapp3.0/SharedLibrary.pdb

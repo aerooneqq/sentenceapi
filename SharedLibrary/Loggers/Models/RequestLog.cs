@@ -8,29 +8,21 @@ using MongoDB.Bson.Serialization.Attributes;
 using Newtonsoft.Json;
 
 
-namespace SentenceAPI.ApplicationFeatures.Loggers.Models
+namespace SharedLibrary.Loggers.Models
 {
     public class RequestLog
     {
-        [BsonElement("queryString"), JsonProperty("queryString")]
         public string QueryString { get; set; }
 
-        [BsonElement("body"), JsonProperty("body")]
         public string Body { get; set; }
 
-        [BsonElement("contentType"), JsonProperty("contentType")]
         public string ContentType { get; set; }
 
-        [BsonElement("contentLength"), JsonProperty("contentLength")]
         public long? ContentLength { get; set; }
 
-        [BsonElement("isHttps"), JsonProperty("isHttps")]
         public bool IsHttps { get; set; }
 
-        [BsonElement("host"), JsonProperty("host")]
         public HostObject Host { get; set; }
-
-        [BsonElement("method"), JsonProperty("method")]
         public string Method { get; set; }
 
         public RequestLog(HttpRequest request)

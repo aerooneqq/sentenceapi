@@ -8,12 +8,12 @@ using SharedLibrary.FactoriesManager;
 using SharedLibrary.FactoriesManager.Interfaces;
 
 using SentenceAPI.Features.Codes.Interfaces;
-using SentenceAPI.ApplicationFeatures.Loggers.Interfaces;
-using SentenceAPI.ApplicationFeatures.Loggers.Models;
+using SharedLibrary.Loggers.Interfaces;
+using SharedLibrary.Loggers.Models;
 using SentenceAPI.Features.Users.Interfaces;
 using SentenceAPI.Features.Users.Models;
 using SentenceAPI.ApplicationFeatures.Requests.Interfaces;
-using SentenceAPI.ApplicationFeatures.Loggers.Configuration;
+using SharedLibrary.Loggers.Configuration;
 
 using System;
 using System.Threading.Tasks;
