@@ -37,8 +37,8 @@ namespace SentenceAPI.ApplicationFeatures.Middlewares
         /// </summary>
         public async Task InvokeAsync(HttpContext httpContext)
         {
-            //requestLogger.Log(new RequestLog(httpContext.Request), LogLevel.Information);
-            DefaultLogger.Log(new RequestLog(httpContext.Request), LogLevel.Error);
+            requestLogger.Log(new RequestLog(httpContext.Request), LogLevel.Information);
+            //DefaultLogger.Log(new RequestLog(httpContext.Request), LogLevel.Error);
 
             await nextMiddlewareDel.Invoke(httpContext).ConfigureAwait(false);
         }

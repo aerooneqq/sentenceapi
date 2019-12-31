@@ -13,9 +13,9 @@ namespace SentenceAPI.ApplicationFeatures.Loggers
 {
     public class LogThread
     {
-        private volatile string logFilePath;
-        private volatile LoggerConfiguration loggerConfiguration;
-        private volatile ConcurrentQueue<Log> logQueue;
+        private string logFilePath;
+        private LoggerConfiguration loggerConfiguration;
+        private ConcurrentQueue<Log> logQueue;
         private readonly Thread logThread; 
         private readonly FileStream logFileStream;
         private readonly StreamWriter logStreamWriter;
@@ -71,6 +71,7 @@ namespace SentenceAPI.ApplicationFeatures.Loggers
             if (supportedLogLevels.Contains(log.LogLevel))
             {
                 logStreamWriter.WriteLine(CreateLogString(log));
+                logStreamWriter.Flush();
             }
         }
 

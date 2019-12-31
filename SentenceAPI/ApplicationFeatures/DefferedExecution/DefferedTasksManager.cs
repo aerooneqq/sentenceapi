@@ -7,6 +7,11 @@ using SentenceAPI.ApplicationFeatures.Loggers.Interfaces;
 using SentenceAPI.ApplicationFeatures.Loggers.Models;
 using SentenceAPI.ApplicationFeatures.Loggers.Configuration;
 
+
+using System.Collections.Concurrent;
+using SharedLibrary.FactoriesManager.Interfaces;
+using SharedLibrary.FactoriesManager;
+
 namespace SentenceAPI.ApplicationFeatures.DefferedExecution
 {
     /// <summary>
@@ -19,14 +24,19 @@ namespace SentenceAPI.ApplicationFeatures.DefferedExecution
     {
         private static readonly object locker = new object();
 
+        #region Factories
+        private static readonly IFactoriesManager factoriesManager = 
+            ManagersDictionary.Instance.GetManager(Startup.ApiName);
+        #endregion
+
         private static ILogger<ApplicationError> exceptionLogger;
-        private static Queue<Action> tasks;
+        private static ConcurrentQueue<Action> actions;
 
         public static void Initialize()
         {
-            tasks = new Queue<Action>();
-            #warning FIX THIS AFTER LOGGER TESTS
-            exceptionLogger = null;
+            actions = new ConcurrentQueue<Action>();
+            
+            factoriesManager.GetService<ILogger<ApplicationError>>().TryGetTarget(out exceptionLogger);
         }
 
         /// <summary>
@@ -42,17 +52,7 @@ namespace SentenceAPI.ApplicationFeatures.DefferedExecution
                 throw new ArgumentNullException("The task can not be null");
             }
 
-            new Thread(() =>
-            {
-                while (true)
-                {
-                    lock (locker)
-                    {
-                        tasks.Enqueue(task);
-                        break;
-                    }
-                }
-            }).Start();
+            actions.Enqueue(task);
         }
 
         /// <summary>
@@ -67,21 +67,21 @@ namespace SentenceAPI.ApplicationFeatures.DefferedExecution
                 {
                     Action action;
 
-                    lock (locker)
+                    if (actions.TryDequeue(out action))
                     {
-                        tasks.TryDequeue(out action);
+                        try
+                        {
+                            action?.Invoke();
+                        }
+                        catch (Exception ex)
+                        {
+                            exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
+                        }
                     }
-
-                    try
+                    else 
                     {
-                        action?.Invoke();
+                        Thread.Yield();
                     }
-                    catch (Exception ex)
-                    {
-                        exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
-                    }
-
-                    Thread.Sleep(100); 
                 }
             }).Start();
         }

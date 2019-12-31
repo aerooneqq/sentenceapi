@@ -26,7 +26,8 @@ namespace SentenceAPI.ApplicationFeatures.Loggers
         #region Static fields
         private static string logConfigurationFilePath = Path.Combine(Startup.CurrDirectory, "log", 
             "email_log", "log_conf.conf");
-        private static InnerLogger innerLogger = new InnerLogger(logConfigurationFilePath, "email_log", 5);
+
+        private readonly LogThread logThread;  
         #endregion
 
         #region Properties
@@ -37,8 +38,11 @@ namespace SentenceAPI.ApplicationFeatures.Loggers
         public LogConfiguration LogConfiguration { get; set; }
         #endregion
 
-        public EmailLogger()
+        public EmailLogger(int loggerID)
         {
+            string logFilePath = Path.Combine(Path.GetDirectoryName(logConfigurationFilePath), $"email_log_{loggerID}.log");
+            logThread = new LogThread(logFilePath, new LoggerConfiguration(logConfigurationFilePath));
+
             LogConfiguration = new LogConfiguration(typeof(object))
             {
                 ClassName = string.Empty, 
@@ -60,7 +64,7 @@ namespace SentenceAPI.ApplicationFeatures.Loggers
                 XMLData = null,
             }; 
 
-            innerLogger.QueueLog(log);
+            logThread.QueueLog(log);
         }
         #endregion
     }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using System.Linq;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -9,6 +10,7 @@ using DataAccessLayer.Exceptions;
 using SharedLibrary.ActionResults;
 using SharedLibrary.FactoriesManager.Interfaces;
 using SharedLibrary.FactoriesManager;
+using SharedLibrary.Extensions;
 
 using SentenceAPI.ApplicationFeatures.Loggers.Interfaces;
 using SentenceAPI.ApplicationFeatures.Loggers.Models;
@@ -51,6 +53,70 @@ namespace SentenceAPI.Features.Workplace.DocumentsDeskState
                     .ConfigureAwait(false);
 
                 return new OkJson<DocumentDeskState>(deskState);
+            }
+            catch (DatabaseException ex)
+            {
+                return new InternalServerError(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
+                return new InternalServerError();
+            }
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> PutFileToTopBar(long documentID, string documentName)
+        {
+            try
+            {
+                var token = requestService.GetToken(Request);
+                var deskState = await deskStateService.GetDeskStateAsync(token).ConfigureAwait(false);
+
+                if (deskState.DocumentTopBarInfos.Contains(d => d.DocumentID == documentID))
+                {
+                    return new NoContent();
+                }
+
+                deskState.DocumentTopBarInfos.Append(new DocumentTopBarInfo()
+                {
+                    DocumentID = documentID,
+                    DocumentName = documentName
+                });
+
+                await deskStateService.UpdateDeskStateAsync(deskState).ConfigureAwait(false);
+
+                return Ok();
+            }
+            catch (DatabaseException ex)
+            {
+                return new InternalServerError(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
+                return new InternalServerError();
+            }
+        }
+
+        [HttpDelete]
+        public async Task<IActionResult> DeleteFileFromTopBar(long documentID)
+        {
+            try
+            {
+                string token = requestService.GetToken(Request);
+                var deskState = await deskStateService.GetDeskStateAsync(token).ConfigureAwait(false);
+
+                if (!deskState.DocumentTopBarInfos.Contains(d => d.DocumentID == documentID))
+                {
+                    return new NoContent();
+                }
+
+                deskState.DocumentTopBarInfos.ToList().RemoveAll(d => d.DocumentID == documentID);
+
+                await deskStateService.UpdateDeskStateAsync(deskState).ConfigureAwait(false);
+
+                return Ok();
             }
             catch (DatabaseException ex)
             {

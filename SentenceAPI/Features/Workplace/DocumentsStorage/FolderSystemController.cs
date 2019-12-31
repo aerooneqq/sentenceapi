@@ -136,7 +136,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage
                 secondFolder.LastUpdateDate = dateService.GetCurrentDate();
                 firstFolder.LastUpdateDate = dateService.GetCurrentDate();
 
-                await folderService.Update(secondFolder);
+                await folderService.Update(secondFolder).ConfigureAwait(false);
 
                 return new Ok();
             }

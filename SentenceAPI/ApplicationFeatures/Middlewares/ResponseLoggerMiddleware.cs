@@ -39,8 +39,8 @@ namespace SentenceAPI.ApplicationFeatures.Middlewares
         {   
             await nextMiddlewareDel.Invoke(httpContext).ConfigureAwait(false);
             
-            DefaultLogger.Log(new ResponseLog(httpContext.Response), LogLevel.Information);
-            //responseLogger.Log(new ResponseLog(httpContext.Response), LogLevel.Information);
+            //DefaultLogger.Log(new ResponseLog(httpContext.Response), LogLevel.Information);
+            responseLogger.Log(new ResponseLog(httpContext.Response), LogLevel.Information);
         }
     }
 }
