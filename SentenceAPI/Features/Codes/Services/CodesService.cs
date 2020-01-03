@@ -21,6 +21,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using SharedLibrary.Loggers.Configuration;
+using DataAccessLayer.DatabasesManager.Interfaces;
 
 namespace SentenceAPI.Features.Codes.Services
 {
@@ -32,22 +33,20 @@ namespace SentenceAPI.Features.Codes.Services
         private static readonly string databaseConfigFile = "mongo_database_config.json";
         #endregion
 
+
         #region Databases
         private IDatabaseService<ActivationCode> database;
         private IConfigurationBuilder configurationBuilder;
         #endregion
+
 
         #region Services
         private ILogger<ApplicationError> exceptionLogger;
         private ITokenService tokenService;
         #endregion
 
-        #region Factories
-        private IFactoriesManager factoriesManager = 
-            ManagersDictionary.Instance.GetManager(Startup.ApiName);
-        #endregion
 
-        public CodesService()
+        public CodesService(IFactoriesManager factoriesManager, IDatabaseManager databaseManager)
         {
             DatabasesManager.Manager.MongoDBFactory.GetDatabase<ActivationCode>().TryGetTarget(out database);
 
@@ -60,6 +59,7 @@ namespace SentenceAPI.Features.Codes.Services
 
             exceptionLogger.LogConfiguration = new LogConfiguration(this.GetType());
         }
+
 
         public ActivationCode CreateActivationCode(long userID)
         {

@@ -24,18 +24,13 @@ namespace SentenceAPI.Features.Workplace.DocumentsDeskState
     [ApiController, Route("api/[controller]"), Authorize]
     public class DocumentDeskStateController : ControllerBase
     {
-        #region Factories
-        private IFactoriesManager factoriesManager = 
-            ManagersDictionary.Instance.GetManager(Startup.ApiName);
-        #endregion
-
         #region Services
         private ILogger<ApplicationError> exceptionLogger;
         private IDocumentDeskStateService deskStateService;
         private IRequestService requestService;
         #endregion
 
-        public DocumentDeskStateController()
+        public DocumentDeskStateController(IFactoriesManager factoriesManager)
         {
             factoriesManager.GetService<ILogger<ApplicationError>>().TryGetTarget(out exceptionLogger);
             factoriesManager.GetService<IDocumentDeskStateService>().TryGetTarget(out deskStateService);

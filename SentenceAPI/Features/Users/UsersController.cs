@@ -45,13 +45,9 @@ namespace SentenceAPI.Features.Users
         private readonly IMemoryCache memoryCacheService;
         private readonly ITokenService tokenService;
         #endregion
+        
 
-        #region Factories
-        private readonly IFactoriesManager factoriesManager =
-            ManagersDictionary.Instance.GetManager(Startup.ApiName);
-        #endregion
-
-        public UsersController(IMemoryCache memoryCacheService)
+        public UsersController(IMemoryCache memoryCacheService, IFactoriesManager factoriesManager)
         { 
             factoriesManager.GetService<IUserService<UserInfo>>().TryGetTarget(out userService);
             factoriesManager.GetService<ILinkService>().TryGetTarget(out linkService);

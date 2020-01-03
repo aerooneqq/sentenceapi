@@ -6,11 +6,13 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using SharedLibrary.KernelInterfaces;
+using SharedLibrary.FactoriesManager.Interfaces;
+using DataAccessLayer.DatabasesManager.Interfaces;
 
 namespace SentenceAPI.Features.UserPhoto.Interfaces
 {
     interface IUserPhotoServiceFactory : IServiceFactory
     {
-        IUserPhotoService GetService();
+        IUserPhotoService GetService(IFactoriesManager factoriesManager, IDatabaseManager databasesManager);
     }
 }

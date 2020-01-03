@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Net.Mail;
 using System.Net;
@@ -11,7 +9,6 @@ using SharedLibrary.FactoriesManager;
 using SentenceAPI.Features.Email.Interfaces;
 using SharedLibrary.Loggers.Models;
 using SharedLibrary.Loggers.Interfaces;
-using SentenceAPI.Features.Users.Models;
 
 using DataAccessLayer.CommonInterfaces;
 using DataAccessLayer.Configuration.Interfaces;
@@ -19,6 +16,7 @@ using DataAccessLayer.DatabasesManager;
 using DataAccessLayer.Configuration;
 using DataAccessLayer.Exceptions;
 using SharedLibrary.Loggers.Configuration;
+using DataAccessLayer.DatabasesManager.Interfaces;
 
 namespace SentenceAPI.Features.Email.Services
 {
@@ -49,9 +47,9 @@ namespace SentenceAPI.Features.Email.Services
             ManagersDictionary.Instance.GetManager(Startup.ApiName);
         #endregion
 
-        public EmailService()
+        public EmailService(IFactoriesManager factoriesManager, IDatabaseManager databaseManager)
         {
-            DatabasesManager.Manager.MongoDBFactory.GetDatabase<EmailLog>().TryGetTarget(out database);
+            databaseManager.MongoDBFactory.GetDatabase<EmailLog>().TryGetTarget(out database);
 
             configurationBuilder = new MongoConfigurationBuilder(database.Configuration);
             configurationBuilder.SetConfigurationFilePath(databaseConfigFile).SetAuthMechanism()

@@ -26,11 +26,8 @@ namespace SentenceAPI.Features.UserActivity
         private IUserActivityService userActivityService;
         #endregion
 
-        #region Factories
-        private IFactoriesManager factoriesManager = ManagersDictionary.Instance.GetManager(Startup.ApiName);
-        #endregion
 
-        public UserActivitiesController()
+        public UserActivitiesController(IFactoriesManager factoriesManager)
         {
             factoriesManager.GetService<IUserActivityService>().TryGetTarget(out userActivityService);
             factoriesManager.GetService<ILogger<ApplicationError>>().TryGetTarget(out exceptionLogger);
@@ -38,6 +35,7 @@ namespace SentenceAPI.Features.UserActivity
 
             exceptionLogger.LogConfiguration = new LogConfiguration(this.GetType());
         }
+
 
         [HttpGet]
         public async Task<IActionResult> GetUserActivities()

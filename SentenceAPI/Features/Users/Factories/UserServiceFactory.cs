@@ -8,14 +8,17 @@ using SentenceAPI.Features.Users.Services;
 using SentenceAPI.Features.Users.Models;
 
 using SharedLibrary.KernelInterfaces;
+using SharedLibrary.FactoriesManager.Interfaces;
+using DataAccessLayer.DatabasesManager.Interfaces;
 
 namespace SentenceAPI.Features.Users.Factories
 {
     public class UserServiceFactory : IUserServiceFactory
     {
-        public IUserService<UserInfo> GetService()
+        public IUserService<UserInfo> GetService(IFactoriesManager factoriesManager, 
+                                                 IDatabaseManager databasesManager)
         {
-            return new UserService();
+            return new UserService(factoriesManager, databasesManager);
         }
     }
 }

@@ -20,6 +20,7 @@ using System.Threading.Tasks;
 using SharedLibrary.FactoriesManager.Interfaces;
 using SharedLibrary.FactoriesManager;
 using SharedLibrary.Loggers.Configuration;
+using DataAccessLayer.DatabasesManager.Interfaces;
 
 namespace SentenceAPI.Features.UserFriends.Services
 {
@@ -29,11 +30,12 @@ namespace SentenceAPI.Features.UserFriends.Services
         private static readonly string databaseConfigFile = "mongo_database_config.json";
         #endregion
 
+
         #region Databases
         private IDatabaseService<Models.UserFriends> database;
         private IConfigurationBuilder configurationBuilder;
-        private DatabasesManager databasesManager = DatabasesManager.Manager;
         #endregion
+
 
         #region Services
         private ILogger<ApplicationError> exceptionLogger;
@@ -41,12 +43,8 @@ namespace SentenceAPI.Features.UserFriends.Services
         private ITokenService tokenService;
         #endregion
 
-        #region Factories
-        private readonly IFactoriesManager factoriesManager =
-            ManagersDictionary.Instance.GetManager(Startup.ApiName);
-        #endregion
 
-        public UserFriendsService()
+        public UserFriendsService(IFactoriesManager factoriesManager, IDatabaseManager databasesManager)
         {
             databasesManager.MongoDBFactory.GetDatabase<Models.UserFriends>().TryGetTarget(out database);
 
@@ -60,6 +58,7 @@ namespace SentenceAPI.Features.UserFriends.Services
             factoriesManager.GetService<IUserService<UserInfo>>().TryGetTarget(out userService);
             factoriesManager.GetService<ITokenService>().TryGetTarget(out tokenService);
         }
+
 
         #region IUserFriendsService implementation
         public async Task AddSubscriberAsync(string token, long subscriberID)

@@ -14,38 +14,7 @@ namespace SharedLibrary.Extensions
     ///</summary>
     public static class TypeExtensions
     {
-        private static OpCode[] LdArgsCodes { get; } = 
-            { OpCodes.Ldarg_0, OpCodes.Ldarg_1, OpCodes.Ldarg_2, OpCodes.Ldarg_3 }; 
-
-        public static T InvokeMethod<T>(this Type type, string getterMethodName)
-        {
-            MethodInfo getterMethod = type.GetMethod(getterMethodName);
-            DynamicMethod dynamicMethod = new DynamicMethod("GetValue", typeof(object),
-                new Type[] { typeof(object) }, typeof(object), true);
-            ILGenerator iLGenerator = dynamicMethod.GetILGenerator();
-
-            //load the first argument (object obj)
-            iLGenerator.Emit(OpCodes.Ldarg_0);
-            //call getter
-            iLGenerator.Emit(OpCodes.Call, getterMethod);
-
-            //box the value type
-            if (getterMethod.ReturnType.GetTypeInfo().IsValueType)
-            {
-                iLGenerator.Emit(OpCodes.Box, getterMethod.ReturnType);
-            }
-
-            //return result
-            iLGenerator.Emit(OpCodes.Ret);
-
-            PropertyGetValueDelegate getPropValueDel = 
-                dynamicMethod.CreateDelegate(typeof(PropertyGetValueDelegate)) as PropertyGetValueDelegate;
-
-            return default(T);
-        }
-
-        public static TDelegate GetMethodDelegate<TDelegate>(this Type type, string methodName)
-            where TDelegate : Delegate
+        public static MethodInvokerDelegate GetMethodDelegate(this Type type, string methodName)
         {
             MethodInfo method = type.GetMethod(methodName);
 
@@ -67,12 +36,11 @@ namespace SharedLibrary.Extensions
 
             ILGenerator iLGenerator = dynamicMethod.GetILGenerator();
 
-            iLGenerator.Emit(OpCodes.Ldarg_0);
-            iLGenerator.Emit(OpCodes.Castclass, type);
+            iLGenerator.Emit(OpCodes.Ldarg, 0);
 
             for (int i = 0; i < paramsTypes.Count; ++i)
             {
-                iLGenerator.Emit(LdArgsCodes[i + 1]);
+                iLGenerator.Emit(OpCodes.Ldarg, i + 1);
 
                 if (paramsTypes[i].IsValueType)
                 {
@@ -89,7 +57,7 @@ namespace SharedLibrary.Extensions
 
             iLGenerator.Emit(OpCodes.Ret);
 
-            return dynamicMethod.CreateDelegate(typeof(TDelegate)) as TDelegate;
+            return MethodDelegateBuilder.GetDelegate(dynamicMethod);
         }
     }
 }

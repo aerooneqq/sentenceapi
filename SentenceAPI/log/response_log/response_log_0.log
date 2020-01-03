@@ -1,0 +1,45 @@
+[2020-01-03T22:08:22.9102667Z][Information][Middleware]
+{"ContentLength":279,"StatusCode":200,"ContentType":null,"Body":null,"Headers":{"Connection":["close"],"Date":["Fri, 03 Jan 2020 22:08:21 GMT"],"Server":["Kestrel"],"Access-Control-Allow-Origin":["*"],"Content-Length":["279"]}}
+
+[2020-01-03T22:08:33.5641391Z][Information][Middleware]
+{"ContentLength":0,"StatusCode":204,"ContentType":null,"Body":null,"Headers":{"Access-Control-Allow-Headers":["authorization"],"Access-Control-Allow-Methods":["GET"],"Access-Control-Allow-Origin":["*"]}}
+
+[2020-01-03T22:08:33.5655032Z][Information][Middleware]
+{"ContentLength":0,"StatusCode":204,"ContentType":null,"Body":null,"Headers":{"Access-Control-Allow-Headers":["authorization"],"Access-Control-Allow-Methods":["GET"],"Access-Control-Allow-Origin":["*"]}}
+
+[2020-01-03T22:08:33.5728444Z][Information][Middleware]
+{"ContentLength":0,"StatusCode":204,"ContentType":null,"Body":null,"Headers":{"Access-Control-Allow-Headers":["authorization"],"Access-Control-Allow-Methods":["GET"],"Access-Control-Allow-Origin":["*"]}}
+
+[2020-01-03T22:08:33.5758258Z][Information][Middleware]
+{"ContentLength":0,"StatusCode":204,"ContentType":null,"Body":null,"Headers":{"Access-Control-Allow-Headers":["authorization"],"Access-Control-Allow-Methods":["GET"],"Access-Control-Allow-Origin":["*"]}}
+
+[2020-01-03T22:08:33.5880187Z][Information][Middleware]
+{"ContentLength":0,"StatusCode":204,"ContentType":null,"Body":null,"Headers":{"Access-Control-Allow-Headers":["authorization"],"Access-Control-Allow-Methods":["GET"],"Access-Control-Allow-Origin":["*"]}}
+
+[2020-01-03T22:08:34.0401211Z][Information][Middleware]
+{"ContentLength":65,"StatusCode":200,"ContentType":"application/json","Body":null,"Headers":{"Connection":["close"],"Date":["Fri, 03 Jan 2020 22:08:33 GMT"],"Content-Type":["application/json"],"Server":["Kestrel"],"Access-Control-Allow-Origin":["*"],"Content-Length":["65"]}}
+
+[2020-01-03T22:08:34.2750582Z][Information][Middleware]
+{"ContentLength":87427,"StatusCode":200,"ContentType":"application/json","Body":null,"Headers":{"Connection":["close"],"Date":["Fri, 03 Jan 2020 22:08:33 GMT"],"Content-Type":["application/json"],"Server":["Kestrel"],"Access-Control-Allow-Origin":["*"],"Content-Length":["87427"]}}
+
+[2020-01-03T22:08:34.4759116Z][Information][Middleware]
+{"ContentLength":26,"StatusCode":200,"ContentType":"application/json","Body":null,"Headers":{"Connection":["close"],"Date":["Fri, 03 Jan 2020 22:08:33 GMT"],"Content-Type":["application/json"],"Server":["Kestrel"],"Access-Control-Allow-Origin":["*"],"Content-Length":["26"]}}
+
+[2020-01-03T22:08:35.0147255Z][Information][Middleware]
+{"ContentLength":347790,"StatusCode":200,"ContentType":"application/json","Body":null,"Headers":{"Connection":["close"],"Date":["Fri, 03 Jan 2020 22:08:34 GMT"],"Content-Type":["application/json"],"Server":["Kestrel"],"Access-Control-Allow-Origin":["*"],"Content-Length":["347790"]}}
+
+[2020-01-03T22:08:35.3624261Z][Information][Middleware]
+{"ContentLength":349532,"StatusCode":200,"ContentType":"application/json","Body":null,"Headers":{"Connection":["close"],"Date":["Fri, 03 Jan 2020 22:08:34 GMT"],"Content-Type":["application/json"],"Server":["Kestrel"],"Access-Control-Allow-Origin":["*"],"Content-Length":["349532"]}}
+
+[2020-01-03T22:09:25.7105833Z][Information][Middleware]
+{"ContentLength":0,"StatusCode":204,"ContentType":null,"Body":null,"Headers":{"Access-Control-Allow-Headers":["authorization"],"Access-Control-Allow-Methods":["PUT"],"Access-Control-Allow-Origin":["*"]}}
+
+[2020-01-03T22:09:25.9888074Z][Information][Middleware]
+{"ContentLength":0,"StatusCode":200,"ContentType":null,"Body":null,"Headers":{"Access-Control-Allow-Origin":["*"]}}
+
+[2020-01-03T22:09:26.0343992Z][Information][Middleware]
+{"ContentLength":0,"StatusCode":204,"ContentType":null,"Body":null,"Headers":{"Access-Control-Allow-Headers":["authorization"],"Access-Control-Allow-Methods":["GET"],"Access-Control-Allow-Origin":["*"]}}
+
+[2020-01-03T22:09:27.1695032Z][Information][Middleware]
+{"ContentLength":349666,"StatusCode":200,"ContentType":"application/json","Body":null,"Headers":{"Connection":["close"],"Date":["Fri, 03 Jan 2020 22:09:26 GMT"],"Content-Type":["application/json"],"Server":["Kestrel"],"Access-Control-Allow-Origin":["*"],"Content-Length":["349666"]}}
+

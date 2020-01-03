@@ -28,22 +28,20 @@ namespace SentenceAPI.Features.Links.Services
         private static readonly string databaseConfigFile = "mongo_database_config.json";
         #endregion
 
+
         #region Daatabases
         private DatabasesManager databasesManager = DatabasesManager.Manager;
         private IDatabaseService<VerificationLink> database;
         private IConfigurationBuilder configurationBuilder;
         #endregion
 
+
         #region Service
         private ILogger<ApplicationError> exceptionLogger;
         #endregion
 
-        #region Factories
-        private IFactoriesManager factoriesManager = 
-            ManagersDictionary.Instance.GetManager(Startup.ApiName);
-        #endregion
 
-        public LinkService()
+        public LinkService(IFactoriesManager factoriesManager)
         {
             databasesManager.MongoDBFactory.GetDatabase<VerificationLink>().TryGetTarget(out database);
 
@@ -55,6 +53,7 @@ namespace SentenceAPI.Features.Links.Services
 
             exceptionLogger.LogConfiguration = new LogConfiguration(this.GetType());
         }
+        
 
         #region ILinkService implementation
         public async Task<string> CreateVerificationLinkAsync(UserInfo user)

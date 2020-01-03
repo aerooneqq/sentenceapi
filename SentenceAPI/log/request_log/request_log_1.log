@@ -1,0 +1,3 @@
+[2020-01-03T22:01:56.5964725Z][Information][Middleware]
+{"QueryString":"?email=aerooneQ@yandex.ru&password=AeroOne123","Body":null,"ContentType":null,"ContentLength":null,"IsHttps":false,"Host":{"Port":7000,"Host":"localhost"},"Method":"GET"}
+

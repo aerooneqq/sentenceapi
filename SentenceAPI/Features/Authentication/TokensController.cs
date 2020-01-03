@@ -26,10 +26,6 @@ namespace SentenceAPI.Features.Authentication
     [ApiController]
     public class TokensController : Controller
     {
-        #region Factories
-        private readonly IFactoriesManager factoriesManager = ManagersDictionary.Instance.GetManager(Startup.ApiName);
-        #endregion
-
         #region Services
         private IUserService<UserInfo> userService;
         private ITokenService tokenService;
@@ -37,8 +33,9 @@ namespace SentenceAPI.Features.Authentication
         private IUserActivityService userActivityService;
         #endregion
 
+
         #region Constructors
-        public TokensController()
+        public TokensController(IFactoriesManager factoriesManager)
         {
             factoriesManager.GetService<IUserService<UserInfo>>().TryGetTarget(out userService);
             factoriesManager.GetService<ITokenService>().TryGetTarget(out tokenService);
@@ -48,6 +45,7 @@ namespace SentenceAPI.Features.Authentication
             exceptionLogger.LogConfiguration = new LogConfiguration(this.GetType());
         }
         #endregion
+
 
         #region Controller's method
         /// <summary>

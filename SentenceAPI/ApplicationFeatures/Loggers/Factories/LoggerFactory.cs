@@ -15,7 +15,7 @@ namespace SentenceAPI.ApplicationFeatures.Loggers.Factories
         private IDictionary<Type, string> LoggersPaths = new Dictionary<Type, string>()
         {
             [typeof(ExceptionLogger)] = Path.Combine(Startup.CurrDirectory, "log", "app_log", "log_conf.conf"),
-            [typeof(RequestLog)] = Path.Combine(Startup.CurrDirectory, "log", "request_log", "log_conf.conf"),
+            [typeof(RequestLogger)] = Path.Combine(Startup.CurrDirectory, "log", "request_log", "log_conf.conf"),
             [typeof(ResponseLogger)] = Path.Combine(Startup.CurrDirectory, "log", "response_log", "log_conf.conf"),
             [typeof(EmailLogger)] = Path.Combine(Startup.CurrDirectory, "log", "email_log", "log_conf.conf"),
         };

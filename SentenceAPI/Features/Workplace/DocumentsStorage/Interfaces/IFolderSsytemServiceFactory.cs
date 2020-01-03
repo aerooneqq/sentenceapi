@@ -1,5 +1,6 @@
-﻿using SentenceAPI.Features.Workplace.DocumentsStorage.Services;
-
+﻿using DataAccessLayer.DatabasesManager.Interfaces;
+using SentenceAPI.Features.Workplace.DocumentsStorage.Services;
+using SharedLibrary.FactoriesManager.Interfaces;
 using SharedLibrary.KernelInterfaces;
 
 using System;
@@ -11,8 +12,8 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage.Interfaces
 {
     interface IFolderSystemServiceFactory : IServiceFactory
     {
-        IFolderService GetFolderService();
+        IFolderService GetFolderService(IFactoriesManager factoriesManager, IDatabaseManager databasesManager);
 
-        IFileService GetFileSystem();
+        IFileService GetFileSystem(IFactoriesManager factoriesManager, IDatabaseManager databasesManager);
     }
 }

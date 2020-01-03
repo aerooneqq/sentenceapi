@@ -31,12 +31,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage
         private readonly IFileService fileService;
         #endregion
 
-        #region Factories
-        private readonly IFactoriesManager factoriesManager = 
-            ManagersDictionary.Instance.GetManager(Startup.ApiName);
-        #endregion
-
-        public DocumentFilesController()
+        public DocumentFilesController(IFactoriesManager factoriesManager)
         {
             factoriesManager.GetService<ITokenService>().TryGetTarget(out tokenService);
             factoriesManager.GetService<IRequestService>().TryGetTarget(out requestService);

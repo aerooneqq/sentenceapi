@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 using SharedLibrary.FactoriesManager.Interfaces;
 using SharedLibrary.FactoriesManager.Models;
-using SharedLibrary.KernelInterfaces;
 
 namespace SharedLibrary.FactoriesManager
 {
@@ -12,12 +10,14 @@ namespace SharedLibrary.FactoriesManager
     {
         #region Fields
         private List<FactoryInfo> factoryInfos;
+        private List<InjectionInfo> injectedObjects;
         #endregion
 
         #region Constructors
         internal FactoriesManager() 
         { 
             factoryInfos = new List<FactoryInfo>();
+            injectedObjects = new List<InjectionInfo>();
         }
         #endregion
 
@@ -41,7 +41,14 @@ namespace SharedLibrary.FactoriesManager
             {
                 if (factory.CheckIfFactorySupportService(typeof(ServiceType)))
                 {
-                    return new WeakReference<ServiceType>(factory.GetService<ServiceType>(typeof(ServiceType)));
+                    return new WeakReference<ServiceType>
+                    (
+                        factory.GetService<ServiceType>
+                        (
+                            typeof(ServiceType),                         
+                            injectedObjects.ToArray()
+                        )
+                    );
                 }
             }
 
@@ -94,6 +101,11 @@ namespace SharedLibrary.FactoriesManager
                 throw new ArgumentNullException("Service type can not be null.");
 
             return factoryInfos.Remove(factoryInfos.Find(f => f.FactoryType == factoryType));
+        }
+
+        public void Inject(Type interfaceType, object instance)
+        {
+            injectedObjects.Add(new InjectionInfo(interfaceType, instance));
         }
         #endregion
     }

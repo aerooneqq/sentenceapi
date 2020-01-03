@@ -22,7 +22,7 @@ using SharedLibrary.FactoriesManager.Interfaces;
 
 using MongoDB.Bson;
 using SharedLibrary.Loggers.Configuration;
-
+using DataAccessLayer.DatabasesManager.Interfaces;
 
 namespace SentenceAPI.Features.UserPhoto.Services
 {
@@ -36,7 +36,6 @@ namespace SentenceAPI.Features.UserPhoto.Services
         #region Database
         private readonly IDatabaseService<Models.UserPhoto> database;
         private readonly IConfigurationBuilder configurationBuilder;
-        private readonly DatabasesManager databasesManager = DatabasesManager.Manager;
         #endregion
 
         #region Services
@@ -45,12 +44,8 @@ namespace SentenceAPI.Features.UserPhoto.Services
         private readonly ICacheService cacheService = CacheService.Service;
         #endregion
 
-        #region Factories
-        private readonly IFactoriesManager factoriesManager = 
-            ManagersDictionary.Instance.GetManager(Startup.ApiName);
-        #endregion
 
-        public UserPhotoService()
+        public UserPhotoService(IFactoriesManager factoriesManager, IDatabaseManager databasesManager)
         {
             databasesManager.MongoDBFactory.GetDatabase<Models.UserPhoto>().TryGetTarget(out database);
 

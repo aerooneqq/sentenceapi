@@ -10,6 +10,9 @@ namespace SharedLibrary.FactoriesManager.Interfaces
         void AddFactory(FactoryInfo factory);
         bool RemoveFactory(Type factoryInfo);
 
-        WeakReference<IType> GetService<IType>() where IType : class;
+        void Inject(Type interfaceType, object instance);
+
+        WeakReference<IType> GetService<IType>() 
+            where IType : class;
     }
 }

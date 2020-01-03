@@ -14,7 +14,7 @@ namespace SharedLibrary.FactoriesManager.Models
         /// <summary>
         /// Collection of services which are supported by the current factory
         /// </summary>
-        private IDictionary<Type, Func<object, object>> services;
+        private IDictionary<Type, (Type[] methodParamsTypes, MethodInvokerDelegate methodInvoker)> services;
 
         public IServiceFactory Factory { get; }
         public Type FactoryType { get; }
@@ -27,14 +27,15 @@ namespace SharedLibrary.FactoriesManager.Models
             services = GetFactoriesServices();
         }
 
-        private IDictionary<Type, Func<object, object>> GetFactoriesServices()
+        private IDictionary<Type, (Type[] methodParams, MethodInvokerDelegate)> GetFactoriesServices()
         {
             MethodInfo[] methods = FactoryType.GetMethods();
-            Dictionary<Type, Func<object, object>> services = new Dictionary<Type, Func<object, object>>();
+            var services = new Dictionary<Type, (Type[] methodParams, MethodInvokerDelegate)>();
 
             foreach (MethodInfo method in methods)
             {
-                services.Add(method.ReturnType, FactoryType.GetMethodDelegate<Func<object, object>>(method.Name));
+                var methodParams = method.GetParameters().Select(param => param.ParameterType).ToArray();
+                services.Add(method.ReturnType, (methodParams, FactoryType.GetMethodDelegate(method.Name)));
             }
 
             return services;
@@ -43,9 +44,21 @@ namespace SharedLibrary.FactoriesManager.Models
         public bool CheckIfFactorySupportService(Type serviceType) => services.Keys.ToArray().Count(
             type => type == serviceType || type.GetInterfaces().Contains(serviceType)) > 0;
 
-        public ServiceType GetService<ServiceType>(Type serviceType)
+        public ServiceType GetService<ServiceType>(Type serviceType, InjectionInfo[] injections)
         {
-            return (ServiceType)services[serviceType](Factory);
+            ISet<int> usedIndexes = new HashSet<int>();
+            Type[] methodParamsTypes = services[serviceType].methodParamsTypes;
+
+            object[] finalMethodParams = new object[methodParamsTypes.Length];
+
+            for (int i = 0; i < services[serviceType].methodParamsTypes.Length; ++i)
+            {
+                System.Console.WriteLine(serviceType + " " + methodParamsTypes[i]);
+                Type paramType = methodParamsTypes[i];
+                finalMethodParams[i] = injections.First(injection => injection.InterfaceType == paramType).Instance;
+            }
+
+            return (ServiceType)services[serviceType].methodInvoker(Factory, finalMethodParams);
         }
     }
 }

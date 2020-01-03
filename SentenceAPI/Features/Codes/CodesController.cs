@@ -24,10 +24,6 @@ namespace SentenceAPI.Features.Codes
     [Authorize, ApiController, Route("api/[controller]")]
     public class CodesController : Controller
     {
-        #region Factories
-        private IFactoriesManager factoriesManager = ManagersDictionary.Instance.GetManager(Startup.ApiName);
-        #endregion
-
         #region Services
         private ILogger<ApplicationError> exceptionLogger;
         private IUserService<UserInfo> userService;
@@ -35,7 +31,8 @@ namespace SentenceAPI.Features.Codes
         private IRequestService requestService;
         #endregion
 
-        public CodesController()
+
+        public CodesController(IFactoriesManager factoriesManager)
         {
             factoriesManager.GetService<ILogger<ApplicationError>>().TryGetTarget(out exceptionLogger);
             factoriesManager.GetService<ICodesService>().TryGetTarget(out codesService);
@@ -44,6 +41,7 @@ namespace SentenceAPI.Features.Codes
             factoriesManager.GetService<IUserService<UserInfo>>().TryGetTarget(out userService);
             exceptionLogger.LogConfiguration = new LogConfiguration(this.GetType());
         }
+
 
         [HttpPut]
         public async Task<IActionResult> ActivateAccount()

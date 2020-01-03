@@ -1,5 +1,7 @@
-﻿using SentenceAPI.Features.Codes.Interfaces;
+﻿using DataAccessLayer.DatabasesManager.Interfaces;
+using SentenceAPI.Features.Codes.Interfaces;
 using SentenceAPI.Features.Codes.Services;
+using SharedLibrary.FactoriesManager.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,9 +11,9 @@ namespace SentenceAPI.Features.Codes.Factories
 {
     class CodesServiceFactory : ICodesServiceFactory
     {
-        public ICodesService GetService()
+        public ICodesService GetService(IFactoriesManager factoriesManager, IDatabaseManager databasesManager)
         {
-            return new CodesService();
+            return new CodesService(factoriesManager, databasesManager);
         }
     }
 }

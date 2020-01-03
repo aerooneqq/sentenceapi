@@ -36,13 +36,9 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage
         private IFolderService folderService;
         private IDateService dateService;
         #endregion
+        
 
-        #region Factories
-        private readonly IFactoriesManager factoriesManager = 
-            ManagersDictionary.Instance.GetManager(Startup.ApiName);
-        #endregion
-
-        public FolderSystemController()
+        public FolderSystemController(IFactoriesManager factoriesManager)
         {
             factoriesManager.GetService<ITokenService>().TryGetTarget(out tokenService);
             factoriesManager.GetService<IRequestService>().TryGetTarget(out requestService);

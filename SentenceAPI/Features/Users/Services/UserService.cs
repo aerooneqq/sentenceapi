@@ -27,6 +27,7 @@ using DataAccessLayer.Filters.Interfaces;
 using SharedLibrary.FactoriesManager.Interfaces; 
 using SharedLibrary.FactoriesManager;
 using SharedLibrary.Loggers.Configuration;
+using DataAccessLayer.DatabasesManager.Interfaces;
 
 namespace SentenceAPI.Features.Users.Services
 {
@@ -39,20 +40,15 @@ namespace SentenceAPI.Features.Users.Services
         #region Databases
         private IDatabaseService<UserInfo> database;
         private IConfigurationBuilder configurationBuilder;
-        private DatabasesManager databasesManager = DatabasesManager.Manager;
         #endregion
 
         #region Services
         private readonly ILogger<ApplicationError> exceptionLogger;
         #endregion
 
-        #region Factories
-        private readonly IFactoriesManager factoriesManager =
-            ManagersDictionary.Instance.GetManager(Startup.ApiName);
-        #endregion
 
         #region Constructors
-        public UserService()
+        public UserService(IFactoriesManager factoriesManager, IDatabaseManager databasesManager)
         {
             databasesManager.MongoDBFactory.GetDatabase<UserInfo>().TryGetTarget(out database);
 

@@ -26,6 +26,7 @@ using SharedLibrary.FactoriesManager.Interfaces;
 using SharedLibrary.FactoriesManager;
 using MongoDB.Bson;
 using SharedLibrary.Loggers.Configuration;
+using DataAccessLayer.DatabasesManager.Interfaces;
 
 namespace SentenceAPI.Features.UserFeed.Services
 {
@@ -35,11 +36,13 @@ namespace SentenceAPI.Features.UserFeed.Services
         private static readonly string databaseConfigFile = "mongo_database_config.json";
         #endregion
 
+
         #region Databases
         private IDatabaseService<Models.UserFeed> database;
         private IConfigurationBuilder configurationBuilder;
         private DatabasesManager databasesManager = DatabasesManager.Manager;
         #endregion
+
 
         #region Services
         private readonly IUserFriendsService userFriendsService;
@@ -49,12 +52,8 @@ namespace SentenceAPI.Features.UserFeed.Services
         private readonly IUserPhotoService userPhotoService;
         #endregion
 
-        #region Factories
-        private readonly IFactoriesManager factoriesManager = 
-            ManagersDictionary.Instance.GetManager(Startup.ApiName);
-        #endregion
 
-        public UserFeedService()
+        public UserFeedService(IFactoriesManager factoriesManager, IDatabaseManager databasesManager)
         {
             databasesManager.MongoDBFactory.GetDatabase<Models.UserFeed>().TryGetTarget(out database);
 
@@ -68,6 +67,7 @@ namespace SentenceAPI.Features.UserFeed.Services
             factoriesManager.GetService<IUserService<UserInfo>>().TryGetTarget(out userService);
             factoriesManager.GetService<IUserPhotoService>().TryGetTarget(out userPhotoService);
         }
+
 
         public async Task<UsersFeedDto> GetUserFeedAsync(long userID)
         {

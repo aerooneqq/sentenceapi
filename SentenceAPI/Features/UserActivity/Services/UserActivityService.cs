@@ -11,6 +11,7 @@ using DataAccessLayer.CommonInterfaces;
 using DataAccessLayer.Configuration.Interfaces;
 using DataAccessLayer.Configuration;
 using DataAccessLayer.Filters;
+using DataAccessLayer.DatabasesManager.Interfaces;
 
 namespace SentenceAPI.Features.UserActivity.Services
 {
@@ -20,22 +21,24 @@ namespace SentenceAPI.Features.UserActivity.Services
         private static readonly string databaseConfigFile = "mongo_database_config.json";
         #endregion
 
+
         #region Databases
         private IDatabaseService<Models.UserActivity> database;
-        private DatabasesManager databasesManager = DatabasesManager.Manager;
         private IConfigurationBuilder configurationBuilder;
         #endregion
 
+
         #region Constructors
-        public UserActivityService()
+        public UserActivityService(IDatabaseManager databaseManager)
         {
-            databasesManager.MongoDBFactory.GetDatabase<Models.UserActivity>().TryGetTarget(out database);
+            databaseManager.MongoDBFactory.GetDatabase<Models.UserActivity>().TryGetTarget(out database);
 
             configurationBuilder = new MongoConfigurationBuilder(database.Configuration);
             configurationBuilder.SetConfigurationFilePath(databaseConfigFile).SetAuthMechanism()
                                 .SetUserName().SetPassword().SetDatabaseName().SetServerName().SetConnectionString();
         }
         #endregion
+
 
         #region IUserActivityService implementation
         /// <summary>

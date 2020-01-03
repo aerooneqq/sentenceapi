@@ -34,12 +34,8 @@ namespace SentenceAPI.Features.UserPhoto
         private ITokenService tokenService;
         #endregion
 
-        #region Factories
-        private readonly IFactoriesManager factoriesManager =
-            ManagersDictionary.Instance.GetManager(Startup.ApiName);
-        #endregion
 
-        public UserPhotoController(IMemoryCache memoryCache)
+        public UserPhotoController(IMemoryCache memoryCache, IFactoriesManager factoriesManager)
         {
             factoriesManager.GetService<ILogger<ApplicationError>>().TryGetTarget(out exceptionLogger);
             exceptionLogger.LogConfiguration = new LogConfiguration(this.GetType());

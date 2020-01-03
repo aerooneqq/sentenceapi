@@ -34,12 +34,7 @@ namespace SentenceAPI.Features.UserFeed
         private IRequestService requestService;
         #endregion
 
-        #region Factories
-        private readonly IFactoriesManager factoriesManager = 
-            ManagersDictionary.Instance.GetManager(Startup.ApiName);
-        #endregion
-
-        public UserFeedController()
+        public UserFeedController(IFactoriesManager factoriesManager)
         {
             factoriesManager.GetService<IUserFeedService>().TryGetTarget(out userFeedService);
             factoriesManager.GetService<ILogger<ApplicationError>>().TryGetTarget(out exceptionLogger);

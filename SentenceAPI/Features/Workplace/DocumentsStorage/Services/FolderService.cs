@@ -20,7 +20,7 @@ using System.Threading.Tasks;
 
 using SharedLibrary.FactoriesManager.Interfaces;
 using SharedLibrary.FactoriesManager;
-
+using DataAccessLayer.DatabasesManager.Interfaces;
 
 namespace SentenceAPI.Features.Workplace.DocumentsStorage.Services
 {
@@ -33,19 +33,14 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage.Services
         #region Databases
         private IDatabaseService<DocumentFolder> database;
         private IConfigurationBuilder configurationBuilder;
-        private DatabasesManager databasesManager = DatabasesManager.Manager;
         #endregion
 
         #region Services
         private ILogger<ApplicationError> exceptionLogger;
         #endregion
 
-        #region Factories
-        private readonly IFactoriesManager factoriesManager = 
-            ManagersDictionary.Instance.GetManager(Startup.ApiName);
-        #endregion
 
-        public FolderService()
+        public FolderService(IFactoriesManager factoriesManager, IDatabaseManager databasesManager)
         {
             databasesManager.MongoDBFactory.GetDatabase<DocumentFolder>().TryGetTarget(out database);
 

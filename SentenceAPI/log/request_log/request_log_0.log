@@ -1,0 +1,9 @@
+[2020-01-03T21:55:57.3584793Z][Information][Middleware]
+{"QueryString":"","Body":null,"ContentType":null,"ContentLength":null,"IsHttps":false,"Host":{"Port":7000,"Host":"localhost"},"Method":"OPTIONS"}
+
+[2020-01-03T21:55:58.7075755Z][Information][Middleware]
+{"QueryString":"","Body":null,"ContentType":null,"ContentLength":null,"IsHttps":false,"Host":{"Port":7000,"Host":"localhost"},"Method":"GET"}
+
+[2020-01-03T21:56:13.9188413Z][Information][Middleware]
+{"QueryString":"?email=aerooneQ@yandex.ru&password=AeroOne123","Body":null,"ContentType":null,"ContentLength":null,"IsHttps":false,"Host":{"Port":7000,"Host":"localhost"},"Method":"GET"}
+

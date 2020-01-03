@@ -1,6 +1,7 @@
-﻿using SentenceAPI.Features.Workplace.DocumentsStorage.Interfaces;
+﻿using DataAccessLayer.DatabasesManager.Interfaces;
+using SentenceAPI.Features.Workplace.DocumentsStorage.Interfaces;
 using SentenceAPI.Features.Workplace.DocumentsStorage.Services;
-
+using SharedLibrary.FactoriesManager.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,14 +11,14 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage.Factories
 {
     class FolderSystemServiceFactory : IFolderSystemServiceFactory
     {
-        public IFileService GetFileSystem()
+        public IFileService GetFileSystem(IFactoriesManager factoriesManager, IDatabaseManager databasesManager)
         {
-            return new FileService();
+            return new FileService(factoriesManager, databasesManager);
         }
 
-        public IFolderService GetFolderService()
+        public IFolderService GetFolderService(IFactoriesManager factoriesManager, IDatabaseManager databasesManager)
         {
-            return new FolderService();
+            return new FolderService(factoriesManager, databasesManager);
         }
     }
 }

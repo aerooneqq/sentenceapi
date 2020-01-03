@@ -26,6 +26,8 @@ using SentenceAPI.Features.Workplace.DocumentsStorage.Factories;
 using SentenceAPI.ApplicationFeatures.Date.Factories;
 using SentenceAPI.Extensions;
 using SentenceAPI.ApplicationFeatures.Middlewares;
+using DataAccessLayer.DatabasesManager.Interfaces;
+using DataAccessLayer.DatabasesManager;
 
 namespace SentenceAPI
 {
@@ -54,6 +56,8 @@ namespace SentenceAPI
 
             services.SetAuthentication();
             services.SetMvc();
+            services.AddSingleton(typeof(IFactoriesManager), ManagersDictionary.Instance.GetManager(ApiName));
+            services.AddSingleton(typeof(IDatabaseManager), DatabasesManager.Manager);
 
             DefferedTasksManager.Initialize();
             DefferedTasksManager.Start();
@@ -76,6 +80,9 @@ namespace SentenceAPI
         /// </summary>
         private void ConfigureCustomServices()
         {
+            factoriesManager.Inject(typeof(IFactoriesManager), factoriesManager);
+            factoriesManager.Inject(typeof(IDatabaseManager), DatabasesManager.Manager);
+            
             factoriesManager.AddFactory(new FactoryInfo(new UserServiceFactory(),
                 typeof(UserServiceFactory)));
             factoriesManager.AddFactory(new FactoryInfo(new TokenServiceFactory(),

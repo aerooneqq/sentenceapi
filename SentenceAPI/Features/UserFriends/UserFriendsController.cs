@@ -29,12 +29,8 @@ namespace SentenceAPI.Features.UserFriends
         private IRequestService requestService; 
         #endregion
 
-        #region Factories
-        private readonly IFactoriesManager factoriesManager = 
-            ManagersDictionary.Instance.GetManager(Startup.ApiName);
-        #endregion
 
-        public UserFriendsController()
+        public UserFriendsController(IFactoriesManager factoriesManager)
         {
             factoriesManager.GetService<IUserFriendsService>().TryGetTarget(out userFriendsService);
             factoriesManager.GetService<IUserFriendsService>().TryGetTarget(out userFriendsService);
