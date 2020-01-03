@@ -11,3 +11,6 @@
 /DataAccessLayerTests/obj
 /SentenceApiTests/obj
 /DataAccessLayer/obj
+bin
+obj
+/DocumentAPI/bin

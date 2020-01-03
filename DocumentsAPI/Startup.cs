@@ -8,6 +8,12 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 
+using SharedLibrary.FactoriesManager;
+using SharedLibrary.FactoriesManager.Interfaces;
+
+using DataAccessLayer.DatabasesManager.Interfaces;
+using DataAccessLayer.DatabasesManager;
+
 namespace DocumentsAPI
 {
     public class Startup
@@ -16,6 +22,8 @@ namespace DocumentsAPI
         
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSingleton(typeof(IFactoriesManager), ManagersDictionary.Instance.GetManager(ApiName));
+            services.AddSingleton(typeof(IDatabaseManager), DatabasesManager.Manager);
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
