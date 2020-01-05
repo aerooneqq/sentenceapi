@@ -7,7 +7,7 @@ using MongoDB.Bson.Serialization.Attributes;
 
 using Newtonsoft.Json;
 
-namespace DocumentsAPI.Models.DocumentStructure 
+namespace DocumentsAPI.Models.DocumentStructureModels 
 { 
     /// <summary>
     /// This is the class which represents the document structure tree item 

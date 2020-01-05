@@ -1,4 +1,5 @@
-﻿using SentenceAPI.Features.Workplace.DocumentsStorage.Models;
+﻿using MongoDB.Bson;
+using SentenceAPI.Features.Workplace.DocumentsStorage.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,13 +9,13 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage.Interfaces
 {
     interface IFolderService
     {
-        Task<IEnumerable<DocumentFolder>> GetFolders(long userID, long parentFolderID);
-        Task<DocumentFolder> GetFolderData(long folderID);
+        Task<IEnumerable<DocumentFolder>> GetFolders(ObjectId userID, ObjectId parentFolderID);
+        Task<DocumentFolder> GetFolderData(ObjectId folderID);
 
-        Task CreateFolder(long userID, long parentFolderID, string folderName);
-        Task DeleteFolder(long folderID);
-        Task RenameFolder(long folderID, string newFolderName);
-        Task<IEnumerable<DocumentFolder>> GetFolders(long userID, string searchQuery);
+        Task CreateFolder(ObjectId userID, ObjectId parentFolderID, string folderName);
+        Task DeleteFolder(ObjectId folderID);
+        Task RenameFolder(ObjectId folderID, string newFolderName);
+        Task<IEnumerable<DocumentFolder>> GetFolders(ObjectId userID, string searchQuery);
         Task Update(DocumentFolder folder);
     }
 }

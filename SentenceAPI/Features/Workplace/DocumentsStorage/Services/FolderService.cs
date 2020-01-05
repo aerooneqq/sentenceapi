@@ -21,6 +21,7 @@ using System.Threading.Tasks;
 using SharedLibrary.FactoriesManager.Interfaces;
 using SharedLibrary.FactoriesManager;
 using DataAccessLayer.DatabasesManager.Interfaces;
+using MongoDB.Bson;
 
 namespace SentenceAPI.Features.Workplace.DocumentsStorage.Services
 {
@@ -52,14 +53,14 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage.Services
             exceptionLogger.LogConfiguration = new LogConfiguration(this.GetType());
         }
 
-        public async Task<IEnumerable<DocumentFolder>> GetFolders(long userID, long parentFolderID)
+        public async Task<IEnumerable<DocumentFolder>> GetFolders(ObjectId userID, ObjectId parentFolderID)
         {
             try
             {
                 await database.Connect().ConfigureAwait(false);
 
-                FilterBase userIDFilter = new EqualityFilter<long>(typeof(DocumentFolder).GetBsonPropertyName("UserID"), userID);
-                FilterBase parentFolderFilter = new EqualityFilter<long>(typeof(DocumentFolder).GetBsonPropertyName("ParentFolderID"), parentFolderID);
+                FilterBase userIDFilter = new EqualityFilter<ObjectId>(typeof(DocumentFolder).GetBsonPropertyName("UserID"), userID);
+                FilterBase parentFolderFilter = new EqualityFilter<ObjectId>(typeof(DocumentFolder).GetBsonPropertyName("ParentFolderID"), parentFolderID);
 
                 return await database.Get(userIDFilter & parentFolderFilter).ConfigureAwait(false);
             }
@@ -70,7 +71,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage.Services
             }
         }
 
-        public async Task CreateFolder(long userID, long parentFolderID, string folderName)
+        public async Task CreateFolder(ObjectId userID, ObjectId parentFolderID, string folderName)
         {
             try
             {
@@ -108,13 +109,13 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage.Services
             }
         }
 
-        public async Task DeleteFolder(long folderID)
+        public async Task DeleteFolder(ObjectId folderID)
         {
             try
             {
                 await database.Connect().ConfigureAwait(false);
 
-                var deletionFilter = new EqualityFilter<long>(typeof(DocumentFolder).GetBsonPropertyName("ID"),
+                var deletionFilter = new EqualityFilter<ObjectId>(typeof(DocumentFolder).GetBsonPropertyName("ID"),
                     folderID);
 
                 await database.Delete(deletionFilter).ConfigureAwait(false);
@@ -126,13 +127,13 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage.Services
             }
         }
 
-        public async Task RenameFolder(long folderID, string newFolderName)
+        public async Task RenameFolder(ObjectId folderID, string newFolderName)
         {
             try
             {
                 await database.Connect().ConfigureAwait(false);
 
-                var getFilter = new EqualityFilter<long>(typeof(DocumentFolder).GetBsonPropertyName("ID"), folderID);
+                var getFilter = new EqualityFilter<ObjectId>(typeof(DocumentFolder).GetBsonPropertyName("ID"), folderID);
 
                 DocumentFolder documentFolder = (await database.Get(getFilter).ConfigureAwait(false)).FirstOrDefault();
 
@@ -152,13 +153,13 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage.Services
             }
         }
 
-        public async Task<DocumentFolder> GetFolderData(long folderID)
+        public async Task<DocumentFolder> GetFolderData(ObjectId folderID)
         {
             try
             {
                 await database.Connect().ConfigureAwait(false);
 
-                var getFilter = new EqualityFilter<long>(typeof(DocumentFolder).GetBsonPropertyName("ID"), folderID);
+                var getFilter = new EqualityFilter<ObjectId>(typeof(DocumentFolder).GetBsonPropertyName("ID"), folderID);
 
                 return (await database.Get(getFilter).ConfigureAwait(false)).FirstOrDefault();
             }
@@ -169,13 +170,13 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage.Services
             }
         }
 
-        public async Task<IEnumerable<DocumentFolder>> GetFolders(long userID, string searchQuery)
+        public async Task<IEnumerable<DocumentFolder>> GetFolders(ObjectId userID, string searchQuery)
         {
             try
             {
                 await database.Connect().ConfigureAwait(false);
 
-                FilterBase idFilter = new EqualityFilter<long>(typeof(DocumentFolder).GetBsonPropertyName("ID"), userID);
+                FilterBase idFilter = new EqualityFilter<ObjectId>(typeof(DocumentFolder).GetBsonPropertyName("ID"), userID);
                 FilterBase folderNameFilter = new RegexFilter(typeof(DocumentFolder).GetBsonPropertyName("FolderName"), $"/{searchQuery}/");
 
                 return await database.Get(idFilter & folderNameFilter).ConfigureAwait(false);

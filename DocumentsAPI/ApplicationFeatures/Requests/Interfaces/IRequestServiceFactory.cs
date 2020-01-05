@@ -5,10 +5,10 @@ using System.Threading.Tasks;
 
 using SharedLibrary.KernelInterfaces;
 
-namespace SentenceAPI.ApplicationFeatures.Date.Interfaces
+namespace DocumentsAPI.ApplicationFeatures.Requests.Interfaces
 {
-    public interface IDateServiceFactory : IServiceFactory
+    interface IRequestServiceFactory : IServiceFactory
     {
-        IDateService GetService();
+        IRequestService GetService();
     }
 }

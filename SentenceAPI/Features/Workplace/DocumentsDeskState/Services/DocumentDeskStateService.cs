@@ -20,6 +20,8 @@ using System.Threading.Tasks;
 using SharedLibrary.FactoriesManager.Interfaces;
 using SharedLibrary.FactoriesManager;
 using SharedLibrary.Loggers.Configuration;
+using MongoDB.Bson;
+using DataAccessLayer.DatabasesManager.Interfaces;
 
 namespace SentenceAPI.Features.Workplace.DocumentsDeskState.Services
 {
@@ -30,7 +32,6 @@ namespace SentenceAPI.Features.Workplace.DocumentsDeskState.Services
         #region Databases
         private IDatabaseService<DocumentDeskState> database;
         private IConfigurationBuilder configurationBuilder;
-        private DatabasesManager databasesManager = DatabasesManager.Manager;
         #endregion
 
         #region Services
@@ -38,14 +39,10 @@ namespace SentenceAPI.Features.Workplace.DocumentsDeskState.Services
         private ITokenService tokenService;
         #endregion
 
-        #region Factories
-        private readonly IFactoriesManager factoriesManager = 
-            ManagersDictionary.Instance.GetManager(Startup.ApiName);
-        #endregion
 
-        public DocumentDeskStateService()
+        public DocumentDeskStateService(IFactoriesManager factoriesManager, IDatabaseManager databaseManager)
         {
-            databasesManager.MongoDBFactory.GetDatabase<DocumentDeskState>().
+            databaseManager.MongoDBFactory.GetDatabase<DocumentDeskState>().
                 TryGetTarget(out database);
 
             configurationBuilder = new MongoConfigurationBuilder(database.Configuration);
@@ -58,7 +55,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsDeskState.Services
             factoriesManager.GetService<ITokenService>().TryGetTarget(out tokenService);
         }
 
-        public async Task CreateDeskStateAsync(long userID)
+        public async Task CreateDeskStateAsync(ObjectId userID)
         {
             try
             {
@@ -67,7 +64,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsDeskState.Services
                 await database.Insert(new DocumentDeskState()
                 {
                     DocumentTopBarInfos = new List<DocumentTopBarInfo>(),
-                    OpenedDocumentID = -1,
+                    OpenedDocumentID = ObjectId.Empty,
                     UserID = userID
                 }).ConfigureAwait(false);
             }
@@ -78,13 +75,13 @@ namespace SentenceAPI.Features.Workplace.DocumentsDeskState.Services
             }
         }
 
-        public async Task DeleteDeskStateAsync(long userID)
+        public async Task DeleteDeskStateAsync(ObjectId userID)
         {
             try
             {
                 await database.Connect().ConfigureAwait(false);
 
-                IFilter deletionFilter = new EqualityFilter<long>("userID", userID);
+                IFilter deletionFilter = new EqualityFilter<ObjectId>("userID", userID);
                 await database.Delete(deletionFilter).ConfigureAwait(false);
             }
             catch (Exception ex)
@@ -98,7 +95,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsDeskState.Services
         {
             try
             {
-                return await GetDeskStateAsync(long.Parse(tokenService.GetTokenClaim("ID", token))).ConfigureAwait(false);
+                return await GetDeskStateAsync(ObjectId.Parse(tokenService.GetTokenClaim("ID", token))).ConfigureAwait(false);
             }
             catch (Exception ex) when (ex.GetType() != typeof(DatabaseException))
             {
@@ -107,13 +104,13 @@ namespace SentenceAPI.Features.Workplace.DocumentsDeskState.Services
             }
         }
 
-        public async Task<DocumentDeskState> GetDeskStateAsync(long userID)
+        public async Task<DocumentDeskState> GetDeskStateAsync(ObjectId userID)
         {
             try
             {
                 await database.Connect().ConfigureAwait(false);
 
-                var getFilter = new EqualityFilter<long>(typeof(DocumentDeskState).GetBsonPropertyName("ID"), userID);
+                var getFilter = new EqualityFilter<ObjectId>(typeof(DocumentDeskState).GetBsonPropertyName("ID"), userID);
                 return (await database.Get(getFilter).ConfigureAwait(false)).FirstOrDefault();
             }
             catch (Exception ex)

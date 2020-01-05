@@ -2,6 +2,7 @@
 
 using DocumentsAPI.Models.VersionControl;
 
+using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
 using Newtonsoft.Json;
@@ -18,13 +19,13 @@ namespace DocumentsAPI.Models.DocumentElements
     public class DocumentElementWrapper : UniqueEntity
     {
         [BsonElement("parentDocumentID"), JsonProperty("parentDocumentID")]
-        public long ParentDocumentID { get; set; }
+        public ObjectId ParentDocumentID { get; set; }
 
         [BsonElement("parentItemID"), JsonProperty("parentItemID")]
-        public long ParentItemID { get; set; }
+        public ObjectId ParentItemID { get; set; }
 
         [BsonElement("creatorID"), JsonProperty("creatorID")]
-        public long CreatorID { get; set; }
+        public ObjectId CreatorID { get; set; }
 
         [BsonElement("versionsCount"), JsonProperty("versionsCount")]
         public int VersionsCount { get; set; }

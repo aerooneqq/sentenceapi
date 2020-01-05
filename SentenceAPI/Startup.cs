@@ -26,6 +26,7 @@ using SentenceAPI.Features.Workplace.DocumentsStorage.Factories;
 using SentenceAPI.ApplicationFeatures.Date.Factories;
 using SentenceAPI.Extensions;
 using SentenceAPI.ApplicationFeatures.Middlewares;
+
 using DataAccessLayer.DatabasesManager.Interfaces;
 using DataAccessLayer.DatabasesManager;
 
@@ -36,30 +37,28 @@ namespace SentenceAPI
         public static string ApiName => "SentenceAPI";
         public static string CurrDirectory => Directory.GetCurrentDirectory();
 
-        #region Factories
-        private readonly IFactoriesManager factoriesManager;
-        #endregion
 
         public IConfiguration Configuration { get; set; }
 
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
-
-            ManagersDictionary.Instance.AddManager(ApiName);
-            factoriesManager = ManagersDictionary.Instance.GetManager(ApiName);
         }
 
         public void ConfigureServices(IServiceCollection services)
         {
-            ConfigureCustomServices();
-
             services.SetAuthentication();
             services.SetMvc();
-            services.AddSingleton(typeof(IFactoriesManager), ManagersDictionary.Instance.GetManager(ApiName));
-            services.AddSingleton(typeof(IDatabaseManager), DatabasesManager.Manager);
 
-            DefferedTasksManager.Initialize();
+            IFactoriesManager factoriesManager = new FactoriesManager();
+            IDatabaseManager databaseManager = new DatabasesManager();
+
+            ConfigureCustomServices(factoriesManager, databaseManager);
+            
+            services.AddSingleton(typeof(IFactoriesManager), factoriesManager);
+            services.AddSingleton(typeof(IDatabaseManager), databaseManager);
+
+            DefferedTasksManager.Initialize(factoriesManager);
             DefferedTasksManager.Start();
         }
 
@@ -78,10 +77,10 @@ namespace SentenceAPI
         /// This method initializes a factory manager, where all factories which will be needed in the system
         /// are stored. With a factories manager we can get access to any service in any part of the system.
         /// </summary>
-        private void ConfigureCustomServices()
+        private void ConfigureCustomServices(IFactoriesManager factoriesManager, IDatabaseManager databaseManager)
         {
             factoriesManager.Inject(typeof(IFactoriesManager), factoriesManager);
-            factoriesManager.Inject(typeof(IDatabaseManager), DatabasesManager.Manager);
+            factoriesManager.Inject(typeof(IDatabaseManager), databaseManager);
             
             factoriesManager.AddFactory(new FactoryInfo(new UserServiceFactory(),
                 typeof(UserServiceFactory)));

@@ -1,22 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+
 using DataAccessLayer.KernelModels;
 
+using MongoDB.Bson;
+
 using SharedLibrary.KernelInterfaces;
+
 
 namespace SentenceAPI.Features.Users.Interfaces
 {
     public interface IUserService<T> : IService where T : UniqueEntity
     {
         Task<T> GetAsync(string email, string password);
-        Task<T> GetAsync(long id);
+        Task<T> GetAsync(ObjectId id);
         Task<T> GetAsync(string token);
 
-        Task<long> CreateNewUserAsync(string email, string password);
+        Task<ObjectId> CreateNewUserAsync(string email, string password);
 
-        Task DeleteAsync(long id);
+        Task DeleteAsync(ObjectId id);
 
         Task UpdateAsync(T user);
         Task UpdateAsync(T user, IEnumerable<string> properties);

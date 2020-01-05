@@ -12,6 +12,7 @@ using DataAccessLayer.Configuration.Interfaces;
 using DataAccessLayer.Configuration;
 using DataAccessLayer.Filters;
 using DataAccessLayer.DatabasesManager.Interfaces;
+using MongoDB.Bson;
 
 namespace SentenceAPI.Features.UserActivity.Services
 {
@@ -49,11 +50,11 @@ namespace SentenceAPI.Features.UserActivity.Services
         /// <exception cref="DatabaseException">
         /// When the error occurs while working with the database. Provides the meaningful description of the error.
         /// </exception>
-        public async Task AddSingleActivityAsync(long userID, SingleUserActivity singleUserActivity)
+        public async Task AddSingleActivityAsync(ObjectId userID, SingleUserActivity singleUserActivity)
         {
             await database.Connect();
 
-            var filter = new EqualityFilter<long>("userID", userID); 
+            var filter = new EqualityFilter<ObjectId>("userID", userID); 
             Models.UserActivity userActivity = (await database.Get(filter).ConfigureAwait(false))
                 .FirstOrDefault();
 
@@ -81,7 +82,7 @@ namespace SentenceAPI.Features.UserActivity.Services
         /// <summary>
         /// Creates the user activity record in the database.
         /// </summary>
-        private async Task CreateUserActivityAsync(long userID)
+        private async Task CreateUserActivityAsync(ObjectId userID)
         {
             await database.Insert(new Models.UserActivity()
             {
@@ -99,11 +100,11 @@ namespace SentenceAPI.Features.UserActivity.Services
         /// <returns>
         /// Can return null if theere is no user with a given ID.
         /// </returns>
-        public async Task<Models.UserActivity> GetUserActivityAsync(long userID)
+        public async Task<Models.UserActivity> GetUserActivityAsync(ObjectId userID)
         {
             await database.Connect();
 
-            var filter = new EqualityFilter<long>("userID", userID);
+            var filter = new EqualityFilter<ObjectId>("userID", userID);
             return (await database.Get(filter).ConfigureAwait(false)).FirstOrDefault();
         }
 
@@ -113,10 +114,10 @@ namespace SentenceAPI.Features.UserActivity.Services
         /// <returns>
         /// Can return null if the user with a given ID does not exist.
         /// </returns>
-        public async Task<IEnumerable<SingleUserActivity>> GetUserSingleActivitiesAsync(long userID)
+        public async Task<IEnumerable<SingleUserActivity>> GetUserSingleActivitiesAsync(ObjectId userID)
         {
             await database.Connect();
-            var filter = new EqualityFilter<long>("userID", userID);
+            var filter = new EqualityFilter<ObjectId>("userID", userID);
             
             return (await database.Get(filter).ConfigureAwait(false)).FirstOrDefault()?.Activities;
         }

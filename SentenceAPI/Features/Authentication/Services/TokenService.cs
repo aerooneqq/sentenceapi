@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
@@ -11,13 +10,10 @@ using SentenceAPI.Features.Authentication.Interfaces;
 using SentenceAPI.Features.Authentication.Models;
 using SentenceAPI.Features.Users.Models;
 
-using DataAccessLayer.MongoDB;
 using DataAccessLayer.CommonInterfaces;
-
-using SharedLibrary.FactoriesManager.Models;
-using DataAccessLayer.DatabasesManager;
 using DataAccessLayer.Configuration.Interfaces;
 using DataAccessLayer.Configuration;
+using DataAccessLayer.DatabasesManager.Interfaces;
 
 
 namespace SentenceAPI.Features.Authentication.Services
@@ -29,15 +25,14 @@ namespace SentenceAPI.Features.Authentication.Services
         #endregion
 
         #region Databases
-        private readonly DatabasesManager databasesManager = DatabasesManager.Manager;
         private IDatabaseService<JwtToken> mongoDBService;
         private IConfigurationBuilder configurationBuilder;
         #endregion
 
         #region Constructors
-        public TokenService()
+        public TokenService(IDatabaseManager databaseManager)
         {
-            databasesManager.MongoDBFactory.GetDatabase<JwtToken>().TryGetTarget(out mongoDBService);
+            databaseManager.MongoDBFactory.GetDatabase<JwtToken>().TryGetTarget(out mongoDBService);
             configurationBuilder = new MongoConfigurationBuilder(mongoDBService.Configuration);
 
             configurationBuilder.SetConfigurationFilePath(databaseConfigFile).SetUserName().SetPassword()

@@ -1,5 +1,5 @@
 ﻿using DataAccessLayer.KernelModels;
-
+using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
 using Newtonsoft.Json;
@@ -18,13 +18,13 @@ namespace SentenceAPI.Features.Workplace.DocumentsDeskState.Models
     public class DocumentDeskState : UniqueEntity
     {
         [BsonElement("userID"), JsonProperty("userID")]
-        public long UserID { get; set; }
+        public ObjectId UserID { get; set; }
         
         [BsonElement("documentTopBarInfos"), JsonProperty("documentTopBarInfos")]
         public IEnumerable<DocumentTopBarInfo> DocumentTopBarInfos { get; set; } 
 
         [BsonElement("openedDocumentID"), JsonProperty("openedDocumentID")]
-        public long OpenedDocumentID { get; set; }
+        public ObjectId OpenedDocumentID { get; set; }
 
     }
 }

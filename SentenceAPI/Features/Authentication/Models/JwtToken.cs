@@ -13,13 +13,15 @@ using SentenceAPI.Features.Users.Models;
 
 using DataAccessLayer.KernelModels;
 
+using MongoDB.Bson;
+
 
 namespace SentenceAPI.Features.Authentication.Models
 {
     public class JwtToken : UniqueEntity
     {
         [BsonElement("userID"), JsonProperty("userID")]
-        public long UserID { get; set; }
+        public ObjectId UserID { get; set; }
 
         [BsonElement("issuer"), JsonProperty("issuer")]
         public string Issuer { get; set; }

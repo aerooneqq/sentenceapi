@@ -21,6 +21,7 @@ using SharedLibrary.FactoriesManager.Interfaces;
 using SharedLibrary.FactoriesManager;
 using SharedLibrary.Loggers.Configuration;
 using DataAccessLayer.DatabasesManager.Interfaces;
+using MongoDB.Bson;
 
 namespace SentenceAPI.Features.UserFriends.Services
 {
@@ -30,12 +31,10 @@ namespace SentenceAPI.Features.UserFriends.Services
         private static readonly string databaseConfigFile = "mongo_database_config.json";
         #endregion
 
-
         #region Databases
         private IDatabaseService<Models.UserFriends> database;
         private IConfigurationBuilder configurationBuilder;
-        #endregion
-
+        #endregion  
 
         #region Services
         private ILogger<ApplicationError> exceptionLogger;
@@ -61,15 +60,15 @@ namespace SentenceAPI.Features.UserFriends.Services
 
 
         #region IUserFriendsService implementation
-        public async Task AddSubscriberAsync(string token, long subscriberID)
+        public async Task AddSubscriberAsync(string token, ObjectId subscriberID)
         {
             try
             {
-                long userID = long.Parse(tokenService.GetTokenClaim(token, "ID"));
+                ObjectId userID = ObjectId.Parse(tokenService.GetTokenClaim(token, "ID"));
 
                 await database.Connect();
 
-                Models.UserFriends userFriends = (await database.Get(new EqualityFilter<long>("userID",
+                Models.UserFriends userFriends = (await database.Get(new EqualityFilter<ObjectId>("userID",
                     userID))).FirstOrDefault();
                 userFriends.SubscribersID.Add(subscriberID);
 
@@ -82,15 +81,15 @@ namespace SentenceAPI.Features.UserFriends.Services
             }
         }
 
-        public async Task AddSubscriptionAsync(string token, long subscriptionID)
+        public async Task AddSubscriptionAsync(string token, ObjectId subscriptionID)
         {
             try
             {
-                long userID = long.Parse(tokenService.GetTokenClaim(token, "ID"));
+                ObjectId userID = ObjectId.Parse(tokenService.GetTokenClaim(token, "ID"));
 
                 await database.Connect();
 
-                Models.UserFriends userFriends = (await database.Get(new EqualityFilter<long>("userID",
+                Models.UserFriends userFriends = (await database.Get(new EqualityFilter<ObjectId>("userID",
                     userID))).FirstOrDefault();
 
                 userFriends.SubscriptionsID.Add(subscriptionID);
@@ -104,15 +103,15 @@ namespace SentenceAPI.Features.UserFriends.Services
             }
         }
 
-        public async Task DeleteSubscriberAsync(string token, long subscriberID)
+        public async Task DeleteSubscriberAsync(string token, ObjectId subscriberID)
         {
             try
             {
-                long userID = long.Parse(tokenService.GetTokenClaim(token, "ID"));
+                ObjectId userID = ObjectId.Parse(tokenService.GetTokenClaim(token, "ID"));
 
                 await database.Connect();
 
-                Models.UserFriends userFriends = (await database.Get(new EqualityFilter<long>("userID",
+                Models.UserFriends userFriends = (await database.Get(new EqualityFilter<ObjectId>("userID",
                     userID))).FirstOrDefault();
 
                 userFriends.SubscribersID.Remove(subscriberID);
@@ -130,15 +129,15 @@ namespace SentenceAPI.Features.UserFriends.Services
             }
         }
 
-        public async Task DeleteSubscriptionAsync(string token, long subscriptionID)
+        public async Task DeleteSubscriptionAsync(string token, ObjectId subscriptionID)
         {
             try
             {
-                long userID = long.Parse(tokenService.GetTokenClaim(token, "ID"));
+                ObjectId userID = ObjectId.Parse(tokenService.GetTokenClaim(token, "ID"));
 
                 await database.Connect();
 
-                Models.UserFriends userFriends = (await database.Get(new EqualityFilter<long>("userID",
+                Models.UserFriends userFriends = (await database.Get(new EqualityFilter<ObjectId>("userID",
                     userID))).FirstOrDefault();
 
                 userFriends.SubscriptionsID.Remove(subscriptionID);
@@ -160,7 +159,7 @@ namespace SentenceAPI.Features.UserFriends.Services
         {
             try
             {
-                long userID = long.Parse(tokenService.GetTokenClaim(token, "ID"));
+                ObjectId userID = ObjectId.Parse(tokenService.GetTokenClaim(token, "ID"));
                 return await GetSubscribersAsync(userID);
             }
             catch (DatabaseException ex)
@@ -174,14 +173,14 @@ namespace SentenceAPI.Features.UserFriends.Services
             }
         }
 
-        public async Task<IEnumerable<Subscriber>> GetSubscribersAsync(long userID)
+        public async Task<IEnumerable<Subscriber>> GetSubscribersAsync(ObjectId userID)
         {
             try
             {
                 await database.Connect();
 
                 List<Subscriber> subscribers = new List<Subscriber>();
-                Models.UserFriends userFriends = (await database.Get(new EqualityFilter<long>("userID",
+                Models.UserFriends userFriends = (await database.Get(new EqualityFilter<ObjectId>("userID",
                     userID))).FirstOrDefault();
 
                 if (userFriends == null)
@@ -189,7 +188,7 @@ namespace SentenceAPI.Features.UserFriends.Services
                     throw new ArgumentException("User with such id does not exist");
                 }
 
-                foreach (long subscriberID in userFriends.SubscribersID)
+                foreach (ObjectId subscriberID in userFriends.SubscribersID)
                 {
                     UserInfo subUser = await userService.GetAsync(subscriberID);
                     subscribers.Add(new Subscriber()
@@ -216,7 +215,7 @@ namespace SentenceAPI.Features.UserFriends.Services
         {
             try
             {
-                long userID = long.Parse(tokenService.GetTokenClaim(token, "ID"));
+                ObjectId userID = ObjectId.Parse(tokenService.GetTokenClaim(token, "ID"));
                 return await GetSubscriptionsAsync(userID);
             }
             catch (DatabaseException ex)
@@ -230,14 +229,14 @@ namespace SentenceAPI.Features.UserFriends.Services
             }
         }
 
-        public async Task<IEnumerable<Subscription>> GetSubscriptionsAsync(long userID)
+        public async Task<IEnumerable<Subscription>> GetSubscriptionsAsync(ObjectId userID)
         {
             try
             {
                 await database.Connect();
 
                 List<Subscription> subscriptions = new List<Subscription>();
-                Models.UserFriends userFriends = (await database.Get(new EqualityFilter<long>("userID",
+                Models.UserFriends userFriends = (await database.Get(new EqualityFilter<ObjectId>("userID",
                     userID))).FirstOrDefault();
 
                 if (userFriends == null)
@@ -245,7 +244,7 @@ namespace SentenceAPI.Features.UserFriends.Services
                     throw new ArgumentException("User with such id does not exist");
                 }
 
-                foreach (long subscriptionID in userFriends.SubscriptionsID)
+                foreach (ObjectId subscriptionID in userFriends.SubscriptionsID)
                 {
                     UserInfo subUser = await userService.GetAsync(subscriptionID);
                     subscriptions.Add(new Subscription()

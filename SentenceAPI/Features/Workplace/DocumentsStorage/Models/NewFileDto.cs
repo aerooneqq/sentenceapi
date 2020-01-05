@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using MongoDB.Bson;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +13,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage.Models
     public class NewFileDto
     {
         [JsonProperty("parentFolderID")]
-        public long ParentFolderID { get; set; }
+        public ObjectId ParentFolderID { get; set; }
 
         [JsonProperty("fileName")]
         public string FileName { get; set; }

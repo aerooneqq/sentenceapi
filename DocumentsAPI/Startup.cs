@@ -1,18 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 
 using SharedLibrary.FactoriesManager;
 using SharedLibrary.FactoriesManager.Interfaces;
+using SharedLibrary.FactoriesManager.Models;
 
 using DataAccessLayer.DatabasesManager.Interfaces;
 using DataAccessLayer.DatabasesManager;
+
+using DocumentsAPI.ApplicationFeatures.Date.Factories;
+using DocumentsAPI.ApplicationFeatures.Requests.Factories;
+using DocumentsAPI.Features.FileToDocument.Factories;
+using DocumentsAPI.Features.DocumentStructure.Factories;
+
 
 namespace DocumentsAPI
 {
@@ -22,8 +23,13 @@ namespace DocumentsAPI
         
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSingleton(typeof(IFactoriesManager), ManagersDictionary.Instance.GetManager(ApiName));
-            services.AddSingleton(typeof(IDatabaseManager), DatabasesManager.Manager);
+            IFactoriesManager factoriesManager = new FactoriesManager();
+            IDatabaseManager databaseManager = new DatabasesManager();
+
+            services.AddSingleton(typeof(IFactoriesManager), factoriesManager);
+            services.AddSingleton(typeof(IDatabaseManager), databaseManager);
+
+            ConfigureCustomServices(factoriesManager, databaseManager);
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -41,5 +47,15 @@ namespace DocumentsAPI
             app.UseMvc();
         }
 
+        public void ConfigureCustomServices(IFactoriesManager factoriesManager, IDatabaseManager databaseManager)
+        {
+            factoriesManager.Inject(typeof(IFactoriesManager), factoriesManager);
+            factoriesManager.Inject(typeof(IDatabaseManager), databaseManager);
+
+            factoriesManager.AddFactory(new FactoryInfo(new DateServiceFactory(), typeof(DateServiceFactory)));
+            factoriesManager.AddFactory(new FactoryInfo(new RequestServiceFactory(), typeof(RequestServiceFactory)));
+            factoriesManager.AddFactory(new FactoryInfo(new FileToDocumentServiceFactory(), typeof(FileToDocumentServiceFactory)));
+            factoriesManager.AddFactory(new FactoryInfo(new DocumentStructureServiceFactory(), typeof(DocumentStructureServiceFactory)));
+        }
     }
 }

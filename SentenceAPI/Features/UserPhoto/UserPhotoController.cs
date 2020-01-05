@@ -86,7 +86,7 @@ namespace SentenceAPI.Features.UserPhoto
                     return new BadSendedRequest<string>("There is no photo");
                 }
 
-                long userID = long.Parse(tokenService.GetTokenClaim(requestService.GetToken(Request), "ID"));
+                ObjectId userID = ObjectId.Parse(tokenService.GetTokenClaim(requestService.GetToken(Request), "ID"));
                 Models.UserPhoto userPhoto = await userPhotoService.GetPhotoAsync(userID).ConfigureAwait(false);
 
                 if (userPhoto is null)

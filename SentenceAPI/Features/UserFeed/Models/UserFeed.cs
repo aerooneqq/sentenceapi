@@ -8,13 +8,14 @@ using Newtonsoft.Json;
 using MongoDB.Bson.Serialization.Attributes;
 
 using DataAccessLayer.KernelModels;
+using MongoDB.Bson;
 
 namespace SentenceAPI.Features.UserFeed.Models
 {
     public class UserFeed : UniqueEntity
     {
         [BsonElement("userID"), JsonProperty("userID")]
-        public long UserID { get; set; }
+        public ObjectId UserID { get; set; }
 
         [BsonElement("message"), JsonProperty("message")]
         public string Message { get; set; }

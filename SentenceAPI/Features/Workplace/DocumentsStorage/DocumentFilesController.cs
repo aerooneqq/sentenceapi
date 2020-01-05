@@ -18,6 +18,7 @@ using System.Threading.Tasks;
 using SharedLibrary.FactoriesManager.Interfaces;
 using SharedLibrary.FactoriesManager;
 using SharedLibrary.Loggers.Configuration;
+using MongoDB.Bson;
 
 namespace SentenceAPI.Features.Workplace.DocumentsStorage
 {
@@ -46,7 +47,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage
         {
             try
             {
-                long userID = long.Parse(tokenService.GetTokenClaim(requestService.GetToken(Request), "ID"));
+                ObjectId userID = ObjectId.Parse(tokenService.GetTokenClaim(requestService.GetToken(Request), "ID"));
 
                 NewFileDto newFile = await requestService.GetRequestBody<NewFileDto>(Request)
                     .ConfigureAwait(false);
@@ -74,7 +75,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetFile([FromQuery]long fileID)
+        public async Task<IActionResult> GetFile([FromQuery]ObjectId fileID)
         {
             try
             {
@@ -94,7 +95,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage
         }
 
         [HttpDelete]
-        public async Task<IActionResult> DeleteFile([FromQuery]long fileID)
+        public async Task<IActionResult> DeleteFile([FromQuery]ObjectId fileID)
         {
             try
             {

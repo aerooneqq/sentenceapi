@@ -22,6 +22,7 @@ using System.Threading.Tasks;
 using SharedLibrary.FactoriesManager.Interfaces;
 using SharedLibrary.FactoriesManager;
 using DataAccessLayer.DatabasesManager.Interfaces;
+using MongoDB.Bson;
 
 namespace SentenceAPI.Features.Workplace.DocumentsStorage.Services
 {
@@ -55,15 +56,15 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage.Services
         /// <summary>
         /// Gets all files from the parent folder, for a given user
         /// </summary>
-        public async Task<IEnumerable<DocumentFile>> GetFilesAsync(long userID, long parentFolderID)
+        public async Task<IEnumerable<DocumentFile>> GetFilesAsync(ObjectId userID, ObjectId parentFolderID)
         {
             try
             {
                 await database.Connect().ConfigureAwait(false);
 
-                FilterBase userIDFilter = new EqualityFilter<long>(typeof(DocumentFile).GetBsonPropertyName(
+                FilterBase userIDFilter = new EqualityFilter<ObjectId>(typeof(DocumentFile).GetBsonPropertyName(
                     "UserID"), userID);
-                FilterBase parentFolderIDFilter = new EqualityFilter<long>(typeof(DocumentFile).GetBsonPropertyName(
+                FilterBase parentFolderIDFilter = new EqualityFilter<ObjectId>(typeof(DocumentFile).GetBsonPropertyName(
                     "ParentFolderID"), parentFolderID);
 
                 return await database.Get(userIDFilter & parentFolderIDFilter).ConfigureAwait(false);
@@ -75,7 +76,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage.Services
             }
         }
 
-        public async Task CreateNewFileAsync(long userID, long parentFolderID, string fileName)
+        public async Task CreateNewFileAsync(ObjectId userID, ObjectId parentFolderID, string fileName)
         {
             try
             {
@@ -97,13 +98,13 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage.Services
             }
         }
 
-        public async Task DeleteFileAsync(long fileID)
+        public async Task DeleteFileAsync(ObjectId fileID)
         {
             try
             {
                 await database.Connect().ConfigureAwait(false);
 
-                var deletionFilter = new EqualityFilter<long>(typeof(DocumentFile).GetBsonPropertyName("ID"),
+                var deletionFilter = new EqualityFilter<ObjectId>(typeof(DocumentFile).GetBsonPropertyName("ID"),
                     fileID);
 
                 await database.Delete(deletionFilter).ConfigureAwait(false);
@@ -115,14 +116,14 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage.Services
             }
         }
 
-        public async Task<IEnumerable<DocumentFile>> GetFilesAsync(long userID, string searchQuery)
+        public async Task<IEnumerable<DocumentFile>> GetFilesAsync(ObjectId userID, string searchQuery)
         {
             try
             {
                 await database.Connect().ConfigureAwait(false);
 
 
-                FilterBase idFilter = new EqualityFilter<long>(typeof(DocumentFile).
+                FilterBase idFilter = new EqualityFilter<ObjectId>(typeof(DocumentFile).
                     GetBsonPropertyName("ID"), userID);
                 FilterBase fileNameFilter = new RegexFilter(typeof(DocumentFile).GetBsonPropertyName(
                     "FileName"), $"/{searchQuery}/");
@@ -136,12 +137,12 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage.Services
             }
         }
 
-        public async Task<DocumentFile> GetFileAsync(long fileID)
+        public async Task<DocumentFile> GetFileAsync(ObjectId fileID)
         {
             try
             {
                 await database.Connect().ConfigureAwait(false);
-                IFilter getFilter = new EqualityFilter<long>(typeof(DocumentFile).
+                IFilter getFilter = new EqualityFilter<ObjectId>(typeof(DocumentFile).
                     GetBsonPropertyName("ID"), fileID);
                 
                 return (await database.Get(getFilter).ConfigureAwait(false)).FirstOrDefault();
@@ -167,13 +168,13 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage.Services
             }
         }
 
-        public async Task RenameFileAsync(long fileID, string newFileName)
+        public async Task RenameFileAsync(ObjectId fileID, string newFileName)
         {
             try
             {
                 await database.Connect().ConfigureAwait(false);
 
-                IFilter getFilter = new EqualityFilter<long>("ID", fileID);
+                IFilter getFilter = new EqualityFilter<ObjectId>("ID", fileID);
                 DocumentFile file = (await database.Get(getFilter).ConfigureAwait(false)).FirstOrDefault();
 
                 if (!(file is DocumentFile))

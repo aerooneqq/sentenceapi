@@ -16,9 +16,9 @@ namespace SentenceAPI.ApplicationFeatures.Middlewares
     {
         private readonly RequestDelegate nextMiddlewareDel;
         private readonly ILogger<RequestLog> requestLogger;
-        private readonly IFactoriesManager factoriesManager = ManagersDictionary.Instance.GetManager(Startup.ApiName);
 
-        public RequestLoggerMiddleware(RequestDelegate nextMiddlewareDel)
+
+        public RequestLoggerMiddleware(RequestDelegate nextMiddlewareDel, IFactoriesManager factoriesManager)
         {
             this.nextMiddlewareDel = nextMiddlewareDel;
             

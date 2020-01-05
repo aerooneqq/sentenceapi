@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using MongoDB.Bson;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,10 +13,10 @@ namespace SentenceAPI.Features.UserFeed.Models
         public List<object> UsersFeed { get; set; }
 
         [JsonProperty("userPhotoes")]
-        public Dictionary<long, string> UserPhotoes { get; set; }
+        public Dictionary<ObjectId, string> UserPhotoes { get; set; }
 
         #region Constructors
-        public UsersFeedDto(List<object> usersFeed, Dictionary<long, string> userPhotoes)
+        public UsersFeedDto(List<object> usersFeed, Dictionary<ObjectId, string> userPhotoes)
         {
             UsersFeed = usersFeed;
             UserPhotoes = userPhotoes;

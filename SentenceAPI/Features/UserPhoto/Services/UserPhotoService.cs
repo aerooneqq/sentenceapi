@@ -59,13 +59,13 @@ namespace SentenceAPI.Features.UserPhoto.Services
             factoriesManager.GetService<ITokenService>().TryGetTarget(out tokenService);
         }
 
-        public async Task CreateUserPhotoAsync(long userID)
+        public async Task CreateUserPhotoAsync(ObjectId userID)
         {
             try
             {
                 await database.Connect().ConfigureAwait(false);
 
-                var filter = new EqualityFilter<long>(typeof(Models.UserPhoto).GetBsonPropertyName("UserID"), userID);
+                var filter = new EqualityFilter<ObjectId>(typeof(Models.UserPhoto).GetBsonPropertyName("UserID"), userID);
                 var userPhoto = await database.Get(filter).ConfigureAwait(false);
 
                 if (userPhoto.ToList().Count != 0)
@@ -101,13 +101,13 @@ namespace SentenceAPI.Features.UserPhoto.Services
             }
         }
 
-        public async Task<Models.UserPhoto> GetPhotoAsync(long userID)
+        public async Task<Models.UserPhoto> GetPhotoAsync(ObjectId userID)
         {
             try
             {
                 await database.Connect().ConfigureAwait(false);
 
-                var filter = new EqualityFilter<long>(typeof(Models.UserPhoto).GetBsonPropertyName("UserID"), userID);
+                var filter = new EqualityFilter<ObjectId>(typeof(Models.UserPhoto).GetBsonPropertyName("UserID"), userID);
                 var userPhotoes = (await database.Get(filter).ConfigureAwait(false)).ToList();
 
                 if (userPhotoes is null || userPhotoes.Count < 1)
@@ -124,7 +124,7 @@ namespace SentenceAPI.Features.UserPhoto.Services
             }
         }
 
-        private string GetUserPhotoCacheKey(long userID)
+        private string GetUserPhotoCacheKey(ObjectId userID)
         {
             return userPhotoCacheKey + userID;
         }
@@ -133,7 +133,7 @@ namespace SentenceAPI.Features.UserPhoto.Services
         {
             try
             {
-                return await GetPhotoAsync(long.Parse(tokenService.GetTokenClaim(token, "ID")))
+                return await GetPhotoAsync(ObjectId.Parse(tokenService.GetTokenClaim(token, "ID")))
                     .ConfigureAwait(false);
             }
             catch (Exception ex) when (ex.GetType() != typeof(DatabaseException))

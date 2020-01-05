@@ -28,7 +28,7 @@ using SharedLibrary.FactoriesManager.Interfaces;
 using SharedLibrary.FactoriesManager;
 
 using DataAccessLayer.Exceptions;
-
+using MongoDB.Bson;
 
 namespace SentenceAPI.Features.Users
 {
@@ -36,6 +36,8 @@ namespace SentenceAPI.Features.Users
     public class UsersController : ControllerBase
     {
         #region Services
+        private readonly IFactoriesManager factoriesManager;
+
         private readonly ILinkService linkService;
         private readonly IEmailService emailService;
         private readonly IUserService<UserInfo> userService;
@@ -49,6 +51,8 @@ namespace SentenceAPI.Features.Users
 
         public UsersController(IMemoryCache memoryCacheService, IFactoriesManager factoriesManager)
         { 
+            this.factoriesManager = factoriesManager;
+
             factoriesManager.GetService<IUserService<UserInfo>>().TryGetTarget(out userService);
             factoriesManager.GetService<ILinkService>().TryGetTarget(out linkService);
             factoriesManager.GetService<IEmailService>().TryGetTarget(out emailService);
@@ -131,7 +135,7 @@ namespace SentenceAPI.Features.Users
         }
 
         [Authorize]
-        public async Task<IActionResult> Get([FromQuery]long id)
+        public async Task<IActionResult> Get([FromQuery]ObjectId id)
         {
             try
             {
@@ -166,7 +170,7 @@ namespace SentenceAPI.Features.Users
 
                 if (!(await userService.DoesUserExistAsync(email).ConfigureAwait(false)))
                 {
-                    long id = await userService.CreateNewUserAsync(email, password).ConfigureAwait(false);
+                    ObjectId id = await userService.CreateNewUserAsync(email, password).ConfigureAwait(false);
 
                     ActivationCode activationCode = codesService.CreateActivationCode(id);
                     await codesService.InsertCodeInDatabaseAsync(activationCode).ConfigureAwait(false);
@@ -209,7 +213,7 @@ namespace SentenceAPI.Features.Users
             {
                 var updatedFields = await requestService.GetRequestBody<Dictionary<string, object>>(Request)
                     .ConfigureAwait(false);
-                long userID = long.Parse(tokenService.GetTokenClaim(requestService.GetToken(Request), "ID"));
+                ObjectId userID = ObjectId.Parse(tokenService.GetTokenClaim(requestService.GetToken(Request), "ID"));
 
                 UserInfo user = new UserInfo(updatedFields)
                 {
@@ -221,7 +225,7 @@ namespace SentenceAPI.Features.Users
                     user.IsAccountVerified = false;
                     updatedFields.Add(typeof(UserInfo).GetBsonPropertyName("IsAccountVerified"), false);
 
-                    await EventManager.Raise(new UserEmailChangedEvent(user.Email, user.ID));
+                    await EventManager.Raise(new UserEmailChangedEvent(user.Email, user.ID, factoriesManager));
                 }
 
                 await userService.UpdateAsync(user, updatedFields.Keys.Select(propName =>

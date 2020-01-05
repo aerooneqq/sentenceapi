@@ -22,6 +22,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using SharedLibrary.Loggers.Configuration;
 using DataAccessLayer.DatabasesManager.Interfaces;
+using MongoDB.Bson;
 
 namespace SentenceAPI.Features.Codes.Services
 {
@@ -48,7 +49,7 @@ namespace SentenceAPI.Features.Codes.Services
 
         public CodesService(IFactoriesManager factoriesManager, IDatabaseManager databaseManager)
         {
-            DatabasesManager.Manager.MongoDBFactory.GetDatabase<ActivationCode>().TryGetTarget(out database);
+            databaseManager.MongoDBFactory.GetDatabase<ActivationCode>().TryGetTarget(out database);
 
             configurationBuilder = new MongoConfigurationBuilder(database.Configuration);
             configurationBuilder.SetConfigurationFilePath(databaseConfigFile).SetAuthMechanism()
@@ -61,14 +62,14 @@ namespace SentenceAPI.Features.Codes.Services
         }
 
 
-        public ActivationCode CreateActivationCode(long userID)
+        public ActivationCode CreateActivationCode(ObjectId userID)
         {
             ActivationCode activationCode = GetActivationCode(userID);
 
             return activationCode;
         }
 
-        private ActivationCode GetActivationCode(long userID)
+        private ActivationCode GetActivationCode(ObjectId userID)
         {
             return new ActivationCode()
             {
@@ -104,7 +105,7 @@ namespace SentenceAPI.Features.Codes.Services
             {
                 await database.Connect().ConfigureAwait(false);
 
-                IFilter filter = new EqualityFilter<long>(typeof(ActivationCode).GetBsonPropertyName("UserID"),
+                IFilter filter = new EqualityFilter<ObjectId>(typeof(ActivationCode).GetBsonPropertyName("UserID"),
                     activationCode.ID);
 
                 await database.Delete(filter).ConfigureAwait(false);

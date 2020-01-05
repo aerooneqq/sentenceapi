@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 using DataAccessLayer.Exceptions;
 using SharedLibrary.ActionResults;
 using SharedLibrary.Loggers.Configuration;
+using MongoDB.Bson;
 
 namespace SentenceAPI.Features.UserActivity
 {
@@ -45,7 +46,7 @@ namespace SentenceAPI.Features.UserActivity
                 string authHeader = Request.Headers["Authorization"];
                 string token = authHeader.Split()[1];
 
-                long id = long.Parse(tokenService.GetTokenClaim(token, "ID"));
+                ObjectId id = ObjectId.Parse(tokenService.GetTokenClaim(token, "ID"));
 
                 var userActivities = await userActivityService.GetUserActivityAsync(id).ConfigureAwait(false);
 

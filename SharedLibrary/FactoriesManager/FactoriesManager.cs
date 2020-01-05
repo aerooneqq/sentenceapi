@@ -14,7 +14,7 @@ namespace SharedLibrary.FactoriesManager
         #endregion
 
         #region Constructors
-        internal FactoriesManager() 
+        public FactoriesManager() 
         { 
             factoryInfos = new List<FactoryInfo>();
             injectedObjects = new List<InjectionInfo>();

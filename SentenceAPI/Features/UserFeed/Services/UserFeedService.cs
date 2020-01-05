@@ -40,7 +40,6 @@ namespace SentenceAPI.Features.UserFeed.Services
         #region Databases
         private IDatabaseService<Models.UserFeed> database;
         private IConfigurationBuilder configurationBuilder;
-        private DatabasesManager databasesManager = DatabasesManager.Manager;
         #endregion
 
 
@@ -69,19 +68,19 @@ namespace SentenceAPI.Features.UserFeed.Services
         }
 
 
-        public async Task<UsersFeedDto> GetUserFeedAsync(long userID)
+        public async Task<UsersFeedDto> GetUserFeedAsync(ObjectId userID)
         {
             try
             {
-                List<long> subscriptionsID = (await userFriendsService.GetSubscriptionsAsync(userID))
+                List<ObjectId> subscriptionsID = (await userFriendsService.GetSubscriptionsAsync(userID))
                     .Select(uf => uf.UserID).ToList();
                 subscriptionsID.Add(userID);
 
-                Dictionary<long, ObjectId> usersPhotoes = await GetUsersPhotoesAsync(subscriptionsID).ConfigureAwait(false);
-                Dictionary<long, string> usersRawPhotoes = await GetUsersRawPhotoesAsync(usersPhotoes).ConfigureAwait(false);
+                Dictionary<ObjectId, ObjectId> usersPhotoes = await GetUsersPhotoesAsync(subscriptionsID).ConfigureAwait(false);
+                Dictionary<ObjectId, string> usersRawPhotoes = await GetUsersRawPhotoesAsync(usersPhotoes).ConfigureAwait(false);
 
                 await database.Connect().ConfigureAwait(false);
-                var usersFeed = await database.GetCombined(new InFilter<long>("userID", subscriptionsID), "userID",
+                var usersFeed = await database.GetCombined(new InFilter<ObjectId>("userID", subscriptionsID), "userID",
                     (typeof(UserInfo), "_id", new[] { "name", "surname" })).ConfigureAwait(false);
 
                 return new UsersFeedDto(usersFeed.ToList(), usersRawPhotoes);
@@ -93,9 +92,9 @@ namespace SentenceAPI.Features.UserFeed.Services
             }
         }
 
-        private async Task<Dictionary<long, string>> GetUsersRawPhotoesAsync(Dictionary<long, ObjectId> userPhotoes)
+        private async Task<Dictionary<ObjectId, string>> GetUsersRawPhotoesAsync(Dictionary<ObjectId, ObjectId> userPhotoes)
         {
-            Dictionary<long, string> userRawPhotoes = new Dictionary<long, string>();
+            Dictionary<ObjectId, string> userRawPhotoes = new Dictionary<ObjectId, string>();
 
             foreach (var (userID, photoID) in userPhotoes)
             {
@@ -107,11 +106,11 @@ namespace SentenceAPI.Features.UserFeed.Services
             return userRawPhotoes;
         }
 
-        private async Task<Dictionary<long, ObjectId>> GetUsersPhotoesAsync(IEnumerable<long> userIDs)
+        private async Task<Dictionary<ObjectId, ObjectId>> GetUsersPhotoesAsync(IEnumerable<ObjectId> userIDs)
         {
-            Dictionary<long, ObjectId> userPhotoes = new Dictionary<long, ObjectId>();
+            Dictionary<ObjectId, ObjectId> userPhotoes = new Dictionary<ObjectId, ObjectId>();
 
-            foreach (long userID in userIDs)
+            foreach (ObjectId userID in userIDs)
             {
                 ObjectId id = (await userPhotoService.GetPhotoAsync(userID).ConfigureAwait(false)).CurrentPhotoID;
                 userPhotoes.Add(userID, id);
@@ -124,7 +123,7 @@ namespace SentenceAPI.Features.UserFeed.Services
         {
             try
             {
-                long userID = long.Parse(tokenService.GetTokenClaim(token, "ID"));
+                ObjectId userID = ObjectId.Parse(tokenService.GetTokenClaim(token, "ID"));
 
                 return await GetUserFeedAsync(userID);
             }
@@ -153,7 +152,7 @@ namespace SentenceAPI.Features.UserFeed.Services
         {
             try
             {
-                long userID = long.Parse(tokenService.GetTokenClaim(token, "ID"));
+                ObjectId userID = ObjectId.Parse(tokenService.GetTokenClaim(token, "ID"));
                 await InsertUserPostAsync(new Models.UserFeed()
                 {
                     UserID = userID,

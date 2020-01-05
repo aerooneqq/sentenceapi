@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using MongoDB.Bson.Serialization.Attributes;
 
 using Newtonsoft.Json;
+using MongoDB.Bson;
 
 namespace SentenceAPI.Features.Codes.Models
 {
@@ -25,6 +26,6 @@ namespace SentenceAPI.Features.Codes.Models
         public DateTime? UsageDate { get; set; }
 
         [BsonElement("userID"), JsonProperty("userID")]
-        public long UserID { get; set; }
+        public ObjectId UserID { get; set; }
     }
 }

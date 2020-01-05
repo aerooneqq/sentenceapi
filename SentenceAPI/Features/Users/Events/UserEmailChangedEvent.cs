@@ -1,18 +1,19 @@
-﻿using DataAccessLayer.Exceptions;
+﻿using System;
+using System.Threading.Tasks;
+
+using DataAccessLayer.Exceptions;
 
 using SharedLibrary.Loggers.Interfaces;
 using SharedLibrary.Loggers.Models;
+using SharedLibrary.FactoriesManager.Interfaces;
+using SharedLibrary.Loggers.Configuration;
+
 using SentenceAPI.Events.Interfaces;
 using SentenceAPI.Features.Codes.Interfaces;
 using SentenceAPI.Features.Codes.Models;
 using SentenceAPI.Features.Email.Interfaces;
 
-using System;
-using System.Threading.Tasks;
-
-using SharedLibrary.FactoriesManager.Interfaces;
-using SharedLibrary.FactoriesManager;
-using SharedLibrary.Loggers.Configuration;
+using MongoDB.Bson;
 
 
 namespace SentenceAPI.Features.Users.Events
@@ -24,13 +25,9 @@ namespace SentenceAPI.Features.Users.Events
     {
         #region Fields
         private readonly string email;
-        private readonly long userID;
+        private readonly ObjectId userID;
         #endregion
 
-        #region Factories
-        private readonly IFactoriesManager factoriesManager = 
-            ManagersDictionary.Instance.GetManager(Startup.ApiName);
-        #endregion
 
         #region Services
         private IEmailService emailService;
@@ -38,7 +35,7 @@ namespace SentenceAPI.Features.Users.Events
         private ILogger<ApplicationError> exceptionLogger;
         #endregion
 
-        public UserEmailChangedEvent(string email, long userID)
+        public UserEmailChangedEvent(string email, ObjectId userID, IFactoriesManager factoriesManager)
         {
             this.email = email;
             this.userID = userID;

@@ -1,4 +1,5 @@
-﻿using MongoDB.Bson.Serialization.Attributes;
+﻿using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsDeskState.Models
     public class DocumentTopBarInfo
     {
         [BsonElement("documentID"), JsonProperty("documentID")]
-        public long DocumentID { get; set; }
+        public ObjectId DocumentID { get; set; }
 
         [BsonElement("documentName"), JsonProperty("documentName")]
         public string DocumentName { get; set; }

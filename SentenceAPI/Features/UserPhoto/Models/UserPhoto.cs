@@ -14,7 +14,7 @@ namespace SentenceAPI.Features.UserPhoto.Models
     {
         #region Properties
         [BsonElement("userID"), JsonProperty("userID")]
-        public long UserID { get; set; }
+        public ObjectId UserID { get; set; }
 
         [BsonElement("gridFSPhotoes"), JsonProperty("gridFSPhotoes")]
         public Dictionary<string, string> GridFSPhotoes { get; set; }
@@ -35,7 +35,7 @@ namespace SentenceAPI.Features.UserPhoto.Models
             GridFSPhotoes = new Dictionary<string, string>();
         }
 
-        public UserPhoto(long userID) : this()
+        public UserPhoto(ObjectId userID) : this()
         { 
             UserID = userID;
         }

@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using MongoDB.Bson;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +16,6 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage.Models
         public string FolderName { get; set; }
 
         [JsonProperty("parentFolderID")]
-        public long ParentFolderID { get; set; }
+        public ObjectId ParentFolderID { get; set; }
     }
 }

@@ -1,12 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Reflection;
 using System;
 using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-
-using MongoDB.Bson.Serialization.Attributes;
 
 using SentenceAPI.Features.Users.Interfaces;
 using SentenceAPI.Features.Users.Models;
@@ -16,7 +12,6 @@ using SentenceAPI.Extensions;
 
 using DataAccessLayer.CommonInterfaces;
 using DataAccessLayer.Configuration.Interfaces;
-using DataAccessLayer.DatabasesManager;
 using DataAccessLayer.Configuration;
 using DataAccessLayer.Filters;
 using DataAccessLayer.Exceptions;
@@ -24,10 +19,10 @@ using DataAccessLayer.Hashes;
 using DataAccessLayer.Filters.Base;
 using DataAccessLayer.Filters.Interfaces;
 
-using SharedLibrary.FactoriesManager.Interfaces; 
-using SharedLibrary.FactoriesManager;
+using SharedLibrary.FactoriesManager.Interfaces;
 using SharedLibrary.Loggers.Configuration;
 using DataAccessLayer.DatabasesManager.Interfaces;
+using MongoDB.Bson;
 
 namespace SentenceAPI.Features.Users.Services
 {
@@ -62,13 +57,13 @@ namespace SentenceAPI.Features.Users.Services
         }
         #endregion
 
-        public async Task DeleteAsync(long id)
+        public async Task DeleteAsync(ObjectId id)
         {
             try
             {
                 await database.Connect();
 
-                var user = (await database.Get(new EqualityFilter<long>(typeof(UserInfo).GetBsonPropertyName("ID"), id))
+                var user = (await database.Get(new EqualityFilter<ObjectId>(typeof(UserInfo).GetBsonPropertyName("ID"), id))
                     .ConfigureAwait(false)).FirstOrDefault();
 
                 if (!(user is UserInfo))
@@ -133,13 +128,13 @@ namespace SentenceAPI.Features.Users.Services
             }
         }
 
-        public async Task<UserInfo> GetAsync(long id)
+        public async Task<UserInfo> GetAsync(ObjectId id)
         {
             try
             {
                 await database.Connect().ConfigureAwait(false);
 
-                return (await database.Get(new EqualityFilter<long>
+                return (await database.Get(new EqualityFilter<ObjectId>
                     (typeof(UserInfo).GetBsonPropertyName("ID"), id))).FirstOrDefault();
             }
             catch (Exception ex)
@@ -177,7 +172,7 @@ namespace SentenceAPI.Features.Users.Services
             }
         }
 
-        public async Task<long> CreateNewUserAsync(string email, string password)
+        public async Task<ObjectId> CreateNewUserAsync(string email, string password)
         {
             try
             {

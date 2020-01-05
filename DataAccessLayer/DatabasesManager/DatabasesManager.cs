@@ -1,11 +1,7 @@
 ﻿using DataAccessLayer.CommonInterfaces;
 using DataAccessLayer.DatabasesManager.Interfaces;
-using DataAccessLayer.KernelModels;
 using DataAccessLayer.MongoDB.Factories;
-using DataAccessLayer.MongoDB.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Text;
+
 
 namespace DataAccessLayer.DatabasesManager
 {
@@ -15,27 +11,9 @@ namespace DataAccessLayer.DatabasesManager
         public IDatabaseFactory MongoDBFactory { get; }
         #endregion
 
-        private DatabasesManager()
+        public DatabasesManager()
         {
             MongoDBFactory = new MongoDBServiceFactory();
         }
-
-        #region Singleton
-        static DatabasesManager() { }
-        private static DatabasesManager databasesManager;
-
-        public static DatabasesManager Manager
-        {
-            get
-            {
-                if (databasesManager == null)
-                {
-                    databasesManager = new DatabasesManager();
-                }
-
-                return databasesManager;
-            }
-        }
-        #endregion
     }
 }

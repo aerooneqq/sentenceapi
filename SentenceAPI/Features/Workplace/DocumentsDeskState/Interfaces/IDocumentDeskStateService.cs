@@ -1,4 +1,5 @@
-﻿using SentenceAPI.Features.Workplace.DocumentsDeskState.Models;
+﻿using MongoDB.Bson;
+using SentenceAPI.Features.Workplace.DocumentsDeskState.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,13 +9,13 @@ namespace SentenceAPI.Features.Workplace.DocumentsDeskState.Interfaces
 {
     public interface IDocumentDeskStateService
     {
-        Task<DocumentDeskState> GetDeskStateAsync(long userID);
+        Task<DocumentDeskState> GetDeskStateAsync(ObjectId userID);
         Task<DocumentDeskState> GetDeskStateAsync(string token);
 
         Task UpdateDeskStateAsync(DocumentDeskState documentDeskState);
 
-        Task CreateDeskStateAsync(long userID);
+        Task CreateDeskStateAsync(ObjectId userID);
 
-        Task DeleteDeskStateAsync(long userID);
+        Task DeleteDeskStateAsync(ObjectId userID);
     }
 }

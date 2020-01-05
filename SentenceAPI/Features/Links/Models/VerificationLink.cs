@@ -7,6 +7,7 @@ using MongoDB.Bson.Serialization.Attributes;
 using Newtonsoft.Json;
 using SentenceAPI.Features.Users.Models;
 using DataAccessLayer.KernelModels;
+using MongoDB.Bson;
 
 namespace SentenceAPI.Features.Links.Models
 {
@@ -30,7 +31,7 @@ namespace SentenceAPI.Features.Links.Models
         public DateTime? UseDate { get; set; }
 
         [BsonElement("userID"), JsonProperty("userID")]
-        public long UserID { get; set; } 
+        public ObjectId UserID { get; set; } 
 
         [BsonElement("hashCode"), JsonProperty("hashCode")]
         public string HashCode { get; set; }

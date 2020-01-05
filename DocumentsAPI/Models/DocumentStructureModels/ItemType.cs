@@ -1,5 +1,5 @@
 
-namespace DocumentsAPI.Models.DocumentStructure 
+namespace DocumentsAPI.Models.DocumentStructureModels 
 { 
     public enum ItemType : byte
     { 

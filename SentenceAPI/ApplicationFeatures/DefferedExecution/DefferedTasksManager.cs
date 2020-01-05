@@ -24,15 +24,10 @@ namespace SentenceAPI.ApplicationFeatures.DefferedExecution
     {
         private static readonly object locker = new object();
 
-        #region Factories
-        private static readonly IFactoriesManager factoriesManager = 
-            ManagersDictionary.Instance.GetManager(Startup.ApiName);
-        #endregion
-
         private static ILogger<ApplicationError> exceptionLogger;
         private static ConcurrentQueue<Action> actions;
 
-        public static void Initialize()
+        public static void Initialize(IFactoriesManager factoriesManager)
         {
             actions = new ConcurrentQueue<Action>();
             

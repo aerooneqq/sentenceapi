@@ -18,6 +18,7 @@ using DataAccessLayer.Filters;
 using DataAccessLayer.Configuration.Interfaces;
 using DataAccessLayer.Configuration;
 using SharedLibrary.Loggers.Configuration;
+using DataAccessLayer.DatabasesManager.Interfaces;
 
 namespace SentenceAPI.Features.Links.Services
 {
@@ -30,7 +31,6 @@ namespace SentenceAPI.Features.Links.Services
 
 
         #region Daatabases
-        private DatabasesManager databasesManager = DatabasesManager.Manager;
         private IDatabaseService<VerificationLink> database;
         private IConfigurationBuilder configurationBuilder;
         #endregion
@@ -41,9 +41,9 @@ namespace SentenceAPI.Features.Links.Services
         #endregion
 
 
-        public LinkService(IFactoriesManager factoriesManager)
+        public LinkService(IFactoriesManager factoriesManager, IDatabaseManager databaseManager)
         {
-            databasesManager.MongoDBFactory.GetDatabase<VerificationLink>().TryGetTarget(out database);
+            databaseManager.MongoDBFactory.GetDatabase<VerificationLink>().TryGetTarget(out database);
 
             configurationBuilder = new MongoConfigurationBuilder(database.Configuration);
             configurationBuilder.SetConfigurationFilePath(databaseConfigFile).SetAuthMechanism()

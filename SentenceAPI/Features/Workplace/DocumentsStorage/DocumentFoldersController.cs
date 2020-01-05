@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 using SharedLibrary.ActionResults;
-using SentenceAPI.ApplicationFeatures.Date.Interfaces;
 using SharedLibrary.Loggers.Interfaces;
 using SharedLibrary.Loggers.Models;
 using SentenceAPI.ApplicationFeatures.Requests.Interfaces;
@@ -21,6 +20,8 @@ using System.Threading.Tasks;
 using SharedLibrary.FactoriesManager.Interfaces;
 using SharedLibrary.FactoriesManager;
 using SharedLibrary.Loggers.Configuration;
+using SharedLibrary.Date.Interfaces;
+using MongoDB.Bson;
 
 namespace SentenceAPI.Features.Workplace.DocumentsStorage
 {
@@ -47,7 +48,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetFolderData([FromQuery]long folderID)
+        public async Task<IActionResult> GetFolderData([FromQuery]ObjectId folderID)
         {
             try
             {
@@ -71,7 +72,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage
         {
             try
             {
-                long userID = long.Parse(tokenService.GetTokenClaim(
+                ObjectId userID = ObjectId.Parse(tokenService.GetTokenClaim(
                     requestService.GetToken(Request), "ID"));
 
                 NewFolderDto newFolder = await requestService.GetRequestBody<NewFolderDto>(Request)
@@ -101,7 +102,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage
 
 
         [HttpDelete]
-        public async Task<IActionResult> DeleteFolder([FromQuery]long folderID)
+        public async Task<IActionResult> DeleteFolder([FromQuery]ObjectId folderID)
         {
             try
             {
@@ -121,7 +122,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage
         }
 
         [HttpPut]
-        public async Task<IActionResult> RenameFolder([FromQuery]long folderID)
+        public async Task<IActionResult> RenameFolder([FromQuery]ObjectId folderID)
         {
             try
             {

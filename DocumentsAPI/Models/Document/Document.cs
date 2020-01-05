@@ -1,14 +1,18 @@
 ﻿using DataAccessLayer.KernelModels;
+
+using MongoDB.Bson;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
+
 namespace DocumentsAPI.Models.Document
 {
     public class Document : UniqueEntity
     {
-        public long AuthorID { get; set; }
+        public ObjectId AuthorID { get; set; }
 
         public string Name { get; set; }
         public DateTime CreatedAt { get; set; }

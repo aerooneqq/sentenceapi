@@ -17,6 +17,7 @@ using SharedLibrary.ActionResults;
 using SharedLibrary.FactoriesManager.Interfaces;
 using SharedLibrary.FactoriesManager;
 using SharedLibrary.Loggers.Configuration;
+using MongoDB.Bson;
 
 namespace SentenceAPI.Features.UserFriends
 {
@@ -85,7 +86,7 @@ namespace SentenceAPI.Features.UserFriends
         }
 
         [HttpPut, Route("subscribers")]
-        public async Task<IActionResult> AddSubscriber([FromQuery]long subscriberID)
+        public async Task<IActionResult> AddSubscriber([FromQuery]ObjectId subscriberID)
         {
             try
             {
@@ -114,7 +115,7 @@ namespace SentenceAPI.Features.UserFriends
         }
 
         [HttpPut, Route("subscriptions")]
-        public async Task<IActionResult> AddSubscription([FromQuery]long subscriptionID)
+        public async Task<IActionResult> AddSubscription([FromQuery]ObjectId subscriptionID)
         {
             try
             {
@@ -143,7 +144,7 @@ namespace SentenceAPI.Features.UserFriends
         }
 
         [HttpDelete, Route("subscribers")]
-        public async Task<IActionResult> DeleteSubscriber([FromQuery]long subscriberID)
+        public async Task<IActionResult> DeleteSubscriber([FromQuery]ObjectId subscriberID)
         {
             try
             {
@@ -165,7 +166,7 @@ namespace SentenceAPI.Features.UserFriends
         }
 
         [HttpDelete, Route("subscriptions")]
-        public async Task<IActionResult> DeleteSubscription([FromQuery]long subscriptionID)
+        public async Task<IActionResult> DeleteSubscription([FromQuery]ObjectId subscriptionID)
         {
             try
             {

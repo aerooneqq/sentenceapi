@@ -7,7 +7,6 @@ using SharedLibrary.ActionResults;
 using SharedLibrary.FactoriesManager.Interfaces;
 using SharedLibrary.FactoriesManager;
 
-using SentenceAPI.ApplicationFeatures.Date.Interfaces;
 using SharedLibrary.Loggers.Interfaces;
 using SharedLibrary.Loggers.Models;
 using SentenceAPI.ApplicationFeatures.Requests.Interfaces;
@@ -22,6 +21,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using SharedLibrary.Loggers.Configuration;
+using SharedLibrary.Date.Interfaces;
+using MongoDB.Bson;
 
 namespace SentenceAPI.Features.Workplace.DocumentsStorage
 {
@@ -51,11 +52,11 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetFoldersAndDocuments([FromQuery]long folderID)
+        public async Task<IActionResult> GetFoldersAndDocuments([FromQuery]ObjectId folderID)
         {
             try
             {
-                long userID = long.Parse(tokenService.GetTokenClaim(requestService.GetToken(Request), "ID"));
+                ObjectId userID = ObjectId.Parse(tokenService.GetTokenClaim(requestService.GetToken(Request), "ID"));
 
                 IEnumerable<DocumentFile> documentFiles = (await fileService.GetFilesAsync(userID, folderID)
                     .ConfigureAwait(false));
@@ -84,7 +85,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage
         {
             try
             {
-                long userID = long.Parse(tokenService.GetTokenClaim(requestService.GetToken(Request), "ID"));
+                ObjectId userID = ObjectId.Parse(tokenService.GetTokenClaim(requestService.GetToken(Request), "ID"));
 
                 IEnumerable<DocumentFile> files = await fileService.GetFilesAsync(userID, query)
                     .ConfigureAwait(false);
@@ -109,8 +110,8 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage
         /// Places the second folder in the first folder.
         /// </summary>
         [HttpPut, Route("replaceFolder")]
-        public async Task<IActionResult> PutFolderIntoAnotherFolder([FromQuery]long firstFolderID,
-                                                                    [FromQuery]long secondFolderID)
+        public async Task<IActionResult> PutFolderIntoAnotherFolder([FromQuery]ObjectId firstFolderID,
+                                                                    [FromQuery]ObjectId secondFolderID)
         {
             try
             {
@@ -148,7 +149,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage
         }
 
         [HttpPut, Route("replaceFile")]
-        public async Task<IActionResult> PutFileInFolder([FromQuery]long fileID, [FromQuery]long folderID)
+        public async Task<IActionResult> PutFileInFolder([FromQuery]ObjectId fileID, [FromQuery]ObjectId folderID)
         {
             try
             {

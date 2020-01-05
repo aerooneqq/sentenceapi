@@ -1,12 +1,13 @@
-using DocumentsAPI.Features.DocumentStructure.Services;
+using DataAccessLayer.DatabasesManager.Interfaces;
+
+using SharedLibrary.FactoriesManager.Interfaces;
+using SharedLibrary.KernelInterfaces;
+
 
 namespace DocumentsAPI.Features.DocumentStructure.Interfaces
-{ 
-    public interface IDocumentStructureServiceFactory
+{
+    public interface IDocumentStructureServiceFactory : IServiceFactory
     {
-        public IDocumentStructureService GetService()
-        { 
-            return new DocumentStructureService();
-        }
+        IDocumentStructureService GetService(IFactoriesManager factoriesManager, IDatabaseManager databaseManager);
     }
 }

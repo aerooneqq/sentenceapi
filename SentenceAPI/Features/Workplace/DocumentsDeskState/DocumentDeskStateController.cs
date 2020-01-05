@@ -18,6 +18,7 @@ using SentenceAPI.ApplicationFeatures.Requests.Interfaces;
 using SentenceAPI.Features.Workplace.DocumentsDeskState.Interfaces;
 using SentenceAPI.Features.Workplace.DocumentsDeskState.Models;
 using SharedLibrary.Loggers.Configuration;
+using MongoDB.Bson;
 
 namespace SentenceAPI.Features.Workplace.DocumentsDeskState
 {
@@ -61,7 +62,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsDeskState
         }
 
         [HttpPut]
-        public async Task<IActionResult> PutFileToTopBar(long documentID, string documentName)
+        public async Task<IActionResult> PutFileToTopBar(ObjectId documentID, string documentName)
         {
             try
             {
@@ -95,7 +96,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsDeskState
         }
 
         [HttpDelete]
-        public async Task<IActionResult> DeleteFileFromTopBar(long documentID)
+        public async Task<IActionResult> DeleteFileFromTopBar(ObjectId documentID)
         {
             try
             {

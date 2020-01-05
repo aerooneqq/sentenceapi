@@ -42,11 +42,6 @@ namespace SentenceAPI.Features.Email.Services
         private ILogger<ApplicationError> exceptionLogger;
         #endregion
 
-        #region Factories
-        private IFactoriesManager factoriesManager = 
-            ManagersDictionary.Instance.GetManager(Startup.ApiName);
-        #endregion
-
         public EmailService(IFactoriesManager factoriesManager, IDatabaseManager databaseManager)
         {
             databaseManager.MongoDBFactory.GetDatabase<EmailLog>().TryGetTarget(out database);

@@ -127,7 +127,7 @@ namespace DataAccessLayer.MongoDB
 
                 entity.ID = GetNewID(supportMongoCollection);
 
-                mongoCollection.InsertOneAsync(entity);
+                mongoCollection.InsertOne(entity);
             });
         }
 
@@ -135,16 +135,9 @@ namespace DataAccessLayer.MongoDB
         /// Gets the last id for a new record, and incrementing the LastID peroperty in a support
         /// collection.
         /// </summary>
-        private long GetNewID(IMongoCollection<CollectionProperties> supportCollection)
+        private ObjectId GetNewID(IMongoCollection<CollectionProperties> supportCollection)
         {
-            var filter = Builders<CollectionProperties>.Filter.Eq("collectionName", SupportDocumentName);
-            CollectionProperties document = supportCollection.Find(filter).First();
-
-            long lastID = document.LastID;
-            supportCollection.UpdateOne(filter, Builders<CollectionProperties>.Update.Set(
-                "lastID", lastID + 1));
-
-            return lastID;
+            return ObjectId.GenerateNewId();
         }
 
         /// <summary>

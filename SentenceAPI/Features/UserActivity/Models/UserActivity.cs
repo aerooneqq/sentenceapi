@@ -8,13 +8,14 @@ using MongoDB.Bson.Serialization.Attributes;
 using Newtonsoft.Json;
 
 using DataAccessLayer.KernelModels;
+using MongoDB.Bson;
 
 namespace SentenceAPI.Features.UserActivity.Models
 {
     public class UserActivity : UniqueEntity
     {
         [BsonElement("userID"), JsonProperty("userID")]
-        public long UserID { get; set; }
+        public ObjectId UserID { get; set; }
 
         [BsonElement("lastActivityDate"), JsonProperty("lastActivityDate")]
         public DateTime LastActivityDate { get; set; }

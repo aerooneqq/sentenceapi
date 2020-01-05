@@ -5,8 +5,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-using MongoDB.Bson.Serialization.Attributes;
 using Newtonsoft.Json;
+
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace SentenceAPI.Features.Workplace.DocumentsStorage.Models
 {
@@ -16,13 +18,13 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage.Models
     public class DocumentFile : UniqueEntity
     {
         [BsonElement("userID"), JsonProperty("userID")]
-        public long UserID { get; set; } 
+        public ObjectId UserID { get; set; } 
         
         [BsonElement("documentID"), JsonProperty("documentID")]
-        public long DocumentID { get; set; }
+        public ObjectId DocumentID { get; set; }
 
         [BsonElement("parentFolderID"), JsonProperty("parentFolderID")]
-        public long ParentFolderID { get; set; }
+        public ObjectId ParentFolderID { get; set; }
 
         [BsonElement("creationDate"), JsonProperty("creationDate")]
         public DateTime CreationDate { get; set; }
