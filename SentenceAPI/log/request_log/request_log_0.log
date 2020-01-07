@@ -7,3 +7,15 @@
 [2020-01-03T21:56:13.9188413Z][Information][Middleware]
 {"QueryString":"?email=aerooneQ@yandex.ru&password=AeroOne123","Body":null,"ContentType":null,"ContentLength":null,"IsHttps":false,"Host":{"Port":7000,"Host":"localhost"},"Method":"GET"}
 
+[2020-01-07T19:06:45.9267860Z][Information][Middleware]
+{"QueryString":"","Body":null,"ContentType":null,"ContentLength":null,"IsHttps":false,"Host":{"Port":7000,"Host":"localhost"},"Method":"OPTIONS"}
+
+[2020-01-07T19:06:47.7131783Z][Information][Middleware]
+{"QueryString":"","Body":null,"ContentType":null,"ContentLength":null,"IsHttps":false,"Host":{"Port":7000,"Host":"localhost"},"Method":"GET"}
+
+[2020-01-07T19:07:17.0518153Z][Information][Middleware]
+{"QueryString":"?email=aerooneQ@yandex.ru&password=AeroOne123","Body":null,"ContentType":null,"ContentLength":null,"IsHttps":false,"Host":{"Port":7000,"Host":"localhost"},"Method":"GET"}
+
+[2020-01-07T19:07:36.4180664Z][Information][Middleware]
+{"QueryString":"?email=aerooneQ@yandex.ru&password=AeroOne123","Body":null,"ContentType":null,"ContentLength":null,"IsHttps":false,"Host":{"Port":7000,"Host":"localhost"},"Method":"GET"}
+

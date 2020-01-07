@@ -17,6 +17,7 @@ namespace SentenceAPI.Features.UserFriends.Interfaces
         Task AddSubscriptionAsync(string token, ObjectId subscriptionID);
         Task DeleteSubscriberAsync(string token, ObjectId subscriberID);
         Task DeleteSubscriptionAsync(string token, ObjectId subscriptionID);
+        Task CreateUserFriendsRecord(ObjectId userID);
 
         Task<IEnumerable<Subscriber>> GetSubscribersAsync(string token);
         Task<IEnumerable<Subscription>> GetSubscriptionsAsync(string token);

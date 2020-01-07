@@ -158,7 +158,7 @@ namespace SentenceAPI.Features.UserFeed.Services
                     UserID = userID,
                     Message = message,
                     PublicationDate = DateTime.Now,
-                });
+                }).ConfigureAwait(false);
             }
             catch (Exception ex) when (ex.GetType() != typeof(DatabaseException))
             {

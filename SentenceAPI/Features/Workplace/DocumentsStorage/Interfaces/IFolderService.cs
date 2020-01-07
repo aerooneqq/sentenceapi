@@ -12,7 +12,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage.Interfaces
         Task<IEnumerable<DocumentFolder>> GetFolders(ObjectId userID, ObjectId parentFolderID);
         Task<DocumentFolder> GetFolderData(ObjectId folderID);
 
-        Task CreateFolder(ObjectId userID, ObjectId parentFolderID, string folderName);
+        Task<ObjectId> CreateFolder(ObjectId userID, ObjectId parentFolderID, string folderName);
         Task DeleteFolder(ObjectId folderID);
         Task RenameFolder(ObjectId folderID, string newFolderName);
         Task<IEnumerable<DocumentFolder>> GetFolders(ObjectId userID, string searchQuery);

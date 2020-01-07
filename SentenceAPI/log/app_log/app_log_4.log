@@ -1,0 +1,18 @@
+[Error][2020-01-06T19:29:12.0446975Z][Object reference not set to an instance of an object.][Service]
+{"errorDate":"2020-01-06T19:29:12.0434294Z","message":"Object reference not set to an instance of an object.","configuration":null,"stackTrace":"   at SentenceAPI.Features.UserFeed.Services.UserFeedService.GetUsersPhotoesAsync(IEnumerable`1 userIDs) in /home/aero/Programming/Sentence/sentenceapi/SentenceAPI/Features/UserFeed/Services/UserFeedService.cs:line 115\n   at SentenceAPI.Features.UserFeed.Services.UserFeedService.GetUserFeedAsync(ObjectId userID) in /home/aero/Programming/Sentence/sentenceapi/SentenceAPI/Features/UserFeed/Services/UserFeedService.cs:line 79","source":"SentenceAPI","ID":"000000000000000000000000"}
+
+[Error][2020-01-07T19:10:39.2630888Z][Object reference not set to an instance of an object.][Controller]
+{"errorDate":"2020-01-07T19:10:39.1487837Z","message":"Object reference not set to an instance of an object.","configuration":null,"stackTrace":"   at SentenceAPI.Features.UserFeed.UserFeedController.InsertFeed() in /home/aero/Programming/Sentence/sentenceapi/SentenceAPI/Features/UserFeed/UserFeedController.cs:line 71","source":"SentenceAPI","ID":"000000000000000000000000"}
+
+[Error][2020-01-07T19:10:56.9081749Z][Object reference not set to an instance of an object.][Controller]
+{"errorDate":"2020-01-07T19:10:56.9063521Z","message":"Object reference not set to an instance of an object.","configuration":null,"stackTrace":"   at SentenceAPI.Features.UserFeed.UserFeedController.InsertFeed() in /home/aero/Programming/Sentence/sentenceapi/SentenceAPI/Features/UserFeed/UserFeedController.cs:line 71","source":"SentenceAPI","ID":"000000000000000000000000"}
+
+[Error][2020-01-07T19:13:34.9619021Z][Object reference not set to an instance of an object.][Controller]
+{"errorDate":"2020-01-07T19:13:34.9612055Z","message":"Object reference not set to an instance of an object.","configuration":null,"stackTrace":"   at SentenceAPI.Features.UserFeed.UserFeedController.InsertFeed() in /home/aero/Programming/Sentence/sentenceapi/SentenceAPI/Features/UserFeed/UserFeedController.cs:line 71","source":"SentenceAPI","ID":"000000000000000000000000"}
+
+[Error][2020-01-07T19:14:05.0863784Z][Object reference not set to an instance of an object.][Controller]
+{"errorDate":"2020-01-07T19:14:05.0857126Z","message":"Object reference not set to an instance of an object.","configuration":null,"stackTrace":"   at SentenceAPI.Features.UserFeed.UserFeedController.InsertFeed() in /home/aero/Programming/Sentence/sentenceapi/SentenceAPI/Features/UserFeed/UserFeedController.cs:line 71","source":"SentenceAPI","ID":"000000000000000000000000"}
+
+[Error][2020-01-07T19:17:36.6327177Z][Object reference not set to an instance of an object.][Controller]
+{"errorDate":"2020-01-07T19:17:36.62813Z","message":"Object reference not set to an instance of an object.","configuration":null,"stackTrace":"   at SentenceAPI.Features.UserFeed.UserFeedController.InsertFeed() in /home/aero/Programming/Sentence/sentenceapi/SentenceAPI/Features/UserFeed/UserFeedController.cs:line 71","source":"SentenceAPI","ID":"000000000000000000000000"}
+

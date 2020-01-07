@@ -6,10 +6,9 @@ using Microsoft.Extensions.Caching.Memory;
 
 using SharedLibrary.ActionResults;
 using SharedLibrary.FactoriesManager.Interfaces;
-using SharedLibrary.FactoriesManager;
-
 using SharedLibrary.Loggers.Interfaces;
 using SharedLibrary.Loggers.Models;
+
 using SentenceAPI.ApplicationFeatures.Requests.Interfaces;
 using SentenceAPI.Features.Authentication.Interfaces;
 using SentenceAPI.Features.UserPhoto.Interfaces;

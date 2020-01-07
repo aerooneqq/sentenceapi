@@ -48,7 +48,6 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage
             factoriesManager.GetService<IDateService>().TryGetTarget(out dateService);
 
             factoriesManager.GetService<ILogger<ApplicationError>>().TryGetTarget(out exceptionLogger);
-            exceptionLogger.LogConfiguration = new LogConfiguration(this.GetType());
         }
 
         [HttpGet]
@@ -109,7 +108,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage
         /// <summary>
         /// Places the second folder in the first folder.
         /// </summary>
-        [HttpPut, Route("replaceFolder")]
+        [HttpPut, Route("folders")]
         public async Task<IActionResult> PutFolderIntoAnotherFolder([FromQuery]ObjectId firstFolderID,
                                                                     [FromQuery]ObjectId secondFolderID)
         {
@@ -148,7 +147,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage
             }
         }
 
-        [HttpPut, Route("replaceFile")]
+        [HttpPut, Route("files")]
         public async Task<IActionResult> PutFileInFolder([FromQuery]ObjectId fileID, [FromQuery]ObjectId folderID)
         {
             try

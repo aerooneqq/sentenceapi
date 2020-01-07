@@ -60,19 +60,41 @@ namespace SentenceAPI.Features.UserFriends.Services
 
 
         #region IUserFriendsService implementation
+        public async Task CreateUserFriendsRecord(ObjectId userID)
+        {
+            try 
+            {
+                var userFriends = new UserFriends.Models.UserFriends()
+                {
+                    ID = ObjectId.GenerateNewId(),
+                    SubscribersID = new List<ObjectId>(),
+                    SubscriptionsID = new List<ObjectId>(),
+                    UserID = userID
+                };
+
+                await database.Connect().ConfigureAwait(false);
+                await database.Insert(userFriends).ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
+                throw new DatabaseException("The error occured when creating the user", ex);
+            }
+        }
+
         public async Task AddSubscriberAsync(string token, ObjectId subscriberID)
         {
             try
             {
                 ObjectId userID = ObjectId.Parse(tokenService.GetTokenClaim(token, "ID"));
 
-                await database.Connect();
+                await database.Connect().ConfigureAwait(false);
 
                 Models.UserFriends userFriends = (await database.Get(new EqualityFilter<ObjectId>("userID",
                     userID))).FirstOrDefault();
                 userFriends.SubscribersID.Add(subscriberID);
 
-                await database.Update(userFriends, new[] { "SubscribersID" });
+                await database.Update(userFriends, new[] { "SubscribersID" }).ConfigureAwait(false);
             }
             catch (Exception ex)
             {
@@ -87,7 +109,7 @@ namespace SentenceAPI.Features.UserFriends.Services
             {
                 ObjectId userID = ObjectId.Parse(tokenService.GetTokenClaim(token, "ID"));
 
-                await database.Connect();
+                await database.Connect().ConfigureAwait(false);
 
                 Models.UserFriends userFriends = (await database.Get(new EqualityFilter<ObjectId>("userID",
                     userID))).FirstOrDefault();

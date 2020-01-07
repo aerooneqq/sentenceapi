@@ -1,27 +1,23 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-
-using Newtonsoft.Json;
 
 using DataAccessLayer.Exceptions;
 
 using SharedLibrary.ActionResults;
 using SharedLibrary.FactoriesManager.Interfaces;
-using SharedLibrary.FactoriesManager;
-
 using SharedLibrary.Loggers.Interfaces;
 using SharedLibrary.Loggers.Models;
+using SharedLibrary.Loggers.Configuration;
+
 using SentenceAPI.ApplicationFeatures.Requests.Interfaces;
 using SentenceAPI.Features.UserFeed.Interfaces;
 using SentenceAPI.Features.UserFeed.Models;
-using SharedLibrary.Loggers.Configuration;
+using SentenceAPI.Features.Users.Interfaces;
+using SentenceAPI.Features.Users.Models;
+
 
 namespace SentenceAPI.Features.UserFeed
 {
@@ -29,9 +25,10 @@ namespace SentenceAPI.Features.UserFeed
     public class UserFeedController : Controller
     {
         #region Services
-        private ILogger<ApplicationError> exceptionLogger;
-        private IUserFeedService userFeedService;
-        private IRequestService requestService;
+        private readonly ILogger<ApplicationError> exceptionLogger;
+        private readonly IUserFeedService userFeedService;
+        private readonly IRequestService requestService;
+        private readonly IUserService<UserInfo> userService;
         #endregion
 
         public UserFeedController(IFactoriesManager factoriesManager)
@@ -39,6 +36,7 @@ namespace SentenceAPI.Features.UserFeed
             factoriesManager.GetService<IUserFeedService>().TryGetTarget(out userFeedService);
             factoriesManager.GetService<ILogger<ApplicationError>>().TryGetTarget(out exceptionLogger);
             factoriesManager.GetService<IRequestService>().TryGetTarget(out requestService);
+            factoriesManager.GetService<IUserService<UserInfo>>().TryGetTarget(out userService);
 
             exceptionLogger.LogConfiguration = new LogConfiguration(this.GetType());
         }
@@ -71,6 +69,12 @@ namespace SentenceAPI.Features.UserFeed
             try
             {
                 string token = requestService.GetToken(Request);
+                var user = await userService.GetAsync(token).ConfigureAwait(false);
+
+                if (user.Name is null || user.Surname is null)
+                {
+                    return new BadSendedRequest<string>("Set your name and surname to insert the post."); 
+                }
 
                 string message = await requestService.GetRequestBody(Request);
 

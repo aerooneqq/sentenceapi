@@ -14,7 +14,7 @@ using DataAccessLayer.CommonInterfaces;
 using DataAccessLayer.Configuration.Interfaces;
 using DataAccessLayer.Configuration;
 using DataAccessLayer.DatabasesManager.Interfaces;
-
+using MongoDB.Bson;
 
 namespace SentenceAPI.Features.Authentication.Services
 {

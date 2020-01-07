@@ -29,6 +29,7 @@ using SharedLibrary.FactoriesManager;
 
 using DataAccessLayer.Exceptions;
 using MongoDB.Bson;
+using SentenceAPI.Features.UserFriends.Interfaces;
 
 namespace SentenceAPI.Features.Users
 {
@@ -38,11 +39,9 @@ namespace SentenceAPI.Features.Users
         #region Services
         private readonly IFactoriesManager factoriesManager;
 
-        private readonly ILinkService linkService;
-        private readonly IEmailService emailService;
+
         private readonly IUserService<UserInfo> userService;
         private readonly ILogger<ApplicationError> exceptionLogger;
-        private readonly ICodesService codesService;
         private readonly IRequestService requestService;
         private readonly IMemoryCache memoryCacheService;
         private readonly ITokenService tokenService;
@@ -54,12 +53,10 @@ namespace SentenceAPI.Features.Users
             this.factoriesManager = factoriesManager;
 
             factoriesManager.GetService<IUserService<UserInfo>>().TryGetTarget(out userService);
-            factoriesManager.GetService<ILinkService>().TryGetTarget(out linkService);
-            factoriesManager.GetService<IEmailService>().TryGetTarget(out emailService);
             factoriesManager.GetService<ILogger<ApplicationError>>().TryGetTarget(out exceptionLogger);
-            factoriesManager.GetService<ICodesService>().TryGetTarget(out codesService);
             factoriesManager.GetService<IRequestService>().TryGetTarget(out requestService);
             factoriesManager.GetService<ITokenService>().TryGetTarget(out tokenService);
+            
 
             this.memoryCacheService = memoryCacheService;
 
@@ -171,11 +168,9 @@ namespace SentenceAPI.Features.Users
                 if (!(await userService.DoesUserExistAsync(email).ConfigureAwait(false)))
                 {
                     ObjectId id = await userService.CreateNewUserAsync(email, password).ConfigureAwait(false);
-
-                    ActivationCode activationCode = codesService.CreateActivationCode(id);
-                    await codesService.InsertCodeInDatabaseAsync(activationCode).ConfigureAwait(false);
-
-                    await emailService.SendConfirmationEmailAsync(activationCode.Code, email).ConfigureAwait(false);
+                    var user = await userService.GetAsync(id).ConfigureAwait(false);
+                    
+                    await EventManager.Raise(new UserCreatedEvent(factoriesManager, user)).ConfigureAwait(false);
 
                     return new Created();
                 }
@@ -225,7 +220,7 @@ namespace SentenceAPI.Features.Users
                     user.IsAccountVerified = false;
                     updatedFields.Add(typeof(UserInfo).GetBsonPropertyName("IsAccountVerified"), false);
 
-                    await EventManager.Raise(new UserEmailChangedEvent(user.Email, user.ID, factoriesManager));
+                    await EventManager.Raise(new UserEmailChangedEvent(user.Email, user.ID, factoriesManager)).ConfigureAwait(false);
                 }
 
                 await userService.UpdateAsync(user, updatedFields.Keys.Select(propName =>

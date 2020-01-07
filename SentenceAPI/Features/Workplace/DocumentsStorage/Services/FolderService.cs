@@ -37,7 +37,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage.Services
         #endregion
 
         #region Services
-        private ILogger<ApplicationError> exceptionLogger;
+        private readonly ILogger<ApplicationError> exceptionLogger;
         #endregion
 
 
@@ -50,7 +50,6 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage.Services
                     .SetUserName().SetPassword().SetDatabaseName().SetServerName().SetConnectionString();
 
             factoriesManager.GetService<ILogger<ApplicationError>>().TryGetTarget(out exceptionLogger);
-            exceptionLogger.LogConfiguration = new LogConfiguration(this.GetType());
         }
 
         public async Task<IEnumerable<DocumentFolder>> GetFolders(ObjectId userID, ObjectId parentFolderID)
@@ -71,21 +70,27 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage.Services
             }
         }
 
-        public async Task CreateFolder(ObjectId userID, ObjectId parentFolderID, string folderName)
+        public async Task<ObjectId> CreateFolder(ObjectId userID, ObjectId parentFolderID, string folderName)
         {
             try
             {
-                await database.Connect().ConfigureAwait(false);
-
-                await database.Insert(new DocumentFolder()
+                ObjectId newFolderID = ObjectId.GenerateNewId();
+                DocumentFolder documentFolder = new DocumentFolder()
                 {
+                    ID = newFolderID,
                     CreationDate = DateTime.Now,
                     UserID = userID,
                     ParentFolderID = parentFolderID,
                     FolderName = folderName,
                     IsDeleted = false,
                     LastUpdateDate = DateTime.Now
-                }).ConfigureAwait(false);
+                };
+
+                await database.Connect().ConfigureAwait(false);
+
+                await database.Insert(documentFolder).ConfigureAwait(false);
+
+                return newFolderID;
             }
             catch (Exception ex)
             {

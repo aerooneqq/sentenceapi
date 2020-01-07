@@ -74,7 +74,8 @@ namespace SentenceAPI.Features.Email.Services
                     using (SmtpClient smtpClient = new SmtpClient(Host, 587)
                     {
                         Credentials = new NetworkCredential(ServerMail, ServiceMailPass),
-                        EnableSsl = true
+                        EnableSsl = true,
+                        UseDefaultCredentials = true
                     })
                     {
                         await smtpClient.SendMailAsync(mailMessage).ConfigureAwait(false);
