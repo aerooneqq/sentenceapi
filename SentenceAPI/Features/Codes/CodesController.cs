@@ -31,6 +31,8 @@ namespace SentenceAPI.Features.Codes
         private IRequestService requestService;
         #endregion
 
+        private readonly LogConfiguration logConfiguration;
+
 
         public CodesController(IFactoriesManager factoriesManager)
         {
@@ -39,7 +41,7 @@ namespace SentenceAPI.Features.Codes
             factoriesManager.GetService<IRequestService>().TryGetTarget(out requestService);
 
             factoriesManager.GetService<IUserService<UserInfo>>().TryGetTarget(out userService);
-            exceptionLogger.LogConfiguration = new LogConfiguration(this.GetType());
+            logConfiguration = new LogConfiguration(this.GetType());
         }
 
 
@@ -63,7 +65,7 @@ namespace SentenceAPI.Features.Codes
             }
             catch (Exception ex)
             {
-                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
                 return new InternalServerError();
             }
         }

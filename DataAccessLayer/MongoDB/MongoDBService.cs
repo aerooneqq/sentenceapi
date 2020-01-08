@@ -125,7 +125,8 @@ namespace DataAccessLayer.MongoDB
                 mongoCollection = database.GetCollection<DataType>(CollectionName);
                 supportMongoCollection = database.GetCollection<CollectionProperties>(SupportCollectionName);
 
-                entity.ID = GetNewID(supportMongoCollection);
+                if (entity.ID == ObjectId.Empty)
+                    entity.ID = GetNewID(supportMongoCollection);
 
                 mongoCollection.InsertOne(entity);
             });
@@ -304,6 +305,11 @@ namespace DataAccessLayer.MongoDB
         {
             mongoCollection = null;
             supportMongoCollection = null;
+        }
+
+        public Task Clear()
+        {
+            throw new NotImplementedException();
         }
         #endregion
     }

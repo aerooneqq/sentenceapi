@@ -16,6 +16,7 @@ using SharedLibrary.FactoriesManager.Interfaces;
 using SharedLibrary.Loggers.Interfaces;
 using SharedLibrary.Loggers.Models;
 using SharedLibrary.Loggers.Configuration;
+using System.Runtime.CompilerServices;
 
 namespace SharedLibrary.Loggers
 {
@@ -23,41 +24,16 @@ namespace SharedLibrary.Loggers
     {
         private readonly LogThread logThread;  
 
-        #region Properties
-
-        /// <summary>
-        /// This property must be initialized befote each logging
-        /// </summary>
-        public LogConfiguration LogConfiguration { get; set; }
-        #endregion
-
         public EmailLogger(string logConfigurationFilePath, int loggerID)
         {
             string logFilePath = Path.Combine(Path.GetDirectoryName(logConfigurationFilePath), $"email_log_{loggerID}.log");
             logThread = new LogThread(logFilePath, new LoggerConfiguration(logConfigurationFilePath));
-
-            LogConfiguration = new LogConfiguration(typeof(object))
-            {
-                ClassName = string.Empty, 
-                ComponentType = ComponentType.Undefined
-            };
         }
 
         #region ILogger implementation
-        public void Log(EmailLog logObject, LogLevel logLevel)
+        public void Log(EmailLog emailLog, LogLevel logLevel, LogConfiguration logConfiguration)
         {
-            Log log = new Log()
-            {
-                LogLevel = logLevel,
-                Date = DateTime.UtcNow,
-                JsonData = JsonConvert.SerializeObject(logObject),
-                Place = LogConfiguration.ComponentType,
-                Message = string.Empty,
-                Base64Data = null,
-                XMLData = null,
-            }; 
-
-            logThread.QueueLog(log);
+            logThread.QueueLog(new Log(emailLog, logLevel, logConfiguration));
         }
         #endregion
     }

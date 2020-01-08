@@ -30,14 +30,15 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage
     public class FolderSystemController : ControllerBase
     {
         #region Services
-        private IRequestService requestService;
-        private ITokenService tokenService;
-        private ILogger<ApplicationError> exceptionLogger;
-        private IFileService fileService;
-        private IFolderService folderService;
-        private IDateService dateService;
+        private readonly IRequestService requestService;
+        private readonly ITokenService tokenService;
+        private readonly ILogger<ApplicationError> exceptionLogger;
+        private readonly IFileService fileService;
+        private readonly IFolderService folderService;
+        private readonly IDateService dateService;
         #endregion
         
+        private readonly LogConfiguration logConfiguration;
 
         public FolderSystemController(IFactoriesManager factoriesManager)
         {
@@ -46,7 +47,6 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage
             factoriesManager.GetService<IFileService>().TryGetTarget(out fileService);
             factoriesManager.GetService<IFolderService>().TryGetTarget(out folderService);
             factoriesManager.GetService<IDateService>().TryGetTarget(out dateService);
-
             factoriesManager.GetService<ILogger<ApplicationError>>().TryGetTarget(out exceptionLogger);
         }
 
@@ -71,7 +71,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage
             }
             catch (Exception ex)
             {
-                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
                 return new InternalServerError();
             }
         }
@@ -100,7 +100,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage
             }
             catch (Exception ex)
             {
-                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
                 return new InternalServerError();
             }
         }
@@ -142,7 +142,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage
             }
             catch (Exception ex)
             {
-                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
                 return new InternalServerError();
             }
         }
@@ -174,7 +174,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage
             }
             catch (Exception ex)
             {
-                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
                 return new InternalServerError();
             }
         }

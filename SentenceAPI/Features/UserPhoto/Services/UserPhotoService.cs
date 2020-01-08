@@ -44,6 +44,7 @@ namespace SentenceAPI.Features.UserPhoto.Services
         private readonly ICacheService cacheService = CacheService.Service;
         #endregion
 
+        private readonly LogConfiguration logConfiguration;
 
         public UserPhotoService(IFactoriesManager factoriesManager, IDatabaseManager databasesManager)
         {
@@ -54,9 +55,9 @@ namespace SentenceAPI.Features.UserPhoto.Services
                     .SetUserName().SetPassword().SetDatabaseName().SetServerName().SetConnectionString();
 
             factoriesManager.GetService<ILogger<ApplicationError>>().TryGetTarget(out exceptionLogger);
-            exceptionLogger.LogConfiguration = new LogConfiguration(this.GetType());
-
             factoriesManager.GetService<ITokenService>().TryGetTarget(out tokenService);
+            
+            logConfiguration = new LogConfiguration(this.GetType());
         }
 
         public async Task CreateUserPhotoAsync(ObjectId userID)
@@ -78,7 +79,7 @@ namespace SentenceAPI.Features.UserPhoto.Services
             }
             catch (Exception ex)
             {
-                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
                 throw new DatabaseException("The error occured while creating photo-record");
             }
         }
@@ -96,7 +97,7 @@ namespace SentenceAPI.Features.UserPhoto.Services
             }
             catch (Exception ex)
             {
-                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
                 throw new DatabaseException("The error occured while getting raw photo");
             }
         }
@@ -119,7 +120,7 @@ namespace SentenceAPI.Features.UserPhoto.Services
             }
             catch (Exception ex) 
             {
-                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
                 throw new DatabaseException("The error occured while getting your photo");
             }
         }
@@ -138,7 +139,7 @@ namespace SentenceAPI.Features.UserPhoto.Services
             }
             catch (Exception ex) when (ex.GetType() != typeof(DatabaseException))
             {
-                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
                 throw new DatabaseException("The error occured while getting the photo");
             }
         }
@@ -152,7 +153,7 @@ namespace SentenceAPI.Features.UserPhoto.Services
             }
             catch (Exception ex)
             {
-                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
                 throw new DatabaseException("The error occured while creating new user photo model");
             }
         }
@@ -190,7 +191,7 @@ namespace SentenceAPI.Features.UserPhoto.Services
             }
             catch (Exception ex)
             {
-                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
                 throw new DatabaseException("Error occured while updating the photo");
             }
         }

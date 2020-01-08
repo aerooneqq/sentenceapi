@@ -33,17 +33,19 @@ namespace SentenceAPI.Features.UserPhoto
         private ITokenService tokenService;
         #endregion
 
+        private readonly LogConfiguration logConfiguration;
+
 
         public UserPhotoController(IMemoryCache memoryCache, IFactoriesManager factoriesManager)
         {
             factoriesManager.GetService<ILogger<ApplicationError>>().TryGetTarget(out exceptionLogger);
-            exceptionLogger.LogConfiguration = new LogConfiguration(this.GetType());
-
             factoriesManager.GetService<IUserPhotoService>().TryGetTarget(out userPhotoService);
-
             factoriesManager.GetService<IRequestService>().TryGetTarget(out requestService);
             factoriesManager.GetService<ITokenService>().TryGetTarget(out tokenService);
+
+            logConfiguration = new LogConfiguration(this.GetType());
         }
+
 
         [HttpGet]
         public async Task<IActionResult> GetPhotoAsync()
@@ -68,7 +70,7 @@ namespace SentenceAPI.Features.UserPhoto
             }
             catch (Exception ex)
             {
-                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
                 return new InternalServerError();
             }
         }
@@ -105,7 +107,7 @@ namespace SentenceAPI.Features.UserPhoto
             }
             catch (Exception ex)
             {
-                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
                 return new InternalServerError();
             }
         }

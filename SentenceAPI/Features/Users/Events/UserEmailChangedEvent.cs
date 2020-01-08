@@ -30,10 +30,12 @@ namespace SentenceAPI.Features.Users.Events
 
 
         #region Services
-        private IEmailService emailService;
-        private ICodesService codesService;
-        private ILogger<ApplicationError> exceptionLogger;
+        private readonly IEmailService emailService;
+        private readonly ICodesService codesService;
+        private readonly ILogger<ApplicationError> exceptionLogger;
         #endregion
+
+        private readonly LogConfiguration logConfiguration;
 
         public UserEmailChangedEvent(string email, ObjectId userID, IFactoriesManager factoriesManager)
         {
@@ -44,8 +46,9 @@ namespace SentenceAPI.Features.Users.Events
             factoriesManager.GetService<ICodesService>().TryGetTarget(out codesService);
             factoriesManager.GetService<ILogger<ApplicationError>>().TryGetTarget(out exceptionLogger);
             
-            exceptionLogger.LogConfiguration = new LogConfiguration(this.GetType());
+            logConfiguration = new LogConfiguration(this.GetType());
         }
+
 
         #region IDomainEvent implementation 
         /// <summary>
@@ -67,7 +70,7 @@ namespace SentenceAPI.Features.Users.Events
             }
             catch (Exception ex)
             {
-                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
                 throw new DatabaseException("The error occured while sending confirmation email");
             }
         }

@@ -8,20 +8,24 @@ using System.Linq;
 using System.Threading.Tasks;
 using SharedLibrary.KernelInterfaces;
 using Microsoft.AspNetCore.Mvc;
+using System.Runtime.CompilerServices;
 
 namespace SharedLibrary.Loggers.Models
 {
     public class LogConfiguration
     {
         public string ClassName { get; set; }
-
         public ComponentType ComponentType { get; set; }
+        public string MethodName { get; set; }
 
-        public LogConfiguration(Type objectType)
+
+        public LogConfiguration(Type objectType, [CallerMemberName]string methodName = "")
         {
             ClassName = objectType.Name;
             ComponentType = GetComponentType(objectType);
+            MethodName = methodName;
         }
+
 
         private ComponentType GetComponentType(Type objectType) 
         {

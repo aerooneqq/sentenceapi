@@ -27,6 +27,8 @@ namespace SentenceAPI.Features.UserActivity
         private IUserActivityService userActivityService;
         #endregion
 
+        private readonly LogConfiguration logConfiguration;
+
 
         public UserActivitiesController(IFactoriesManager factoriesManager)
         {
@@ -34,7 +36,7 @@ namespace SentenceAPI.Features.UserActivity
             factoriesManager.GetService<ILogger<ApplicationError>>().TryGetTarget(out exceptionLogger);
             factoriesManager.GetService<ITokenService>().TryGetTarget(out tokenService);
 
-            exceptionLogger.LogConfiguration = new LogConfiguration(this.GetType());
+            logConfiguration = new LogConfiguration(this.GetType());
         }
 
 
@@ -58,7 +60,7 @@ namespace SentenceAPI.Features.UserActivity
             }
             catch (Exception ex)
             {
-                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
                 return new InternalServerError();
             }
         }

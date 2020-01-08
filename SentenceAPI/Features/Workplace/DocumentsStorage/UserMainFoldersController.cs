@@ -37,6 +37,8 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage
         private readonly ITokenService tokenService;
         #endregion
 
+        private readonly LogConfiguration logConfiguration;
+
 
         public UserMainFoldersController(IFactoriesManager factoriesManager)
         {
@@ -63,7 +65,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage
             }
             catch (Exception ex)
             {
-                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
                 return new InternalServerError();
             }
         }

@@ -14,7 +14,9 @@ using DataAccessLayer.CommonInterfaces;
 using DataAccessLayer.Configuration.Interfaces;
 using DataAccessLayer.Configuration;
 using DataAccessLayer.DatabasesManager.Interfaces;
-using MongoDB.Bson;
+
+using SharedLibrary.Loggers.Models;
+
 
 namespace SentenceAPI.Features.Authentication.Services
 {
@@ -29,6 +31,8 @@ namespace SentenceAPI.Features.Authentication.Services
         private IConfigurationBuilder configurationBuilder;
         #endregion
 
+        private readonly LogConfiguration logConfiguration;
+
         #region Constructors
         public TokenService(IDatabaseManager databaseManager)
         {
@@ -37,6 +41,8 @@ namespace SentenceAPI.Features.Authentication.Services
 
             configurationBuilder.SetConfigurationFilePath(databaseConfigFile).SetUserName().SetPassword()
                                 .SetAuthMechanism().SetDatabaseName().SetServerName().SetConnectionString();
+
+            logConfiguration = new LogConfiguration(GetType());
         }
         #endregion
 

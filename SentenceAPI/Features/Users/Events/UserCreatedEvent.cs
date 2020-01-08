@@ -12,6 +12,10 @@ using SharedLibrary.FactoriesManager.Interfaces;
 
 namespace SentenceAPI.Features.Users.Events
 {
+    /// <summary>
+    /// Does all support job for the user creation (sending an email, inserting code in the database,
+    /// creates the main folder objects and user friends recorcd in the database)
+    /// </summary>
     public class UserCreatedEvent : IDomainEvent
     {
         #region Services
@@ -24,6 +28,7 @@ namespace SentenceAPI.Features.Users.Events
 
         private readonly UserInfo user;
 
+
         public UserCreatedEvent(IFactoriesManager factoriesManager, UserInfo user)
         {
             factoriesManager.GetService<ILinkService>().TryGetTarget(out linkService);
@@ -34,6 +39,7 @@ namespace SentenceAPI.Features.Users.Events
 
             this.user = user;
         }
+
 
         public async Task Handle()
         {

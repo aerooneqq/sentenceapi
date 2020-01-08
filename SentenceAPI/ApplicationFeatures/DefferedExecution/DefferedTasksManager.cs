@@ -26,12 +26,15 @@ namespace SentenceAPI.ApplicationFeatures.DefferedExecution
 
         private static ILogger<ApplicationError> exceptionLogger;
         private static ConcurrentQueue<Action> actions;
+        private static LogConfiguration logConfiguration;
 
         public static void Initialize(IFactoriesManager factoriesManager)
         {
             actions = new ConcurrentQueue<Action>();
             
             factoriesManager.GetService<ILogger<ApplicationError>>().TryGetTarget(out exceptionLogger);
+
+            logConfiguration = new LogConfiguration(typeof(DefferedTasksManager));
         }
 
         /// <summary>
@@ -70,7 +73,7 @@ namespace SentenceAPI.ApplicationFeatures.DefferedExecution
                         }
                         catch (Exception ex)
                         {
-                            exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
+                            exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
                         }
                     }
                     else 

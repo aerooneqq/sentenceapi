@@ -26,6 +26,8 @@ namespace DataAccessLayer.CommonInterfaces
 
         Task DeleteCollection();
 
+        Task Clear();
+
         Task Insert(DataType entity);
 
         Task Update(DataType entity, IEnumerable<string> properties);

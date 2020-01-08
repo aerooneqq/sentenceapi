@@ -14,3 +14,7 @@
 bin
 obj
 /DocumentAPI/bin
+log
+/SharedLibrary/bin
+/SharedLibrary/obj
+

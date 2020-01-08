@@ -46,6 +46,8 @@ namespace SentenceAPI.Features.Codes.Services
         private ITokenService tokenService;
         #endregion
 
+        private readonly LogConfiguration logConfiguration;
+    
 
         public CodesService(IFactoriesManager factoriesManager, IDatabaseManager databaseManager)
         {
@@ -58,7 +60,7 @@ namespace SentenceAPI.Features.Codes.Services
             factoriesManager.GetService<ILogger<ApplicationError>>().TryGetTarget(out exceptionLogger);
             factoriesManager.GetService<ITokenService>().TryGetTarget(out tokenService);
 
-            exceptionLogger.LogConfiguration = new LogConfiguration(this.GetType());
+            logConfiguration = new LogConfiguration(this.GetType());
         }
 
 
@@ -113,7 +115,7 @@ namespace SentenceAPI.Features.Codes.Services
             }
             catch (Exception ex)
             {
-                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
                 throw new DatabaseException("The error happened inserting the activation code");
             }
         }
@@ -143,7 +145,7 @@ namespace SentenceAPI.Features.Codes.Services
             }
             catch (Exception ex) when (ex.GetType() != typeof(DatabaseException))
             {
-                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
                 throw new DatabaseException("THe error happened while activating the code");
             }
         }

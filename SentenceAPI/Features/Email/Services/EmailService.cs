@@ -42,6 +42,9 @@ namespace SentenceAPI.Features.Email.Services
         private ILogger<ApplicationError> exceptionLogger;
         #endregion
 
+        private readonly LogConfiguration logConfiguration;
+
+
         public EmailService(IFactoriesManager factoriesManager, IDatabaseManager databaseManager)
         {
             databaseManager.MongoDBFactory.GetDatabase<EmailLog>().TryGetTarget(out database);
@@ -53,8 +56,7 @@ namespace SentenceAPI.Features.Email.Services
             factoriesManager.GetService<ILogger<ApplicationError>>().TryGetTarget(out exceptionLogger);
             factoriesManager.GetService<ILogger<EmailLog>>().TryGetTarget(out emailLogger);
 
-            exceptionLogger.LogConfiguration = new LogConfiguration(this.GetType());
-            emailLogger.LogConfiguration = new LogConfiguration(this.GetType()); 
+            logConfiguration = new LogConfiguration(this.GetType());
         }
 
         public async Task SendConfirmationEmailAsync(string code, string email)
@@ -79,13 +81,13 @@ namespace SentenceAPI.Features.Email.Services
                     })
                     {
                         await smtpClient.SendMailAsync(mailMessage).ConfigureAwait(false);
-                        emailLogger.Log(new EmailLog(email, mailMessage.Body), LogLevel.Information);
+                        emailLogger.Log(new EmailLog(email, mailMessage.Body), LogLevel.Information, logConfiguration);
                     }
                 }
             }
             catch (Exception ex)
             {
-                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
                 throw new DatabaseException("Error occured while working with the database");
             }
         }

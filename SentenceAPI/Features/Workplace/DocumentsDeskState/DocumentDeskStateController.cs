@@ -26,10 +26,13 @@ namespace SentenceAPI.Features.Workplace.DocumentsDeskState
     public class DocumentDeskStateController : ControllerBase
     {
         #region Services
-        private ILogger<ApplicationError> exceptionLogger;
-        private IDocumentDeskStateService deskStateService;
-        private IRequestService requestService;
+        private readonly ILogger<ApplicationError> exceptionLogger;
+        private readonly IDocumentDeskStateService deskStateService;
+        private readonly IRequestService requestService;
         #endregion
+
+        private readonly LogConfiguration logConfiguration;
+
 
         public DocumentDeskStateController(IFactoriesManager factoriesManager)
         {
@@ -37,8 +40,9 @@ namespace SentenceAPI.Features.Workplace.DocumentsDeskState
             factoriesManager.GetService<IDocumentDeskStateService>().TryGetTarget(out deskStateService);
             factoriesManager.GetService<IRequestService>().TryGetTarget(out requestService);
 
-            exceptionLogger.LogConfiguration = new LogConfiguration(this.GetType());
+            logConfiguration = new LogConfiguration(this.GetType());
         }
+
 
         [HttpGet]
         public async Task<IActionResult> GetDocumentDeskState()
@@ -56,7 +60,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsDeskState
             }
             catch (Exception ex)
             {
-                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
                 return new InternalServerError();
             }
         }
@@ -90,7 +94,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsDeskState
             }
             catch (Exception ex)
             {
-                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
                 return new InternalServerError();
             }
         }
@@ -120,7 +124,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsDeskState
             }
             catch (Exception ex)
             {
-                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
                 return new InternalServerError();
             }
         }

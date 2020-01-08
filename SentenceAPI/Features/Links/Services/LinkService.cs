@@ -40,6 +40,8 @@ namespace SentenceAPI.Features.Links.Services
         private ILogger<ApplicationError> exceptionLogger;
         #endregion
 
+        private readonly LogConfiguration logConfiguration;
+
 
         public LinkService(IFactoriesManager factoriesManager, IDatabaseManager databaseManager)
         {
@@ -51,7 +53,7 @@ namespace SentenceAPI.Features.Links.Services
 
             factoriesManager.GetService<ILogger<ApplicationError>>().TryGetTarget(out exceptionLogger);
 
-            exceptionLogger.LogConfiguration = new LogConfiguration(this.GetType());
+            logConfiguration = new LogConfiguration(this.GetType());
         }
         
 
@@ -69,7 +71,7 @@ namespace SentenceAPI.Features.Links.Services
             }
             catch (Exception ex)
             {
-                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
                 throw new DatabaseException("Error occured while working with the database");
             }
         }
@@ -106,7 +108,7 @@ namespace SentenceAPI.Features.Links.Services
             }
             catch (Exception ex)
             {
-                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
                 throw new DatabaseException("Error occured while working with the database");
             }
         }

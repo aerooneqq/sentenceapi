@@ -36,20 +36,9 @@ namespace SharedLibrary.Loggers
         #endregion
 
         #region ILogger implmentation
-        public void Log(ApplicationError logObject, LogLevel logLevel)
+        public void Log(ApplicationError applicationError, LogLevel logLevel, LogConfiguration logConfiguration)
         {
-            Log log = new Log() 
-            {
-                Base64Data = null, 
-                Date = DateTime.UtcNow, 
-                JsonData = JsonConvert.SerializeObject(logObject),
-                LogLevel = logLevel, 
-                Message = logObject.Message, 
-                Place = LogConfiguration.ComponentType,
-                XMLData = null
-            };
-
-            logThread.QueueLog(log);
+            logThread.QueueLog(new Log(applicationError, logLevel, logConfiguration));
         }
         #endregion
     }

@@ -11,25 +11,21 @@ using SentenceAPI.Features.Users.Interfaces;
 using SentenceAPI.Features.Users.Models;
 using SharedLibrary.Loggers.Interfaces;
 using SharedLibrary.Loggers.Models;
-using SentenceAPI.Features.Email.Interfaces;
-using SentenceAPI.Features.Links.Interfaces;
+using SharedLibrary.Loggers.Configuration;
+using SharedLibrary.ActionResults;
+using SharedLibrary.FactoriesManager.Interfaces;
+
 using SentenceAPI.Validators;
 using SentenceAPI.Extensions;
-using SentenceAPI.Features.Codes.Models;
-using SentenceAPI.Features.Codes.Interfaces;
 using SentenceAPI.ApplicationFeatures.Requests.Interfaces;
 using SentenceAPI.Features.Authentication.Interfaces;
 using SentenceAPI.Events;
 using SentenceAPI.Features.Users.Events;
-using SharedLibrary.Loggers.Configuration;
-
-using SharedLibrary.ActionResults;
-using SharedLibrary.FactoriesManager.Interfaces;
-using SharedLibrary.FactoriesManager;
 
 using DataAccessLayer.Exceptions;
+
 using MongoDB.Bson;
-using SentenceAPI.Features.UserFriends.Interfaces;
+
 
 namespace SentenceAPI.Features.Users
 {
@@ -46,6 +42,8 @@ namespace SentenceAPI.Features.Users
         private readonly IMemoryCache memoryCacheService;
         private readonly ITokenService tokenService;
         #endregion
+
+        private readonly LogConfiguration logConfiguration;
         
 
         public UsersController(IMemoryCache memoryCacheService, IFactoriesManager factoriesManager)
@@ -57,10 +55,9 @@ namespace SentenceAPI.Features.Users
             factoriesManager.GetService<IRequestService>().TryGetTarget(out requestService);
             factoriesManager.GetService<ITokenService>().TryGetTarget(out tokenService);
             
-
             this.memoryCacheService = memoryCacheService;
 
-            exceptionLogger.LogConfiguration = new LogConfiguration(this.GetType());
+            logConfiguration = new LogConfiguration(this.GetType());
         }
 
         [HttpGet, Route("search/login"), Authorize]
@@ -79,7 +76,7 @@ namespace SentenceAPI.Features.Users
             }
             catch (Exception ex)
             {
-                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
                 return new InternalServerError();
             }
         }
@@ -99,7 +96,7 @@ namespace SentenceAPI.Features.Users
             }
             catch (Exception ex)
             {
-                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
                 return new InternalServerError();
             }
         }
@@ -126,7 +123,7 @@ namespace SentenceAPI.Features.Users
             }
             catch (Exception ex)
             {
-                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
                 return new InternalServerError();
             }
         }
@@ -144,7 +141,7 @@ namespace SentenceAPI.Features.Users
             }
             catch (Exception ex)
             {
-                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
                 return new InternalServerError();
             }
         }
@@ -183,7 +180,7 @@ namespace SentenceAPI.Features.Users
             }
             catch (Exception ex)
             {
-                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
                 return new InternalServerError();
             }
         }
@@ -220,7 +217,8 @@ namespace SentenceAPI.Features.Users
                     user.IsAccountVerified = false;
                     updatedFields.Add(typeof(UserInfo).GetBsonPropertyName("IsAccountVerified"), false);
 
-                    await EventManager.Raise(new UserEmailChangedEvent(user.Email, user.ID, factoriesManager)).ConfigureAwait(false);
+                    await EventManager.Raise(new UserEmailChangedEvent(user.Email, user.ID, factoriesManager)).
+                        ConfigureAwait(false);
                 }
 
                 await userService.UpdateAsync(user, updatedFields.Keys.Select(propName =>
@@ -236,7 +234,7 @@ namespace SentenceAPI.Features.Users
             }
             catch (Exception ex)
             {
-                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
                 return new InternalServerError();
             }
         }
@@ -260,7 +258,7 @@ namespace SentenceAPI.Features.Users
             }
             catch (Exception ex)
             {
-                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
                 return new InternalServerError();
             }
         }

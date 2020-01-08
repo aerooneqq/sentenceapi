@@ -38,6 +38,8 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage.Services
         private readonly IFolderService folderService;
         #endregion
 
+        private readonly LogConfiguration logConfiguration;
+
 
         public UserMainFoldersService(IFactoriesManager factoriesManager, IDatabaseManager databaseManager)
         {
@@ -48,7 +50,10 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage.Services
             configurationBuilder = new MongoConfigurationBuilder(database.Configuration);
             configurationBuilder.SetConfigurationFilePath(databaseConfigFile).SetAuthMechanism()
                     .SetUserName().SetPassword().SetDatabaseName().SetServerName().SetConnectionString();
+
+            logConfiguration = new LogConfiguration(GetType());
         }
+
 
         public async Task<ObjectId> CreateNewUserMainFolders(ObjectId userID)
         {
@@ -84,7 +89,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage.Services
             }
             catch (Exception ex)
             {
-                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
                 throw new DatabaseException("Error occured while creating default folders");
             }
         }
@@ -98,7 +103,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage.Services
             }
             catch (Exception ex)
             {
-                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
                 throw new DatabaseException("Error occured while getting the main folders");
             }
         }
@@ -111,7 +116,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage.Services
             }
             catch (Exception ex)
             {
-                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
                 throw new DatabaseException("Error occured while updating the main folders");
             }
         }

@@ -31,6 +31,9 @@ namespace SentenceAPI.Features.UserFeed
         private readonly IUserService<UserInfo> userService;
         #endregion
 
+        private readonly LogConfiguration logConfiguration;
+
+
         public UserFeedController(IFactoriesManager factoriesManager)
         {
             factoriesManager.GetService<IUserFeedService>().TryGetTarget(out userFeedService);
@@ -38,8 +41,9 @@ namespace SentenceAPI.Features.UserFeed
             factoriesManager.GetService<IRequestService>().TryGetTarget(out requestService);
             factoriesManager.GetService<IUserService<UserInfo>>().TryGetTarget(out userService);
 
-            exceptionLogger.LogConfiguration = new LogConfiguration(this.GetType());
+            logConfiguration = new LogConfiguration(this.GetType());
         }
+
 
         [HttpGet]
         public async Task<IActionResult> GetUserFeed()
@@ -58,7 +62,7 @@ namespace SentenceAPI.Features.UserFeed
             }
             catch (Exception ex)
             {
-                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
                 return new InternalServerError();
             }
         }
@@ -88,7 +92,7 @@ namespace SentenceAPI.Features.UserFeed
             }
             catch (Exception ex)
             {
-                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
                 return new InternalServerError();
             }
         }

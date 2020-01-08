@@ -31,20 +31,9 @@ namespace SharedLibrary.Loggers
         }
 
 
-        public void Log(ResponseLog logObject, LogLevel logLevel)
+        public void Log(ResponseLog responseLog, LogLevel logLevel, LogConfiguration logConfiguration)
         {
-            Log log = new Log() 
-            {
-                Base64Data = null, 
-                Date = DateTime.UtcNow, 
-                JsonData = JsonConvert.SerializeObject(logObject),
-                LogLevel = logLevel, 
-                Message = null, 
-                Place = LogConfiguration.ComponentType,
-                XMLData = null
-            };
-
-            logThread.QueueLog(log);
+            logThread.QueueLog(new Log(responseLog, logLevel, logConfiguration));
         }
     }
 }

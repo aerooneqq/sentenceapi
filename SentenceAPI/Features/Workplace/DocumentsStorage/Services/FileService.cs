@@ -1,11 +1,16 @@
-﻿using DataAccessLayer.CommonInterfaces;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+using DataAccessLayer.CommonInterfaces;
 using DataAccessLayer.Configuration;
 using DataAccessLayer.Configuration.Interfaces;
-using DataAccessLayer.DatabasesManager;
 using DataAccessLayer.Exceptions;
 using DataAccessLayer.Filters;
 using DataAccessLayer.Filters.Base;
 using DataAccessLayer.Filters.Interfaces;
+using DataAccessLayer.DatabasesManager.Interfaces;
 
 using SharedLibrary.Loggers.Interfaces;
 using SharedLibrary.Loggers.Models;
@@ -14,15 +19,10 @@ using SentenceAPI.Features.Workplace.DocumentsStorage.Interfaces;
 using SentenceAPI.Features.Workplace.DocumentsStorage.Models;
 using SharedLibrary.Loggers.Configuration;
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
 using SharedLibrary.FactoriesManager.Interfaces;
-using SharedLibrary.FactoriesManager;
-using DataAccessLayer.DatabasesManager.Interfaces;
+
 using MongoDB.Bson;
+
 
 namespace SentenceAPI.Features.Workplace.DocumentsStorage.Services
 {
@@ -41,6 +41,8 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage.Services
         private readonly ILogger<ApplicationError> exceptionLogger;
         #endregion
 
+        private readonly LogConfiguration logConfiguration;
+
         public FileService(IFactoriesManager factoriesManager, IDatabaseManager databasesManager)
         {
             databasesManager.MongoDBFactory.GetDatabase<DocumentFile>().TryGetTarget(out database);
@@ -50,7 +52,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage.Services
                     .SetUserName().SetPassword().SetDatabaseName().SetServerName().SetConnectionString();
 
             factoriesManager.GetService<ILogger<ApplicationError>>().TryGetTarget(out exceptionLogger);
-            exceptionLogger.LogConfiguration = new LogConfiguration(this.GetType());
+            logConfiguration = new LogConfiguration(this.GetType());
         }
 
         /// <summary>
@@ -71,7 +73,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage.Services
             }
             catch (Exception ex)
             {
-                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
                 throw new DatabaseException("The error occured while getting the files");
             }
         }
@@ -93,7 +95,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage.Services
             }
             catch (Exception ex)
             {
-                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
                 throw new DatabaseException("The error occured while creating new files", ex);
             }
         }
@@ -111,7 +113,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage.Services
             }
             catch (Exception ex)
             {
-                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
                 throw new DatabaseException("The error occured while deleting the file", ex);
             }
         }
@@ -132,7 +134,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage.Services
             }
             catch (Exception ex)
             {
-                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
                 throw new DatabaseException("The error occured while searching for the files", ex);
             }
         }
@@ -149,7 +151,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage.Services
             }
             catch (Exception ex)
             {
-                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
                 throw new DatabaseException("The error occured while getting the file data", ex);
             }
         }
@@ -163,7 +165,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage.Services
             }
             catch (Exception ex)
             {
-                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
                 throw new DatabaseException("The error occured while updating file", ex);
             }
         }
@@ -188,7 +190,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage.Services
             }
             catch (Exception ex)
             {
-                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
                 throw new DatabaseException("The error occured while renaming file", ex);
             }
         }

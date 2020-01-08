@@ -51,6 +51,8 @@ namespace SentenceAPI.Features.UserFeed.Services
         private readonly IUserPhotoService userPhotoService;
         #endregion
 
+        private readonly LogConfiguration logConfiguration;
+
 
         public UserFeedService(IFactoriesManager factoriesManager, IDatabaseManager databasesManager)
         {
@@ -65,6 +67,8 @@ namespace SentenceAPI.Features.UserFeed.Services
             factoriesManager.GetService<ITokenService>().TryGetTarget(out tokenService);
             factoriesManager.GetService<IUserService<UserInfo>>().TryGetTarget(out userService);
             factoriesManager.GetService<IUserPhotoService>().TryGetTarget(out userPhotoService);
+
+            logConfiguration = new LogConfiguration(GetType());
         }
 
 
@@ -87,7 +91,7 @@ namespace SentenceAPI.Features.UserFeed.Services
             }
             catch (Exception ex) when (ex.GetType() != typeof(DatabaseException))
             {
-                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
                 throw new DatabaseException("Error occured while getting user feed");
             }
         }
@@ -129,7 +133,7 @@ namespace SentenceAPI.Features.UserFeed.Services
             }
             catch (Exception ex) when (ex.GetType() != typeof(DatabaseException))
             {
-                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
                 throw new DatabaseException("Error occured while getting user feed");
             }
         }
@@ -143,7 +147,7 @@ namespace SentenceAPI.Features.UserFeed.Services
             }
             catch (Exception ex) when (ex.GetType() != typeof(DatabaseException))
             {
-                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
                 throw new DatabaseException("Error occured while inserting new post");
             }
         }
@@ -162,7 +166,7 @@ namespace SentenceAPI.Features.UserFeed.Services
             }
             catch (Exception ex) when (ex.GetType() != typeof(DatabaseException))
             {
-                 exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
+                 exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
                 throw new DatabaseException("Error occured while inserting new post");
             }
         }

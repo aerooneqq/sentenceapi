@@ -30,6 +30,8 @@ namespace SentenceAPI.Features.UserFriends
         private IRequestService requestService; 
         #endregion
 
+        private readonly LogConfiguration logConfiguration;
+
 
         public UserFriendsController(IFactoriesManager factoriesManager)
         {
@@ -38,8 +40,9 @@ namespace SentenceAPI.Features.UserFriends
             factoriesManager.GetService<ILogger<ApplicationError>>().TryGetTarget(out exceptionLogger);
             factoriesManager.GetService<IRequestService>().TryGetTarget(out requestService);
             
-            exceptionLogger.LogConfiguration = new LogConfiguration(this.GetType());
+            logConfiguration = new LogConfiguration(this.GetType());
         }
+
 
         [HttpGet, Route("subscribers")]
         public async Task<IActionResult> GetSubscribers()
@@ -58,7 +61,7 @@ namespace SentenceAPI.Features.UserFriends
             }
             catch (Exception ex)
             {
-                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
                 return new InternalServerError();
             }
         }
@@ -80,7 +83,7 @@ namespace SentenceAPI.Features.UserFriends
             }
             catch (Exception ex)
             {
-                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
                 return new InternalServerError();
             }
         }
@@ -109,7 +112,7 @@ namespace SentenceAPI.Features.UserFriends
             }
             catch (Exception ex)
             {
-                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
                 return new InternalServerError();
             }
         }
@@ -138,7 +141,7 @@ namespace SentenceAPI.Features.UserFriends
             }
             catch (Exception ex)
             {
-                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
                 return new InternalServerError();
             }
         }
@@ -160,7 +163,7 @@ namespace SentenceAPI.Features.UserFriends
             }
             catch (Exception ex)
             {
-                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
                 return new InternalServerError();
             }
         }
@@ -182,7 +185,7 @@ namespace SentenceAPI.Features.UserFriends
             }
             catch (Exception ex)
             {
-                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
                 return new InternalServerError();
             }
         }

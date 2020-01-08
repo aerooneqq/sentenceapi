@@ -30,15 +30,16 @@ namespace SentenceAPI.Features.Workplace.DocumentsDeskState.Services
         private static readonly string databaseConfigFileName = "mongo_database_config.json";
 
         #region Databases
-        private IDatabaseService<DocumentDeskState> database;
-        private IConfigurationBuilder configurationBuilder;
+        private readonly IDatabaseService<DocumentDeskState> database;
+        private readonly IConfigurationBuilder configurationBuilder;
         #endregion
 
         #region Services
-        private ILogger<ApplicationError> exceptionLogger;
-        private ITokenService tokenService;
+        private readonly ILogger<ApplicationError> exceptionLogger;
+        private readonly ITokenService tokenService;
         #endregion
 
+        private readonly LogConfiguration logConfiguration;
 
         public DocumentDeskStateService(IFactoriesManager factoriesManager, IDatabaseManager databaseManager)
         {
@@ -50,7 +51,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsDeskState.Services
                                 .SetUserName().SetPassword().SetDatabaseName().SetServerName().SetConnectionString();
 
             factoriesManager.GetService<ILogger<ApplicationError>>().TryGetTarget(out exceptionLogger);
-            exceptionLogger.LogConfiguration = new LogConfiguration(typeof(DocumentDeskStateService));
+            logConfiguration = new LogConfiguration(typeof(DocumentDeskStateService));
 
             factoriesManager.GetService<ITokenService>().TryGetTarget(out tokenService);
         }
@@ -70,7 +71,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsDeskState.Services
             }
             catch (Exception ex)
             {
-                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
                 throw new DatabaseException("The error occured while creating new document desk state");
             }
         }
@@ -86,7 +87,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsDeskState.Services
             }
             catch (Exception ex)
             {
-                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
                 throw new DatabaseException("The error occured while creating new document desk state");
             }
         }
@@ -99,7 +100,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsDeskState.Services
             }
             catch (Exception ex) when (ex.GetType() != typeof(DatabaseException))
             {
-                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
                 throw new DatabaseException("Error occured while getting the desk state");
             }
         }
@@ -115,7 +116,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsDeskState.Services
             }
             catch (Exception ex)
             {
-                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
                 throw new DatabaseException("The error occured while getting the desk state", ex);
             }
         }
@@ -129,7 +130,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsDeskState.Services
             }
             catch (Exception ex)
             {
-                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
                 throw new DatabaseException("The error occured while updating the desk state", ex);
             }
         }
@@ -143,7 +144,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsDeskState.Services
             }
             catch (Exception ex)
             {
-                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
                 throw new DatabaseException("The error occured while updating the desk state");
             }
         }

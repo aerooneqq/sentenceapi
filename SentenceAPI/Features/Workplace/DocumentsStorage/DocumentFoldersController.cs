@@ -36,6 +36,9 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage
         private readonly IDateService dateService;
         #endregion
 
+        private readonly LogConfiguration logConfiguration;
+
+
         public DocumentFoldersController(IFactoriesManager factoriesManager)
         {
             factoriesManager.GetService<ITokenService>().TryGetTarget(out tokenService);
@@ -44,8 +47,9 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage
             factoriesManager.GetService<IDateService>().TryGetTarget(out dateService);
 
             factoriesManager.GetService<ILogger<ApplicationError>>().TryGetTarget(out exceptionLogger);
-            exceptionLogger.LogConfiguration = new LogConfiguration(this.GetType());
+            logConfiguration = new LogConfiguration(this.GetType());
         }
+
 
         [HttpGet]
         public async Task<IActionResult> GetFolderData([FromQuery]ObjectId folderID)
@@ -62,7 +66,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage
             }
             catch (Exception ex)
             {
-                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
                 return new InternalServerError();
             }
         }
@@ -95,7 +99,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage
             }
             catch (Exception ex)
             {
-                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
                 return new InternalServerError();
             }
         }
@@ -116,7 +120,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage
             }
             catch (Exception ex)
             {
-                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
                 return new InternalServerError();
             }
         }
@@ -143,7 +147,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage
             }
             catch (Exception ex)
             {
-                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
                 return new InternalServerError();
             }
         }

@@ -16,6 +16,7 @@ namespace SentenceAPI.ApplicationFeatures.Middlewares
     {
         private readonly RequestDelegate nextMiddlewareDel;
         private readonly ILogger<RequestLog> requestLogger;
+        private readonly LogConfiguration logConfiguration;
 
 
         public RequestLoggerMiddleware(RequestDelegate nextMiddlewareDel, IFactoriesManager factoriesManager)
@@ -24,11 +25,7 @@ namespace SentenceAPI.ApplicationFeatures.Middlewares
             
             factoriesManager.GetService<ILogger<RequestLog>>().TryGetTarget(out requestLogger);
 
-            requestLogger.LogConfiguration = new LogConfiguration(typeof(RequestLoggerMiddleware))
-            {
-                ClassName = this.GetType().FullName,
-                ComponentType = ComponentType.Middleware
-            };
+            logConfiguration = new LogConfiguration(typeof(RequestLoggerMiddleware));
         }
 
         /// <summary>
@@ -37,7 +34,7 @@ namespace SentenceAPI.ApplicationFeatures.Middlewares
         /// </summary>
         public async Task InvokeAsync(HttpContext httpContext)
         {
-            requestLogger.Log(new RequestLog(httpContext.Request), LogLevel.Information);
+            requestLogger.Log(new RequestLog(httpContext.Request), LogLevel.Information, logConfiguration);
             //DefaultLogger.Log(new RequestLog(httpContext.Request), LogLevel.Error);
 
             await nextMiddlewareDel.Invoke(httpContext).ConfigureAwait(false);
