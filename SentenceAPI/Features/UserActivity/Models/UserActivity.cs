@@ -10,11 +10,15 @@ using Newtonsoft.Json;
 using DataAccessLayer.KernelModels;
 using MongoDB.Bson;
 
+using SharedLibrary.JsonConverters;
+
+
 namespace SentenceAPI.Features.UserActivity.Models
 {
     public class UserActivity : UniqueEntity
     {
         [BsonElement("userID"), JsonProperty("userID")]
+        [JsonConverter(typeof(ObjectIDJsonConverter))]
         public ObjectId UserID { get; set; }
 
         [BsonElement("lastActivityDate"), JsonProperty("lastActivityDate")]

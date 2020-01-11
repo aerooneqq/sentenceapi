@@ -51,16 +51,17 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetFoldersAndDocuments([FromQuery]ObjectId folderID)
+        public async Task<IActionResult> GetFoldersAndDocuments([FromQuery]string folderID)
         {
             try
             {
+                ObjectId id = ObjectId.Parse(folderID);
                 ObjectId userID = ObjectId.Parse(tokenService.GetTokenClaim(requestService.GetToken(Request), "ID"));
 
-                IEnumerable<DocumentFile> documentFiles = (await fileService.GetFilesAsync(userID, folderID)
+                IEnumerable<DocumentFile> documentFiles = (await fileService.GetFilesAsync(userID, id)
                     .ConfigureAwait(false));
 
-                IEnumerable<DocumentFolder> documentFolders = (await folderService.GetFolders(userID, folderID)
+                IEnumerable<DocumentFolder> documentFolders = (await folderService.GetFolders(userID, id)
                     .ConfigureAwait(false));
 
                 return new OkJson<FolderSystemDto>(new FolderSystemDto(documentFiles, documentFolders));
@@ -109,18 +110,21 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage
         /// Places the second folder in the first folder.
         /// </summary>
         [HttpPut, Route("folders")]
-        public async Task<IActionResult> PutFolderIntoAnotherFolder([FromQuery]ObjectId firstFolderID,
-                                                                    [FromQuery]ObjectId secondFolderID)
+        public async Task<IActionResult> PutFolderIntoAnotherFolder([FromQuery]string firstFolderID,
+                                                                    [FromQuery]string secondFolderID)
         {
             try
             {
-                if (firstFolderID == secondFolderID)
+                ObjectId firstFolderObjectID = ObjectId.Parse(firstFolderID);
+                ObjectId secondFolderObjectID = ObjectId.Parse(secondFolderID);
+
+                if (firstFolderObjectID == secondFolderObjectID)
                 {
                     return new BadSendedRequest<string>("Folders can not be the same");
                 }
 
-                var firstFolder = await folderService.GetFolderData(firstFolderID).ConfigureAwait(false);
-                var secondFolder = await folderService.GetFolderData(secondFolderID).ConfigureAwait(false);
+                var firstFolder = await folderService.GetFolderData(firstFolderObjectID).ConfigureAwait(false);
+                var secondFolder = await folderService.GetFolderData(secondFolderObjectID).ConfigureAwait(false);
 
                 if (firstFolder is null || secondFolder is null)
                 {
@@ -148,12 +152,16 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage
         }
 
         [HttpPut, Route("files")]
-        public async Task<IActionResult> PutFileInFolder([FromQuery]ObjectId fileID, [FromQuery]ObjectId folderID)
+        public async Task<IActionResult> PutFileInFolder([FromQuery]string fileID, 
+                                                         [FromQuery]string folderID)
         {
             try
             {
-                var file = await fileService.GetFileAsync(fileID).ConfigureAwait(false);
-                var folder = await folderService.GetFolderData(folderID).ConfigureAwait(false);
+                ObjectId fileObjectID = ObjectId.Parse(fileID);
+                ObjectId folderObjectID = ObjectId.Parse(folderID);
+
+                var file = await fileService.GetFileAsync(fileObjectID).ConfigureAwait(false);
+                var folder = await folderService.GetFolderData(folderObjectID).ConfigureAwait(false);
 
                 if (file is null || folder is null)
                 {

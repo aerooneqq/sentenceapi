@@ -15,12 +15,15 @@ using DataAccessLayer.KernelModels;
 
 using MongoDB.Bson;
 
+using SharedLibrary.JsonConverters;
+
 
 namespace SentenceAPI.Features.Authentication.Models
 {
     public class JwtToken : UniqueEntity
     {
         [BsonElement("userID"), JsonProperty("userID")]
+        [JsonConverter(typeof(ObjectIDJsonConverter))]
         public ObjectId UserID { get; set; }
 
         [BsonElement("issuer"), JsonProperty("issuer")]

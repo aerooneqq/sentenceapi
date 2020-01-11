@@ -1,8 +1,12 @@
-﻿using SentenceAPI.Events.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.IO;
+using System.Net;
 using System.Threading.Tasks;
+
+using MongoDB.Bson;
+
+using SentenceAPI.Events.Exceptions;
+using SentenceAPI.Events.Interfaces;
+using SentenceAPI.Features.Workplace.DocumentsStorage.Models;
 
 namespace SentenceAPI.Features.Workplace.DocumentsStorage.Events
 {
@@ -12,24 +16,34 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage.Events
     class FileCreationEvent : IDomainEvent
     {
         #region Event properties
-        private readonly string folderName;
-        private readonly long userID;
-        private readonly long folderID;
+        private readonly ObjectId userID;
+        private readonly DocumentFile file; 
         #endregion
 
-        #region Services
-        #endregion
+        private readonly string documentsApiUrl;
 
-        public FileCreationEvent(string folderName, long userID, long folderID)
+
+        public FileCreationEvent(DocumentFile file, ObjectId userID)
         {
-            this.folderName = folderName;
             this.userID = userID;
-            this.folderID = folderID;
+            this.file = file;
+
+            documentsApiUrl = $"{Startup.OtherApis["DocumentsAPI"]}/fileToDocument?fileID={file.ID}&" +
+                $"userID={userID}&fileName={file.FileName}&documentType=0";
         }
 
-        public Task Handle()
+
+        public async Task Handle()
         {
-            throw new NotImplementedException();
+            HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create(documentsApiUrl);
+            request.Method = "PUT";
+            
+            HttpWebResponse response = (HttpWebResponse)(await request.GetResponseAsync().ConfigureAwait(false));
+            
+            if (response.StatusCode == HttpStatusCode.InternalServerError)
+            {
+                throw new DomainEventException("Error occured on the document server");
+            }
         }
     }
 }

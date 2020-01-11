@@ -9,6 +9,8 @@ using Newtonsoft.Json;
 using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Bson;
 
+using SharedLibrary.JsonConverters;
+
 namespace SentenceAPI.Features.Workplace.DocumentsStorage.Models
 {
     /// <summary>
@@ -17,10 +19,10 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage.Models
     /// </summary>
     public class DocumentFolder : UniqueEntity
     {
-        [BsonElement("userID"), JsonProperty("userID")]
+        [BsonElement("userID"), JsonProperty("userID"), JsonConverter(typeof(ObjectIDJsonConverter))]
         public ObjectId UserID { get; set; }
 
-        [BsonElement("parentFolderID"), JsonProperty("parentFolderID")]
+        [BsonElement("parentFolderID"), JsonProperty("parentFolderID"), JsonConverter(typeof(ObjectIDJsonConverter))]
         public ObjectId ParentFolderID { get; set; }
         
         [BsonElement("fodlerName"), JsonProperty("folderName")]

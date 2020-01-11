@@ -10,7 +10,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage.Interfaces
     interface IFileService
     {
         Task<IEnumerable<DocumentFile>> GetFilesAsync(ObjectId userID, ObjectId parentFolderID);
-        Task CreateNewFileAsync(ObjectId userID, ObjectId parentFileID, string fileName);
+        Task<ObjectId> CreateNewFileAsync(ObjectId userID, ObjectId parentFileID, string fileName);
         Task DeleteFileAsync(ObjectId fileID);
         Task UpdateAsync(DocumentFile documentFile);
         Task<IEnumerable<DocumentFile>> GetFilesAsync(ObjectId userID, string searchQuery);

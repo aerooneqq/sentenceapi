@@ -1,4 +1,5 @@
 ﻿using DataAccessLayer.KernelModels;
+
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
@@ -9,11 +10,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
+using SharedLibrary.JsonConverters;
+
+
 namespace SentenceAPI.Features.UserFriends.Models
 {
     public class UserFriends : UniqueEntity
     {
-        [BsonElement("userID"), JsonProperty("userID")]
+        [BsonElement("userID"), JsonProperty("userID"), JsonConverter(typeof(ObjectIDJsonConverter))]
         public ObjectId UserID { get; set; }
 
         [BsonElement("subscribersID"), JsonProperty("subscribersID")]

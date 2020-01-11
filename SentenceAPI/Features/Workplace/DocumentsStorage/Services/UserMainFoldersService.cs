@@ -60,6 +60,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage.Services
             try
             {
                 await database.Connect().ConfigureAwait(false);
+                await database.CreateCollection();
 
                 var userMainFolders = (await database.Get(new EqualityFilter<ObjectId>("userID", userID))
                     .ConfigureAwait(false)).FirstOrDefault();
@@ -98,6 +99,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage.Services
         {
             try
             {
+                await database.Connect().ConfigureAwait(false);
                 return (await database.Get(new EqualityFilter<ObjectId>("userID", userID))
                     .ConfigureAwait(false)).FirstOrDefault();
             }
@@ -112,6 +114,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage.Services
         {
             try
             {
+                await database.Connect().ConfigureAwait(false);
                 await database.Update(userMainFolders).ConfigureAwait(false);
             }
             catch (Exception ex)

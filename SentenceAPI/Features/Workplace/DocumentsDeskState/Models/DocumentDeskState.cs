@@ -9,6 +9,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
+using SharedLibrary.JsonConverters;
+
 namespace SentenceAPI.Features.Workplace.DocumentsDeskState.Models
 {
     /// <summary>
@@ -17,13 +19,14 @@ namespace SentenceAPI.Features.Workplace.DocumentsDeskState.Models
     /// </summary>
     public class DocumentDeskState : UniqueEntity
     {
-        [BsonElement("userID"), JsonProperty("userID")]
+        [BsonElement("userID"), JsonProperty("userID"), JsonConverter(typeof(ObjectIDJsonConverter))]
         public ObjectId UserID { get; set; }
         
         [BsonElement("documentTopBarInfos"), JsonProperty("documentTopBarInfos")]
         public IEnumerable<DocumentTopBarInfo> DocumentTopBarInfos { get; set; } 
 
         [BsonElement("openedDocumentID"), JsonProperty("openedDocumentID")]
+        [JsonConverter(typeof(ObjectIDJsonConverter))]
         public ObjectId OpenedDocumentID { get; set; }
 
     }

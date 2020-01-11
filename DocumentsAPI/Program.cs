@@ -19,6 +19,7 @@ namespace DocumentsAPI
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
+                .UseUrls("http://localhost:6000")
                 .UseStartup<Startup>();
     }
 }

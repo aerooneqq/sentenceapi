@@ -33,15 +33,12 @@ namespace DocumentsAPI.Features.DocumentStructure
         private readonly IRequestService requestService;
         #endregion
 
+        private readonly LogConfiguration logConfiguration;
 
         public DocumentStructureController(IFactoriesManager factoriesManager)
         { 
             factoriesManager.GetService<ILogger<ApplicationError>>().TryGetTarget(out exceptionLogger);
-            exceptionLogger.LogConfiguration = new LogConfiguration(GetType())
-            {
-                ComponentType = ComponentType.Controller,
-                ClassName = GetType().FullName
-            };
+            logConfiguration = new LogConfiguration(GetType());
 
             factoriesManager.GetService<IDocumentStructureService>().TryGetTarget(out documentStructureService);
         }
@@ -68,7 +65,7 @@ namespace DocumentsAPI.Features.DocumentStructure
             }
             catch (Exception ex)
             {
-                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
                 return new InternalServerError();
             }
         }
@@ -116,7 +113,7 @@ namespace DocumentsAPI.Features.DocumentStructure
             }
             catch (Exception ex)
             {
-                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
                 return new InternalServerError();
             }
         }

@@ -19,6 +19,8 @@ using SharedLibrary.FactoriesManager.Interfaces;
 using SharedLibrary.FactoriesManager;
 using SharedLibrary.Loggers.Configuration;
 using MongoDB.Bson;
+using SentenceAPI.Events;
+using SentenceAPI.Features.Workplace.DocumentsStorage.Events;
 
 namespace SentenceAPI.Features.Workplace.DocumentsStorage
 {
@@ -60,8 +62,12 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage
                     return new BadSendedRequest<string>(errorMessage);
                 }
 
-                await fileService.CreateNewFileAsync(userID, newFile.ParentFolderID, newFile.FileName)
+                var createdFileID = await fileService.CreateNewFileAsync(userID, newFile.ParentFolderID, newFile.FileName)
                     .ConfigureAwait(false);
+                var file = await fileService.GetFileAsync(createdFileID).ConfigureAwait(false);
+
+
+                await EventManager.Raise(new FileCreationEvent(file, userID)).ConfigureAwait(false);
 
                 return new Ok();
             }
@@ -77,11 +83,12 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetFile([FromQuery]ObjectId fileID)
+        public async Task<IActionResult> GetFile([FromQuery]string fileID)
         {
             try
             {
-                DocumentFile file = await fileService.GetFileAsync(fileID).ConfigureAwait(false);
+                ObjectId fileObjectID = ObjectId.Parse(fileID);
+                DocumentFile file = await fileService.GetFileAsync(fileObjectID).ConfigureAwait(false);
 
                 return new OkJson<DocumentFile>(file);
             }
@@ -97,11 +104,12 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage
         }
 
         [HttpDelete]
-        public async Task<IActionResult> DeleteFile([FromQuery]ObjectId fileID)
+        public async Task<IActionResult> DeleteFile([FromQuery]string fileID)
         {
             try
             {
-                await fileService.DeleteFileAsync(fileID).ConfigureAwait(false);
+                ObjectId fileObjectID = ObjectId.Parse(fileID);
+                await fileService.DeleteFileAsync(fileObjectID).ConfigureAwait(false);
 
                 return new Ok();
             }

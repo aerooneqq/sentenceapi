@@ -1,11 +1,10 @@
 using System;
 using System.Threading.Tasks;
-using System.Linq; 
+using System.Linq;
 using System.Collections.Generic;
 
 using DataAccessLayer.CommonInterfaces;
 using DataAccessLayer.DatabasesManager.Interfaces;
-using DataAccessLayer.DatabasesManager;
 using DataAccessLayer.Filters;
 using DataAccessLayer.Filters.Base;
 
@@ -14,10 +13,9 @@ using DocumentsAPI.Features.FileToDocument.Interfaces;
 using SharedLibrary.FactoriesManager.Interfaces;
 using SharedLibrary.Loggers.Interfaces;
 using SharedLibrary.Loggers.Models;
-using SharedLibrary.FactoriesManager;
 using SharedLibrary.Loggers.Configuration;
 using DataAccessLayer.Exceptions;
-
+using MongoDB.Bson;
 
 namespace DocumentsAPI.Features.FileToDocument.Services
 {
@@ -31,25 +29,24 @@ namespace DocumentsAPI.Features.FileToDocument.Services
         private ILogger<ApplicationError> exceptionLogger;
         #endregion
 
+        private readonly LogConfiguration logConfiguration;
+
 
         public FileToDocumentService(IFactoriesManager factoriesManager, IDatabaseManager databaseManager)
         {
             factoriesManager.GetService<ILogger<ApplicationError>>().TryGetTarget(out exceptionLogger);
-            exceptionLogger.LogConfiguration = new LogConfiguration(GetType())
-            {
-                ClassName = this.GetType().FullName,
-                ComponentType = ComponentType.Service
-            };
+            logConfiguration = new LogConfiguration(GetType());
 
             databaseManager.MongoDBFactory.GetDatabase<Models.FileToDocument>().TryGetTarget(out database);
         }
 
 
-        public async Task AssociateFileWithDocumentAsync(long fileID, long documentID)
+        public async Task AssociateFileWithDocumentAsync(ObjectId fileID, ObjectId documentID)
         {
             try
             {
-                FilterBase fileIDGetFilter = new EqualityFilter<long>("FileID", fileID);
+                await database.Connect().ConfigureAwait(false);
+                FilterBase fileIDGetFilter = new EqualityFilter<ObjectId>("FileID", fileID);
 
                 var fileToDoc = (await database.Get(fileIDGetFilter).
                     ConfigureAwait(false)).FirstOrDefault();
@@ -73,16 +70,18 @@ namespace DocumentsAPI.Features.FileToDocument.Services
             }
             catch (Exception ex)
             {
-                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
                 throw new DatabaseException("The error occured while associating file with document", ex);
             }
         }
 
-        public async Task<long> GetDocumentIDAsync(long fileID)
+        public async Task<ObjectId> GetDocumentIDAsync(ObjectId fileID)
         {
             try
             {
-                FilterBase getFilter = new EqualityFilter<long>("FileID", fileID);
+                await database.Connect().ConfigureAwait(false);
+
+                FilterBase getFilter = new EqualityFilter<ObjectId>("fileID", fileID);
 
                 var fileToDoc = (await database.Get(getFilter).ConfigureAwait(false)).FirstOrDefault();
 
@@ -96,8 +95,25 @@ namespace DocumentsAPI.Features.FileToDocument.Services
             }
             catch (Exception ex)
             {
-                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
                 throw new DatabaseException("The error occured while getting the associated document", ex);
+            }
+        }
+
+        public async Task<Models.FileToDocument> GetFileToDocumentModelAsync(ObjectId fileID) 
+        {
+            try
+            {
+                await database.Connect().ConfigureAwait(false);
+
+                FilterBase getFilter = new EqualityFilter<ObjectId>("fileID", fileID);
+
+                return (await database.Get(getFilter).ConfigureAwait(false)).FirstOrDefault();
+            }
+            catch (Exception ex)
+            {
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
+                throw new DatabaseException("Error ocured while getting the file-document info");
             }
         }
     }

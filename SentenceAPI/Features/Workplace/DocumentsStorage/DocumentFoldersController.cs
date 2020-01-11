@@ -52,11 +52,12 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage
 
 
         [HttpGet]
-        public async Task<IActionResult> GetFolderData([FromQuery]ObjectId folderID)
+        public async Task<IActionResult> GetFolderData([FromQuery]string folderID)
         {
             try
             {
-                DocumentFolder documentFolder = await folderService.GetFolderData(folderID).ConfigureAwait(false);
+                ObjectId folderObjectID = ObjectId.Parse(folderID);
+                DocumentFolder documentFolder = await folderService.GetFolderData(folderObjectID).ConfigureAwait(false);
 
                 return new OkJson<DocumentFolder>(documentFolder);
             }
@@ -106,11 +107,12 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage
 
 
         [HttpDelete]
-        public async Task<IActionResult> DeleteFolder([FromQuery]ObjectId folderID)
+        public async Task<IActionResult> DeleteFolder([FromQuery]string folderID)
         {
             try
             {
-                await folderService.DeleteFolder(folderID).ConfigureAwait(false);
+                ObjectId folderObjectId = ObjectId.Parse(folderID);
+                await folderService.DeleteFolder(folderObjectId).ConfigureAwait(false);
 
                 return new Ok();
             }
@@ -126,14 +128,16 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage
         }
 
         [HttpPut]
-        public async Task<IActionResult> RenameFolder([FromQuery]ObjectId folderID)
+        public async Task<IActionResult> RenameFolder([FromQuery]string folderID)
         {
             try
             {
+                ObjectId folderObjectId = ObjectId.Parse(folderID);
+
                 var newFolderName = await requestService.GetRequestBody<Dictionary<string, string>>(Request).
                     ConfigureAwait(false);
 
-                await folderService.RenameFolder(folderID, newFolderName["newFolderName"]).ConfigureAwait(false);
+                await folderService.RenameFolder(folderObjectId, newFolderName["newFolderName"]).ConfigureAwait(false);
 
                 return new Ok();
             }

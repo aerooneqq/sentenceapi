@@ -1,9 +1,13 @@
 ﻿using MongoDB.Bson;
+
 using Newtonsoft.Json;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
+using SharedLibrary.JsonConverters;
 
 namespace SentenceAPI.Features.Workplace.DocumentsStorage.Models
 {
@@ -15,7 +19,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage.Models
         [JsonProperty("folderName")]
         public string FolderName { get; set; }
 
-        [JsonProperty("parentFolderID")]
+        [JsonProperty("parentFolderID"), JsonConverter(typeof(ObjectIDJsonConverter))]
         public ObjectId ParentFolderID { get; set; }
     }
 }

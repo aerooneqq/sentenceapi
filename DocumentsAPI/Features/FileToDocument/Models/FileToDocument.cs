@@ -1,19 +1,16 @@
 using DataAccessLayer.KernelModels;
+using MongoDB.Bson;
 
 namespace DocumentsAPI.Features.FileToDocument.Models
 {
     public class FileToDocument : UniqueEntity
     {
-        public long FileID { get; set; }
-        public long DocumentID { get; set; }
+        public ObjectId FileID { get; set; }
+        public ObjectId DocumentID { get; set; }
 
 
-        public FileToDocument()
-        {
-            FileID = -1;
-            DocumentID = -1;
-        }
-        public FileToDocument(long fileID, long documentID)
+        public FileToDocument() {}
+        public FileToDocument(ObjectId fileID, ObjectId documentID)
         {
             FileID = fileID;
             DocumentID = documentID;

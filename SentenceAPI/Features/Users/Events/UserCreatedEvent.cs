@@ -48,9 +48,9 @@ namespace SentenceAPI.Features.Users.Events
             ActivationCode activationCode = codesService.CreateActivationCode(user.ID);
             await codesService.InsertCodeInDatabaseAsync(activationCode).ConfigureAwait(false);
 
-            await emailService.SendConfirmationEmailAsync(activationCode.Code, user.Email).ConfigureAwait(false);
-
             await userMainFoldersService.CreateNewUserMainFolders(user.ID).ConfigureAwait(false);
+            
+            await emailService.SendConfirmationEmailAsync(activationCode.Code, user.Email).ConfigureAwait(false);
         }
     }
 }

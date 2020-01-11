@@ -100,7 +100,7 @@ namespace SharedLibrary.Loggers
                         break;
 
                     case LogInformation.Message:
-                        logString += delimiter.Insert(1, log.Message);
+                        logString += delimiter.Insert(1, log.Message ?? string.Empty);
                         break;
 
                     case LogInformation.Place:

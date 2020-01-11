@@ -78,20 +78,25 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage.Services
             }
         }
 
-        public async Task CreateNewFileAsync(ObjectId userID, ObjectId parentFolderID, string fileName)
+        public async Task<ObjectId> CreateNewFileAsync(ObjectId userID, ObjectId parentFolderID, string fileName)
         {
             try
             {
+                var fileID = ObjectId.GenerateNewId();
+
                 await database.Connect().ConfigureAwait(false);
 
                 await database.Insert(new DocumentFile()
                 {
+                    ID = fileID,
                     CreationDate = DateTime.Now,
                     FileName = fileName,
                     LastUpdateDate = DateTime.Now,
                     ParentFolderID = parentFolderID,
                     UserID = userID
                 }).ConfigureAwait(false);
+
+                return fileID;
             }
             catch (Exception ex)
             {

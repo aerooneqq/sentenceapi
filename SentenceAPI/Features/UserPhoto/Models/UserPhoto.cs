@@ -1,19 +1,25 @@
 ﻿using DataAccessLayer.KernelModels;
+
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
+
 using Newtonsoft.Json;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using SharedLibrary.JsonConverters;
+
+
 namespace SentenceAPI.Features.UserPhoto.Models
 {
     public class UserPhoto : UniqueEntity
     {
         #region Properties
-        [BsonElement("userID"), JsonProperty("userID")]
+        [BsonElement("userID"), JsonProperty("userID"), JsonConverter(typeof(ObjectIDJsonConverter))]
         public ObjectId UserID { get; set; }
 
         [BsonElement("gridFSPhotoes"), JsonProperty("gridFSPhotoes")]
@@ -26,6 +32,7 @@ namespace SentenceAPI.Features.UserPhoto.Models
         public DateTime UpdatedAt { get; set; }
 
         [BsonElement("currentPhotoPointer"), JsonProperty("currentPhotoPointer")]
+        [JsonConverter(typeof(ObjectIDJsonConverter))]
         public ObjectId CurrentPhotoID { get; set; }
         #endregion
 

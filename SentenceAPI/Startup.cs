@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System.IO;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
-
-using System.IO;
 
 using SharedLibrary.FactoriesManager;
 using SharedLibrary.FactoriesManager.Models;
@@ -30,12 +32,16 @@ using SentenceAPI.ApplicationFeatures.Middlewares;
 using DataAccessLayer.DatabasesManager.Interfaces;
 using DataAccessLayer.DatabasesManager;
 
+using Newtonsoft.Json;
+
+
 namespace SentenceAPI
 {
     public class Startup
     {
         public static string ApiName => "SentenceAPI";
         public static string CurrDirectory => Directory.GetCurrentDirectory();
+        public static Dictionary<string, string> OtherApis { get; private set; }
 
 
         public IConfiguration Configuration { get; set; }
@@ -43,6 +49,7 @@ namespace SentenceAPI
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+            OtherApis = new Dictionary<string, string>();
         }
 
         public void ConfigureServices(IServiceCollection services)
@@ -60,6 +67,8 @@ namespace SentenceAPI
 
             DefferedTasksManager.Initialize(factoriesManager);
             DefferedTasksManager.Start();
+
+            ReadOtherApisConfigFile("other_api.json").GetAwaiter().GetResult();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -109,6 +118,14 @@ namespace SentenceAPI
             factoriesManager.AddFactory(new FactoryInfo(new FolderSystemServiceFactory(),
                 typeof(FolderSystemServiceFactory)));
             factoriesManager.AddFactory(new FactoryInfo(new DateServiceFactory(), typeof(DateServiceFactory)));
+        }
+
+        private async Task ReadOtherApisConfigFile(string filePath)
+        {
+            using FileStream fs = new FileStream(filePath, FileMode.Open, FileAccess.Read);
+            using StreamReader sr = new StreamReader(fs);
+
+            OtherApis = JsonConvert.DeserializeObject<Dictionary<string, string>>(await sr.ReadToEndAsync());
         }
     }
 }

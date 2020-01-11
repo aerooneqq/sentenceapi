@@ -13,7 +13,7 @@ using DocumentsAPI.ApplicationFeatures.Date.Factories;
 using DocumentsAPI.ApplicationFeatures.Requests.Factories;
 using DocumentsAPI.Features.FileToDocument.Factories;
 using DocumentsAPI.Features.DocumentStructure.Factories;
-
+using DocumentsAPI.Features.Documents.Factories;
 
 namespace DocumentsAPI
 {
@@ -28,6 +28,8 @@ namespace DocumentsAPI
 
             services.AddSingleton(typeof(IFactoriesManager), factoriesManager);
             services.AddSingleton(typeof(IDatabaseManager), databaseManager);
+
+            services.AddMvc();
 
             ConfigureCustomServices(factoriesManager, databaseManager);
         }
@@ -56,6 +58,7 @@ namespace DocumentsAPI
             factoriesManager.AddFactory(new FactoryInfo(new RequestServiceFactory(), typeof(RequestServiceFactory)));
             factoriesManager.AddFactory(new FactoryInfo(new FileToDocumentServiceFactory(), typeof(FileToDocumentServiceFactory)));
             factoriesManager.AddFactory(new FactoryInfo(new DocumentStructureServiceFactory(), typeof(DocumentStructureServiceFactory)));
+            factoriesManager.AddFactory(new FactoryInfo(new DocumentServiceFactory(), typeof(DocumentServiceFactory)));
         }
     }
 }

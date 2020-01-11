@@ -41,16 +41,12 @@ namespace DocumentsAPI.Features.DocumentStructure.Services
         private readonly IDateService dateService;
         #endregion
 
+        private readonly LogConfiguration logConfiguration;
 
         public DocumentStructureService(IFactoriesManager factoriesManager, IDatabaseManager databaseManager)
         {
             factoriesManager.GetService<IDateService>().TryGetTarget(out dateService);
             factoriesManager.GetService<ILogger<ApplicationError>>().TryGetTarget(out exceptionLogger);
-            exceptionLogger.LogConfiguration = new LogConfiguration(GetType())
-            {
-                ComponentType = ComponentType.Service,
-                ClassName = GetType().FullName
-            };
 
             databaseManager.MongoDBFactory.GetDatabase<DocumentStructureModel>()
                 .TryGetTarget(out database);
@@ -58,6 +54,8 @@ namespace DocumentsAPI.Features.DocumentStructure.Services
             configurationBuilder = new MongoConfigurationBuilder(database.Configuration);
             configurationBuilder.SetConfigurationFilePath(databaseConfigFile).SetAuthMechanism()
                                 .SetUserName().SetPassword().SetDatabaseName().SetServerName().SetConnectionString();
+
+            logConfiguration = new LogConfiguration(GetType());
         }
 
 
@@ -73,7 +71,7 @@ namespace DocumentsAPI.Features.DocumentStructure.Services
             }
             catch (Exception ex)
             {
-                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
                 throw new DatabaseException("The error occured while getting document structure.", ex);
             }
         }
@@ -105,7 +103,7 @@ namespace DocumentsAPI.Features.DocumentStructure.Services
             }
             catch (Exception ex)
             {
-                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error);
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
                 throw new DatabaseException("The error occured while updating the structure", ex);
             }
         }

@@ -20,5 +20,10 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage.Factories
         {
             return new FolderService(factoriesManager, databasesManager);
         }
+
+        public IUserMainFoldersService GetMainFolderService(IFactoriesManager factoriesManager, IDatabaseManager databaseManager)
+        {
+            return new UserMainFoldersService(factoriesManager, databaseManager);
+        }
     }
 }
