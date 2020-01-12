@@ -23,7 +23,7 @@ namespace SentenceAPI.Features.Authentication.Services
     public class TokenService : ITokenService
     {
         #region Static properties
-        private static readonly string databaseConfigFile = "mongo_database_config.json";
+        private static readonly string databaseConfigFile = "./configs/mongo_database_config.json";
         #endregion
 
         #region Databases

@@ -29,7 +29,7 @@ namespace SentenceAPI.Features.UserPhoto.Services
     public class UserPhotoService : IUserPhotoService
     {
         #region Static fields 
-        private static readonly string databaseConfigFile = "mongo_database_config.json";
+        private static readonly string databaseConfigFile = "./configs/mongo_database_config.json";
         private static readonly string userPhotoCacheKey = "user_photo_";
         #endregion
 

@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Threading.Tasks;
+
 using Microsoft.IdentityModel.Tokens;
+
 using SentenceAPI.Features.Authentication.Models;
 using SentenceAPI.Features.Users.Models;
 using SharedLibrary.KernelInterfaces;

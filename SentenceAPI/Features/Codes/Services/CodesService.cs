@@ -31,7 +31,7 @@ namespace SentenceAPI.Features.Codes.Services
         #region Static fields
         private static Random random = new Random();
         private static int codeLength = 6;
-        private static readonly string databaseConfigFile = "mongo_database_config.json";
+        private static readonly string databaseConfigFile = "./configs/mongo_database_config.json";
         #endregion
 
 

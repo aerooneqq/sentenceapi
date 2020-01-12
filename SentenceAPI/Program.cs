@@ -12,20 +12,13 @@ namespace SentenceAPI
     {
         public static void Main(string[] args) => CreateWebHostBuilder(args).Build().Run();
 
-        public static IHostBuilder CreateWebHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(webBuilder =>
-                {
-                    webBuilder.UseKestrel(options => 
-                    {
-                        options.Listen(IPAddress.Any, 5001, options =>
-                        {
-                            options.UseHttps("server.pfx", "Aero");
-                        });
+        public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
+            WebHost.CreateDefaultBuilder(args)
+                   .UseKestrel(options => 
+                   {
+                       options.ListenAnyIP(5000);
+                   })
+                   .UseStartup<Startup>();
 
-                        options.Listen(IPAddress.Any, 5000);
-                    });
-                    webBuilder.UseStartup<Startup>();
-                });
     }
 }

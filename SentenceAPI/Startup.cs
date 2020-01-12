@@ -28,6 +28,7 @@ using SentenceAPI.Features.Workplace.DocumentsStorage.Factories;
 using SentenceAPI.ApplicationFeatures.Date.Factories;
 using SentenceAPI.Extensions;
 using SentenceAPI.ApplicationFeatures.Middlewares;
+using SentenceAPI.StartupHelperClasses;
 
 using DataAccessLayer.DatabasesManager.Interfaces;
 using DataAccessLayer.DatabasesManager;
@@ -41,7 +42,7 @@ namespace SentenceAPI
     {
         public static string ApiName => "SentenceAPI";
         public static string CurrDirectory => Directory.GetCurrentDirectory();
-        public static Dictionary<string, string> OtherApis { get; private set; }
+        public static Dictionary<OtherApis, string> OtherApis { get; private set; }
 
 
         public IConfiguration Configuration { get; set; }
@@ -49,7 +50,7 @@ namespace SentenceAPI
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
-            OtherApis = new Dictionary<string, string>();
+            OtherApis = new Dictionary<OtherApis, string>();
         }
 
         public void ConfigureServices(IServiceCollection services)
@@ -125,7 +126,7 @@ namespace SentenceAPI
             using FileStream fs = new FileStream(filePath, FileMode.Open, FileAccess.Read);
             using StreamReader sr = new StreamReader(fs);
 
-            OtherApis = JsonConvert.DeserializeObject<Dictionary<string, string>>(await sr.ReadToEndAsync());
+            OtherApis = JsonConvert.DeserializeObject<Dictionary<OtherApis, string>>(await sr.ReadToEndAsync());
         }
     }
 }

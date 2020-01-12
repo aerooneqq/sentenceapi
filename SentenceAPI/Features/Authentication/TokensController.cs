@@ -10,7 +10,6 @@ using SentenceAPI.Features.Authentication.Models;
 using SentenceAPI.ApplicationFeatures.DefferedExecution;
 using SentenceAPI.Features.UserActivity.Interfaces;
 
-
 using DataAccessLayer.Exceptions;
 using DataAccessLayer.Hashes;
 
@@ -19,7 +18,10 @@ using SharedLibrary.ActionResults;
 using SharedLibrary.Loggers.Models;
 using SharedLibrary.Loggers.Interfaces;
 using SharedLibrary.Loggers.Configuration;
-
+using System.Net;
+using SentenceAPI.StartupHelperClasses;
+using System.IO;
+using MongoDB.Bson;
 
 namespace SentenceAPI.Features.Authentication
 {
@@ -67,7 +69,7 @@ namespace SentenceAPI.Features.Authentication
                 
                 password = password.GetMD5Hash();
 
-                UserInfo user = await userService.GetAsync(email, password);
+                UserInfo user = await userService.GetAsync(email, password).ConfigureAwait(false);
 
                 if (user == null || user.IsAccountDeleted)
                 {
@@ -75,15 +77,10 @@ namespace SentenceAPI.Features.Authentication
                 }
 
                 var (encodedToken, securityToken) = tokenService.CreateEncodedToken(user);
+                string documentsAPIToken = await GetDocumentsApiToken(user).ConfigureAwait(false);
 
                 await tokenService.InsertTokenInDBAsync(new JwtToken(securityToken, user)).ConfigureAwait(false);
-
-                DefferedTasksManager.AddTask(new Action(() => userActivityService.AddSingleActivityAsync(user.ID,
-                    new UserActivity.Models.SingleUserActivity()
-                    {
-                        ActivityDate = DateTime.Now,
-                        Activity = "Logged in"
-                    })));
+                AddLogInTaskToDefferedManager(user.ID);
 
                 return new Ok(encodedToken);
             }
@@ -98,6 +95,25 @@ namespace SentenceAPI.Features.Authentication
                 return new InternalServerError();
             }
         }
+
+        private async Task<string> GetDocumentsApiToken(UserInfo user)
+        {
+            string url = $"{Startup.OtherApis[OtherApis.DocumentsAPI]}/tokens?userID={user.ID}";
+            HttpWebRequest request = HttpWebRequest.CreateHttp(url);
+
+            HttpWebResponse response = (HttpWebResponse)await request.GetResponseAsync().ConfigureAwait(false);
+
+            using StreamReader streamReader = new StreamReader(response.GetResponseStream());
+            return await streamReader.ReadToEndAsync().ConfigureAwait(false);
+        }
+
+        private void AddLogInTaskToDefferedManager(ObjectId userID) =>
+            DefferedTasksManager.AddTask(new Action(() => userActivityService.AddSingleActivityAsync(userID,
+                new UserActivity.Models.SingleUserActivity()
+                {
+                    ActivityDate = DateTime.Now,
+                    Activity = "Logged in"
+                })));
         #endregion
     }
 }

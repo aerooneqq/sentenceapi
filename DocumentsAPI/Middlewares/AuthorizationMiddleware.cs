@@ -21,7 +21,6 @@ namespace DocumentsAPI.Middlewares
         {
             var authHeader = context.Request.Headers["Authorization"].ToString();
             
-
             await nextMiddleware.Invoke(context).ConfigureAwait(false);
         }
     }

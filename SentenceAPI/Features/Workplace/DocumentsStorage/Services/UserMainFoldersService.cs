@@ -26,7 +26,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage.Services
 {
     public class UserMainFoldersService : IUserMainFoldersService
     {
-        private static readonly string databaseConfigFile = "mongo_database_config.json";
+        private static readonly string databaseConfigFile = "./configs/mongo_database_config.json";
 
         #region Database
         private readonly IDatabaseService<UserMainFolders> database;

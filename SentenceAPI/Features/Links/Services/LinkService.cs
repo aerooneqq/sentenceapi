@@ -26,7 +26,7 @@ namespace SentenceAPI.Features.Links.Services
     {
         #region Static fields
         private static Random Random { get; } = new Random();
-        private static readonly string databaseConfigFile = "mongo_database_config.json";
+        private static readonly string databaseConfigFile = "./configs/mongo_database_config.json";
         #endregion
 
 

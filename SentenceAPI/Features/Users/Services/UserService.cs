@@ -29,7 +29,7 @@ namespace SentenceAPI.Features.Users.Services
     public class UserService : IUserService<UserInfo>
     {
         #region Static fields
-        private static readonly string databaseConfigFile = "mongo_database_config.json";
+        private static readonly string databaseConfigFile = "./configs/mongo_database_config.json";
         #endregion
 
         #region Databases

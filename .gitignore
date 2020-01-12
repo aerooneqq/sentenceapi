@@ -17,4 +17,8 @@ obj
 log
 /SharedLibrary/bin
 /SharedLibrary/obj
-
+/SentenceAPI/Assemblies
+/SentenceAPI/other_api.json
+/SentenceAPI/configs
+/DocumentsAPI/configs
+configs

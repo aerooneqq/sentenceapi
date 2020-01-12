@@ -27,7 +27,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsDeskState.Services
 {
     public class DocumentDeskStateService : IDocumentDeskStateService
     {
-        private static readonly string databaseConfigFileName = "mongo_database_config.json";
+        private static readonly string databaseConfigFileName = "./configs/mongo_database_config.json";
 
         #region Databases
         private readonly IDatabaseService<DocumentDeskState> database;
