@@ -20,10 +20,8 @@ namespace SentenceAPI.Features.Authentication.Models
         const string SecretKey = "asdl;kf l;sdfksdl;f'k dsfl;kds;ldsl;kds;l sd';lfk sdl;'f d";
         #endregion
 
-        public static SymmetricSecurityKey GetSymmetricSecurityKey()
-        {
-            return new SymmetricSecurityKey(Encoding.ASCII.GetBytes(SecretKey));
-        }
+        public static SymmetricSecurityKey GetSymmetricSecurityKey() => 
+            new SymmetricSecurityKey(Encoding.ASCII.GetBytes(SecretKey));
 
         public static LifetimeValidator GetLifeTimeValidationDel()
         {

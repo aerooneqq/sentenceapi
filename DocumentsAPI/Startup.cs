@@ -30,7 +30,10 @@ namespace DocumentsAPI
             services.AddSingleton(typeof(IFactoriesManager), factoriesManager);
             services.AddSingleton(typeof(IDatabaseManager), databaseManager);
 
-            services.AddMvc();
+            services.AddMvc(options => 
+            {
+                options.EnableEndpointRouting = false;
+            });
 
             ConfigureCustomServices(factoriesManager, databaseManager);
         }

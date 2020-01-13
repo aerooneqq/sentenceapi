@@ -7,7 +7,7 @@ using MongoDB.Bson;
 
 using Newtonsoft.Json;
 
-using SharedLibrary.JsonConverters;
+using DataAccessLayer.JsonConverters;
 
 
 namespace SentenceAPI.Features.UserFriends.Models

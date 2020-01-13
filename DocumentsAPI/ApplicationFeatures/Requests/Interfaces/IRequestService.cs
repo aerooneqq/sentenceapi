@@ -1,8 +1,12 @@
 ﻿using Microsoft.AspNetCore.Http;
+
+using MongoDB.Bson;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
 
 namespace DocumentsAPI.ApplicationFeatures.Requests.Interfaces
 {
@@ -13,5 +17,6 @@ namespace DocumentsAPI.ApplicationFeatures.Requests.Interfaces
         Task<string> GetRequestBodyAsync(HttpRequest request);
 
         string GetToken(HttpRequest request);
+        Task<bool> CheckIfRequestInDatabase(ObjectId requestID);
     }
 }

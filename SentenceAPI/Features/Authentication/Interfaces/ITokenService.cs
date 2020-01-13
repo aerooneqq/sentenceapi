@@ -6,9 +6,13 @@ using System.Threading.Tasks;
 
 using Microsoft.IdentityModel.Tokens;
 
+using MongoDB.Bson;
+
 using SentenceAPI.Features.Authentication.Models;
 using SentenceAPI.Features.Users.Models;
+
 using SharedLibrary.KernelInterfaces;
+
 
 namespace SentenceAPI.Features.Authentication.Interfaces
 {   

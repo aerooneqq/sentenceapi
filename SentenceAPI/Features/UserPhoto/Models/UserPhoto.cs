@@ -11,7 +11,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using SharedLibrary.JsonConverters;
+using DataAccessLayer.JsonConverters;
 
 
 namespace SentenceAPI.Features.UserPhoto.Models

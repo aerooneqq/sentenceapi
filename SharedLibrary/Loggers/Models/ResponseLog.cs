@@ -2,25 +2,29 @@ using System.IO;
 using System.Text;
 
 using Microsoft.AspNetCore.Http;
+
+using MongoDB.Bson.Serialization.Attributes;
+
 using Newtonsoft.Json;
+
 
 namespace SharedLibrary.Loggers.Models
 {
     public class ResponseLog
     {
-        [JsonProperty("ContentLength")]
+        [JsonProperty("ContentLength"), BsonElement("contentLength")]
         public long ContentLength { get; set; }
 
-        [JsonProperty("StatusCode")]
+        [JsonProperty("StatusCode"), BsonElement("statusCode")]
         public int StatusCode { get; set; }
 
-        [JsonProperty("ContentType")]
+        [JsonProperty("ContentType"), BsonElement("contentType")]
         public string ContentType { get; set; }
 
-        [JsonProperty("Body")]
+        [JsonProperty("Body"), BsonElement("body")]
         public string Body { get; set; }
 
-        [JsonProperty("Headers")]
+        [JsonProperty("Headers"), BsonElement("headers")]
         public IHeaderDictionary Headers { get; set; }
 
         public ResponseLog(HttpResponse response) 

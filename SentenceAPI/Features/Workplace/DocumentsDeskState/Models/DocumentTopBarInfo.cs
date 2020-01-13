@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-using SharedLibrary.JsonConverters;
+using DataAccessLayer.JsonConverters;
 
 
 namespace SentenceAPI.Features.Workplace.DocumentsDeskState.Models

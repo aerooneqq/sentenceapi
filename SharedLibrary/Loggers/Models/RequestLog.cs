@@ -7,22 +7,32 @@ using MongoDB.Bson.Serialization.Attributes;
 
 using Newtonsoft.Json;
 
+using DataAccessLayer.KernelModels;
+
 
 namespace SharedLibrary.Loggers.Models
 {
-    public class RequestLog
+    public class RequestLog : UniqueEntity
     {
+        [JsonProperty("queryString"), BsonElement("queryString")]
         public string QueryString { get; set; }
 
+        [JsonProperty("body"), BsonElement("body")]
         public string Body { get; set; }
 
+        [JsonProperty("contentType"), BsonElement("contentType")]
         public string ContentType { get; set; }
 
+        [JsonProperty("contentLength"), BsonElement("contentLength")]
         public long? ContentLength { get; set; }
 
+        [JsonProperty("isHttps"), BsonElement("isHttps")]
         public bool IsHttps { get; set; }
 
+        [JsonProperty("host"), BsonElement("host")]
         public HostObject Host { get; set; }
+
+        [JsonProperty("method"), BsonElement("method")]
         public string Method { get; set; }
 
         public RequestLog(HttpRequest request)

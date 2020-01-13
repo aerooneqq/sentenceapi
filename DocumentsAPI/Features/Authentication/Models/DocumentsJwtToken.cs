@@ -1,30 +1,28 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Security.Claims;
 using System.IdentityModel.Tokens.Jwt;
-
-using MongoDB.Bson.Serialization.Attributes;
-
-using Newtonsoft.Json;
-
-using SentenceAPI.Features.Users.Models;
 
 using DataAccessLayer.KernelModels;
 
 using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
+
+using Newtonsoft.Json;
 
 using DataAccessLayer.JsonConverters;
 
 
-namespace SentenceAPI.Features.Authentication.Models
+namespace DocumentsAPI.Features.Authentication.Models
 {
-    public class JwtToken : UniqueEntity
-    {   
+    public class DocumentsJwtToken : UniqueEntity
+    {
         [BsonElement("userID"), JsonProperty("userID")]
         [JsonConverter(typeof(ObjectIDJsonConverter))]
         public ObjectId UserID { get; set; }
+
+        [BsonElement("parentSentenceAPITokenID"), JsonProperty("parentSentenceAPITokenID")]
+        [JsonConverter(typeof(ObjectIDJsonConverter))]
+        public ObjectId SentenceAPITokenID { get; set; }
 
         [BsonElement("issuer"), JsonProperty("issuer")]
         public string Issuer { get; set; }
@@ -42,25 +40,21 @@ namespace SentenceAPI.Features.Authentication.Models
         public string SignatureAlgorithm { get; set; }
 
         [BsonElement("claims"), JsonProperty("claims")]
-        public List<KeyValuePair<string, string>> Claims { get; set; }
+        public List<KeyValuePair<string, string>> Claims { get; set; }        
 
-        public JwtToken(JwtSecurityToken token, UserInfo user)
+
+        public DocumentsJwtToken() { }
+        public DocumentsJwtToken(ObjectId userID, ObjectId sentenceAPITokenID, 
+                                 JwtSecurityToken token)
         {
-            ID = ObjectId.GenerateNewId();
-            UserID = user.ID;
+            ID = ObjectId.GenerateNewId(); 
+            UserID = userID;
+            SentenceAPITokenID = sentenceAPITokenID;
             Issuer = token.Issuer;
             Audiences = token.Audiences;
             ValidFrom = token.ValidFrom;
             ExpiringDate = token.ValidTo;
             SignatureAlgorithm = token.SignatureAlgorithm;
-
-            Claims = new List<KeyValuePair<string, string>>();
-            var tokenClaims = token.Claims.ToList();
-
-            for (int i = 0; i < AuthOptions.CustomClaimsCount; i++)
-            {
-                Claims.Add(new KeyValuePair<string, string>(tokenClaims[i].Type , tokenClaims[i].Value));
-            }
         }
     }
 }

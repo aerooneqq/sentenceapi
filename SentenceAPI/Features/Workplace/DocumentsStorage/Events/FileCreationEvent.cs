@@ -7,6 +7,7 @@ using MongoDB.Bson;
 using SentenceAPI.Events.Exceptions;
 using SentenceAPI.Events.Interfaces;
 using SentenceAPI.Features.Workplace.DocumentsStorage.Models;
+using SentenceAPI.StartupHelperClasses;
 
 namespace SentenceAPI.Features.Workplace.DocumentsStorage.Events
 {
@@ -28,7 +29,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage.Events
             this.userID = userID;
             this.file = file;
 
-            documentsApiUrl = $"{Startup.OtherApis["DocumentsAPI"]}/fileToDocument?fileID={file.ID}&" +
+            documentsApiUrl = $"{Startup.OtherApis[OtherApis.DocumentsAPI]}/fileToDocument?fileID={file.ID}&" +
                 $"userID={userID}&fileName={file.FileName}&documentType=0";
         }
 

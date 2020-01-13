@@ -10,7 +10,7 @@ using Newtonsoft.Json;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
-using SharedLibrary.JsonConverters;
+using DataAccessLayer.JsonConverters;
 
 
 namespace SentenceAPI.Features.Workplace.DocumentsStorage.Models

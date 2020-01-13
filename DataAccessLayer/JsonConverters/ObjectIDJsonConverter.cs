@@ -5,11 +5,12 @@ using MongoDB.Bson;
 using Newtonsoft.Json;
 
 
-namespace SharedLibrary.JsonConverters
+namespace DataAccessLayer.JsonConverters
 {
     public class ObjectIDJsonConverter : JsonConverter<ObjectId>
     {
-        public override ObjectId ReadJson(JsonReader reader, Type objectType, ObjectId existingValue, bool hasExistingValue, JsonSerializer serializer)
+        public override ObjectId ReadJson(JsonReader reader, Type objectType, ObjectId existingValue, 
+                                          bool hasExistingValue, JsonSerializer serializer)
         {
             return ObjectId.Parse((string)reader.Value);
         }

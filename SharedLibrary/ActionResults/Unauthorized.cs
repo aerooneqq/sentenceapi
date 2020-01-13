@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace SharedLibrary.ActionResults
 {
-    public class SharedLibrary : IActionResult
+    public class Unauthorized : IActionResult
     {
         private IResponseBuilder responseBuilder;
 

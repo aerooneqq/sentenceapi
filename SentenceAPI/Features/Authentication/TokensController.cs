@@ -77,9 +77,12 @@ namespace SentenceAPI.Features.Authentication
                 }
 
                 var (encodedToken, securityToken) = tokenService.CreateEncodedToken(user);
-                string documentsAPIToken = await GetDocumentsApiToken(user).ConfigureAwait(false);
 
+                JwtToken jwtToken = new JwtToken(securityToken, user);
                 await tokenService.InsertTokenInDBAsync(new JwtToken(securityToken, user)).ConfigureAwait(false);
+
+                string documentsAPIToken = await GetDocumentsApiToken(user, jwtToken.ID).ConfigureAwait(false);
+
                 AddLogInTaskToDefferedManager(user.ID);
 
                 return new Ok(encodedToken);
@@ -96,9 +99,9 @@ namespace SentenceAPI.Features.Authentication
             }
         }
 
-        private async Task<string> GetDocumentsApiToken(UserInfo user)
+        private async Task<string> GetDocumentsApiToken(UserInfo user, ObjectId sentenceAPITokenID)
         {
-            string url = $"{Startup.OtherApis[OtherApis.DocumentsAPI]}/tokens?userID={user.ID}";
+            string url = $"{Startup.OtherApis[OtherApis.DocumentsAPI]}/tokens?userID={user.ID}&sentenceAPITokenID={sentenceAPITokenID}";
             HttpWebRequest request = HttpWebRequest.CreateHttp(url);
 
             HttpWebResponse response = (HttpWebResponse)await request.GetResponseAsync().ConfigureAwait(false);

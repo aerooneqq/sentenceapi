@@ -18,3 +18,4 @@ FROM base AS final
 WORKDIR /app/DocumentsAPIRelease
 
 COPY --from=publish /app/DocumentsAPIRelease ./
+ENTRYPOINT ["dotnet", "DocumentsAPI.dll"]

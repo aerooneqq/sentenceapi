@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Bson;
 
-using SharedLibrary.JsonConverters;
+using DataAccessLayer.JsonConverters;
 
 namespace SentenceAPI.Features.Workplace.DocumentsStorage.Models
 {

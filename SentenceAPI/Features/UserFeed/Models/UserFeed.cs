@@ -10,7 +10,7 @@ using MongoDB.Bson.Serialization.Attributes;
 using DataAccessLayer.KernelModels;
 using MongoDB.Bson;
 
-using SharedLibrary.JsonConverters;
+using DataAccessLayer.JsonConverters;
 
 
 namespace SentenceAPI.Features.UserFeed.Models

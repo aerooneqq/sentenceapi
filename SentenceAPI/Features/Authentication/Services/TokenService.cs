@@ -16,7 +16,9 @@ using DataAccessLayer.Configuration;
 using DataAccessLayer.DatabasesManager.Interfaces;
 
 using SharedLibrary.Loggers.Models;
-
+using SharedLibrary.Loggers.Interfaces;
+using SharedLibrary.Loggers.Configuration;
+using DataAccessLayer.Exceptions;
 
 namespace SentenceAPI.Features.Authentication.Services
 {
@@ -31,7 +33,13 @@ namespace SentenceAPI.Features.Authentication.Services
         private IConfigurationBuilder configurationBuilder;
         #endregion
 
+
+        #region Services
+        private ILogger<ApplicationError> exceptionLogger;
+        #endregion
+
         private readonly LogConfiguration logConfiguration;
+
 
         #region Constructors
         public TokenService(IDatabaseManager databaseManager)
@@ -46,14 +54,24 @@ namespace SentenceAPI.Features.Authentication.Services
         }
         #endregion
 
+
         public bool CheckToken(string encodedToken)
         {
             throw new NotImplementedException();
         }
 
-        public Task InsertTokenInDBAsync(JwtToken token)
+        public async Task InsertTokenInDBAsync(JwtToken token)
         {
-            return mongoDBService.Connect().ContinueWith((t) => mongoDBService.Insert(token));
+            try
+            {
+                await mongoDBService.Connect().ConfigureAwait(false);
+                await mongoDBService.Insert(token).ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
+                throw new DatabaseException("Error occured while working with token", ex);
+            }
         }
 
         /// <summary>
