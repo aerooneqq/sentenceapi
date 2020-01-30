@@ -1,0 +1,5 @@
+cd ./SentenceAPI
+dotnet run &
+
+cd ../DocumentsAPI
+dotnet run &

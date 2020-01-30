@@ -1,17 +1,14 @@
 ﻿using SentenceAPI.ApplicationFeatures.Requests.Interfaces;
-
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using DataAccessLayer.DatabasesManager.Interfaces;
+using SharedLibrary.FactoriesManager.Interfaces;
 
 namespace SentenceAPI.ApplicationFeatures.Requests.Factories
 {
-    class RequestServiceFactory : IRequestServiceFactory
+    internal class RequestServiceFactory : IRequestServiceFactory
     {
-        public IRequestService GetService()
+        public IRequestService GetService(IFactoriesManager factoriesManager, IDatabaseManager databaseManager)
         {
-            return new RequestService();
+            return new RequestService(factoriesManager, databaseManager);
         }
     }
 }

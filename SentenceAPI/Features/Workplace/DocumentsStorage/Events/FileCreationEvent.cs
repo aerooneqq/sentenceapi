@@ -1,13 +1,15 @@
-﻿using System.IO;
-using System.Net;
+﻿using System.Net;
 using System.Threading.Tasks;
+
+using Domain.Workplace.DocumentsStorage;
 
 using MongoDB.Bson;
 
-using SentenceAPI.Events.Exceptions;
-using SentenceAPI.Events.Interfaces;
-using SentenceAPI.Features.Workplace.DocumentsStorage.Models;
 using SentenceAPI.StartupHelperClasses;
+
+using SharedLibrary.Events.Exceptions;
+using SharedLibrary.Events.Interfaces;
+
 
 namespace SentenceAPI.Features.Workplace.DocumentsStorage.Events
 {
@@ -18,29 +20,29 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage.Events
     {
         #region Event properties
         private readonly ObjectId userID;
-        private readonly DocumentFile file; 
+        private readonly DocumentFile file;
         #endregion
 
         private readonly string documentsApiUrl;
 
 
-        public FileCreationEvent(DocumentFile file, ObjectId userID)
+        public FileCreationEvent(DocumentFile file, ObjectId userID, int documentType)
         {
             this.userID = userID;
             this.file = file;
 
-            documentsApiUrl = $"{Startup.OtherApis[OtherApis.DocumentsAPI]}/fileToDocument?fileID={file.ID}&" +
-                $"userID={userID}&fileName={file.FileName}&documentType=0";
+            documentsApiUrl = $"{Startup.OtherApis[OtherApis.DocumentsAPI]}/api/fileToDocument?fileID={file.ID}&" +
+                              $"userID={userID}&fileName={file.FileName}&documentType={documentType}";
         }
 
-
+ 
         public async Task Handle()
         {
-            HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create(documentsApiUrl);
+            HttpWebRequest request = (HttpWebRequest) HttpWebRequest.Create(documentsApiUrl);
             request.Method = "PUT";
-            
-            HttpWebResponse response = (HttpWebResponse)(await request.GetResponseAsync().ConfigureAwait(false));
-            
+
+            HttpWebResponse response = (HttpWebResponse) (await request.GetResponseAsync().ConfigureAwait(false));
+
             if (response.StatusCode == HttpStatusCode.InternalServerError)
             {
                 throw new DomainEventException("Error occured on the document server");

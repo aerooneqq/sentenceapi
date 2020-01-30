@@ -12,8 +12,23 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage.Models
     /// </summary>
     public class NewFileDto
     {
+        private ObjectId parentFolderObjectId;
+        [JsonIgnore]
+        public ObjectId ParentFolderObjectId => parentFolderObjectId;
+        
+
+        private string parentFolderID;
+        
         [JsonProperty("parentFolderID")]
-        public ObjectId ParentFolderID { get; set; }
+        public string ParentFolderID { 
+            get => parentFolderID;
+            set
+            {
+                parentFolderID = value;
+                parentFolderObjectId = ObjectId.Parse(value);
+            }
+        }
+        
 
         [JsonProperty("fileName")]
         public string FileName { get; set; }

@@ -4,29 +4,36 @@ using System.Linq;
 using System.Collections.Generic;
 
 using DataAccessLayer.CommonInterfaces;
+using DataAccessLayer.Configuration;
+using DataAccessLayer.Configuration.Interfaces;
 using DataAccessLayer.DatabasesManager.Interfaces;
 using DataAccessLayer.Filters;
 using DataAccessLayer.Filters.Base;
+using DataAccessLayer.Exceptions;
 
 using DocumentsAPI.Features.FileToDocument.Interfaces;
 
 using SharedLibrary.FactoriesManager.Interfaces;
 using SharedLibrary.Loggers.Interfaces;
-using SharedLibrary.Loggers.Models;
-using SharedLibrary.Loggers.Configuration;
-using DataAccessLayer.Exceptions;
+
+using Domain.Logs;
+using Domain.Logs.Configuration;
+
 using MongoDB.Bson;
+
 
 namespace DocumentsAPI.Features.FileToDocument.Services
 {
     public class FileToDocumentService : IFileToDocumentService
     {
+        private static readonly string databaseConfigFile = "./configs/mongo_database_config.json";
+        
         #region Databases
-        private IDatabaseService<Models.FileToDocument> database;
+        private readonly IDatabaseService<Models.FileToDocument> database;
         #endregion
 
         #region Services
-        private ILogger<ApplicationError> exceptionLogger;
+        private readonly ILogger<ApplicationError> exceptionLogger;
         #endregion
 
         private readonly LogConfiguration logConfiguration;
@@ -35,9 +42,14 @@ namespace DocumentsAPI.Features.FileToDocument.Services
         public FileToDocumentService(IFactoriesManager factoriesManager, IDatabaseManager databaseManager)
         {
             factoriesManager.GetService<ILogger<ApplicationError>>().TryGetTarget(out exceptionLogger);
-            logConfiguration = new LogConfiguration(GetType());
 
             databaseManager.MongoDBFactory.GetDatabase<Models.FileToDocument>().TryGetTarget(out database);
+            
+            IConfigurationBuilder configurationBuilder = new MongoConfigurationBuilder(database.Configuration);
+            configurationBuilder.SetConfigurationFilePath(databaseConfigFile).SetUserName().SetPassword()
+                .SetAuthMechanism().SetDatabaseName().SetServerName().SetConnectionString();
+            
+            logConfiguration = new LogConfiguration(GetType());
         }
 
 
@@ -46,6 +58,7 @@ namespace DocumentsAPI.Features.FileToDocument.Services
             try
             {
                 await database.Connect().ConfigureAwait(false);
+
                 FilterBase fileIDGetFilter = new EqualityFilter<ObjectId>("FileID", fileID);
 
                 var fileToDoc = (await database.Get(fileIDGetFilter).

@@ -1,16 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading;
-
-using SentenceAPI.ApplicationFeatures.Loggers;
-using SharedLibrary.Loggers.Interfaces;
-using SharedLibrary.Loggers.Models;
-using SharedLibrary.Loggers.Configuration;
-
-
 using System.Collections.Concurrent;
+
+using Domain.Logs;
+using Domain.Logs.Configuration;
+using SharedLibrary.Loggers.Interfaces;
 using SharedLibrary.FactoriesManager.Interfaces;
-using SharedLibrary.FactoriesManager;
+
 
 namespace SentenceAPI.ApplicationFeatures.DefferedExecution
 {

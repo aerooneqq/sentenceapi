@@ -7,7 +7,6 @@ using Microsoft.Extensions.Caching.Memory;
 using SharedLibrary.ActionResults;
 using SharedLibrary.FactoriesManager.Interfaces;
 using SharedLibrary.Loggers.Interfaces;
-using SharedLibrary.Loggers.Models;
 
 using SentenceAPI.ApplicationFeatures.Requests.Interfaces;
 using SentenceAPI.Features.Authentication.Interfaces;
@@ -17,8 +16,9 @@ using System;
 using System.Threading.Tasks;
 using System.Text;
 
+using Domain.Logs;
+using Domain.Logs.Configuration;
 using MongoDB.Bson;
-using SharedLibrary.Loggers.Configuration;
 
 
 namespace SentenceAPI.Features.UserPhoto
@@ -57,7 +57,7 @@ namespace SentenceAPI.Features.UserPhoto
 
                 if (userPhoto is null)
                 {
-                    return new BadSendedRequest<string>("Upload your photo firstly!");
+                    return new BadSentRequest<string>("Upload your photo firstly!");
                 }
 
                 byte[] photo = await userPhotoService.GetRawPhotoAsync(userPhoto.CurrentPhotoID).ConfigureAwait(false);
@@ -84,15 +84,15 @@ namespace SentenceAPI.Features.UserPhoto
 
                 if (photo is null || photo.Length == 0)
                 { 
-                    return new BadSendedRequest<string>("There is no photo");
+                    return new BadSentRequest<string>("There is no photo");
                 }
 
                 ObjectId userID = ObjectId.Parse(tokenService.GetTokenClaim(requestService.GetToken(Request), "ID"));
-                Models.UserPhoto userPhoto = await userPhotoService.GetPhotoAsync(userID).ConfigureAwait(false);
+                Domain.UserPhoto.UserPhoto userPhoto = await userPhotoService.GetPhotoAsync(userID).ConfigureAwait(false);
 
                 if (userPhoto is null)
                 {
-                    userPhoto = new Models.UserPhoto(userID);
+                    userPhoto = new Domain.UserPhoto.UserPhoto(userID);
                     await userPhotoService.InsertUserPhotoModel(userPhoto).ConfigureAwait(false);
                 }
                 

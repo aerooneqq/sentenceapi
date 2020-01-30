@@ -1,14 +1,11 @@
-﻿using System;
-using System.Runtime.CompilerServices;
-
-using SharedLibrary.Loggers.Configuration;
-using SharedLibrary.Loggers.Models;
-using SharedLibrary.KernelInterfaces;
+﻿using Domain.KernelInterfaces;
+using Domain.Logs;
+using Domain.Logs.Configuration;
 
 
 namespace SharedLibrary.Loggers.Interfaces
 {
-    public interface ILogger<LogType> : IService
+    public interface ILogger<in LogType> : IService
     {
         #region Methods
         void Log(LogType logObject, LogLevel logLevel, LogConfiguration logConfiguration);

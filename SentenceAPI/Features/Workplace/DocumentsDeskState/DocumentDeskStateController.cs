@@ -6,19 +6,20 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 using DataAccessLayer.Exceptions;
+using Domain.Logs;
+using Domain.Logs.Configuration;
+using Domain.Workplace.DocumentsDeskState;
 
 using SharedLibrary.ActionResults;
 using SharedLibrary.FactoriesManager.Interfaces;
-using SharedLibrary.FactoriesManager;
 using SharedLibrary.Extensions;
-
 using SharedLibrary.Loggers.Interfaces;
-using SharedLibrary.Loggers.Models;
+
 using SentenceAPI.ApplicationFeatures.Requests.Interfaces;
 using SentenceAPI.Features.Workplace.DocumentsDeskState.Interfaces;
-using SentenceAPI.Features.Workplace.DocumentsDeskState.Models;
-using SharedLibrary.Loggers.Configuration;
+
 using MongoDB.Bson;
+
 
 namespace SentenceAPI.Features.Workplace.DocumentsDeskState
 {

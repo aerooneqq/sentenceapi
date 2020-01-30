@@ -3,24 +3,28 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-using SharedLibrary.ActionResults;
-using SharedLibrary.Loggers.Interfaces;
-using SharedLibrary.Loggers.Models;
 using SentenceAPI.ApplicationFeatures.Requests.Interfaces;
 using SentenceAPI.Features.Authentication.Interfaces;
 using SentenceAPI.Features.Workplace.DocumentsStorage.Interfaces;
 using SentenceAPI.Features.Workplace.DocumentsStorage.Models;
-using SentenceAPI.Validators;
 
 using System;
 using System.Threading.Tasks;
 
+using Domain.Logs;
+using Domain.Logs.Configuration;
+using Domain.Validators;
+using Domain.Workplace.DocumentsStorage;
+
 using SharedLibrary.FactoriesManager.Interfaces;
-using SharedLibrary.FactoriesManager;
-using SharedLibrary.Loggers.Configuration;
+using SharedLibrary.Events;
+using SharedLibrary.ActionResults;
+using SharedLibrary.Loggers.Interfaces;
+
 using MongoDB.Bson;
-using SentenceAPI.Events;
+
 using SentenceAPI.Features.Workplace.DocumentsStorage.Events;
+
 
 namespace SentenceAPI.Features.Workplace.DocumentsStorage
 {
@@ -59,15 +63,15 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage
                 var (result, errorMessage) = new FileNameValidator(newFile.FileName).Validate();
                 if (!result)
                 {
-                    return new BadSendedRequest<string>(errorMessage);
+                    return new BadSentRequest<string>(errorMessage);
                 }
 
-                var createdFileID = await fileService.CreateNewFileAsync(userID, newFile.ParentFolderID, newFile.FileName)
+                var createdFileID = await fileService.CreateNewFileAsync(userID, newFile.ParentFolderObjectId, newFile.FileName)
                     .ConfigureAwait(false);
                 var file = await fileService.GetFileAsync(createdFileID).ConfigureAwait(false);
 
 
-                await EventManager.Raise(new FileCreationEvent(file, userID)).ConfigureAwait(false);
+                await EventManager.Raise(new FileCreationEvent(file, userID, 0)).ConfigureAwait(false);
 
                 return new Ok();
             }
@@ -135,7 +139,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage
                 var (result, errorMsg) = new FileNameValidator(fileRenameDto.FileName).Validate();
                 if (!result)
                 {
-                    return new BadSendedRequest<string>(errorMsg);
+                    return new BadSentRequest<string>(errorMsg);
                 }
 
                 await fileService.RenameFileAsync(fileRenameDto.FolderID, fileRenameDto.FileName)
@@ -145,7 +149,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage
             }
             catch (ArgumentException)
             {
-                return new BadSendedRequest<string>("Such file does not exist");
+                return new BadSentRequest<string>("Such file does not exist");
             }
             catch (DatabaseException ex)
             {

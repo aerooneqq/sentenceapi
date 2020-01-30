@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 
 using DocumentsAPI.Features.DocumentStructure.Interfaces;
-using DocumentsAPI.Models.DocumentStructureModels;
 using DocumentsAPI.Features.DocumentStructure.Models;
 using DocumentsAPI.Features.DocumentStructure.Exceptions;
 
@@ -15,10 +14,12 @@ using DataAccessLayer.Configuration;
 using DataAccessLayer.Exceptions;
 using DataAccessLayer.Filters;
 
+using Domain.DocumentStructureModels;
+using Domain.Logs;
+using Domain.Logs.Configuration;
+using Domain.Date;
+
 using SharedLibrary.Loggers.Interfaces;
-using SharedLibrary.Loggers.Models;
-using SharedLibrary.Loggers.Configuration;
-using SharedLibrary.Date.Interfaces;
 using SharedLibrary.FactoriesManager.Interfaces;
 
 using MongoDB.Bson;
@@ -28,9 +29,8 @@ namespace DocumentsAPI.Features.DocumentStructure.Services
 {
     public class DocumentStructureService : IDocumentStructureService
     { 
-        private readonly static string databaseConfigFile = "mongo_database_config.json";
-
-
+        private static readonly string databaseConfigFile = "mongo_database_config.json";
+        
         #region Databases
         private readonly IDatabaseService<DocumentStructureModel> database;
         private readonly IConfigurationBuilder configurationBuilder;
@@ -97,7 +97,7 @@ namespace DocumentsAPI.Features.DocumentStructure.Services
                     itemToUpdate.Name = itemUpdateDto.NewName;
                 }
 
-                itemToUpdate.UpdatedAt = dateService.GetCurrentDate();
+                itemToUpdate.UpdatedAt = dateService.Now;
 
                 await database.Update(documentStructure).ConfigureAwait(false);
             }
@@ -110,15 +110,15 @@ namespace DocumentsAPI.Features.DocumentStructure.Services
 
         private void InsertNewItemInItem(Item item, NewInnerItem newInnerItem)
         {
-            Item newItem = new Item()
+            Item newItem = new Item
             {
-                CreatedAt = dateService.GetCurrentDate(),
+                CreatedAt = dateService.Now,
                 DocumentID = item.DocumentID,
                 ID = ObjectId.GenerateNewId(),
                 Items = new List<Item>(),
                 ItemType = newInnerItem.ItemType,
                 Name = newInnerItem.Name,
-                UpdatedAt = dateService.GetCurrentDate()
+                UpdatedAt = dateService.Now
             };
 
             item.Items.Insert(newInnerItem.Position, newItem);
@@ -157,6 +157,25 @@ namespace DocumentsAPI.Features.DocumentStructure.Services
                 {
                     FindItemRecursive(item.Items, objectId, out searchResult);
                 }
+            }
+        }
+
+        public async Task<ObjectId> CreateNewDocumentStructure(ObjectId documentID)
+        {
+            try
+            {
+                DocumentStructureModel documentStructure = DocumentStructureModel.
+                    GetNewDocumentStructure(dateService.Now, documentID);
+
+                await database.Connect().ConfigureAwait(false);
+                await database.Insert(documentStructure).ConfigureAwait(false);
+
+                return documentStructure.ID;
+            }
+            catch (Exception ex)
+            {
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
+                throw new DatabaseException("The error occured while creating the document structure");
             }
         }
     }

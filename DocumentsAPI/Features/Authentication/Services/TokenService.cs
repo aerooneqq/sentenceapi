@@ -6,27 +6,33 @@ using System.Threading.Tasks;
 using System.Linq;
 
 using DataAccessLayer.CommonInterfaces;
+using DataAccessLayer.Configuration;
+using DataAccessLayer.Configuration.Interfaces;
 using DataAccessLayer.DatabasesManager.Interfaces;
 using DataAccessLayer.Exceptions;
 
 using DocumentsAPI.Features.Authentication.Interfaces;
 using DocumentsAPI.Features.Authentication.Models;
 
+using Domain.Date;
+using Domain.Logs;
+using Domain.Logs.Configuration;
+
 using Microsoft.IdentityModel.Tokens;
 
 using MongoDB.Bson;
 
-using SharedLibrary.Date.Interfaces;
 using SharedLibrary.FactoriesManager.Interfaces;
-using SharedLibrary.Loggers.Configuration;
 using SharedLibrary.Loggers.Interfaces;
-using SharedLibrary.Loggers.Models;
 
 
 namespace DocumentsAPI.Features.Authentication.Services
 {
     public class TokenService : ITokenService
     {
+        private static readonly string databaseConfigFile = "./configs/mongo_database_config.json";
+        
+        
         #region Databases
         private readonly IDatabaseService<DocumentsJwtToken> database;
         private readonly ILogger<ApplicationError> exceptionLogger;
@@ -39,7 +45,13 @@ namespace DocumentsAPI.Features.Authentication.Services
         public TokenService(IFactoriesManager factoriesManager, IDatabaseManager databaseManager)
         {
             databaseManager.MongoDBFactory.GetDatabase<DocumentsJwtToken>().TryGetTarget(out database);
+            
+            IConfigurationBuilder configurationBuilder = new MongoConfigurationBuilder(database.Configuration);
+            configurationBuilder.SetConfigurationFilePath(databaseConfigFile).SetUserName().SetPassword()
+                .SetAuthMechanism().SetDatabaseName().SetServerName().SetConnectionString();
+            
             factoriesManager.GetService<ILogger<ApplicationError>>().TryGetTarget(out exceptionLogger);
+            factoriesManager.GetService<IDateService>().TryGetTarget(out dateService);
 
             logConfiguration = new LogConfiguration(GetType());
         }
@@ -69,14 +81,14 @@ namespace DocumentsAPI.Features.Authentication.Services
                                                                                         ObjectId parentTokenID,
                                                                                         ObjectId requestID)
         {
-            var currDate = dateService.GetCurrentDate();
+            var currDate = dateService.Now;
             var jwtToken = new JwtSecurityToken
                 (
-                    issuer: AuthOptions.Issuer,
-                    audience: AuthOptions.Audienece,
+                    AuthOptions.Issuer,
+                    AuthOptions.Audience,
                     expires: currDate.Add(TimeSpan.FromSeconds(AuthOptions.SecondsLifeTime)),
                     claims: GetClaims(userID, parentTokenID, requestID),
-                    notBefore: dateService.GetCurrentDate(),
+                    notBefore: dateService.Now,
                     signingCredentials: new SigningCredentials(AuthOptions.GetSecurityKey(),
                         SecurityAlgorithms.HmacSha256)
                 );

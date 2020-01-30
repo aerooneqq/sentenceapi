@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Domain.KernelInterfaces;
+using Domain.Logs;
 
-using SharedLibrary.Loggers.Models;
-
-using SharedLibrary.KernelInterfaces;
 
 namespace SharedLibrary.Loggers.Interfaces
 {

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace DocumentsAPI.Services.ChangesApplier
 {
     /// <summary>
-    /// Aplies the changes which are listed in the frames list.
+    /// Applies the changes which are listed in the frames list.
     /// </summary>
     class ChangesApplier : IChangesApplier
     {

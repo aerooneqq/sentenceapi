@@ -10,16 +10,24 @@ namespace SharedLibrary.ActionResults
 {
     public class Created : IActionResult
     {
-        private IResponseBuilder responseBuilder;
-
+        private readonly string content;
+        
+        public Created() {}
+        public Created(string content) => this.content = content;
+        
+        
         public Task ExecuteResultAsync(ActionContext actionContext)
         {
             return Task.Run(() =>
             {
-                responseBuilder = new HttpResponseBuilder(actionContext.HttpContext.Response, Encoding.UTF8);
+                IResponseBuilder responseBuilder = new HttpResponseBuilder(actionContext.HttpContext.Response,
+                    Encoding.UTF8);
 
                 responseBuilder.SetStatusCode((int)HttpReturnCodes.Created)
                                .SetContentLength(0).SetCORSHeaders();
+
+                if (content is {})
+                    responseBuilder.SetContent(content).SetContentLength();
             });
         }
 

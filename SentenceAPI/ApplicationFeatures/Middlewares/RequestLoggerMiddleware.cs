@@ -1,13 +1,11 @@
 using System.Threading.Tasks;
 
+using Domain.Logs;
+using Domain.Logs.Configuration;
 using Microsoft.AspNetCore.Http;
 
 using SharedLibrary.FactoriesManager.Interfaces;
-using SharedLibrary.FactoriesManager;
-
 using SharedLibrary.Loggers.Interfaces;
-using SharedLibrary.Loggers.Models;
-using SharedLibrary.Loggers.Configuration;
 
 
 namespace SentenceAPI.ApplicationFeatures.Middlewares

@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -11,31 +9,38 @@ using DocumentsAPI.ApplicationFeatures.Requests.Interfaces;
 
 using SharedLibrary.Serialization;
 using SharedLibrary.Serialization.Json;
-using SharedLibrary.Loggers.Models;
 using SharedLibrary.Loggers.Interfaces;
 using SharedLibrary.FactoriesManager.Interfaces;
 
 using DataAccessLayer.CommonInterfaces;
+using DataAccessLayer.Configuration;
+using DataAccessLayer.Configuration.Interfaces;
 using DataAccessLayer.DatabasesManager.Interfaces;
 using DataAccessLayer.Exceptions;
 
 using MongoDB.Bson;
 
-using SharedLibrary.Loggers.Configuration;
-
 using DataAccessLayer.Filters;
+
+using DocumentsAPI.Features.Authentication.Interfaces;
+
+using Domain.Logs;
+using Domain.Logs.Configuration;
 
 
 namespace DocumentsAPI.ApplicationFeatures.Requests
 {
     public class RequestService : IRequestService
     {
+        private static readonly string databaseConfigFile = "./configs/mongo_database_config.json";
+    
         #region Databases
         private readonly IDatabaseService<RequestLog> database;
         #endregion
 
         #region Services
         private readonly ILogger<ApplicationError> exceptionLogger;
+        private readonly ITokenService tokenService;
         #endregion
 
         private readonly LogConfiguration logConfiguration;
@@ -44,9 +49,14 @@ namespace DocumentsAPI.ApplicationFeatures.Requests
         public RequestService(IFactoriesManager factoriesManager, IDatabaseManager databaseManager)
         {
             factoriesManager.GetService<ILogger<ApplicationError>>().TryGetTarget(out exceptionLogger);
+            factoriesManager.GetService<ITokenService>().TryGetTarget(out tokenService);
 
             databaseManager.MongoDBFactory.GetDatabase<RequestLog>().TryGetTarget(out database);
+            IConfigurationBuilder configurationBuilder = new MongoConfigurationBuilder(database.Configuration);
 
+            configurationBuilder.SetConfigurationFilePath(databaseConfigFile).SetUserName().SetPassword()
+                .SetAuthMechanism().SetDatabaseName().SetServerName().SetConnectionString();
+            
             logConfiguration = new LogConfiguration(GetType());
         }
 
@@ -78,7 +88,8 @@ namespace DocumentsAPI.ApplicationFeatures.Requests
             try
             {
                 await database.Connect().ConfigureAwait(false);
-                var request = await database.Get(new EqualityFilter<ObjectId>("_id", requestID)).ConfigureAwait(false);
+                var request = await database.Get(new EqualityFilter<ObjectId>("_id",
+                    requestID)).ConfigureAwait(false);
 
                 return !(request is null);
             }
@@ -87,6 +98,12 @@ namespace DocumentsAPI.ApplicationFeatures.Requests
                 exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
                 throw new DatabaseException("");
             }
+        }
+
+        public ObjectId GetUserID(HttpRequest request)
+        {
+            string token = GetToken(request);
+            return ObjectId.Parse(tokenService.GetTokenClaim(token, "ID"));
         }
     }
 }

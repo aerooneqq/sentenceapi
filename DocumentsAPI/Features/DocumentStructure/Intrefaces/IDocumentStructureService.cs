@@ -1,11 +1,11 @@
 using System.Threading.Tasks;
 
 using DocumentsAPI.Features.DocumentStructure.Models;
-using DocumentsAPI.Models.DocumentStructureModels;
+
+using Domain.DocumentStructureModels;
+using Domain.KernelInterfaces;
 
 using MongoDB.Bson;
-
-using SharedLibrary.KernelInterfaces;
 
 
 namespace DocumentsAPI.Features.DocumentStructure.Interfaces
@@ -14,5 +14,6 @@ namespace DocumentsAPI.Features.DocumentStructure.Interfaces
     {
         Task<DocumentStructureModel> GetDocumentStructureAsync(ObjectId documentID);
         Task UpdateStructureAsync(DocumentStructureModel documentStructure, ItemUpdateDto itemUpdateDto);
+        Task<ObjectId> CreateNewDocumentStructure(ObjectId documentID);
     }
 }

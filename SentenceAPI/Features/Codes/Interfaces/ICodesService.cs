@@ -1,9 +1,9 @@
 ﻿using MongoDB.Bson;
-using SentenceAPI.Features.Codes.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+
 using System.Threading.Tasks;
+
+using Domain.Codes;
+
 
 namespace SentenceAPI.Features.Codes.Interfaces
 {

@@ -2,14 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 
-using DataAccessLayer.KernelModels;
+using Domain.JsonConverters;
+using Domain.KernelModels;
 
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
 using Newtonsoft.Json;
-
-using DataAccessLayer.JsonConverters;
 
 
 namespace DocumentsAPI.Features.Authentication.Models

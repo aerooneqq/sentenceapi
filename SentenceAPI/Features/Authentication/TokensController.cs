@@ -1,27 +1,35 @@
 ﻿using System;
 using System.Threading.Tasks;
+using System.Net;
+using SentenceAPI.StartupHelperClasses;
+using System.IO;
 
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
 
 using SentenceAPI.Features.Users.Interfaces;
-using SentenceAPI.Features.Users.Models;
 using SentenceAPI.Features.Authentication.Interfaces;
-using SentenceAPI.Features.Authentication.Models;
 using SentenceAPI.ApplicationFeatures.DefferedExecution;
 using SentenceAPI.Features.UserActivity.Interfaces;
 
 using DataAccessLayer.Exceptions;
 using DataAccessLayer.Hashes;
 
+using Domain.Authentication;
+using Domain.Logs;
+using Domain.Logs.Configuration;
+using Domain.UserActivity;
+using Domain.Users;
+
 using SharedLibrary.FactoriesManager.Interfaces;
 using SharedLibrary.ActionResults;
-using SharedLibrary.Loggers.Models;
 using SharedLibrary.Loggers.Interfaces;
-using SharedLibrary.Loggers.Configuration;
-using System.Net;
-using SentenceAPI.StartupHelperClasses;
-using System.IO;
+
 using MongoDB.Bson;
+
+using SentenceAPI.ApplicationFeatures.Requests.Interfaces;
+using SentenceAPI.Features.Authentication.Dto;
+
 
 namespace SentenceAPI.Features.Authentication
 {
@@ -32,10 +40,11 @@ namespace SentenceAPI.Features.Authentication
         private readonly LogConfiguration logConfiguration; 
 
         #region Services
-        private IUserService<UserInfo> userService;
-        private ITokenService tokenService;
-        private ILogger<ApplicationError> exceptionLogger;
-        private IUserActivityService userActivityService;
+        private readonly IUserService<UserInfo> userService;
+        private readonly ITokenService tokenService;
+        private readonly ILogger<ApplicationError> exceptionLogger;
+        private readonly IUserActivityService userActivityService;
+        private readonly IRequestService requestService;
         #endregion
 
 
@@ -46,6 +55,7 @@ namespace SentenceAPI.Features.Authentication
             factoriesManager.GetService<ITokenService>().TryGetTarget(out tokenService);
             factoriesManager.GetService<ILogger<ApplicationError>>().TryGetTarget(out exceptionLogger);
             factoriesManager.GetService<IUserActivityService>().TryGetTarget(out userActivityService);
+            factoriesManager.GetService<IRequestService>().TryGetTarget(out requestService);
 
             logConfiguration = new LogConfiguration(GetType());
         }
@@ -64,7 +74,7 @@ namespace SentenceAPI.Features.Authentication
             {
                 if (email is null || password is null) 
                 { 
-                    return new BadSendedRequest<string>("Email and password must be defined");
+                    return new BadSentRequest<string>("Email and password must be defined");
                 }
                 
                 password = password.GetMD5Hash();
@@ -76,20 +86,22 @@ namespace SentenceAPI.Features.Authentication
                     return Unauthorized();
                 }
 
-                var (encodedToken, securityToken) = tokenService.CreateEncodedToken(user);
+                ObjectId requestID = await LogRequestAndGetID(Request).ConfigureAwait(false);
+
+                var (sentenceApiToken, securityToken) = tokenService.CreateEncodedToken(user);
 
                 JwtToken jwtToken = new JwtToken(securityToken, user);
                 await tokenService.InsertTokenInDBAsync(new JwtToken(securityToken, user)).ConfigureAwait(false);
 
-                string documentsAPIToken = await GetDocumentsApiToken(user, jwtToken.ID).ConfigureAwait(false);
+                string documentsApiToken = await GetDocumentsApiToken(user, jwtToken.ID, requestID).
+                    ConfigureAwait(false);
 
                 AddLogInTaskToDefferedManager(user.ID);
 
-                return new Ok(encodedToken);
+                return new OkJson<AuthorizarionTokens>(new AuthorizarionTokens(sentenceApiToken, documentsApiToken));
             }
             catch (DatabaseException ex)
             {
-                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
                 return new InternalServerError(ex.Message);
             }
             catch (Exception ex)
@@ -99,20 +111,28 @@ namespace SentenceAPI.Features.Authentication
             }
         }
 
-        private async Task<string> GetDocumentsApiToken(UserInfo user, ObjectId sentenceAPITokenID)
+        private async Task<string> GetDocumentsApiToken(UserInfo user, ObjectId sentenceAPITokenID,
+                                                        ObjectId requestID)
         {
-            string url = $"{Startup.OtherApis[OtherApis.DocumentsAPI]}/tokens?userID={user.ID}&sentenceAPITokenID={sentenceAPITokenID}";
+            string url = $"{Startup.OtherApis[OtherApis.DocumentsAPI]}/api/" + 
+                $"tokens?userID={user.ID}&sentenceAPITokenID={sentenceAPITokenID}&requestID={requestID}";
             HttpWebRequest request = HttpWebRequest.CreateHttp(url);
 
             HttpWebResponse response = (HttpWebResponse)await request.GetResponseAsync().ConfigureAwait(false);
 
             using StreamReader streamReader = new StreamReader(response.GetResponseStream());
+            
             return await streamReader.ReadToEndAsync().ConfigureAwait(false);
+        }
+
+        private async Task<ObjectId> LogRequestAndGetID(HttpRequest request)
+        {
+            return await requestService.LogRequestToDatabase(request).ConfigureAwait(false);
         }
 
         private void AddLogInTaskToDefferedManager(ObjectId userID) =>
             DefferedTasksManager.AddTask(new Action(() => userActivityService.AddSingleActivityAsync(userID,
-                new UserActivity.Models.SingleUserActivity()
+                new SingleUserActivity()
                 {
                     ActivityDate = DateTime.Now,
                     Activity = "Logged in"

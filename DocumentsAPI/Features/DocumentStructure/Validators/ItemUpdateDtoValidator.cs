@@ -1,7 +1,7 @@
 using DocumentsAPI.Features.DocumentStructure.Models;
-using DocumentsAPI.Models.DocumentStructureModels;
 
-using SharedLibrary.KernelInterfaces;
+using Domain.DocumentStructureModels;
+using Domain.KernelInterfaces;
 
 
 namespace DocumentsAPI.Features.DocumentStructure.Validators

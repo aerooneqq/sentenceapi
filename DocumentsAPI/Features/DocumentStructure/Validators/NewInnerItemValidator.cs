@@ -1,6 +1,5 @@
 using DocumentsAPI.Features.DocumentStructure.Models;
-
-using SharedLibrary.KernelInterfaces;
+using Domain.KernelInterfaces;
 
 
 namespace DocumentsAPI.Features.DocumentStructure.Validators

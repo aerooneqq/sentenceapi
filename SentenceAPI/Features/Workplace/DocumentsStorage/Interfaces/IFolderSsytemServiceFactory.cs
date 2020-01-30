@@ -1,16 +1,13 @@
 ﻿using DataAccessLayer.DatabasesManager.Interfaces;
-using SentenceAPI.Features.Workplace.DocumentsStorage.Services;
-using SharedLibrary.FactoriesManager.Interfaces;
-using SharedLibrary.KernelInterfaces;
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using SharedLibrary.FactoriesManager.Interfaces;
+
+using Domain.KernelInterfaces;
+
 
 namespace SentenceAPI.Features.Workplace.DocumentsStorage.Interfaces
 {
-    interface IFolderSystemServiceFactory : IServiceFactory
+    internal interface IFolderSystemServiceFactory : IServiceFactory
     {
         IFolderService GetFolderService(IFactoriesManager factoriesManager, IDatabaseManager databasesManager);
 

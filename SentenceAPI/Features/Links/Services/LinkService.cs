@@ -3,22 +3,21 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using SentenceAPI.Features.Links.Interfaces;
-using SentenceAPI.Features.Links.Models;
 using SharedLibrary.Loggers.Interfaces;
-using SharedLibrary.Loggers.Models;
-using SentenceAPI.Features.Users.Models;
-
-using SharedLibrary.FactoriesManager;
 using SharedLibrary.FactoriesManager.Interfaces;
 
-using DataAccessLayer.DatabasesManager;
 using DataAccessLayer.CommonInterfaces;
 using DataAccessLayer.Exceptions;
 using DataAccessLayer.Filters;
 using DataAccessLayer.Configuration.Interfaces;
 using DataAccessLayer.Configuration;
-using SharedLibrary.Loggers.Configuration;
 using DataAccessLayer.DatabasesManager.Interfaces;
+
+using Domain.Links;
+using Domain.Logs;
+using Domain.Logs.Configuration;
+using Domain.Users;
+
 
 namespace SentenceAPI.Features.Links.Services
 {

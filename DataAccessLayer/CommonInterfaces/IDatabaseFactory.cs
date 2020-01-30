@@ -1,7 +1,7 @@
-﻿using DataAccessLayer.KernelModels;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System;
+
+using Domain.KernelModels;
+
 
 namespace DataAccessLayer.CommonInterfaces
 {

@@ -1,13 +1,15 @@
 ﻿using DataAccessLayer.CommonInterfaces;
 using DataAccessLayer.Configuration;
 using DataAccessLayer.Configuration.Interfaces;
-using DataAccessLayer.DatabasesManager;
 using DataAccessLayer.Exceptions;
 using DataAccessLayer.Filters;
 using DataAccessLayer.MongoDB.Interfaces;
+using DataAccessLayer.DatabasesManager.Interfaces;
 
 using SharedLibrary.Loggers.Interfaces;
-using SharedLibrary.Loggers.Models;
+using SharedLibrary.Caching;
+using SharedLibrary.FactoriesManager.Interfaces;
+
 using SentenceAPI.Extensions;
 using SentenceAPI.Features.Authentication.Interfaces;
 using SentenceAPI.Features.UserPhoto.Interfaces;
@@ -16,13 +18,12 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-using SharedLibrary.Caching;
-using SharedLibrary.FactoriesManager;
-using SharedLibrary.FactoriesManager.Interfaces;
-
 using MongoDB.Bson;
-using SharedLibrary.Loggers.Configuration;
-using DataAccessLayer.DatabasesManager.Interfaces;
+
+using Domain.Extensions;
+using Domain.Logs;
+using Domain.Logs.Configuration;
+
 
 namespace SentenceAPI.Features.UserPhoto.Services
 {
@@ -34,7 +35,7 @@ namespace SentenceAPI.Features.UserPhoto.Services
         #endregion
 
         #region Database
-        private readonly IDatabaseService<Models.UserPhoto> database;
+        private readonly IDatabaseService<Domain.UserPhoto.UserPhoto> database;
         private readonly IConfigurationBuilder configurationBuilder;
         #endregion
 
@@ -48,7 +49,7 @@ namespace SentenceAPI.Features.UserPhoto.Services
 
         public UserPhotoService(IFactoriesManager factoriesManager, IDatabaseManager databasesManager)
         {
-            databasesManager.MongoDBFactory.GetDatabase<Models.UserPhoto>().TryGetTarget(out database);
+            databasesManager.MongoDBFactory.GetDatabase<Domain.UserPhoto.UserPhoto>().TryGetTarget(out database);
 
             configurationBuilder = new MongoConfigurationBuilder(database.Configuration);
             configurationBuilder.SetConfigurationFilePath(databaseConfigFile).SetAuthMechanism()
@@ -66,7 +67,7 @@ namespace SentenceAPI.Features.UserPhoto.Services
             {
                 await database.Connect().ConfigureAwait(false);
 
-                var filter = new EqualityFilter<ObjectId>(typeof(Models.UserPhoto).GetBsonPropertyName("UserID"), userID);
+                var filter = new EqualityFilter<ObjectId>(typeof(Domain.UserPhoto.UserPhoto).GetBsonPropertyName("UserID"), userID);
                 var userPhoto = await database.Get(filter).ConfigureAwait(false);
 
                 if (userPhoto.ToList().Count != 0)
@@ -75,7 +76,7 @@ namespace SentenceAPI.Features.UserPhoto.Services
                         $" photo already exists. ID: {userID}");
                 }
 
-                await database.Insert(new Models.UserPhoto(userID)).ConfigureAwait(false);
+                await database.Insert(new Domain.UserPhoto.UserPhoto(userID)).ConfigureAwait(false);
             }
             catch (Exception ex)
             {
@@ -90,7 +91,7 @@ namespace SentenceAPI.Features.UserPhoto.Services
             {
                 await database.Connect().ConfigureAwait(false);
 
-                IMongoDBService<Models.UserPhoto> mongoDatabase = (IMongoDBService<Models.UserPhoto>)database;
+                IMongoDBService<Domain.UserPhoto.UserPhoto> mongoDatabase = (IMongoDBService<Domain.UserPhoto.UserPhoto>)database;
                 byte[] rawPhoto = await mongoDatabase.GridFS.GetFile(gridFSPhotoID).ConfigureAwait(false);
 
                 return rawPhoto;
@@ -102,13 +103,13 @@ namespace SentenceAPI.Features.UserPhoto.Services
             }
         }
 
-        public async Task<Models.UserPhoto> GetPhotoAsync(ObjectId userID)
+        public async Task<Domain.UserPhoto.UserPhoto> GetPhotoAsync(ObjectId userID)
         {
             try
             {
                 await database.Connect().ConfigureAwait(false);
 
-                var filter = new EqualityFilter<ObjectId>(typeof(Models.UserPhoto).GetBsonPropertyName("UserID"), userID);
+                var filter = new EqualityFilter<ObjectId>(typeof(Domain.UserPhoto.UserPhoto).GetBsonPropertyName("UserID"), userID);
                 var userPhotoes = (await database.Get(filter).ConfigureAwait(false)).ToList();
 
                 if (userPhotoes is null || userPhotoes.Count < 1)
@@ -130,7 +131,7 @@ namespace SentenceAPI.Features.UserPhoto.Services
             return userPhotoCacheKey + userID;
         }
 
-        public async Task<Models.UserPhoto> GetPhotoAsync(string token)
+        public async Task<Domain.UserPhoto.UserPhoto> GetPhotoAsync(string token)
         {
             try
             {
@@ -144,7 +145,7 @@ namespace SentenceAPI.Features.UserPhoto.Services
             }
         }
 
-        public async Task InsertUserPhotoModel(Models.UserPhoto userPhoto)
+        public async Task InsertUserPhotoModel(Domain.UserPhoto.UserPhoto userPhoto)
         {
             try
             {
@@ -163,7 +164,7 @@ namespace SentenceAPI.Features.UserPhoto.Services
         /// then we just need to return it's id, otherwise we upload the new file (user photo),
         /// and update the UserPhoto model.
         /// </summary>
-        public async Task<ObjectId> UpdatePhotoAsync(Models.UserPhoto userPhoto, 
+        public async Task<ObjectId> UpdatePhotoAsync(Domain.UserPhoto.UserPhoto userPhoto, 
                                                      byte[] newPhoto,
                                                      string fileName)
         {
@@ -177,7 +178,8 @@ namespace SentenceAPI.Features.UserPhoto.Services
                     return existingPhotoID;
                 }
 
-                IMongoDBService<Models.UserPhoto> mongoDatabase = (IMongoDBService<Models.UserPhoto>)database;
+                IMongoDBService<Domain.UserPhoto.UserPhoto> mongoDatabase = 
+                    (IMongoDBService<Domain.UserPhoto.UserPhoto>)database;
 
                 await database.Connect().ConfigureAwait(false);
                 ObjectId newPhotoID = await mongoDatabase.GridFS.AddFile(newPhoto, fileName).ConfigureAwait(false);
@@ -199,7 +201,8 @@ namespace SentenceAPI.Features.UserPhoto.Services
         /// <summary>
         /// Checks if the wanted hash is in the dictionary of UserPhoto object (id - hash dictionary)
         /// </summary>
-        private (bool result, ObjectId photoID) CheckIfHashInPhotoes(Models.UserPhoto userPhoto, string wantedHash)
+        private (bool result, ObjectId photoID) CheckIfHashInPhotoes(Domain.UserPhoto.UserPhoto userPhoto,
+                                                                     string wantedHash)
         {
             foreach (var (id, hash) in userPhoto.GridFSPhotoes)
             {

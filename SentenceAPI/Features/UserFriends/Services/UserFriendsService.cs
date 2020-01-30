@@ -1,27 +1,29 @@
 ﻿using DataAccessLayer.CommonInterfaces;
 using DataAccessLayer.Configuration;
 using DataAccessLayer.Configuration.Interfaces;
-using DataAccessLayer.DatabasesManager;
 using DataAccessLayer.Exceptions;
 using DataAccessLayer.Filters;
+using DataAccessLayer.DatabasesManager.Interfaces;
+
 using SentenceAPI.Features.Authentication.Interfaces;
-using SharedLibrary.Loggers.Interfaces;
-using SharedLibrary.Loggers.Models;
 using SentenceAPI.Features.UserFriends.Interfaces;
-using SentenceAPI.Features.UserFriends.Models;
 using SentenceAPI.Features.Users.Interfaces;
-using SentenceAPI.Features.Users.Models;
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
+using SharedLibrary.Loggers.Interfaces;
 using SharedLibrary.FactoriesManager.Interfaces;
-using SharedLibrary.FactoriesManager;
-using SharedLibrary.Loggers.Configuration;
-using DataAccessLayer.DatabasesManager.Interfaces;
+
+using Domain.Logs;
+using Domain.Logs.Configuration;
+using Domain.UserFriends;
+using Domain.Users;
+
 using MongoDB.Bson;
+
 
 namespace SentenceAPI.Features.UserFriends.Services
 {
@@ -32,7 +34,7 @@ namespace SentenceAPI.Features.UserFriends.Services
         #endregion
 
         #region Databases
-        private IDatabaseService<Models.UserFriends> database;
+        private readonly IDatabaseService<Domain.UserFriends.UserFriends> database;
         private IConfigurationBuilder configurationBuilder;
         #endregion  
 
@@ -47,7 +49,7 @@ namespace SentenceAPI.Features.UserFriends.Services
 
         public UserFriendsService(IFactoriesManager factoriesManager, IDatabaseManager databasesManager)
         {
-            databasesManager.MongoDBFactory.GetDatabase<Models.UserFriends>().TryGetTarget(out database);
+            databasesManager.MongoDBFactory.GetDatabase<Domain.UserFriends.UserFriends>().TryGetTarget(out database);
 
             configurationBuilder = new MongoConfigurationBuilder(database.Configuration);
             configurationBuilder.SetConfigurationFilePath(databaseConfigFile).SetAuthMechanism()
@@ -66,7 +68,7 @@ namespace SentenceAPI.Features.UserFriends.Services
         {
             try 
             {
-                var userFriends = new UserFriends.Models.UserFriends()
+                var userFriends = new Domain.UserFriends.UserFriends()
                 {
                     ID = ObjectId.GenerateNewId(),
                     SubscribersID = new List<ObjectId>(),
@@ -92,7 +94,7 @@ namespace SentenceAPI.Features.UserFriends.Services
 
                 await database.Connect().ConfigureAwait(false);
 
-                Models.UserFriends userFriends = (await database.Get(new EqualityFilter<ObjectId>("userID",
+                Domain.UserFriends.UserFriends userFriends = (await database.Get(new EqualityFilter<ObjectId>("userID",
                     userID))).FirstOrDefault();
                 userFriends.SubscribersID.Add(subscriberID);
 
@@ -113,7 +115,7 @@ namespace SentenceAPI.Features.UserFriends.Services
 
                 await database.Connect().ConfigureAwait(false);
 
-                Models.UserFriends userFriends = (await database.Get(new EqualityFilter<ObjectId>("userID",
+                Domain.UserFriends.UserFriends userFriends = (await database.Get(new EqualityFilter<ObjectId>("userID",
                     userID))).FirstOrDefault();
 
                 userFriends.SubscriptionsID.Add(subscriptionID);
@@ -135,7 +137,7 @@ namespace SentenceAPI.Features.UserFriends.Services
 
                 await database.Connect();
 
-                Models.UserFriends userFriends = (await database.Get(new EqualityFilter<ObjectId>("userID",
+                Domain.UserFriends.UserFriends userFriends = (await database.Get(new EqualityFilter<ObjectId>("userID",
                     userID))).FirstOrDefault();
 
                 userFriends.SubscribersID.Remove(subscriberID);
@@ -161,7 +163,7 @@ namespace SentenceAPI.Features.UserFriends.Services
 
                 await database.Connect();
 
-                Models.UserFriends userFriends = (await database.Get(new EqualityFilter<ObjectId>("userID",
+                Domain.UserFriends.UserFriends userFriends = (await database.Get(new EqualityFilter<ObjectId>("userID",
                     userID))).FirstOrDefault();
 
                 userFriends.SubscriptionsID.Remove(subscriptionID);
@@ -204,7 +206,7 @@ namespace SentenceAPI.Features.UserFriends.Services
                 await database.Connect();
 
                 List<Subscriber> subscribers = new List<Subscriber>();
-                Models.UserFriends userFriends = (await database.Get(new EqualityFilter<ObjectId>("userID",
+                Domain.UserFriends.UserFriends userFriends = (await database.Get(new EqualityFilter<ObjectId>("userID",
                     userID))).FirstOrDefault();
 
                 if (userFriends == null)
@@ -260,7 +262,7 @@ namespace SentenceAPI.Features.UserFriends.Services
                 await database.Connect();
 
                 List<Subscription> subscriptions = new List<Subscription>();
-                Models.UserFriends userFriends = (await database.Get(new EqualityFilter<ObjectId>("userID",
+                Domain.UserFriends.UserFriends userFriends = (await database.Get(new EqualityFilter<ObjectId>("userID",
                     userID))).FirstOrDefault();
 
                 if (userFriends == null)

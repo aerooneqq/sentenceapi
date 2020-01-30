@@ -1,8 +1,10 @@
+using Domain.Authentication;
+
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
-using SentenceAPI.Features.Authentication.Models;
+
 
 namespace SentenceAPI.Extensions
 {

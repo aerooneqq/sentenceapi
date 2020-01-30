@@ -1,14 +1,15 @@
 using DataAccessLayer.DatabasesManager.Interfaces;
 
+using Domain.KernelInterfaces;
+
 using SharedLibrary.FactoriesManager.Interfaces;
-using SharedLibrary.KernelInterfaces;
 
 
 namespace DocumentsAPI.Features.FileToDocument.Interfaces
 {
-    public interface IFileToDocumentServiceFactory : IServiceFactory
-    {
-        IFileToDocumentService GetService(IFactoriesManager factoriesManager, 
-                                          IDatabaseManager databaseManager);
-    }
-}
+     public interface IFileToDocumentServiceFactory : IServiceFactory
+     {
+         IFileToDocumentService GetService(IFactoriesManager factoriesManager, 
+                                           IDatabaseManager databaseManager);
+     }
+ }

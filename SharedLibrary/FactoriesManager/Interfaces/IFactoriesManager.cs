@@ -1,7 +1,7 @@
 ﻿using System;
 
 using SharedLibrary.FactoriesManager.Models;
-using SharedLibrary.KernelInterfaces;
+
 
 namespace SharedLibrary.FactoriesManager.Interfaces
 {

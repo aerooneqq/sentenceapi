@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using DataAccessLayer.DatabasesManager.Interfaces;
-using SharedLibrary.KernelInterfaces;
+﻿using DataAccessLayer.DatabasesManager.Interfaces;
+using Domain.KernelInterfaces;
 
 namespace SentenceAPI.Features.UserActivity.Interfaces
 {

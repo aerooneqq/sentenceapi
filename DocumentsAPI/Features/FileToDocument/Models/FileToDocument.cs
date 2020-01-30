@@ -1,5 +1,7 @@
-using DataAccessLayer.KernelModels;
+using Domain.KernelModels;
+
 using MongoDB.Bson;
+
 
 namespace DocumentsAPI.Features.FileToDocument.Models
 {

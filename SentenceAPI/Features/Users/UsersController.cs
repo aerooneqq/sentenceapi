@@ -7,22 +7,25 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 
-using SentenceAPI.Features.Users.Interfaces;
-using SentenceAPI.Features.Users.Models;
 using SharedLibrary.Loggers.Interfaces;
-using SharedLibrary.Loggers.Models;
-using SharedLibrary.Loggers.Configuration;
 using SharedLibrary.ActionResults;
 using SharedLibrary.FactoriesManager.Interfaces;
+using SharedLibrary.Events;
 
-using SentenceAPI.Validators;
+using SentenceAPI.Features.Users.Interfaces;
+using SentenceAPI.Features.Users.Models;
 using SentenceAPI.Extensions;
 using SentenceAPI.ApplicationFeatures.Requests.Interfaces;
 using SentenceAPI.Features.Authentication.Interfaces;
-using SentenceAPI.Events;
 using SentenceAPI.Features.Users.Events;
 
 using DataAccessLayer.Exceptions;
+
+using Domain.Extensions;
+using Domain.Logs;
+using Domain.Logs.Configuration;
+using Domain.Users;
+using Domain.Validators;
 
 using MongoDB.Bson;
 
@@ -65,7 +68,8 @@ namespace SentenceAPI.Features.Users
         {
             try
             {
-                var userInfoResult = await userService.FindUsersWithLoginAsync(login).ConfigureAwait(false);
+                var userInfoResult = await userService.FindUsersWithLoginAsync(login)
+                    .ConfigureAwait(false);
                 var userSearchResult = userInfoResult.Select(user => new UserSearchResult(user));
 
                 return new OkJson<IEnumerable<UserSearchResult>>(userSearchResult);
@@ -115,7 +119,7 @@ namespace SentenceAPI.Features.Users
                 string token = requestService.GetToken(Request);
 
                 return new OkJson<Dictionary<string, object>>((await userService.GetAsync(token).ConfigureAwait(false))
-                    .ConfigureNewObject(properties.Split(',', ';', StringSplitOptions.RemoveEmptyEntries)));
+                    .ConfigureNewObject(properties.Split(new [] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries)));
             }
             catch (DatabaseException ex)
             {
@@ -159,20 +163,19 @@ namespace SentenceAPI.Features.Users
 
                 if (!validationResult)
                 {
-                    return new BadSendedRequest<IEnumerable<string>>(errors);
+                    return new BadSentRequest<IEnumerable<string>>(errors);
                 }
 
-                if (!(await userService.DoesUserExistAsync(email).ConfigureAwait(false)))
-                {
-                    ObjectId id = await userService.CreateNewUserAsync(email, password).ConfigureAwait(false);
-                    var user = await userService.GetAsync(id).ConfigureAwait(false);
+                if (await userService.DoesUserExistAsync(email).ConfigureAwait(false))
+                    return new NoContent();
+                
+                ObjectId id = await userService.CreateNewUserAsync(email, password).ConfigureAwait(false);
+                var user = await userService.GetAsync(id).ConfigureAwait(false);
                     
-                    await EventManager.Raise(new UserCreatedEvent(factoriesManager, user)).ConfigureAwait(false);
+                await EventManager.Raise(new UserCreatedEvent(factoriesManager, user)).ConfigureAwait(false);
 
-                    return new Created();
-                }
+                return new Created();
 
-                return new NoContent();
             }
             catch (DatabaseException ex)
             {
@@ -221,10 +224,8 @@ namespace SentenceAPI.Features.Users
                         ConfigureAwait(false);
                 }
 
-                await userService.UpdateAsync(user, updatedFields.Keys.Select(propName =>
-                {
-                    return typeof(UserInfo).GetPropertyFromBSONName(propName).Name;
-                }));
+                await userService.UpdateAsync(user, updatedFields.Keys.Select(propName => 
+                    typeof(UserInfo).GetPropertyFromBSONName(propName).Name));
 
                 return new Ok();
             }

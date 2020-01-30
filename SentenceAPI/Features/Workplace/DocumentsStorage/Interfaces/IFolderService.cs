@@ -1,13 +1,14 @@
 ﻿using MongoDB.Bson;
-using SentenceAPI.Features.Workplace.DocumentsStorage.Models;
-using System;
+
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
+
+using Domain.Workplace.DocumentsStorage;
+
 
 namespace SentenceAPI.Features.Workplace.DocumentsStorage.Interfaces
 {
-    interface IFolderService
+    internal interface IFolderService
     {
         Task<IEnumerable<DocumentFolder>> GetFolders(ObjectId userID, ObjectId parentFolderID);
         Task<DocumentFolder> GetFolderData(ObjectId folderID);

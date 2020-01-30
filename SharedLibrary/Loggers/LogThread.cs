@@ -1,19 +1,17 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
-using System.Threading.Tasks;
-using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading;
-using SharedLibrary.Loggers.Configuration;
-using SharedLibrary.Loggers.Models;
+using Domain.Logs;
+using Domain.Logs.Configuration;
 
 namespace SharedLibrary.Loggers
 {
     public class LogThread
     {
         private string logFilePath;
-        private LoggerConfiguration loggerConfiguration;
-        private ConcurrentQueue<Log> logQueue;
+        private readonly LoggerConfiguration loggerConfiguration;
+        private volatile ConcurrentQueue<Log> logQueue;
         private readonly Thread logThread; 
         private readonly FileStream logFileStream;
         private readonly StreamWriter logStreamWriter;
@@ -23,7 +21,7 @@ namespace SharedLibrary.Loggers
         {
             this.logFilePath = logFilePath;
             this.loggerConfiguration = loggerConfiguration;
-            this.logQueue = new ConcurrentQueue<Log>();
+            logQueue = new ConcurrentQueue<Log>();
             
             logFileStream = new FileStream(logFilePath, FileMode.Append, FileAccess.Write);
             logStreamWriter = new StreamWriter(logFileStream);
@@ -46,13 +44,11 @@ namespace SharedLibrary.Loggers
 
         private void Log()
         {
-            Log log;
-
             while (true)
             {
                 if (logQueue.Count != 0)
                 {
-                    bool dequeResult = logQueue.TryDequeue(out log);
+                    bool dequeResult = logQueue.TryDequeue(out Log log);
 
                     if (dequeResult)
                     {

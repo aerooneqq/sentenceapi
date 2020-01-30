@@ -1,14 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using DataAccessLayer.DatabasesManager.Interfaces;
-using SharedLibrary.KernelInterfaces;
+﻿using DataAccessLayer.DatabasesManager.Interfaces;
+
+using Domain.KernelInterfaces;
+using SharedLibrary.FactoriesManager.Interfaces;
+
 
 namespace SentenceAPI.Features.Authentication.Interfaces
 {
     public interface ITokenServiceFactory : IServiceFactory
     {
-        ITokenService GetService(IDatabaseManager databaseManager);
+        ITokenService GetService(IDatabaseManager databaseManager, IFactoriesManager factoriesManager);
     }
 }

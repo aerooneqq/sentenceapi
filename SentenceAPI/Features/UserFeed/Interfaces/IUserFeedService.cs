@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
-using SharedLibrary.KernelInterfaces;
+using Domain.KernelInterfaces;
 
 using SentenceAPI.Features.UserFeed.Models;
+
 using MongoDB.Bson;
+
 
 namespace SentenceAPI.Features.UserFeed.Interfaces
 {
@@ -15,7 +14,7 @@ namespace SentenceAPI.Features.UserFeed.Interfaces
         Task<UsersFeedDto> GetUserFeedAsync(string token);
         Task<UsersFeedDto> GetUserFeedAsync(ObjectId userID);
 
-        Task InsertUserPostAsync(Models.UserFeed userFeed);
+        Task InsertUserPostAsync(Domain.UserFeed.UserFeed userFeed);
         Task InsertUserPostAsync(string token, string message);
     }
 }

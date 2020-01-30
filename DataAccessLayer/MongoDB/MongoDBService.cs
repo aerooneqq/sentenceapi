@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Reflection;
 
@@ -16,6 +15,9 @@ using DataAccessLayer.Configuration.Interfaces;
 using DataAccessLayer.Configuration;
 using DataAccessLayer.Aggregations.Interfaces;
 using DataAccessLayer.Aggregations;
+
+using Domain.KernelModels;
+
 
 namespace DataAccessLayer.MongoDB
 {

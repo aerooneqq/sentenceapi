@@ -1,10 +1,9 @@
 ﻿using DataAccessLayer.CommonInterfaces;
-using DataAccessLayer.MongoDB.Interfaces;
-using DataAccessLayer.KernelModels;
+
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+
+using Domain.KernelModels;
+
 
 namespace DataAccessLayer.MongoDB.Factories
 {

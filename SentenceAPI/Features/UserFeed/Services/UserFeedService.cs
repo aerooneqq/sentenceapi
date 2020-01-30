@@ -1,14 +1,12 @@
-﻿using MongoDB.Driver;
-
-using SentenceAPI.Features.Authentication.Interfaces;
-using SharedLibrary.Loggers.Interfaces;
-using SharedLibrary.Loggers.Models;
+﻿using SentenceAPI.Features.Authentication.Interfaces;
 using SentenceAPI.Features.UserFeed.Interfaces;
 using SentenceAPI.Features.UserFeed.Models;
 using SentenceAPI.Features.UserFriends.Interfaces;
-using SentenceAPI.Features.Users.Models;
 using SentenceAPI.Features.Users.Interfaces;
 using SentenceAPI.Features.UserPhoto.Interfaces;
+
+using SharedLibrary.Loggers.Interfaces;
+using SharedLibrary.FactoriesManager.Interfaces;
 
 using System;
 using System.Collections.Generic;
@@ -17,16 +15,18 @@ using System.Threading.Tasks;
 
 using DataAccessLayer.CommonInterfaces;
 using DataAccessLayer.Configuration.Interfaces;
-using DataAccessLayer.DatabasesManager;
 using DataAccessLayer.Configuration;
 using DataAccessLayer.Filters;
 using DataAccessLayer.Exceptions;
 
-using SharedLibrary.FactoriesManager.Interfaces;
-using SharedLibrary.FactoriesManager;
 using MongoDB.Bson;
-using SharedLibrary.Loggers.Configuration;
+
 using DataAccessLayer.DatabasesManager.Interfaces;
+
+using Domain.Logs;
+using Domain.Logs.Configuration;
+using Domain.Users;
+
 
 namespace SentenceAPI.Features.UserFeed.Services
 {
@@ -38,7 +38,7 @@ namespace SentenceAPI.Features.UserFeed.Services
 
 
         #region Databases
-        private IDatabaseService<Models.UserFeed> database;
+        private readonly IDatabaseService<Domain.UserFeed.UserFeed> database;
         private IConfigurationBuilder configurationBuilder;
         #endregion
 
@@ -56,7 +56,7 @@ namespace SentenceAPI.Features.UserFeed.Services
 
         public UserFeedService(IFactoriesManager factoriesManager, IDatabaseManager databasesManager)
         {
-            databasesManager.MongoDBFactory.GetDatabase<Models.UserFeed>().TryGetTarget(out database);
+            databasesManager.MongoDBFactory.GetDatabase<Domain.UserFeed.UserFeed>().TryGetTarget(out database);
 
             configurationBuilder = new MongoConfigurationBuilder(database.Configuration);
             configurationBuilder.SetConfigurationFilePath(databaseConfigFile).SetAuthMechanism()
@@ -138,7 +138,7 @@ namespace SentenceAPI.Features.UserFeed.Services
             }
         }
 
-        public async Task InsertUserPostAsync(Models.UserFeed userFeed)
+        public async Task InsertUserPostAsync(Domain.UserFeed.UserFeed userFeed)
         {
             try
             {
@@ -157,7 +157,7 @@ namespace SentenceAPI.Features.UserFeed.Services
             try
             {
                 ObjectId userID = ObjectId.Parse(tokenService.GetTokenClaim(token, "ID"));
-                await InsertUserPostAsync(new Models.UserFeed()
+                await InsertUserPostAsync(new Domain.UserFeed.UserFeed()
                 {
                     UserID = userID,
                     Message = message,

@@ -11,9 +11,9 @@ namespace SentenceAPI.Features.Authentication.Factories
 {
     public class TokenServiceFactory : ITokenServiceFactory
     {
-        public ITokenService GetService(IDatabaseManager databaseManager)
+        public ITokenService GetService(IDatabaseManager databaseManager, IFactoriesManager factoriesManager)
         {
-            return new TokenService(databaseManager);
+            return new TokenService(databaseManager, factoriesManager);
         }
     }
 }

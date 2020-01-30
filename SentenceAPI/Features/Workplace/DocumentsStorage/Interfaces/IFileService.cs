@@ -1,13 +1,14 @@
 ﻿using MongoDB.Bson;
-using SentenceAPI.Features.Workplace.DocumentsStorage.Models;
-using System;
+
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
+
+using Domain.Workplace.DocumentsStorage;
+
 
 namespace SentenceAPI.Features.Workplace.DocumentsStorage.Interfaces
 {
-    interface IFileService
+    internal interface IFileService
     {
         Task<IEnumerable<DocumentFile>> GetFilesAsync(ObjectId userID, ObjectId parentFolderID);
         Task<ObjectId> CreateNewFileAsync(ObjectId userID, ObjectId parentFileID, string fileName);

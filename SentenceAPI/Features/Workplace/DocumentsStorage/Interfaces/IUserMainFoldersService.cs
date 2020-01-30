@@ -1,11 +1,9 @@
 using System.Threading.Tasks;
 
+using Domain.KernelInterfaces;
+using Domain.Workplace.DocumentsStorage;
+
 using MongoDB.Bson;
-
-using SentenceAPI.Features.Users.Models;
-using SentenceAPI.Features.Workplace.DocumentsStorage.Models;
-
-using SharedLibrary.KernelInterfaces;
 
 
 namespace SentenceAPI.Features.Workplace.DocumentsStorage.Interfaces

@@ -1,18 +1,16 @@
-using System;
 using System.IO;
 
-using SharedLibrary.Loggers.Configuration;
-using SharedLibrary.Loggers.Interfaces;
-using SharedLibrary.Loggers.Models;
+using Domain.Logs;
+using Domain.Logs.Configuration;
 
-using Newtonsoft.Json;
+using SharedLibrary.Loggers.Interfaces;
 
 
 namespace SharedLibrary.Loggers
 {
     public class RequestLogger : ILogger<RequestLog>
     {
-        private LogThread logThread;
+        private readonly LogThread logThread;
 
 
         public RequestLogger(string logConfigurationFilePath, int loggerID) 

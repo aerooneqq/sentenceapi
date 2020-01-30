@@ -1,28 +1,28 @@
 ﻿using DataAccessLayer.CommonInterfaces;
 using DataAccessLayer.Configuration;
 using DataAccessLayer.Configuration.Interfaces;
-using DataAccessLayer.DatabasesManager;
 using DataAccessLayer.Exceptions;
 using DataAccessLayer.Filters;
 using DataAccessLayer.Filters.Interfaces;
 using DataAccessLayer.Filters.Base;
+using DataAccessLayer.DatabasesManager.Interfaces;
 
-using SentenceAPI.Extensions;
 using SentenceAPI.Features.Authentication.Interfaces;
 using SentenceAPI.Features.Codes.Interfaces;
-using SentenceAPI.Features.Codes.Models;
 using SharedLibrary.Loggers.Interfaces;
-using SharedLibrary.Loggers.Models;
-
-using SharedLibrary.FactoriesManager;
 using SharedLibrary.FactoriesManager.Interfaces;
 
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using SharedLibrary.Loggers.Configuration;
-using DataAccessLayer.DatabasesManager.Interfaces;
+
+using Domain.Codes;
+using Domain.Extensions;
+using Domain.Logs;
+using Domain.Logs.Configuration;
+
 using MongoDB.Bson;
+
 
 namespace SentenceAPI.Features.Codes.Services
 {
@@ -36,8 +36,7 @@ namespace SentenceAPI.Features.Codes.Services
 
 
         #region Databases
-        private IDatabaseService<ActivationCode> database;
-        private IConfigurationBuilder configurationBuilder;
+        private readonly IDatabaseService<ActivationCode> database;
         #endregion
 
 
@@ -53,7 +52,7 @@ namespace SentenceAPI.Features.Codes.Services
         {
             databaseManager.MongoDBFactory.GetDatabase<ActivationCode>().TryGetTarget(out database);
 
-            configurationBuilder = new MongoConfigurationBuilder(database.Configuration);
+            IConfigurationBuilder configurationBuilder = new MongoConfigurationBuilder(database.Configuration);
             configurationBuilder.SetConfigurationFilePath(databaseConfigFile).SetAuthMechanism()
                                 .SetUserName().SetPassword().SetDatabaseName().SetServerName().SetConnectionString();
 

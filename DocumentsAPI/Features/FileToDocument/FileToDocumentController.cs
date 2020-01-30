@@ -5,23 +5,23 @@ using DataAccessLayer.Exceptions;
 
 using DocumentsAPI.Features.Documents.Interfaces;
 using DocumentsAPI.Features.FileToDocument.Interfaces;
-using DocumentsAPI.Models.Document;
+
+using Domain.Logs;
+using Domain.Logs.Configuration;
+using Domain.Models.Document;
 
 using MongoDB.Bson;
 
 using SharedLibrary.ActionResults;
 using SharedLibrary.FactoriesManager.Interfaces;
-using SharedLibrary.Loggers.Configuration;
 using SharedLibrary.Loggers.Interfaces;
-using SharedLibrary.Loggers.Models;
 
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 
 namespace DocumentsAPI.Features.FileToDocument
 {
-    [Route("api/[controller]"), ApiController, Authorize]
+    [Route("api/[controller]"), ApiController]
     public class FileToDocumentController : Controller
     {
         #region Services
@@ -36,8 +36,9 @@ namespace DocumentsAPI.Features.FileToDocument
         public FileToDocumentController(IFactoriesManager factoriesManager)
         {
             factoriesManager.GetService<IFileToDocumentService>().TryGetTarget(out fileToDocumentService);
-
             factoriesManager.GetService<ILogger<ApplicationError>>().TryGetTarget(out exceptionLogger);
+            factoriesManager.GetService<IDocumentService>().TryGetTarget(out documentService);
+            
             logConfiguration = new LogConfiguration(GetType());
         }
 
@@ -63,21 +64,25 @@ namespace DocumentsAPI.Features.FileToDocument
 
         [HttpPut]
         public async Task<IActionResult> AssociateFileWithDocument(
-            [FromQuery]ObjectId fileID, [FromQuery]ObjectId userID,
+            [FromQuery]string fileID, [FromQuery]string userID,
             [FromQuery]string fileName, [FromQuery]DocumentType documentType
             )
         {
             try 
             {
-                var fileToDocument = await fileToDocumentService.GetFileToDocumentModelAsync(fileID).ConfigureAwait(false);
+                ObjectId fileObjectId = ObjectId.Parse(fileID);
+                ObjectId userObjectId = ObjectId.Parse(userID);
+                var fileToDocument = await fileToDocumentService.GetFileToDocumentModelAsync(fileObjectId).
+                    ConfigureAwait(false);
 
-                if (fileToDocument is {} && fileToDocument.FileID == fileID)
+                if (fileToDocument is {} && fileToDocument.FileID == fileObjectId)
                 {
-                    return new BadSendedRequest<string>("File already associated with the document");
+                    return new BadSentRequest<string>("File already associated with the document");
                 }
 
-                ObjectId documentID = await documentService.CreateEmptyDocument(userID, fileName, documentType);
-                await fileToDocumentService.AssociateFileWithDocumentAsync(fileID, documentID).ConfigureAwait(false);
+                ObjectId documentID = await documentService.CreateEmptyDocument(userObjectId, fileName, documentType);
+                await fileToDocumentService.AssociateFileWithDocumentAsync(fileObjectId, documentID).ConfigureAwait(false);
+                
                 return new Ok();
             }
             catch (DatabaseException ex)

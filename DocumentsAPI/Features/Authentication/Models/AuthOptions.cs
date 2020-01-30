@@ -23,17 +23,17 @@ namespace DocumentsAPI.Features.Authentication.Models
             Dictionary<string, object> config = JsonConvert.DeserializeObject<Dictionary<string, object>>(fileContent);
 
             Issuer = (string)config[nameof(Issuer)];
-            Audienece = (string)config[nameof(Audienece)];
-            SecondsLifeTime = (int)config[nameof(SecondsLifeTime)];
-            CustomClaimsCount = (int)config[nameof(CustomClaimsCount)];
+            Audience = (string)config[nameof(Audience)];
+            SecondsLifeTime = (long)config[nameof(SecondsLifeTime)];
+            CustomClaimsCount = (long)config[nameof(CustomClaimsCount)];
             SecretKey = (string)config[nameof(SecretKey)];
         }
 
 
         public static string Issuer { get; }
-        public static string Audienece { get; }
-        public static int SecondsLifeTime { get; }
-        public static int CustomClaimsCount { get; }
+        public static string Audience { get; }
+        public static long SecondsLifeTime { get; }
+        public static long CustomClaimsCount { get; }
         private static string SecretKey { get; }
 
 

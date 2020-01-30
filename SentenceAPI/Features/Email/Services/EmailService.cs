@@ -4,19 +4,18 @@ using System.Net.Mail;
 using System.Net;
 
 using SharedLibrary.FactoriesManager.Interfaces;
-using SharedLibrary.FactoriesManager;
-
 using SentenceAPI.Features.Email.Interfaces;
-using SharedLibrary.Loggers.Models;
 using SharedLibrary.Loggers.Interfaces;
 
 using DataAccessLayer.CommonInterfaces;
 using DataAccessLayer.Configuration.Interfaces;
-using DataAccessLayer.DatabasesManager;
 using DataAccessLayer.Configuration;
 using DataAccessLayer.Exceptions;
-using SharedLibrary.Loggers.Configuration;
 using DataAccessLayer.DatabasesManager.Interfaces;
+
+using Domain.Logs;
+using Domain.Logs.Configuration;
+
 
 namespace SentenceAPI.Features.Email.Services
 {

@@ -1,14 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using DataAccessLayer.DatabasesManager.Interfaces;
 
-using SharedLibrary.KernelInterfaces;
+using Domain.KernelInterfaces;
+
+using SharedLibrary.FactoriesManager.Interfaces;
+
 
 namespace SentenceAPI.ApplicationFeatures.Requests.Interfaces
 {
     interface IRequestServiceFactory : IServiceFactory
     {
-        IRequestService GetService();
+        IRequestService GetService(IFactoriesManager factoriesManager, IDatabaseManager databaseManager);
     }
 }

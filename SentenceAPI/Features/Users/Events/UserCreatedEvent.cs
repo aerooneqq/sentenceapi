@@ -1,14 +1,17 @@
 using System.Threading.Tasks;
-using MongoDB.Bson;
-using SentenceAPI.Events.Interfaces;
+
+using Domain.Codes;
+using Domain.Users;
+
 using SentenceAPI.Features.Codes.Interfaces;
-using SentenceAPI.Features.Codes.Models;
 using SentenceAPI.Features.Email.Interfaces;
 using SentenceAPI.Features.Links.Interfaces;
 using SentenceAPI.Features.UserFriends.Interfaces;
-using SentenceAPI.Features.Users.Models;
 using SentenceAPI.Features.Workplace.DocumentsStorage.Interfaces;
+
+using SharedLibrary.Events.Interfaces;
 using SharedLibrary.FactoriesManager.Interfaces;
+
 
 namespace SentenceAPI.Features.Users.Events
 {

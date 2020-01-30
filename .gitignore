@@ -22,3 +22,9 @@ log
 /SentenceAPI/configs
 /DocumentsAPI/configs
 configs
+**/bin
+**/obj
+**/**/bin
+**/**/obj
+**/.idea
+**/**/.idea

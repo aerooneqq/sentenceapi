@@ -1,17 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
+﻿using System.IdentityModel.Tokens.Jwt;
 using System.Threading.Tasks;
 
-using Microsoft.IdentityModel.Tokens;
+using Domain.Authentication;
+using Domain.Users;
 
-using MongoDB.Bson;
-
-using SentenceAPI.Features.Authentication.Models;
-using SentenceAPI.Features.Users.Models;
-
-using SharedLibrary.KernelInterfaces;
+using Domain.KernelInterfaces;
 
 
 namespace SentenceAPI.Features.Authentication.Interfaces

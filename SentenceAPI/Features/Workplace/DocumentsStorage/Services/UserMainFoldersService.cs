@@ -8,18 +8,16 @@ using DataAccessLayer.Configuration.Interfaces;
 using DataAccessLayer.DatabasesManager.Interfaces;
 using DataAccessLayer.Exceptions;
 using DataAccessLayer.Filters;
-
+using Domain.Logs;
+using Domain.Logs.Configuration;
+using Domain.Workplace.DocumentsStorage;
 using MongoDB.Bson;
 
-using SentenceAPI.Features.Users.Models;
 using SentenceAPI.Features.Workplace.DocumentsStorage.Exceptions;
 using SentenceAPI.Features.Workplace.DocumentsStorage.Interfaces;
-using SentenceAPI.Features.Workplace.DocumentsStorage.Models;
 
 using SharedLibrary.FactoriesManager.Interfaces;
-using SharedLibrary.Loggers.Configuration;
 using SharedLibrary.Loggers.Interfaces;
-using SharedLibrary.Loggers.Models;
 
 
 namespace SentenceAPI.Features.Workplace.DocumentsStorage.Services

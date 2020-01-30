@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Threading.Tasks;
 
-using SharedLibrary.KernelInterfaces;
+using Domain.KernelInterfaces;
+
 using SharedLibrary.Extensions;
+
 
 namespace SharedLibrary.FactoriesManager.Models
 {
@@ -46,7 +47,6 @@ namespace SharedLibrary.FactoriesManager.Models
 
         public ServiceType GetService<ServiceType>(Type serviceType, InjectionInfo[] injections)
         {
-            ISet<int> usedIndexes = new HashSet<int>();
             Type[] methodParamsTypes = services[serviceType].methodParamsTypes;
 
             object[] finalMethodParams = new object[methodParamsTypes.Length];

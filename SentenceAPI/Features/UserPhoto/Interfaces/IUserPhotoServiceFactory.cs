@@ -1,13 +1,9 @@
-﻿using SentenceAPI.Features.UserPhoto.Services;
+﻿using SharedLibrary.FactoriesManager.Interfaces;
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-using SharedLibrary.KernelInterfaces;
-using SharedLibrary.FactoriesManager.Interfaces;
 using DataAccessLayer.DatabasesManager.Interfaces;
+
+using Domain.KernelInterfaces;
+
 
 namespace SentenceAPI.Features.UserPhoto.Interfaces
 {

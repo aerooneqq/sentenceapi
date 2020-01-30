@@ -1,10 +1,10 @@
-using System;
 using System.IO;
 
-using Newtonsoft.Json;
-using SharedLibrary.Loggers.Configuration;
+using Domain.Logs;
+using Domain.Logs.Configuration;
+
 using SharedLibrary.Loggers.Interfaces;
-using SharedLibrary.Loggers.Models;
+
 
 namespace SharedLibrary.Loggers
 {
@@ -15,7 +15,7 @@ namespace SharedLibrary.Loggers
         /// <summary>
         /// This property must be initialized befote each logging
         /// </summary>
-        public LogConfiguration LogConfiguration { get; set; }
+        public LogConfiguration LogConfiguration { get; }
 
 
         public ResponseLogger(string logConfigurationFilePath, int loggerID)

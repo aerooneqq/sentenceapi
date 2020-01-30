@@ -2,11 +2,9 @@
 using Newtonsoft.Json;
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
-using DataAccessLayer.JsonConverters;
+using Domain.JsonConverters;
+using Domain.Users;
 
 
 namespace SentenceAPI.Features.Users.Models

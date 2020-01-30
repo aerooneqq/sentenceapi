@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 using SharedLibrary.Loggers.Interfaces;
-using SharedLibrary.Loggers.Models;
 using SentenceAPI.ApplicationFeatures.Requests.Interfaces;
 using SentenceAPI.Features.UserFriends.Interfaces;
 
@@ -13,11 +12,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
+using Domain.Logs;
+using Domain.Logs.Configuration;
+using Domain.UserFriends;
 using SharedLibrary.ActionResults;
 using SharedLibrary.FactoriesManager.Interfaces;
-using SharedLibrary.FactoriesManager;
-using SharedLibrary.Loggers.Configuration;
+
 using MongoDB.Bson;
+
 
 namespace SentenceAPI.Features.UserFriends
 {
@@ -53,7 +55,7 @@ namespace SentenceAPI.Features.UserFriends
 
                 var subscribers = await userFriendsService.GetSubscribersAsync(token);
 
-                return new OkJson<IEnumerable<Models.Subscriber>>(subscribers);
+                return new OkJson<IEnumerable<Domain.UserFriends.Subscriber>>(subscribers);
             }
             catch (DatabaseException ex)
             {
@@ -75,7 +77,7 @@ namespace SentenceAPI.Features.UserFriends
 
                 var subscriptions = await userFriendsService.GetSubscriptionsAsync(token);
 
-                return new OkJson<IEnumerable<Models.Subscription>>(subscriptions);
+                return new OkJson<IEnumerable<Subscription>>(subscriptions);
             }
             catch (DatabaseException ex)
             {
@@ -99,7 +101,7 @@ namespace SentenceAPI.Features.UserFriends
 
                 if (subscribers.Any(s => s.UserID == subscriberID))
                 {
-                    return new BadSendedRequest<string>("The subscriber has been already added");
+                    return new BadSentRequest<string>("The subscriber has been already added");
                 }
 
                 await userFriendsService.AddSubscriberAsync(token, subscriberID).ConfigureAwait(false);
@@ -128,7 +130,7 @@ namespace SentenceAPI.Features.UserFriends
 
                 if (subscriptions.Any(s => s.UserID == subscriptionID))
                 {
-                    return new BadSendedRequest<string>("The subscription has been already added");
+                    return new BadSentRequest<string>("The subscription has been already added");
                 }
 
                 await userFriendsService.AddSubscriptionAsync(token, subscriptionID);

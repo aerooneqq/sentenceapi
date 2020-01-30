@@ -1,10 +1,9 @@
 using System.Threading.Tasks;
 
-using DocumentsAPI.Models.Document;
+using Domain.KernelInterfaces;
+using Domain.Models.Document;
 
 using MongoDB.Bson;
-
-using SharedLibrary.KernelInterfaces;
 
 
 namespace DocumentsAPI.Features.Documents.Interfaces
@@ -12,5 +11,7 @@ namespace DocumentsAPI.Features.Documents.Interfaces
     public interface IDocumentService : IService
     {
         Task<ObjectId> CreateEmptyDocument(ObjectId userID, string name, DocumentType documentType);
+        Task<Document> GetDocumentByID(ObjectId documentID);
+        Task DeleteDocumentByID(ObjectId documentID);
     }
 }

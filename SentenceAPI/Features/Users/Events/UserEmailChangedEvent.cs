@@ -2,18 +2,18 @@
 using System.Threading.Tasks;
 
 using DataAccessLayer.Exceptions;
-
+using Domain.Codes;
+using Domain.Logs;
+using Domain.Logs.Configuration;
 using SharedLibrary.Loggers.Interfaces;
-using SharedLibrary.Loggers.Models;
 using SharedLibrary.FactoriesManager.Interfaces;
-using SharedLibrary.Loggers.Configuration;
 
-using SentenceAPI.Events.Interfaces;
 using SentenceAPI.Features.Codes.Interfaces;
-using SentenceAPI.Features.Codes.Models;
 using SentenceAPI.Features.Email.Interfaces;
 
 using MongoDB.Bson;
+
+using SharedLibrary.Events.Interfaces;
 
 
 namespace SentenceAPI.Features.Users.Events

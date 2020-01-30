@@ -1,27 +1,29 @@
 ﻿using DataAccessLayer.CommonInterfaces;
 using DataAccessLayer.Configuration;
 using DataAccessLayer.Configuration.Interfaces;
-using DataAccessLayer.DatabasesManager;
 using DataAccessLayer.Exceptions;
 using DataAccessLayer.Filters;
 using DataAccessLayer.Filters.Interfaces;
+using DataAccessLayer.DatabasesManager.Interfaces;
+
 using SharedLibrary.Loggers.Interfaces;
-using SharedLibrary.Loggers.Models;
-using SentenceAPI.Extensions;
+using SharedLibrary.FactoriesManager.Interfaces;
+
 using SentenceAPI.Features.Authentication.Interfaces;
 using SentenceAPI.Features.Workplace.DocumentsDeskState.Interfaces;
-using SentenceAPI.Features.Workplace.DocumentsDeskState.Models;
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-using SharedLibrary.FactoriesManager.Interfaces;
-using SharedLibrary.FactoriesManager;
-using SharedLibrary.Loggers.Configuration;
 using MongoDB.Bson;
-using DataAccessLayer.DatabasesManager.Interfaces;
+
+using Domain.Extensions;
+using Domain.Logs;
+using Domain.Logs.Configuration;
+using Domain.Workplace.DocumentsDeskState;
+
 
 namespace SentenceAPI.Features.Workplace.DocumentsDeskState.Services
 {

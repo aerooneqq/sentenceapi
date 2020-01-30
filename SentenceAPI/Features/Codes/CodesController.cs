@@ -4,19 +4,19 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 using SharedLibrary.ActionResults;
-using SharedLibrary.FactoriesManager;
 using SharedLibrary.FactoriesManager.Interfaces;
+using SharedLibrary.Loggers.Interfaces;
 
 using SentenceAPI.Features.Codes.Interfaces;
-using SharedLibrary.Loggers.Interfaces;
-using SharedLibrary.Loggers.Models;
 using SentenceAPI.Features.Users.Interfaces;
-using SentenceAPI.Features.Users.Models;
 using SentenceAPI.ApplicationFeatures.Requests.Interfaces;
-using SharedLibrary.Loggers.Configuration;
 
 using System;
 using System.Threading.Tasks;
+
+using Domain.Logs;
+using Domain.Logs.Configuration;
+using Domain.Users;
 
 
 namespace SentenceAPI.Features.Codes

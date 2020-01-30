@@ -1,22 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-
-using Newtonsoft.Json;
-
-using DataAccessLayer.CommonInterfaces;
-using DataAccessLayer.DatabasesManager;
-using DataAccessLayer.Configuration.Interfaces;
-using DataAccessLayer.Configuration;
-
-using SharedLibrary.FactoriesManager;
-using SharedLibrary.FactoriesManager.Interfaces;
+﻿using System.IO;
 using SharedLibrary.Loggers.Interfaces;
-using SharedLibrary.Loggers.Models;
-using SharedLibrary.Loggers.Configuration;
-using System.Runtime.CompilerServices;
+
+using Domain.Logs;
+using Domain.Logs.Configuration;
+
 
 namespace SharedLibrary.Loggers
 {

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System.IO;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -9,23 +10,30 @@ using SharedLibrary.FactoriesManager.Models;
 using DataAccessLayer.DatabasesManager.Interfaces;
 using DataAccessLayer.DatabasesManager;
 
-using DocumentsAPI.ApplicationFeatures.Date.Factories;
+using DocumentsAPI.ApplicationFeatures.Loggers.Factories;
 using DocumentsAPI.ApplicationFeatures.Requests.Factories;
+using DocumentsAPI.Extensions.AppExtensions;
+using DocumentsAPI.Extensions.ServiceCollectionExtensions;
+using DocumentsAPI.Features.Authentication.Factories;
 using DocumentsAPI.Features.FileToDocument.Factories;
 using DocumentsAPI.Features.DocumentStructure.Factories;
 using DocumentsAPI.Features.Documents.Factories;
 
+using Domain.Date;
 
 namespace DocumentsAPI
 {
     public class Startup
     {
+        public static string CurrDirectory => Directory.GetCurrentDirectory();
         public static string ApiName => "DocumentsAPI";
         
         public void ConfigureServices(IServiceCollection services)
         {
             IFactoriesManager factoriesManager = new FactoriesManager();
             IDatabaseManager databaseManager = new DatabasesManager();
+            
+            ConfigureCustomServices(factoriesManager, databaseManager);
 
             services.AddSingleton(typeof(IFactoriesManager), factoriesManager);
             services.AddSingleton(typeof(IDatabaseManager), databaseManager);
@@ -34,13 +42,14 @@ namespace DocumentsAPI
             {
                 options.EnableEndpointRouting = false;
             });
-
-            ConfigureCustomServices(factoriesManager, databaseManager);
+            
+            services.SetAuthentication();
+            services.SetMvc();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();    
             app.UseAuthentication();
 
             app.UseCors(builder =>
@@ -49,7 +58,8 @@ namespace DocumentsAPI
                 builder.AllowAnyMethod();
                 builder.AllowAnyHeader();
             });
-
+            
+            app.SetForwardedHeaders();
             app.UseMvc();
         }
 
@@ -63,6 +73,8 @@ namespace DocumentsAPI
             factoriesManager.AddFactory(new FactoryInfo(new FileToDocumentServiceFactory(), typeof(FileToDocumentServiceFactory)));
             factoriesManager.AddFactory(new FactoryInfo(new DocumentStructureServiceFactory(), typeof(DocumentStructureServiceFactory)));
             factoriesManager.AddFactory(new FactoryInfo(new DocumentServiceFactory(), typeof(DocumentServiceFactory)));
+            factoriesManager.AddFactory(new FactoryInfo(new LoggerFactory(), typeof(LoggerFactory)));
+            factoriesManager.AddFactory(new FactoryInfo(new TokenServiceFactory(), typeof(TokenServiceFactory)));
         }
     }
 }

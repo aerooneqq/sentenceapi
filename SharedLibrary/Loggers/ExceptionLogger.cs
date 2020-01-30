@@ -1,18 +1,15 @@
-﻿using System.Threading.Tasks;
-using System.IO;
-using System;
+﻿using System.IO;
+using Domain.Logs;
+using Domain.Logs.Configuration;
 
-using Newtonsoft.Json;
-using System.Threading;
 using SharedLibrary.Loggers.Interfaces;
-using SharedLibrary.Loggers.Models;
-using SharedLibrary.Loggers.Configuration;
+
 
 namespace SharedLibrary.Loggers
 {
     public class ExceptionLogger : ILogger<ApplicationError>
     {
-        private LogThread logThread;
+        private readonly LogThread logThread;
 
         #region Properties
         /// <summary>

@@ -5,24 +5,24 @@ using Microsoft.AspNetCore.Mvc;
 
 using SharedLibrary.ActionResults;
 using SharedLibrary.FactoriesManager.Interfaces;
-using SharedLibrary.FactoriesManager;
-
 using SharedLibrary.Loggers.Interfaces;
-using SharedLibrary.Loggers.Models;
+
 using SentenceAPI.ApplicationFeatures.Requests.Interfaces;
 using SentenceAPI.Features.Authentication.Interfaces;
 using SentenceAPI.Features.Workplace.DocumentsStorage.Interfaces;
 using SentenceAPI.Features.Workplace.DocumentsStorage.Models;
 
-using SentenceAPI.Validators;
-
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using SharedLibrary.Loggers.Configuration;
-using SharedLibrary.Date.Interfaces;
+
+using Domain.Date;
+using Domain.Logs;
+using Domain.Logs.Configuration;
+using Domain.Workplace.DocumentsStorage;
+
 using MongoDB.Bson;
+
 
 namespace SentenceAPI.Features.Workplace.DocumentsStorage
 {
@@ -120,7 +120,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage
 
                 if (firstFolderObjectID == secondFolderObjectID)
                 {
-                    return new BadSendedRequest<string>("Folders can not be the same");
+                    return new BadSentRequest<string>("Folders can not be the same");
                 }
 
                 var firstFolder = await folderService.GetFolderData(firstFolderObjectID).ConfigureAwait(false);
@@ -128,13 +128,13 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage
 
                 if (firstFolder is null || secondFolder is null)
                 {
-                    return new BadSendedRequest<string>("Folders with such ids do not exist");
+                    return new BadSentRequest<string>("Folders with such ids do not exist");
                 }
 
                 secondFolder.ParentFolderID = firstFolder.ID;
 
-                secondFolder.LastUpdateDate = dateService.GetCurrentDate();
-                firstFolder.LastUpdateDate = dateService.GetCurrentDate();
+                secondFolder.LastUpdateDate = dateService.Now;
+                firstFolder.LastUpdateDate = dateService.Now;
 
                 await folderService.Update(secondFolder).ConfigureAwait(false);
 
@@ -165,11 +165,11 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage
 
                 if (file is null || folder is null)
                 {
-                    return new BadSendedRequest<string>("The file or folder with such and id does not exist");
+                    return new BadSentRequest<string>("The file or folder with such and id does not exist");
                 }
 
                 file.ParentFolderID = folder.ID;
-                file.LastUpdateDate = folder.LastUpdateDate = dateService.GetCurrentDate();
+                file.LastUpdateDate = folder.LastUpdateDate = dateService.Now;
 
                 await fileService.UpdateAsync(file).ConfigureAwait(false);
                 await folderService.Update(folder).ConfigureAwait(false);

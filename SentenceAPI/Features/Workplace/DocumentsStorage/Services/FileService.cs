@@ -12,14 +12,15 @@ using DataAccessLayer.Filters.Base;
 using DataAccessLayer.Filters.Interfaces;
 using DataAccessLayer.DatabasesManager.Interfaces;
 
-using SharedLibrary.Loggers.Interfaces;
-using SharedLibrary.Loggers.Models;
-using SentenceAPI.Extensions;
-using SentenceAPI.Features.Workplace.DocumentsStorage.Interfaces;
-using SentenceAPI.Features.Workplace.DocumentsStorage.Models;
-using SharedLibrary.Loggers.Configuration;
+using Domain.Extensions;
+using Domain.Logs;
+using Domain.Logs.Configuration;
+using Domain.Workplace.DocumentsStorage;
 
+using SharedLibrary.Loggers.Interfaces;
 using SharedLibrary.FactoriesManager.Interfaces;
+
+using SentenceAPI.Features.Workplace.DocumentsStorage.Interfaces;
 
 using MongoDB.Bson;
 

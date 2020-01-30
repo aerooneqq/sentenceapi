@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 
 using SharedLibrary.Loggers.Interfaces;
 using SharedLibrary.Loggers;
-using SharedLibrary.Loggers.Models;
-using System.IO;
+
+using Domain.Logs;
+
 
 namespace SentenceAPI.ApplicationFeatures.Loggers.Factories
 {

@@ -1,18 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Reflection;
-using System.Text;
-using DataAccessLayer.Attributes;
-using DataAccessLayer.Filters;
+
+using Domain.Attributes;
+
 using DataAccessLayer.Aggregations.Interfaces;
 
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
+
 namespace DataAccessLayer.Aggregations
 {
     /// <summary>
-    /// Transform the aggregation query to the request to a perticular database.
+    /// Transform the aggregation query to the request to a particular database.
     /// </summary>
     public class AggregationFilter : IAggregationFilter
     {

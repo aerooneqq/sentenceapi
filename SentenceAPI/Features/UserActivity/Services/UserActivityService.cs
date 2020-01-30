@@ -1,18 +1,21 @@
 ﻿using SentenceAPI.Features.UserActivity.Interfaces;
-using SentenceAPI.Features.UserActivity.Models;
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-using DataAccessLayer.DatabasesManager;
 using DataAccessLayer.CommonInterfaces;
 using DataAccessLayer.Configuration.Interfaces;
 using DataAccessLayer.Configuration;
 using DataAccessLayer.Filters;
 using DataAccessLayer.DatabasesManager.Interfaces;
+using DataAccessLayer.Exceptions;
+
+using Domain.UserActivity;
+
 using MongoDB.Bson;
+
 
 namespace SentenceAPI.Features.UserActivity.Services
 {
@@ -24,7 +27,7 @@ namespace SentenceAPI.Features.UserActivity.Services
 
 
         #region Databases
-        private IDatabaseService<Models.UserActivity> database;
+        private IDatabaseService<Domain.UserActivity.UserActivity> database;
         private IConfigurationBuilder configurationBuilder;
         #endregion
 
@@ -32,7 +35,7 @@ namespace SentenceAPI.Features.UserActivity.Services
         #region Constructors
         public UserActivityService(IDatabaseManager databaseManager)
         {
-            databaseManager.MongoDBFactory.GetDatabase<Models.UserActivity>().TryGetTarget(out database);
+            databaseManager.MongoDBFactory.GetDatabase<Domain.UserActivity.UserActivity>().TryGetTarget(out database);
 
             configurationBuilder = new MongoConfigurationBuilder(database.Configuration);
             configurationBuilder.SetConfigurationFilePath(databaseConfigFile).SetAuthMechanism()
@@ -55,7 +58,7 @@ namespace SentenceAPI.Features.UserActivity.Services
             await database.Connect();
 
             var filter = new EqualityFilter<ObjectId>("userID", userID); 
-            Models.UserActivity userActivity = (await database.Get(filter).ConfigureAwait(false))
+            Domain.UserActivity.UserActivity userActivity = (await database.Get(filter).ConfigureAwait(false))
                 .FirstOrDefault();
 
             if (userActivity == null)
@@ -71,7 +74,8 @@ namespace SentenceAPI.Features.UserActivity.Services
             await database.Update(userActivity, new[] { "Activities" });
         }
 
-        private void AddActivityToList(Models.UserActivity userActivity, SingleUserActivity singleUserActivity)
+        private void AddActivityToList(Domain.UserActivity.UserActivity userActivity, 
+                                       SingleUserActivity singleUserActivity)
         {
             var activitiesList = userActivity.Activities.ToList();
 
@@ -84,7 +88,7 @@ namespace SentenceAPI.Features.UserActivity.Services
         /// </summary>
         private async Task CreateUserActivityAsync(ObjectId userID)
         {
-            await database.Insert(new Models.UserActivity()
+            await database.Insert(new Domain.UserActivity.UserActivity()
             {
                 Activities = new List<SingleUserActivity>(),
                 IsOnline = false,
@@ -100,7 +104,7 @@ namespace SentenceAPI.Features.UserActivity.Services
         /// <returns>
         /// Can return null if theere is no user with a given ID.
         /// </returns>
-        public async Task<Models.UserActivity> GetUserActivityAsync(ObjectId userID)
+        public async Task<Domain.UserActivity.UserActivity> GetUserActivityAsync(ObjectId userID)
         {
             await database.Connect();
 
@@ -128,7 +132,7 @@ namespace SentenceAPI.Features.UserActivity.Services
         /// <param name="properties">
         /// The array of properties which must be updated.
         /// </param>
-        public async Task UpdateActivityAsync(Models.UserActivity userActivity, IEnumerable<string> properties)
+        public async Task UpdateActivityAsync(Domain.UserActivity.UserActivity userActivity, IEnumerable<string> properties)
         {
             await database.Connect().ConfigureAwait(false);
             await database.Update(userActivity, properties).ConfigureAwait(false);

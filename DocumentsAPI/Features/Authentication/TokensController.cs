@@ -5,16 +5,15 @@ using DataAccessLayer.Exceptions;
 using DocumentsAPI.ApplicationFeatures.Requests.Interfaces;
 using DocumentsAPI.Features.Authentication.Interfaces;
 using DocumentsAPI.Features.Authentication.Models;
-
+using Domain.Logs;
+using Domain.Logs.Configuration;
 using Microsoft.AspNetCore.Mvc;
 
 using MongoDB.Bson;
 
 using SharedLibrary.ActionResults;
 using SharedLibrary.FactoriesManager.Interfaces;
-using SharedLibrary.Loggers.Configuration;
 using SharedLibrary.Loggers.Interfaces;
-using SharedLibrary.Loggers.Models;
 
 
 namespace DocumentsAPI.Features.Authentication
@@ -50,7 +49,8 @@ namespace DocumentsAPI.Features.Authentication
                 ObjectId sentenceAPITokenObjectID   = ObjectId.Parse(sentenceAPITokenID);
                 ObjectId requestObjectID = ObjectId.Parse(requestID);
                 
-                if (await requestService.CheckIfRequestInDatabase(requestObjectID).ConfigureAwait(false))
+                if (!(await requestService.CheckIfRequestInDatabase(requestObjectID).
+                    ConfigureAwait(false)))
                 {
                     return new Unauthorized();
                 }

@@ -1,26 +1,22 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 using DataAccessLayer.Exceptions;
+
+using Domain.Logs;
+using Domain.Logs.Configuration;
+using Domain.Workplace.DocumentsStorage;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 using SharedLibrary.ActionResults;
 using SharedLibrary.Loggers.Interfaces;
-using SharedLibrary.Loggers.Models;
 using SharedLibrary.FactoriesManager.Interfaces;
-using SharedLibrary.FactoriesManager;
-using SharedLibrary.Loggers.Configuration;
-using SharedLibrary.Date.Interfaces;
 
 using SentenceAPI.ApplicationFeatures.Requests.Interfaces;
 using SentenceAPI.Features.Authentication.Interfaces;
 using SentenceAPI.Features.Workplace.DocumentsStorage.Interfaces;
-using SentenceAPI.Features.Workplace.DocumentsStorage.Models;
-using SentenceAPI.Validators;
 
 using MongoDB.Bson;
 

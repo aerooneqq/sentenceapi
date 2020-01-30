@@ -1,7 +1,8 @@
 using DataAccessLayer.DatabasesManager.Interfaces;
 
+using Domain.KernelInterfaces;
+
 using SharedLibrary.FactoriesManager.Interfaces;
-using SharedLibrary.KernelInterfaces;
 
 
 namespace DocumentsAPI.Features.Documents.Interfaces

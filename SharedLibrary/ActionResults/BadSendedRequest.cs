@@ -10,16 +10,16 @@ using SharedLibrary.Serialization.Json;
 
 namespace SharedLibrary.ActionResults
 {
-    public class BadSendedRequest<T> : IActionResult    
+    public class BadSentRequest<T> : IActionResult    
     {
         private IResponseBuilder responseBuilder;
-        private ISerializer<T> serializer;
-        private T message;
+        private readonly ISerializer<T> serializer;
+        private readonly T message;
 
         #region Constructors
-        public BadSendedRequest() { }
+        public BadSentRequest() { }
 
-        public BadSendedRequest(T message)
+        public BadSentRequest(T message)
         {
             this.message = message;
             this.serializer = new JsonSerializer<T>(this.message);

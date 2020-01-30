@@ -1,11 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-
-using DataAccessLayer.KernelModels;
-
+using Domain.KernelInterfaces;
+using Domain.KernelModels;
 using MongoDB.Bson;
-
-using SharedLibrary.KernelInterfaces;
 
 
 namespace SentenceAPI.Features.Users.Interfaces

@@ -7,18 +7,21 @@ using System.Threading.Tasks;
 using Microsoft.IdentityModel.Tokens;
 
 using SentenceAPI.Features.Authentication.Interfaces;
-using SentenceAPI.Features.Authentication.Models;
-using SentenceAPI.Features.Users.Models;
 
 using DataAccessLayer.CommonInterfaces;
 using DataAccessLayer.Configuration.Interfaces;
 using DataAccessLayer.Configuration;
 using DataAccessLayer.DatabasesManager.Interfaces;
-
-using SharedLibrary.Loggers.Models;
-using SharedLibrary.Loggers.Interfaces;
-using SharedLibrary.Loggers.Configuration;
 using DataAccessLayer.Exceptions;
+
+using SharedLibrary.Loggers.Interfaces;
+
+using Domain.Authentication;
+using Domain.Logs;
+using Domain.Logs.Configuration;
+using Domain.Users;
+using SharedLibrary.FactoriesManager.Interfaces;
+
 
 namespace SentenceAPI.Features.Authentication.Services
 {
@@ -42,8 +45,10 @@ namespace SentenceAPI.Features.Authentication.Services
 
 
         #region Constructors
-        public TokenService(IDatabaseManager databaseManager)
+        public TokenService(IDatabaseManager databaseManager, IFactoriesManager factoriesManager)
         {
+            factoriesManager.GetService<ILogger<ApplicationError>>().TryGetTarget(out exceptionLogger);
+            
             databaseManager.MongoDBFactory.GetDatabase<JwtToken>().TryGetTarget(out mongoDBService);
             configurationBuilder = new MongoConfigurationBuilder(mongoDBService.Configuration);
 

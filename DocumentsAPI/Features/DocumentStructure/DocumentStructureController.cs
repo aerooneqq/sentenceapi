@@ -6,9 +6,12 @@ using DataAccessLayer.Exceptions;
 using DocumentsAPI.ApplicationFeatures.Requests.Interfaces;
 using DocumentsAPI.Features.DocumentStructure.Interfaces;
 using DocumentsAPI.Features.DocumentStructure.Models;
-using DocumentsAPI.Models.DocumentStructureModels;
 using DocumentsAPI.Features.DocumentStructure.Validators;
 using DocumentsAPI.Features.DocumentStructure.Exceptions;
+
+using Domain.DocumentStructureModels;
+using Domain.Logs;
+using Domain.Logs.Configuration;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -17,9 +20,7 @@ using MongoDB.Bson;
 
 using SharedLibrary.ActionResults;
 using SharedLibrary.FactoriesManager.Interfaces;
-using SharedLibrary.Loggers.Configuration;
 using SharedLibrary.Loggers.Interfaces;
-using SharedLibrary.Loggers.Models;
 
 
 namespace DocumentsAPI.Features.DocumentStructure 
@@ -35,6 +36,7 @@ namespace DocumentsAPI.Features.DocumentStructure
 
         private readonly LogConfiguration logConfiguration;
 
+        
         public DocumentStructureController(IFactoriesManager factoriesManager)
         { 
             factoriesManager.GetService<ILogger<ApplicationError>>().TryGetTarget(out exceptionLogger);
@@ -53,9 +55,7 @@ namespace DocumentsAPI.Features.DocumentStructure
                     .ConfigureAwait(false);
 
                 if (documentStructure is null)
-                {
-                    return new BadSendedRequest<string>("There is no structure for this document");
-                }
+                    return new BadSentRequest<string>("There is no structure for this document");
 
                 return new OkJson<DocumentStructureModel>(documentStructure);
             }
@@ -80,7 +80,7 @@ namespace DocumentsAPI.Features.DocumentStructure
 
                 if (itemUpdateDto is null)
                 {
-                    return new BadSendedRequest<string>("Update info was sent in a bad format");
+                    return new BadSentRequest<string>("Update info was sent in a bad format");
                 }
 
                 var documentStructure = await documentStructureService.GetDocumentStructureAsync(
@@ -88,14 +88,14 @@ namespace DocumentsAPI.Features.DocumentStructure
 
                 if (documentStructure is null)
                 {
-                    return new BadSendedRequest<string>("Document structure with given ID does not exist");
+                    return new BadSentRequest<string>("Document structure with given ID does not exist");
                 }
 
                 var validationResult = new ItemUpdateDtoValidator(itemUpdateDto, documentStructure).Validate();
                 if (!validationResult.result)
                 {
                     #warning Add logging for validation errors
-                    return new BadSendedRequest<string>(validationResult.errorMessage);
+                    return new BadSentRequest<string>(validationResult.errorMessage);
                 }
 
                 await documentStructureService.UpdateStructureAsync(documentStructure, itemUpdateDto).
@@ -105,7 +105,7 @@ namespace DocumentsAPI.Features.DocumentStructure
             }
             catch (ItemNotFoundException ex)
             {
-                return new BadSendedRequest<string>(ex.Message);
+                return new BadSentRequest<string>(ex.Message);
             }
             catch (DatabaseException ex)
             {

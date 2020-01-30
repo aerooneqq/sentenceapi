@@ -1,12 +1,9 @@
 ﻿using DataAccessLayer.Configuration.Interfaces;
-using DataAccessLayer.Filters;
 using DataAccessLayer.Filters.Interfaces;
-using DataAccessLayer.Aggregations.Interfaces;
-using DataAccessLayer.KernelModels;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
+using Domain.KernelModels;
 
 namespace DataAccessLayer.CommonInterfaces
 {

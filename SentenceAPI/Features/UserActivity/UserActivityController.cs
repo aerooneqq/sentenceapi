@@ -2,19 +2,21 @@
 using Microsoft.AspNetCore.Mvc;
 
 using SentenceAPI.Features.Authentication.Interfaces;
-using SharedLibrary.Loggers.Interfaces;
-using SharedLibrary.Loggers.Models;
 using SentenceAPI.Features.UserActivity.Interfaces;
 
+using SharedLibrary.Loggers.Interfaces;
 using SharedLibrary.FactoriesManager.Interfaces;
-using SharedLibrary.FactoriesManager;
+using SharedLibrary.ActionResults;
 
 using System;
 using System.Threading.Tasks;
+
 using DataAccessLayer.Exceptions;
-using SharedLibrary.ActionResults;
-using SharedLibrary.Loggers.Configuration;
+
+using Domain.Logs;
+using Domain.Logs.Configuration;
 using MongoDB.Bson;
+
 
 namespace SentenceAPI.Features.UserActivity
 {
@@ -52,7 +54,7 @@ namespace SentenceAPI.Features.UserActivity
 
                 var userActivities = await userActivityService.GetUserActivityAsync(id).ConfigureAwait(false);
 
-                return new OkJson<Models.UserActivity>(userActivities);
+                return new OkJson<Domain.UserActivity.UserActivity>(userActivities);
             }
             catch (DatabaseException ex)
             {

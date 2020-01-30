@@ -5,23 +5,25 @@ using Microsoft.AspNetCore.Mvc;
 
 using SharedLibrary.ActionResults;
 using SharedLibrary.Loggers.Interfaces;
-using SharedLibrary.Loggers.Models;
+using SharedLibrary.FactoriesManager.Interfaces;
+
 using SentenceAPI.ApplicationFeatures.Requests.Interfaces;
 using SentenceAPI.Features.Authentication.Interfaces;
 using SentenceAPI.Features.Workplace.DocumentsStorage.Interfaces;
 using SentenceAPI.Features.Workplace.DocumentsStorage.Models;
-using SentenceAPI.Validators;
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
-using SharedLibrary.FactoriesManager.Interfaces;
-using SharedLibrary.FactoriesManager;
-using SharedLibrary.Loggers.Configuration;
-using SharedLibrary.Date.Interfaces;
+using Domain.Date;
+using Domain.Logs;
+using Domain.Logs.Configuration;
+using Domain.Validators;
+using Domain.Workplace.DocumentsStorage;
+
 using MongoDB.Bson;
+
 
 namespace SentenceAPI.Features.Workplace.DocumentsStorage
 {
@@ -86,7 +88,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage
                 var (result, errorMessage) = new FolderNameValidator(newFolder.FolderName).Validate();
                 if (!result)
                 {
-                    return new BadSendedRequest<string>(errorMessage);
+                    return new BadSentRequest<string>(errorMessage);
                 }
 
                 await folderService.CreateFolder(userID, newFolder.ParentFolderID, newFolder.FolderName)
@@ -143,7 +145,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage
             }
             catch (ArgumentException)
             {
-                return new BadSendedRequest<string>("The folder which such id does not exist");
+                return new BadSentRequest<string>("The folder which such id does not exist");
             }
             catch (DatabaseException ex)
             {

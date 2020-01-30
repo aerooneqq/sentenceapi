@@ -10,13 +10,16 @@ using System.Threading.Tasks;
 
 namespace DocumentsAPI.ApplicationFeatures.Requests.Interfaces
 {
-    interface IRequestService
+    internal interface IRequestService
     {
         Task<T> GetRequestBodyAsync<T>(HttpRequest request);
 
         Task<string> GetRequestBodyAsync(HttpRequest request);
 
         string GetToken(HttpRequest request);
+        
         Task<bool> CheckIfRequestInDatabase(ObjectId requestID);
+     
+        ObjectId GetUserID(HttpRequest request);
     }
 }

@@ -1,4 +1,4 @@
-using DocumentsAPI.Models.DocumentStructureModels;
+using Domain.DocumentStructureModels;
 
 using Newtonsoft.Json;
 

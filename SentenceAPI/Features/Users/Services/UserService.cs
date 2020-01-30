@@ -5,10 +5,9 @@ using System;
 using System.IdentityModel.Tokens.Jwt;
 
 using SentenceAPI.Features.Users.Interfaces;
-using SentenceAPI.Features.Users.Models;
+
 using SharedLibrary.Loggers.Interfaces;
-using SharedLibrary.Loggers.Models;
-using SentenceAPI.Extensions;
+using SharedLibrary.FactoriesManager.Interfaces;
 
 using DataAccessLayer.CommonInterfaces;
 using DataAccessLayer.Configuration.Interfaces;
@@ -18,11 +17,15 @@ using DataAccessLayer.Exceptions;
 using DataAccessLayer.Hashes;
 using DataAccessLayer.Filters.Base;
 using DataAccessLayer.Filters.Interfaces;
-
-using SharedLibrary.FactoriesManager.Interfaces;
-using SharedLibrary.Loggers.Configuration;
 using DataAccessLayer.DatabasesManager.Interfaces;
+
+using Domain.Extensions;
+using Domain.Logs;
+using Domain.Logs.Configuration;
+using Domain.Users;
+
 using MongoDB.Bson;
+
 
 namespace SentenceAPI.Features.Users.Services
 {

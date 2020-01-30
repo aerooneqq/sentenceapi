@@ -6,17 +6,18 @@ using Microsoft.AspNetCore.Mvc;
 
 using DataAccessLayer.Exceptions;
 
+using Domain.Logs;
+using Domain.Logs.Configuration;
+using Domain.Users;
+
 using SharedLibrary.ActionResults;
 using SharedLibrary.FactoriesManager.Interfaces;
 using SharedLibrary.Loggers.Interfaces;
-using SharedLibrary.Loggers.Models;
-using SharedLibrary.Loggers.Configuration;
 
 using SentenceAPI.ApplicationFeatures.Requests.Interfaces;
 using SentenceAPI.Features.UserFeed.Interfaces;
 using SentenceAPI.Features.UserFeed.Models;
 using SentenceAPI.Features.Users.Interfaces;
-using SentenceAPI.Features.Users.Models;
 
 
 namespace SentenceAPI.Features.UserFeed
@@ -77,12 +78,12 @@ namespace SentenceAPI.Features.UserFeed
 
                 if (user.Name is null || user.Surname is null)
                 {
-                    return new BadSendedRequest<string>("Set your name and surname to insert the post."); 
+                    return new BadSentRequest<string>("Set your name and surname to insert the post."); 
                 }
 
                 string message = await requestService.GetRequestBody(Request);
 
-                await userFeedService.InsertUserPostAsync(token, message);
+                await userFeedService.InsertUserPostAsync(token, message).ConfigureAwait(false);
 
                 return new Ok();
             }

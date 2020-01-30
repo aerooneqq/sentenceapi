@@ -1,15 +1,9 @@
-﻿using MongoDB.Bson.Serialization.Attributes;
-
-using DataAccessLayer.Attributes;
-
-using System;
-using System.Collections.Generic;
-using System.Dynamic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Threading.Tasks;
-using System.Security.Cryptography;
-using System.Text;
+
+using Domain.Attributes;
+
 
 namespace SentenceAPI.Extensions
 {
@@ -26,18 +20,10 @@ namespace SentenceAPI.Extensions
                 .Where(p => propertiesNames.Select(propertyName => propertyName.ToLowerInvariant())
                     .Contains(p.Name.ToLowerInvariant()));
 
-            Dictionary<string, object> newObject = new Dictionary<string, object>();
-
-            foreach (PropertyInfo property in properties)
-            {
-                if (property.GetCustomAttribute<SecretAttribute>() == null)
-                {
-                    newObject.Add(property.Name[0].ToString().ToLowerInvariant() + property.Name.Substring(1), 
-                        property.GetValue(obj));
-                }
-            }
-
-            return newObject;
+            return properties.Where(property => property.GetCustomAttribute<SecretAttribute>() == null)
+                             .ToDictionary(property => property.Name[0].ToString().ToLowerInvariant() + 
+                                                       property.Name.Substring(1),
+                                           property => property.GetValue(obj));
         }
     }
 }

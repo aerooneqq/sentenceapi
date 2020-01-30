@@ -25,13 +25,14 @@ using SentenceAPI.ApplicationFeatures.DefferedExecution;
 using SentenceAPI.Features.Workplace.DocumentsDeskState.Factories;
 using SentenceAPI.Features.UserPhoto.Factories;
 using SentenceAPI.Features.Workplace.DocumentsStorage.Factories;
-using SentenceAPI.ApplicationFeatures.Date.Factories;
 using SentenceAPI.Extensions;
 using SentenceAPI.ApplicationFeatures.Middlewares;
 using SentenceAPI.StartupHelperClasses;
 
 using DataAccessLayer.DatabasesManager.Interfaces;
 using DataAccessLayer.DatabasesManager;
+
+using Domain.Date;
 
 using Newtonsoft.Json;
 
@@ -69,7 +70,7 @@ namespace SentenceAPI
             DefferedTasksManager.Initialize(factoriesManager);
             DefferedTasksManager.Start();
 
-            ReadOtherApisConfigFile("other_api.json").GetAwaiter().GetResult();
+            ReadOtherApisConfigFile("./configs/other_api.json").GetAwaiter().GetResult();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
