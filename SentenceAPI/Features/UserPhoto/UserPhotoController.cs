@@ -8,13 +8,13 @@ using SharedLibrary.ActionResults;
 using SharedLibrary.FactoriesManager.Interfaces;
 using SharedLibrary.Loggers.Interfaces;
 
-using SentenceAPI.ApplicationFeatures.Requests.Interfaces;
-using SentenceAPI.Features.Authentication.Interfaces;
-using SentenceAPI.Features.UserPhoto.Interfaces;
-
 using System;
 using System.Threading.Tasks;
 using System.Text;
+
+using Application.Requests.Interfaces;
+using Application.Tokens.Interfaces;
+using Application.UserPhoto.Interfaces;
 
 using Domain.Logs;
 using Domain.Logs.Configuration;
@@ -23,7 +23,7 @@ using MongoDB.Bson;
 
 namespace SentenceAPI.Features.UserPhoto
 {
-    [ApiController, Route("api/[controller]"), Authorize]
+    [ApiController, Route("sentenceapi/[controller]"), Authorize]
     public class UserPhotoController : ControllerBase
     {
         #region Services

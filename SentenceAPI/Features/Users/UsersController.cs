@@ -2,7 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-
+using Application.Requests.Interfaces;
+using Application.Tokens.Interfaces;
+using Application.Users.Interfaces;
+using Application.Users.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
@@ -12,11 +15,7 @@ using SharedLibrary.ActionResults;
 using SharedLibrary.FactoriesManager.Interfaces;
 using SharedLibrary.Events;
 
-using SentenceAPI.Features.Users.Interfaces;
-using SentenceAPI.Features.Users.Models;
 using SentenceAPI.Extensions;
-using SentenceAPI.ApplicationFeatures.Requests.Interfaces;
-using SentenceAPI.Features.Authentication.Interfaces;
 using SentenceAPI.Features.Users.Events;
 
 using DataAccessLayer.Exceptions;
@@ -32,7 +31,7 @@ using MongoDB.Bson;
 
 namespace SentenceAPI.Features.Users
 {
-    [Route("api/[controller]"), ApiController]
+    [Route("sentenceapi/[controller]"), ApiController]
     public class UsersController : ControllerBase
     {
         #region Services
@@ -42,7 +41,6 @@ namespace SentenceAPI.Features.Users
         private readonly IUserService<UserInfo> userService;
         private readonly ILogger<ApplicationError> exceptionLogger;
         private readonly IRequestService requestService;
-        private readonly IMemoryCache memoryCacheService;
         private readonly ITokenService tokenService;
         #endregion
 
@@ -57,8 +55,6 @@ namespace SentenceAPI.Features.Users
             factoriesManager.GetService<ILogger<ApplicationError>>().TryGetTarget(out exceptionLogger);
             factoriesManager.GetService<IRequestService>().TryGetTarget(out requestService);
             factoriesManager.GetService<ITokenService>().TryGetTarget(out tokenService);
-            
-            this.memoryCacheService = memoryCacheService;
 
             logConfiguration = new LogConfiguration(this.GetType());
         }

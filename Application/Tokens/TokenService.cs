@@ -4,9 +4,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
-using Microsoft.IdentityModel.Tokens;
-
-using SentenceAPI.Features.Authentication.Interfaces;
+using Application.Tokens.Interfaces;
 
 using DataAccessLayer.CommonInterfaces;
 using DataAccessLayer.Configuration.Interfaces;
@@ -20,20 +18,22 @@ using Domain.Authentication;
 using Domain.Logs;
 using Domain.Logs.Configuration;
 using Domain.Users;
+
+using Microsoft.IdentityModel.Tokens;
+
 using SharedLibrary.FactoriesManager.Interfaces;
 
 
-namespace SentenceAPI.Features.Authentication.Services
+namespace Application.Tokens
 {
     public class TokenService : ITokenService
     {
-        #region Static properties
-        private static readonly string databaseConfigFile = "./configs/mongo_database_config.json";
+        #region Constants
+        private const string DATABASE_CONFIG_FILE = "./configs/mongo_database_config.json";
         #endregion
 
         #region Databases
-        private IDatabaseService<JwtToken> mongoDBService;
-        private IConfigurationBuilder configurationBuilder;
+        private readonly IDatabaseService<JwtToken> mongoDBService;
         #endregion
 
 
@@ -50,9 +50,9 @@ namespace SentenceAPI.Features.Authentication.Services
             factoriesManager.GetService<ILogger<ApplicationError>>().TryGetTarget(out exceptionLogger);
             
             databaseManager.MongoDBFactory.GetDatabase<JwtToken>().TryGetTarget(out mongoDBService);
-            configurationBuilder = new MongoConfigurationBuilder(mongoDBService.Configuration);
+            IConfigurationBuilder configurationBuilder = new MongoConfigurationBuilder(mongoDBService.Configuration);
 
-            configurationBuilder.SetConfigurationFilePath(databaseConfigFile).SetUserName().SetPassword()
+            configurationBuilder.SetConfigurationFilePath(DATABASE_CONFIG_FILE).SetUserName().SetPassword()
                                 .SetAuthMechanism().SetDatabaseName().SetServerName().SetConnectionString();
 
             logConfiguration = new LogConfiguration(GetType());
@@ -60,9 +60,20 @@ namespace SentenceAPI.Features.Authentication.Services
         #endregion
 
 
+        /// <summary>
+        /// Checks if token is of valid format
+        /// </summary>
         public bool CheckToken(string encodedToken)
         {
-            throw new NotImplementedException();
+            try 
+            {
+                new JwtSecurityToken(encodedToken);
+                return true;
+            }
+            catch (Exception) 
+            {
+                return false;
+            }
         }
 
         public async Task InsertTokenInDBAsync(JwtToken token)
@@ -87,8 +98,8 @@ namespace SentenceAPI.Features.Authentication.Services
         /// </returns>
         public (string encodedToken, JwtSecurityToken securityToken) CreateEncodedToken(UserInfo user)
         {
-            var now = DateTime.UtcNow;
-            var jwtToken = new JwtSecurityToken(
+            DateTime now = DateTime.UtcNow;
+            JwtSecurityToken jwtToken = new JwtSecurityToken(
                     issuer: AuthOptions.ISSUER,
                     audience: AuthOptions.AUDIENCE,
                     expires: now.Add(TimeSpan.FromSeconds(AuthOptions.SecondsLifeTime)),
@@ -102,7 +113,15 @@ namespace SentenceAPI.Features.Authentication.Services
             return (encodedToken, jwtToken);
         }
 
-        private ClaimsIdentity GetUserIdentity(UserInfo user)
+        /// <summary>
+        /// Decodes the token, assuming that the token is of a valid format
+        /// </summary>
+        public JwtSecurityToken DecodeToken(string token) 
+        {
+            return new JwtSecurityToken(token);
+        }
+
+        private static ClaimsIdentity GetUserIdentity(UserInfo user)
         {
             ClaimsIdentity userIdentity = new ClaimsIdentity();
 
@@ -110,13 +129,24 @@ namespace SentenceAPI.Features.Authentication.Services
             userIdentity.AddClaim(new Claim("Login", user.Login ?? string.Empty));
             userIdentity.AddClaim(new Claim("ID", user.ID.ToString()));
 
+            foreach (Role role in user.Roles)
+            {
+                userIdentity.AddClaim(new Claim(role.ToString(), role.ToString()));
+            }
+
             return userIdentity;
         }
 
+        /// <summary>
+        /// Gets the token claim. If token is null then returns null.
+        /// If there is no claim with such a name returns null 
+        /// </summary>
         public string GetTokenClaim(string token, string claimType)
         {
             JwtSecurityToken jwtSecurityToken = new JwtSecurityTokenHandler().ReadToken(token) as JwtSecurityToken;
-            return jwtSecurityToken.Claims.ToList().Find(c => c.Type == claimType).Value;
+
+            Claim claim = jwtSecurityToken?.Claims.FirstOrDefault(c => c.Type == claimType);
+            return claim?.Value;
         }
     }
 }

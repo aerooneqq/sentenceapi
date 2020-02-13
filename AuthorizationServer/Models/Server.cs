@@ -1,6 +1,6 @@
 namespace AuthorizationServer.Models
 {
-    public enum Servers : byte
+    public enum Server : byte
     {
         SentenceAPI = 0,
         DocumentsAPI,

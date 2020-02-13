@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace SentenceAPI.Features.Email
 {
-    [Route("api/[controller]"), Authorize, ApiController]
+    [Route("sentenceapi/[controller]"), Authorize, ApiController]
     public class EmailController
     {
     }

@@ -4,7 +4,7 @@ using Domain.KernelInterfaces;
 using SharedLibrary.FactoriesManager.Interfaces;
 
 
-namespace SentenceAPI.Features.Authentication.Interfaces
+namespace Application.Tokens.Interfaces
 {
     public interface ITokenServiceFactory : IServiceFactory
     {

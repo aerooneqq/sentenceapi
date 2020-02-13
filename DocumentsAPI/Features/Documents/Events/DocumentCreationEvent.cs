@@ -1,7 +1,7 @@
 using System;
 using System.Threading.Tasks;
 
-using DocumentsAPI.Features.DocumentStructure.Interfaces;
+using Application.Documents.DocumentStructure.Interfaces;
 
 using Domain.Logs;
 using Domain.Logs.Configuration;

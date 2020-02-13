@@ -5,10 +5,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace SentenceAPI.Features.Workplace.DocumentsStorage.Models
+namespace Application.Workplace.DocumentStorage.FileService.Models
 {
     /// <summary>
-    /// This class is a model for a new file creation proccess
+    /// This class is a model for a new file creation process
     /// </summary>
     public class NewFileDto
     {

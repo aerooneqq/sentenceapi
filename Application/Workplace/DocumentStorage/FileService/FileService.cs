@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-
+using Application.Workplace.DocumentStorage.FileService.Interfaces;
 using DataAccessLayer.CommonInterfaces;
 using DataAccessLayer.Configuration;
 using DataAccessLayer.Configuration.Interfaces;
@@ -20,12 +20,10 @@ using Domain.Workplace.DocumentsStorage;
 using SharedLibrary.Loggers.Interfaces;
 using SharedLibrary.FactoriesManager.Interfaces;
 
-using SentenceAPI.Features.Workplace.DocumentsStorage.Interfaces;
-
 using MongoDB.Bson;
 
 
-namespace SentenceAPI.Features.Workplace.DocumentsStorage.Services
+namespace Application.Workplace.DocumentStorage.FileService
 {
     public class FileService : IFileService
     {

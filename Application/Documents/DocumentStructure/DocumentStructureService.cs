@@ -3,9 +3,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 
-using DocumentsAPI.Features.DocumentStructure.Interfaces;
-using DocumentsAPI.Features.DocumentStructure.Models;
-using DocumentsAPI.Features.DocumentStructure.Exceptions;
+using Application.Documents.DocumentStructure.Exceptions;
+using Application.Documents.DocumentStructure.Interfaces;
+using Application.Documents.DocumentStructure.Models;
 
 using DataAccessLayer.DatabasesManager.Interfaces;
 using DataAccessLayer.CommonInterfaces;
@@ -25,7 +25,7 @@ using SharedLibrary.FactoriesManager.Interfaces;
 using MongoDB.Bson;
 
 
-namespace DocumentsAPI.Features.DocumentStructure.Services
+namespace Application.Documents.DocumentStructure
 {
     public class DocumentStructureService : IDocumentStructureService
     { 
@@ -142,7 +142,7 @@ namespace DocumentsAPI.Features.DocumentStructure.Services
             return searchResult;
         }
 
-        private void FindItemRecursive(List<Item> items, ObjectId objectId, out Item searchResult)
+        private static void FindItemRecursive(IEnumerable<Item> items, ObjectId objectId, out Item searchResult)
         {
             searchResult = null;
 

@@ -1,11 +1,8 @@
 using System;
 using System.Threading.Tasks;
-
+using Application.Documents.Documents.Interfaces;
+using Application.Documents.FileToDocument.Interfaces;
 using DataAccessLayer.Exceptions;
-
-using DocumentsAPI.Features.Documents.Interfaces;
-using DocumentsAPI.Features.FileToDocument.Interfaces;
-
 using Domain.Logs;
 using Domain.Logs.Configuration;
 using Domain.Models.Document;
@@ -21,7 +18,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace DocumentsAPI.Features.FileToDocument
 {
-    [Route("api/[controller]"), ApiController]
+    [Route("documentsapi/[controller]"), ApiController]
     public class FileToDocumentController : Controller
     {
         #region Services

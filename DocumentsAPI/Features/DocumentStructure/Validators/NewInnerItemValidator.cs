@@ -1,4 +1,5 @@
-using DocumentsAPI.Features.DocumentStructure.Models;
+using Application.Documents.DocumentStructure.Models;
+
 using Domain.KernelInterfaces;
 
 

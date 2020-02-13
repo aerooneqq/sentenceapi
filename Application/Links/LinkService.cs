@@ -2,7 +2,8 @@
 using System.Linq;
 using System.Threading.Tasks;
 
-using SentenceAPI.Features.Links.Interfaces;
+using Application.Links.Interfaces;
+
 using SharedLibrary.Loggers.Interfaces;
 using SharedLibrary.FactoriesManager.Interfaces;
 
@@ -19,7 +20,7 @@ using Domain.Logs.Configuration;
 using Domain.Users;
 
 
-namespace SentenceAPI.Features.Links.Services
+namespace Application.Links.Services
 {
     public class LinkService : ILinkService
     {

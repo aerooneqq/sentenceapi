@@ -5,7 +5,7 @@ using Domain.KernelInterfaces;
 using SharedLibrary.FactoriesManager.Interfaces;
 
 
-namespace SentenceAPI.Features.UserFeed.Interfaces
+namespace Application.UserFeed.Interfaces
 {
     public interface IUserFeedServiceFactory : IServiceFactory
     {

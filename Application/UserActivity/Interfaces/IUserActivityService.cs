@@ -7,7 +7,7 @@ using Domain.UserActivity;
 using MongoDB.Bson;
 
 
-namespace SentenceAPI.Features.UserActivity.Interfaces
+namespace Application.UserActivity.Interfaces
 {
     public interface IUserActivityService : IService
     {

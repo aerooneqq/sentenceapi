@@ -5,9 +5,9 @@ using Domain.KernelInterfaces;
 using SharedLibrary.FactoriesManager.Interfaces;
 
 
-namespace SentenceAPI.Features.Codes.Interfaces
+namespace Application.Codes.Interfaces
 {
-    interface ICodesServiceFactory : IServiceFactory
+    public interface ICodesServiceFactory : IServiceFactory
     {
         ICodesService GetService(IFactoriesManager factoriesManager, IDatabaseManager databasesManager);
     }

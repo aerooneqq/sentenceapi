@@ -18,7 +18,7 @@ using SharedLibrary.Loggers.Interfaces;
 
 namespace DocumentsAPI.Features.Authentication
 {
-    [ApiController, Route("api/[controller]")]
+    [ApiController, Route("documentsapi/[controller]")]
     public class TokensController : Controller
     {
         #region Services

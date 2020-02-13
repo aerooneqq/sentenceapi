@@ -7,8 +7,9 @@ using DataAccessLayer.Filters.Interfaces;
 using DataAccessLayer.Filters.Base;
 using DataAccessLayer.DatabasesManager.Interfaces;
 
-using SentenceAPI.Features.Authentication.Interfaces;
-using SentenceAPI.Features.Codes.Interfaces;
+using Application.Codes.Interfaces;
+using Application.Tokens.Interfaces;
+
 using SharedLibrary.Loggers.Interfaces;
 using SharedLibrary.FactoriesManager.Interfaces;
 
@@ -24,7 +25,7 @@ using Domain.Logs.Configuration;
 using MongoDB.Bson;
 
 
-namespace SentenceAPI.Features.Codes.Services
+namespace Application.Codes.Services
 {
     class CodesService : ICodesService
     {

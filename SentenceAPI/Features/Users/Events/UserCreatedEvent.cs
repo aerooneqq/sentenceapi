@@ -1,13 +1,12 @@
 using System.Threading.Tasks;
 
+using Application.Codes.Interfaces;
+using Application.Email.Interfaces;
+using Application.Links.Interfaces;
+using Application.UserFriends.Interfaces;
+using Application.Workplace.DocumentStorage.UserMainFoldersService.Interfaces;
 using Domain.Codes;
 using Domain.Users;
-
-using SentenceAPI.Features.Codes.Interfaces;
-using SentenceAPI.Features.Email.Interfaces;
-using SentenceAPI.Features.Links.Interfaces;
-using SentenceAPI.Features.UserFriends.Interfaces;
-using SentenceAPI.Features.Workplace.DocumentsStorage.Interfaces;
 
 using SharedLibrary.Events.Interfaces;
 using SharedLibrary.FactoriesManager.Interfaces;
@@ -17,7 +16,7 @@ namespace SentenceAPI.Features.Users.Events
 {
     /// <summary>
     /// Does all support job for the user creation (sending an email, inserting code in the database,
-    /// creates the main folder objects and user friends recorcd in the database)
+    /// creates the main folder objects and user friends record in the database)
     /// </summary>
     public class UserCreatedEvent : IDomainEvent
     {
@@ -53,7 +52,7 @@ namespace SentenceAPI.Features.Users.Events
 
             await userMainFoldersService.CreateNewUserMainFolders(user.ID).ConfigureAwait(false);
             
-            await emailService.SendConfirmationEmailAsync(activationCode.Code, user.Email).ConfigureAwait(false);
+            //await emailService.SendConfirmationEmailAsync(activationCode.Code, user.Email).ConfigureAwait(false);
         }
     }
 }

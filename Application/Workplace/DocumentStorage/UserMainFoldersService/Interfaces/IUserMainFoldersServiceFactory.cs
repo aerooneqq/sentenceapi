@@ -1,7 +1,11 @@
-namespace SentenceAPI.Features.Workplace.DocumentsStorage.Interfaces
+using DataAccessLayer.DatabasesManager.Interfaces;
+using Domain.KernelInterfaces;
+using SharedLibrary.FactoriesManager.Interfaces;
+
+namespace Application.Workplace.DocumentStorage.UserMainFoldersService.Interfaces
 {
-    public class IUserMainFoldersServiceFactory
+    public interface IUserMainFoldersServiceFactory : IServiceFactory
     {
-        
+        IUserMainFoldersService GetService(IFactoriesManager factoriesManager, IDatabaseManager databaseManager);
     }
 }

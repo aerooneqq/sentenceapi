@@ -5,7 +5,7 @@ using Domain.KernelInterfaces;
 using MongoDB.Bson;
 
 
-namespace DocumentsAPI.Features.FileToDocument.Interfaces
+namespace Application.Documents.FileToDocument.Interfaces
 {
     public interface IFileToDocumentService : IService
     {

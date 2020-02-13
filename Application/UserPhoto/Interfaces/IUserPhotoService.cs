@@ -1,13 +1,11 @@
-﻿using Microsoft.Extensions.Caching.Memory;
-using MongoDB.Bson;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using MongoDB.Bson;
+
 using System.Threading.Tasks;
 
-namespace SentenceAPI.Features.UserPhoto.Interfaces
+
+namespace Application.UserPhoto.Interfaces
 {
-    interface IUserPhotoService
+    public interface IUserPhotoService
     {
         #region Methods
         Task<Domain.UserPhoto.UserPhoto> GetPhotoAsync(ObjectId userID);

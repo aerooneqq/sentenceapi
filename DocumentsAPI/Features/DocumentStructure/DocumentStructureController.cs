@@ -1,13 +1,12 @@
 using System;
 using System.Threading.Tasks;
-
+using Application.Documents.DocumentStructure.Exceptions;
+using Application.Documents.DocumentStructure.Interfaces;
+using Application.Documents.DocumentStructure.Models;
 using DataAccessLayer.Exceptions;
 
 using DocumentsAPI.ApplicationFeatures.Requests.Interfaces;
-using DocumentsAPI.Features.DocumentStructure.Interfaces;
-using DocumentsAPI.Features.DocumentStructure.Models;
 using DocumentsAPI.Features.DocumentStructure.Validators;
-using DocumentsAPI.Features.DocumentStructure.Exceptions;
 
 using Domain.DocumentStructureModels;
 using Domain.Logs;
@@ -25,7 +24,7 @@ using SharedLibrary.Loggers.Interfaces;
 
 namespace DocumentsAPI.Features.DocumentStructure 
 {
-    [ApiController, Route("api/[controller]"), Authorize]
+    [ApiController, Route("documentsapi/[controller]"), Authorize]
     public class DocumentStructureController : Controller 
     {
         #region Services
@@ -43,6 +42,7 @@ namespace DocumentsAPI.Features.DocumentStructure
             logConfiguration = new LogConfiguration(GetType());
 
             factoriesManager.GetService<IDocumentStructureService>().TryGetTarget(out documentStructureService);
+            factoriesManager.GetService<IRequestService>().TryGetTarget(out requestService);
         }
 
 

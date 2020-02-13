@@ -4,8 +4,8 @@ using System.Threading.Tasks;
 using System;
 using System.IdentityModel.Tokens.Jwt;
 
-using SentenceAPI.Features.Users.Interfaces;
-
+using Application.Users.Interfaces;
+ 
 using SharedLibrary.Loggers.Interfaces;
 using SharedLibrary.FactoriesManager.Interfaces;
 
@@ -27,7 +27,7 @@ using Domain.Users;
 using MongoDB.Bson;
 
 
-namespace SentenceAPI.Features.Users.Services
+namespace Application.Users.Services
 {
     public class UserService : IUserService<UserInfo>
     {
@@ -62,6 +62,7 @@ namespace SentenceAPI.Features.Users.Services
         }
         #endregion
 
+        
         public async Task DeleteAsync(ObjectId id)
         {
             try
@@ -71,7 +72,7 @@ namespace SentenceAPI.Features.Users.Services
                 var user = (await database.Get(new EqualityFilter<ObjectId>(typeof(UserInfo).GetBsonPropertyName("ID"), id))
                     .ConfigureAwait(false)).FirstOrDefault();
 
-                if (!(user is UserInfo))
+                if (user is null)
                 {
                     throw new ArgumentException($"Can not delete the user with the ID ({id}), which does not exist");
                 }
@@ -181,15 +182,10 @@ namespace SentenceAPI.Features.Users.Services
         {
             try
             {
-                UserInfo user = new UserInfo()
-                {
-                    Email = email,
-                    Password = password.GetMD5Hash(),
-                    IsAccountVerified = false,
-                };
+                UserInfo user = UserInfo.GetDefaultUser(email, password.GetMD5Hash());
 
-                await database.Connect();
-                await database.Insert(user);
+                await database.Connect().ConfigureAwait(false);
+                await database.Insert(user).ConfigureAwait(false);
 
                 return user.ID;
             }

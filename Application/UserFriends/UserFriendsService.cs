@@ -5,14 +5,14 @@ using DataAccessLayer.Exceptions;
 using DataAccessLayer.Filters;
 using DataAccessLayer.DatabasesManager.Interfaces;
 
-using SentenceAPI.Features.Authentication.Interfaces;
-using SentenceAPI.Features.UserFriends.Interfaces;
-using SentenceAPI.Features.Users.Interfaces;
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
+using Application.Tokens.Interfaces;
+using Application.UserFriends.Interfaces;
+using Application.Users.Interfaces;
 
 using SharedLibrary.Loggers.Interfaces;
 using SharedLibrary.FactoriesManager.Interfaces;
@@ -25,7 +25,7 @@ using Domain.Users;
 using MongoDB.Bson;
 
 
-namespace SentenceAPI.Features.UserFriends.Services
+namespace Application.UserFriends.Services
 {
     public class UserFriendsService : IUserFriendsService
     {

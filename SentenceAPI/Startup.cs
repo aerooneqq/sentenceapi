@@ -2,6 +2,22 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
+using Application.Codes.Factories;
+using Application.Email.Factories;
+using Application.Links.Factories;
+using Application.Requests.Factories;
+using Application.Responses.Factories;
+using Application.Tokens.Factories;
+using Application.UserActivity.Factories;
+using Application.UserFeed.Factories;
+using Application.UserFriends.Factories;
+using Application.UserPhoto.Factories;
+using Application.Users.Factories;
+using Application.Workplace.DocumentsDeskState.Factories;
+using Application.Workplace.DocumentStorage.FolderService.Factories;
+using Application.Workplace.DocumentStorage.Services.Factories;
+using Application.Workplace.DocumentStorage.UserMainFoldersService.Factories;
+
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
@@ -11,20 +27,8 @@ using SharedLibrary.FactoriesManager;
 using SharedLibrary.FactoriesManager.Models;
 using SharedLibrary.FactoriesManager.Interfaces;
 
-using SentenceAPI.Features.Users.Factories;
-using SentenceAPI.Features.Authentication.Factories;
 using SentenceAPI.ApplicationFeatures.Loggers.Factories;
-using SentenceAPI.Features.Email.Factories;
-using SentenceAPI.Features.Links.Factories;
-using SentenceAPI.Features.UserFriends.Factories;
-using SentenceAPI.Features.UserActivity.Factories;
-using SentenceAPI.Features.UserFeed.Factories;
-using SentenceAPI.Features.Codes.Factories;
-using SentenceAPI.ApplicationFeatures.Requests.Factories;
 using SentenceAPI.ApplicationFeatures.DefferedExecution;
-using SentenceAPI.Features.Workplace.DocumentsDeskState.Factories;
-using SentenceAPI.Features.UserPhoto.Factories;
-using SentenceAPI.Features.Workplace.DocumentsStorage.Factories;
 using SentenceAPI.Extensions;
 using SentenceAPI.ApplicationFeatures.Middlewares;
 using SentenceAPI.StartupHelperClasses;
@@ -46,7 +50,7 @@ namespace SentenceAPI
         public static Dictionary<OtherApis, string> OtherApis { get; private set; }
 
 
-        public IConfiguration Configuration { get; set; }
+        private IConfiguration Configuration { get; set; }
 
         public Startup(IConfiguration configuration)
         {
@@ -113,12 +117,18 @@ namespace SentenceAPI
                 typeof(CodesServiceFactory)));
             factoriesManager.AddFactory(new FactoryInfo(new RequestServiceFactory(),
                 typeof(RequestServiceFactory)));
+            factoriesManager.AddFactory(new FactoryInfo(new ResponseServiceFactory(),
+                typeof(ResponseServiceFactory)));
             factoriesManager.AddFactory(new FactoryInfo(new DocumentDeskStateServiceFactory(),
                 typeof(DocumentDeskStateServiceFactory)));
             factoriesManager.AddFactory(new FactoryInfo(new UserPhotoServiceFactory(),
                 typeof(UserPhotoServiceFactory)));
-            factoriesManager.AddFactory(new FactoryInfo(new FolderSystemServiceFactory(),
-                typeof(FolderSystemServiceFactory)));
+            factoriesManager.AddFactory(new FactoryInfo(new FileServiceFactory(), 
+                typeof(FileServiceFactory)));
+            factoriesManager.AddFactory(new FactoryInfo(new FolderServiceFactory(),
+                typeof(FolderServiceFactory)));
+            factoriesManager.AddFactory(new FactoryInfo(new UserMainFoldersServiceFactory(), 
+                typeof(UserMainFoldersServiceFactory)));
             factoriesManager.AddFactory(new FactoryInfo(new DateServiceFactory(), typeof(DateServiceFactory)));
         }
 

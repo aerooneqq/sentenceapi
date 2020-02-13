@@ -1,10 +1,8 @@
-﻿using SentenceAPI.Features.UserActivity.Interfaces;
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-
+using Application.UserActivity.Interfaces;
 using DataAccessLayer.CommonInterfaces;
 using DataAccessLayer.Configuration.Interfaces;
 using DataAccessLayer.Configuration;
@@ -17,12 +15,14 @@ using Domain.UserActivity;
 using MongoDB.Bson;
 
 
-namespace SentenceAPI.Features.UserActivity.Services
+namespace Application.UserActivity
 {
     public class UserActivityService : IUserActivityService
     {
         #region Static fields
-        private static readonly string databaseConfigFile = "./configs/mongo_database_config.json";
+
+        private const string databaseConfigFile = "./configs/mongo_database_config.json";
+
         #endregion
 
 

@@ -1,6 +1,10 @@
 using System;
 using System.Threading.Tasks;
 
+using Application.Requests.Interfaces;
+using Application.Tokens.Interfaces;
+using Application.Workplace.DocumentStorage.UserMainFoldersService.Interfaces;
+
 using DataAccessLayer.Exceptions;
 
 using Domain.Logs;
@@ -14,16 +18,12 @@ using SharedLibrary.ActionResults;
 using SharedLibrary.Loggers.Interfaces;
 using SharedLibrary.FactoriesManager.Interfaces;
 
-using SentenceAPI.ApplicationFeatures.Requests.Interfaces;
-using SentenceAPI.Features.Authentication.Interfaces;
-using SentenceAPI.Features.Workplace.DocumentsStorage.Interfaces;
-
 using MongoDB.Bson;
 
 
 namespace SentenceAPI.Features.Workplace.DocumentsStorage
 {
-    [ApiController, Authorize, Route("api/[controller]")]
+    [ApiController, Authorize, Route("sentenceapi/[controller]")]
     public class UserMainFoldersController : Controller
     {
         #region Services

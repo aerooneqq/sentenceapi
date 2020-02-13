@@ -5,7 +5,7 @@ using Domain.Logs;
 using SharedLibrary.Loggers;
 using SharedLibrary.Loggers.Interfaces;
 
-namespace AuthorizationServer.Loggers
+namespace AuthorizationServer.ApplicationFeatures.Loggers
 {
 public class LoggerFactory : ILoggerFactory
     {
@@ -42,8 +42,12 @@ public class LoggerFactory : ILoggerFactory
         {
             return exceptionLoggers[Random.Next(exceptionLoggers.Count)];
         }
-        
 
+        public ILogger<EmailLog> GetEmailLogger()
+        {
+            throw new NotImplementedException();
+        }
+        
         public ILogger<RequestLog> GetRequestLog()
         {
             return requestLoggers[Random.Next(requestLoggers.Count)];

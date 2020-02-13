@@ -1,13 +1,13 @@
 ﻿using System.Threading.Tasks;
 
-using Domain.KernelInterfaces;
+using Application.UserFeed.Models;
 
-using SentenceAPI.Features.UserFeed.Models;
+using Domain.KernelInterfaces;
 
 using MongoDB.Bson;
 
 
-namespace SentenceAPI.Features.UserFeed.Interfaces
+namespace Application.UserFeed.Interfaces
 {
     public interface IUserFeedService : IService
     {

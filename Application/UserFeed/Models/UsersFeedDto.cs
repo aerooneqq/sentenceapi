@@ -1,11 +1,10 @@
 ﻿﻿using MongoDB.Bson;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace SentenceAPI.Features.UserFeed.Models
+ using Newtonsoft.Json;
+ 
+ using System.Collections.Generic;
+
+ namespace Application.UserFeed.Models
 {
     public class UsersFeedDto
     {

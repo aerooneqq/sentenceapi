@@ -7,10 +7,6 @@ using SharedLibrary.ActionResults;
 using SharedLibrary.FactoriesManager.Interfaces;
 using SharedLibrary.Loggers.Interfaces;
 
-using SentenceAPI.Features.Codes.Interfaces;
-using SentenceAPI.Features.Users.Interfaces;
-using SentenceAPI.ApplicationFeatures.Requests.Interfaces;
-
 using System;
 using System.Threading.Tasks;
 
@@ -18,17 +14,21 @@ using Domain.Logs;
 using Domain.Logs.Configuration;
 using Domain.Users;
 
+using Application.Codes.Interfaces;
+using Application.Requests.Interfaces;
+using Application.Users.Interfaces;
+
 
 namespace SentenceAPI.Features.Codes
 {
-    [Authorize, ApiController, Route("api/[controller]")]
+    [Authorize, ApiController, Route("sentenceapi/[controller]")]
     public class CodesController : Controller
     {
         #region Services
-        private ILogger<ApplicationError> exceptionLogger;
-        private IUserService<UserInfo> userService;
-        private ICodesService codesService;
-        private IRequestService requestService;
+        private readonly ILogger<ApplicationError> exceptionLogger;
+        private readonly IUserService<UserInfo> userService;
+        private readonly ICodesService codesService;
+        private readonly IRequestService requestService;
         #endregion
 
         private readonly LogConfiguration logConfiguration;

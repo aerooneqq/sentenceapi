@@ -1,16 +1,14 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-using SentenceAPI.Features.Authentication.Interfaces;
-using SentenceAPI.Features.UserActivity.Interfaces;
-
 using SharedLibrary.Loggers.Interfaces;
 using SharedLibrary.FactoriesManager.Interfaces;
 using SharedLibrary.ActionResults;
 
 using System;
 using System.Threading.Tasks;
-
+using Application.Tokens.Interfaces;
+using Application.UserActivity.Interfaces;
 using DataAccessLayer.Exceptions;
 
 using Domain.Logs;
@@ -20,7 +18,7 @@ using MongoDB.Bson;
 
 namespace SentenceAPI.Features.UserActivity
 {
-    [Route("api/[controller]"), Authorize, ApiController]
+    [Route("sentenceapi/[controller]"), Authorize, ApiController]
     public class UserActivitiesController : Controller
     {
         #region Services

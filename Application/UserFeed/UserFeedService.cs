@@ -1,11 +1,4 @@
-﻿﻿using SentenceAPI.Features.Authentication.Interfaces;
-using SentenceAPI.Features.UserFeed.Interfaces;
-using SentenceAPI.Features.UserFeed.Models;
-using SentenceAPI.Features.UserFriends.Interfaces;
-using SentenceAPI.Features.Users.Interfaces;
-using SentenceAPI.Features.UserPhoto.Interfaces;
-
-using SharedLibrary.Loggers.Interfaces;
+﻿using SharedLibrary.Loggers.Interfaces;
 using SharedLibrary.FactoriesManager.Interfaces;
 
 using System;
@@ -27,8 +20,15 @@ using Domain.Logs;
 using Domain.Logs.Configuration;
 using Domain.Users;
 
+using Application.Tokens.Interfaces;
+using Application.UserFeed.Interfaces;
+using Application.UserFeed.Models;
+using Application.UserFriends.Interfaces;
+using Application.UserPhoto.Interfaces;
+using Application.Users.Interfaces;
 
-namespace SentenceAPI.Features.UserFeed.Services
+
+namespace Application.UserFeed
 {
     public class UserFeedService : IUserFeedService
     {

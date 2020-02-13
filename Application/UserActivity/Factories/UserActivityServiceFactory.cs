@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using DataAccessLayer.DatabasesManager.Interfaces;
-using SentenceAPI.Features.UserActivity.Interfaces;
-using SentenceAPI.Features.UserActivity.Services;
+﻿using Application.UserActivity.Interfaces;
 
-namespace SentenceAPI.Features.UserActivity.Factories
+using DataAccessLayer.DatabasesManager.Interfaces;
+
+
+namespace Application.UserActivity.Factories
 {
     public class UserActivityServiceFactory : IUserActivityServiceFactory
     {

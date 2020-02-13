@@ -4,17 +4,19 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 using SharedLibrary.Loggers.Interfaces;
-using SentenceAPI.ApplicationFeatures.Requests.Interfaces;
-using SentenceAPI.Features.UserFriends.Interfaces;
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
+using Application.Requests.Interfaces;
+using Application.UserFriends.Interfaces;
+
 using Domain.Logs;
 using Domain.Logs.Configuration;
 using Domain.UserFriends;
+
 using SharedLibrary.ActionResults;
 using SharedLibrary.FactoriesManager.Interfaces;
 
@@ -23,7 +25,7 @@ using MongoDB.Bson;
 
 namespace SentenceAPI.Features.UserFriends
 {
-    [Authorize, ApiController, Route("api/[controller]")]
+    [Authorize, ApiController, Route("sentenceapi/[controller]")]
     public class UserFriendsController : Controller
     {
         #region Services

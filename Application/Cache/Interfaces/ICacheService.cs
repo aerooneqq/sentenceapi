@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Application.Caching
+namespace Application.Caching.Interfaces
 {
     public interface ICacheService
     {

@@ -9,13 +9,14 @@ using DataAccessLayer.DatabasesManager.Interfaces;
 using SharedLibrary.Loggers.Interfaces;
 using SharedLibrary.FactoriesManager.Interfaces;
 
-using SentenceAPI.Features.Authentication.Interfaces;
 using SentenceAPI.Features.Workplace.DocumentsDeskState.Interfaces;
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
+using Application.Tokens.Interfaces;
 
 using MongoDB.Bson;
 
@@ -25,7 +26,7 @@ using Domain.Logs.Configuration;
 using Domain.Workplace.DocumentsDeskState;
 
 
-namespace SentenceAPI.Features.Workplace.DocumentsDeskState.Services
+namespace Application.Workplace.DocumentsDeskState.Services
 {
     public class DocumentDeskStateService : IDocumentDeskStateService
     {

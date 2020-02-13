@@ -1,12 +1,11 @@
-using DataAccessLayer.DatabasesManager.Interfaces;
+using Application.Documents.FileToDocument.Interfaces;
 
-using DocumentsAPI.Features.FileToDocument.Interfaces;
-using DocumentsAPI.Features.FileToDocument.Services;
+using DataAccessLayer.DatabasesManager.Interfaces;
 
 using SharedLibrary.FactoriesManager.Interfaces;
 
 
-namespace DocumentsAPI.Features.FileToDocument.Factories
+namespace Application.Documents.FileToDocument.Factories
 {
     public class FileToDocumentServiceFactory : IFileToDocumentServiceFactory
     {

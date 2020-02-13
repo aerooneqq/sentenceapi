@@ -4,16 +4,18 @@ using System.Text;
 
 namespace Domain.Authentication
 {
+    #warning FIX THIS HARDCODED SHIT
+    
     /// <summary>
     /// Class where authentication parameters are stored
     /// </summary>
     public static class AuthOptions
     {
         #region Public constants
-        public const string ISSUER = "SentenceKernel";
+        public const string ISSUER = "SentenceAuthorization";
         public const string AUDIENCE = "https://localhost:44368/";
         public const int SecondsLifeTime = 86400;
-        public const int CustomClaimsCount = 3;
+        public const int CustomClaimsCount = 5;
         #endregion
 
         #region Private constants

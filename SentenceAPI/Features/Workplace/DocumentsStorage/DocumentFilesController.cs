@@ -3,13 +3,12 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-using SentenceAPI.ApplicationFeatures.Requests.Interfaces;
-using SentenceAPI.Features.Authentication.Interfaces;
-using SentenceAPI.Features.Workplace.DocumentsStorage.Interfaces;
-using SentenceAPI.Features.Workplace.DocumentsStorage.Models;
-
 using System;
 using System.Threading.Tasks;
+using Application.Requests.Interfaces;
+using Application.Tokens.Interfaces;
+using Application.Workplace.DocumentStorage.FileService.Interfaces;
+using Application.Workplace.DocumentStorage.FileService.Models;
 
 using Domain.Logs;
 using Domain.Logs.Configuration;
@@ -28,7 +27,7 @@ using SentenceAPI.Features.Workplace.DocumentsStorage.Events;
 
 namespace SentenceAPI.Features.Workplace.DocumentsStorage
 {
-    [Route("api/[controller]"), Authorize, ApiController]
+    [Route("sentenceapi/[controller]"), Authorize, ApiController]
     public class DocumentFilesController : ControllerBase
     {
         #region Services

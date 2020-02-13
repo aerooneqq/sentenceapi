@@ -1,7 +1,9 @@
 using MongoDB.Bson;
+
 using Newtonsoft.Json;
 
-namespace DocumentsAPI.Features.DocumentStructure.Models
+
+namespace Application.Documents.DocumentStructure.Models
 {
     public class ItemUpdateDto
     {

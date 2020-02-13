@@ -6,7 +6,7 @@ using Domain.Users;
 using SharedLibrary.FactoriesManager.Interfaces;
 
 
-namespace SentenceAPI.Features.Users.Interfaces
+namespace Application.Users.Interfaces
 {
     public interface IUserServiceFactory : IServiceFactory
     {

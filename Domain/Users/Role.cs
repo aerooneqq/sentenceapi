@@ -1,7 +1,9 @@
 namespace Domain.Users
 {
-    public class Role
+    public enum Role : byte
     {
-        
+        SentenceAPI = 0,
+        DocumentsAPI,
+        AnalyticsAPI,
     }
 }

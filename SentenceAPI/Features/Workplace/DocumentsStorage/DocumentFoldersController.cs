@@ -7,14 +7,14 @@ using SharedLibrary.ActionResults;
 using SharedLibrary.Loggers.Interfaces;
 using SharedLibrary.FactoriesManager.Interfaces;
 
-using SentenceAPI.ApplicationFeatures.Requests.Interfaces;
-using SentenceAPI.Features.Authentication.Interfaces;
-using SentenceAPI.Features.Workplace.DocumentsStorage.Interfaces;
-using SentenceAPI.Features.Workplace.DocumentsStorage.Models;
-
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+
+using Application.Requests.Interfaces;
+using Application.Tokens.Interfaces;
+using Application.Workplace.DocumentStorage.FolderService.Interfaces;
+using Application.Workplace.DocumentStorage.FolderService.Models;
 
 using Domain.Date;
 using Domain.Logs;
@@ -27,7 +27,7 @@ using MongoDB.Bson;
 
 namespace SentenceAPI.Features.Workplace.DocumentsStorage
 {
-    [Route("api/[controller]"), ApiController, Authorize]
+    [Route("sentenceapi/[controller]"), ApiController, Authorize]
     public class DocumentFoldersController : ControllerBase
     {
         #region Services

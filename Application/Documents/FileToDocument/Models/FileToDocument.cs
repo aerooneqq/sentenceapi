@@ -3,7 +3,7 @@ using Domain.KernelModels;
 using MongoDB.Bson;
 
 
-namespace DocumentsAPI.Features.FileToDocument.Models
+namespace Application.Documents.FileToDocument.Models
 {
     public class FileToDocument : UniqueEntity
     {

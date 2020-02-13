@@ -3,6 +3,8 @@ using System.Threading.Tasks;
 using System.Linq;
 using System.Collections.Generic;
 
+using Application.Documents.FileToDocument.Interfaces;
+
 using DataAccessLayer.CommonInterfaces;
 using DataAccessLayer.Configuration;
 using DataAccessLayer.Configuration.Interfaces;
@@ -10,8 +12,6 @@ using DataAccessLayer.DatabasesManager.Interfaces;
 using DataAccessLayer.Filters;
 using DataAccessLayer.Filters.Base;
 using DataAccessLayer.Exceptions;
-
-using DocumentsAPI.Features.FileToDocument.Interfaces;
 
 using SharedLibrary.FactoriesManager.Interfaces;
 using SharedLibrary.Loggers.Interfaces;
@@ -22,12 +22,12 @@ using Domain.Logs.Configuration;
 using MongoDB.Bson;
 
 
-namespace DocumentsAPI.Features.FileToDocument.Services
+namespace Application.Documents.FileToDocument
 {
     public class FileToDocumentService : IFileToDocumentService
     {
-        private static readonly string databaseConfigFile = "./configs/mongo_database_config.json";
-        
+        private const string DATABASE_CONFIG_FILE = "./configs/mongo_database_config.json";
+
         #region Databases
         private readonly IDatabaseService<Models.FileToDocument> database;
         #endregion
@@ -46,7 +46,7 @@ namespace DocumentsAPI.Features.FileToDocument.Services
             databaseManager.MongoDBFactory.GetDatabase<Models.FileToDocument>().TryGetTarget(out database);
             
             IConfigurationBuilder configurationBuilder = new MongoConfigurationBuilder(database.Configuration);
-            configurationBuilder.SetConfigurationFilePath(databaseConfigFile).SetUserName().SetPassword()
+            configurationBuilder.SetConfigurationFilePath(DATABASE_CONFIG_FILE).SetUserName().SetPassword()
                 .SetAuthMechanism().SetDatabaseName().SetServerName().SetConnectionString();
             
             logConfiguration = new LogConfiguration(GetType());

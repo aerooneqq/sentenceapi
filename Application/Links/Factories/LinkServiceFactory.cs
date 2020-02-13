@@ -1,12 +1,12 @@
-﻿using DataAccessLayer.DatabasesManager.Interfaces;
+﻿using Application.Links.Interfaces;
+using Application.Links.Services;
 
-using SentenceAPI.Features.Links.Interfaces;
-using SentenceAPI.Features.Links.Services;
+using DataAccessLayer.DatabasesManager.Interfaces;
 
 using SharedLibrary.FactoriesManager.Interfaces;
 
 
-namespace SentenceAPI.Features.Links.Factories
+namespace Application.Links.Factories
 {
     public class LinkServiceFactory : ILinkServiceFactory
     {

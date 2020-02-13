@@ -1,9 +1,11 @@
+using Application.Documents.Documents.Interfaces;
+
 using DataAccessLayer.DatabasesManager.Interfaces;
-using DocumentsAPI.Features.Documents.Interfaces;
-using DocumentsAPI.Features.Documents.Services;
+
 using SharedLibrary.FactoriesManager.Interfaces;
 
-namespace DocumentsAPI.Features.Documents.Factories
+
+namespace Application.Documents.Documents.Factories
 {
     public class DocumentServiceFactory : IDocumentServiceFactory
     {

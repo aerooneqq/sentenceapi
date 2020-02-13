@@ -2,14 +2,14 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 
+using Application.Documents.Documents.Interfaces;
+
 using DataAccessLayer.CommonInterfaces;
 using DataAccessLayer.Configuration;
 using DataAccessLayer.Configuration.Interfaces;
 using DataAccessLayer.DatabasesManager.Interfaces;
 using DataAccessLayer.Exceptions;
 using DataAccessLayer.Filters;
-
-using DocumentsAPI.Features.Documents.Interfaces;
 
 using Domain.Date;
 using Domain.Logs;
@@ -22,7 +22,7 @@ using SharedLibrary.Loggers.Interfaces;
 using MongoDB.Bson;
 
 
-namespace DocumentsAPI.Features.Documents.Services
+namespace Application.Documents.Documents
 {
     public class DocumentService : IDocumentService
     {

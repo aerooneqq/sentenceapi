@@ -5,9 +5,9 @@ using DataAccessLayer.DatabasesManager.Interfaces;
 using Domain.KernelInterfaces;
 
 
-namespace SentenceAPI.Features.UserPhoto.Interfaces
+namespace Application.UserPhoto.Interfaces
 {
-    interface IUserPhotoServiceFactory : IServiceFactory
+    public interface IUserPhotoServiceFactory : IServiceFactory
     {
         IUserPhotoService GetService(IFactoriesManager factoriesManager, IDatabaseManager databasesManager);
     }

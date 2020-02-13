@@ -1,4 +1,7 @@
 ﻿using System.IO;
+using Application.Documents.Documents.Factories;
+using Application.Documents.DocumentStructure.Factories;
+using Application.Documents.FileToDocument.Factories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
@@ -15,10 +18,6 @@ using DocumentsAPI.ApplicationFeatures.Requests.Factories;
 using DocumentsAPI.Extensions.AppExtensions;
 using DocumentsAPI.Extensions.ServiceCollectionExtensions;
 using DocumentsAPI.Features.Authentication.Factories;
-using DocumentsAPI.Features.FileToDocument.Factories;
-using DocumentsAPI.Features.DocumentStructure.Factories;
-using DocumentsAPI.Features.Documents.Factories;
-
 using Domain.Date;
 
 namespace DocumentsAPI
@@ -63,7 +62,7 @@ namespace DocumentsAPI
             app.UseMvc();
         }
 
-        public void ConfigureCustomServices(IFactoriesManager factoriesManager, IDatabaseManager databaseManager)
+        private static void ConfigureCustomServices(IFactoriesManager factoriesManager, IDatabaseManager databaseManager)
         {
             factoriesManager.Inject(typeof(IFactoriesManager), factoriesManager);
             factoriesManager.Inject(typeof(IDatabaseManager), databaseManager);

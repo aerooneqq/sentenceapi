@@ -1,43 +1,26 @@
-﻿﻿using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using Application.Caching.Interfaces;
 
-namespace SharedLibrary.Caching
+
+namespace Application.Caching
 {
     public class CacheService : ICacheService
     {
-        #region Singleton
-        static CacheService() { }
+        private readonly IDictionary<string, object> storage;
 
-        private static ICacheService cacheService = null;
-        public static ICacheService Service
-        {
-            get
-            {
-                if (cacheService is null)
-                {
-                    cacheService = new CacheService();
-                }   
 
-                return cacheService;
-            }
-        }
-
-        private CacheService()
+        public CacheService()
         {
             storage = new Dictionary<string, object>();
         }
-        #endregion
-
-
-        private IDictionary<string, object> storage;
 
         /// <summary>
         /// Tries to insert the given pair in the cache
         /// </summary>
         /// <exception cref="ArgumentNullException">When key or obj is null</exception>
         /// <returns>
-        /// True if the insertion was successfull, false otherwise
+        /// True if the insertion was successful, false otherwise
         /// </returns>
         public bool TryInsert(string key, object obj)
         {

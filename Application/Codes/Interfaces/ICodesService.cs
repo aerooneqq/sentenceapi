@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 using Domain.Codes;
 
 
-namespace SentenceAPI.Features.Codes.Interfaces
+namespace Application.Codes.Interfaces
 {
-    interface ICodesService
+    public interface ICodesService
     {
         ActivationCode CreateActivationCode(ObjectId userID);
 

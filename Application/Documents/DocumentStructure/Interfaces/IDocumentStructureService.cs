@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 
-using DocumentsAPI.Features.DocumentStructure.Models;
+using Application.Documents.DocumentStructure.Models;
 
 using Domain.DocumentStructureModels;
 using Domain.KernelInterfaces;
@@ -8,7 +8,7 @@ using Domain.KernelInterfaces;
 using MongoDB.Bson;
 
 
-namespace DocumentsAPI.Features.DocumentStructure.Interfaces
+namespace Application.Documents.DocumentStructure.Interfaces
 {
     public interface IDocumentStructureService : IService
     {

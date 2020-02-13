@@ -5,7 +5,7 @@ using Domain.KernelInterfaces;
 using SharedLibrary.FactoriesManager.Interfaces;
 
 
-namespace SentenceAPI.Features.Links.Interfaces
+namespace Application.Links.Interfaces
 {
     public interface ILinkServiceFactory : IServiceFactory
     {

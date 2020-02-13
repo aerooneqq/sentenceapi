@@ -2,10 +2,13 @@
 using System.Threading.Tasks;
 using System.Linq;
 
+using Application.Requests.Interfaces;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 using DataAccessLayer.Exceptions;
+
 using Domain.Logs;
 using Domain.Logs.Configuration;
 using Domain.Workplace.DocumentsDeskState;
@@ -15,7 +18,6 @@ using SharedLibrary.FactoriesManager.Interfaces;
 using SharedLibrary.Extensions;
 using SharedLibrary.Loggers.Interfaces;
 
-using SentenceAPI.ApplicationFeatures.Requests.Interfaces;
 using SentenceAPI.Features.Workplace.DocumentsDeskState.Interfaces;
 
 using MongoDB.Bson;
@@ -23,7 +25,7 @@ using MongoDB.Bson;
 
 namespace SentenceAPI.Features.Workplace.DocumentsDeskState
 {
-    [ApiController, Route("api/[controller]"), Authorize]
+    [ApiController, Route("sentenceapi/[controller]"), Authorize]
     public class DocumentDeskStateController : ControllerBase
     {
         #region Services

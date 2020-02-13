@@ -39,5 +39,6 @@
     <ProjectReference Include="../Domain/Domain.csproj" />
     <ProjectReference Include="../SharedLibrary/SharedLibrary.csproj" />
     <ProjectReference Include="../DataAccessLayer/DataAccessLayer.csproj " />
+    <ProjectReference Include="../Application/Application.csproj" />
   </ItemGroup>
 </Project>

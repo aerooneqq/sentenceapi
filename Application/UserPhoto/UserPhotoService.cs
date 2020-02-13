@@ -7,23 +7,23 @@ using DataAccessLayer.MongoDB.Interfaces;
 using DataAccessLayer.DatabasesManager.Interfaces;
 
 using SharedLibrary.Loggers.Interfaces;
-using SharedLibrary.Caching;
 using SharedLibrary.FactoriesManager.Interfaces;
-
-using SentenceAPI.Extensions;
-using SentenceAPI.Features.Authentication.Interfaces;
-using SentenceAPI.Features.UserPhoto.Interfaces;
-
+  
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+  
+using Application.Caching.Interfaces;
 
 using MongoDB.Bson;
 
 using Domain.Extensions;
 using Domain.Logs;
 using Domain.Logs.Configuration;
-
+  
+using Application.Tokens.Interfaces;
+using Application.UserPhoto.Interfaces;
+using Application.Hash.Interfaces;
 
 namespace SentenceAPI.Features.UserPhoto.Services
 {
@@ -42,7 +42,8 @@ namespace SentenceAPI.Features.UserPhoto.Services
         #region Services
         private readonly ILogger<ApplicationError> exceptionLogger;
         private readonly ITokenService tokenService;
-        private readonly ICacheService cacheService = CacheService.Service;
+        private readonly ICacheService cacheService;
+        private readonly IHashService hashService; 
         #endregion
 
         private readonly LogConfiguration logConfiguration;
@@ -57,6 +58,8 @@ namespace SentenceAPI.Features.UserPhoto.Services
 
             factoriesManager.GetService<ILogger<ApplicationError>>().TryGetTarget(out exceptionLogger);
             factoriesManager.GetService<ITokenService>().TryGetTarget(out tokenService);
+            factoriesManager.GetService<IHashService>().TryGetTarget(out hashService);
+            factoriesManager.GetService<ICacheService>().TryGetTarget(out cacheService);
             
             logConfiguration = new LogConfiguration(this.GetType());
         }
@@ -170,7 +173,7 @@ namespace SentenceAPI.Features.UserPhoto.Services
         {
             try
             {
-                string photoHash = newPhoto.GetMD5Hash();
+                string photoHash = hashService.GetHash(newPhoto);
                 var (checkResult, existingPhotoID) = CheckIfHashInPhotoes(userPhoto, photoHash);
 
                 if (checkResult)
@@ -204,7 +207,7 @@ namespace SentenceAPI.Features.UserPhoto.Services
         private (bool result, ObjectId photoID) CheckIfHashInPhotoes(Domain.UserPhoto.UserPhoto userPhoto,
                                                                      string wantedHash)
         {
-            foreach (var (id, hash) in userPhoto.GridFSPhotoes)
+            foreach ((string id, string hash) in userPhoto.GridFSPhotoes)
             {
                 if (hash == wantedHash)
                 {

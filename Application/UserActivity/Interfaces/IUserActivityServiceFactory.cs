@@ -1,7 +1,7 @@
 ﻿using DataAccessLayer.DatabasesManager.Interfaces;
 using Domain.KernelInterfaces;
 
-namespace SentenceAPI.Features.UserActivity.Interfaces
+namespace Application.UserActivity.Interfaces
 {
     public interface IUserActivityServiceFactory : IServiceFactory
     {

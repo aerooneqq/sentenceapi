@@ -7,7 +7,7 @@ using Domain.KernelInterfaces;
 using Domain.UserFriends;
 
 
-namespace SentenceAPI.Features.UserFriends.Interfaces
+namespace Application.UserFriends.Interfaces
 {
     public interface IUserFriendsService : IService
     {

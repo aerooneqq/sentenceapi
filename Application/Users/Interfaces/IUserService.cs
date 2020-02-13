@@ -5,7 +5,7 @@ using Domain.KernelModels;
 using MongoDB.Bson;
 
 
-namespace SentenceAPI.Features.Users.Interfaces
+namespace Application.Users.Interfaces
 {
     public interface IUserService<T> : IService where T : UniqueEntity
     {

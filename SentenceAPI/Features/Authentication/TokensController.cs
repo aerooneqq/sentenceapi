@@ -3,14 +3,15 @@ using System.Threading.Tasks;
 using System.Net;
 using SentenceAPI.StartupHelperClasses;
 using System.IO;
-
+using Application.Requests.Interfaces;
+using Application.Tokens.Interfaces;
+using Application.UserActivity.Interfaces;
+using Application.Users.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 
-using SentenceAPI.Features.Users.Interfaces;
-using SentenceAPI.Features.Authentication.Interfaces;
 using SentenceAPI.ApplicationFeatures.DefferedExecution;
-using SentenceAPI.Features.UserActivity.Interfaces;
+using SentenceAPI.Features.Authentication.Dto;
 
 using DataAccessLayer.Exceptions;
 using DataAccessLayer.Hashes;
@@ -27,13 +28,12 @@ using SharedLibrary.Loggers.Interfaces;
 
 using MongoDB.Bson;
 
-using SentenceAPI.ApplicationFeatures.Requests.Interfaces;
-using SentenceAPI.Features.Authentication.Dto;
+
 
 
 namespace SentenceAPI.Features.Authentication
 {
-    [Route("api/[controller]")]
+    [Route("sentenceapi/[controller]")]
     [ApiController]
     public class TokensController : Controller
     {

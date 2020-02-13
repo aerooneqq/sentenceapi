@@ -1,7 +1,8 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-
+using Application.Workplace.DocumentStorage.FolderService.Interfaces;
+using Application.Workplace.DocumentStorage.UserMainFoldersService.Interfaces;
 using DataAccessLayer.CommonInterfaces;
 using DataAccessLayer.Configuration;
 using DataAccessLayer.Configuration.Interfaces;
@@ -14,13 +15,12 @@ using Domain.Workplace.DocumentsStorage;
 using MongoDB.Bson;
 
 using SentenceAPI.Features.Workplace.DocumentsStorage.Exceptions;
-using SentenceAPI.Features.Workplace.DocumentsStorage.Interfaces;
 
 using SharedLibrary.FactoriesManager.Interfaces;
 using SharedLibrary.Loggers.Interfaces;
 
 
-namespace SentenceAPI.Features.Workplace.DocumentsStorage.Services
+namespace Application.Workplace.DocumentStorage.UserMainFoldersService
 {
     public class UserMainFoldersService : IUserMainFoldersService
     {
@@ -58,7 +58,6 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage.Services
             try
             {
                 await database.Connect().ConfigureAwait(false);
-                await database.CreateCollection();
 
                 var userMainFolders = (await database.Get(new EqualityFilter<ObjectId>("userID", userID))
                     .ConfigureAwait(false)).FirstOrDefault();
@@ -75,7 +74,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage.Services
                     ConfigureAwait(false);
 
                 ObjectId userMainFoldersID = ObjectId.GenerateNewId();
-                var userMainFolder = new UserMainFolders()
+                UserMainFolders userMainFolder = new UserMainFolders()
                 {
                     ID = userMainFoldersID,
                     LocalFolderID = localFolderID,

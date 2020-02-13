@@ -1,13 +1,12 @@
-﻿using DataAccessLayer.DatabasesManager.Interfaces;
-using SentenceAPI.Features.UserFriends.Interfaces;
-using SentenceAPI.Features.UserFriends.Services;
-using SharedLibrary.FactoriesManager.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Application.UserFriends.Interfaces;
+using Application.UserFriends.Services;
 
-namespace SentenceAPI.Features.UserFriends.Factories
+using DataAccessLayer.DatabasesManager.Interfaces;
+
+using SharedLibrary.FactoriesManager.Interfaces;
+
+
+namespace Application.UserFriends.Factories
 {
     public class UserFriendsServiceFactory : IUserFriendsServiceFactory
     {

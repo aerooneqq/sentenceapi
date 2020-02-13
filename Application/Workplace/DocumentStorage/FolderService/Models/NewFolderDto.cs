@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 using Domain.JsonConverters;
 
 
-namespace SentenceAPI.Features.Workplace.DocumentsStorage.Models
+namespace Application.Workplace.DocumentStorage.FolderService.Models
 {
     /// <summary>
     /// This class is a model for a new folder which will be created.

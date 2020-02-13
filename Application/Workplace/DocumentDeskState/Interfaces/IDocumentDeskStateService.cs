@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 
 using Domain.Workplace.DocumentsDeskState;
 
+
 namespace SentenceAPI.Features.Workplace.DocumentsDeskState.Interfaces
 {
     public interface IDocumentDeskStateService

@@ -1,11 +1,13 @@
-﻿using DataAccessLayer.DatabasesManager.Interfaces;
+﻿using Application.Workplace.DocumentsDeskState.Services;
+
+using DataAccessLayer.DatabasesManager.Interfaces;
 
 using SentenceAPI.Features.Workplace.DocumentsDeskState.Interfaces;
-using SentenceAPI.Features.Workplace.DocumentsDeskState.Services;
+
 using SharedLibrary.FactoriesManager.Interfaces;
 
 
-namespace SentenceAPI.Features.Workplace.DocumentsDeskState.Factories
+namespace Application.Workplace.DocumentsDeskState.Factories
 {
     public class DocumentDeskStateServiceFactory : IDocumentDeskStateServiceFactory
     {

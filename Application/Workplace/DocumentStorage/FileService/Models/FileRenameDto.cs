@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 using Domain.JsonConverters;
 
 
-namespace SentenceAPI.Features.Workplace.DocumentsStorage.Models
+namespace Application.Workplace.DocumentStorage.FileService.Models
 {
     public class FileRenameDto
     {

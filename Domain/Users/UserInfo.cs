@@ -1,22 +1,22 @@
 ﻿using System.Collections.Generic;
 using System;
+using System.Linq;
 using System.Reflection;
-
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-
 using MongoDB.Bson.Serialization.Attributes;
-
 using Domain.KernelModels;
 using Domain.Extensions;
 using Domain.Attributes;
+using MongoDB.Bson;
 
 
 namespace Domain.Users
 {
     public class UserInfo : UniqueEntity
     {
-        #region Authentication 
+        #region Authentication
+
         [BsonElement("login"), JsonProperty("login")]
         public string Login { get; set; }
 
@@ -25,9 +25,11 @@ namespace Domain.Users
 
         [BsonElement("password"), JsonIgnore, Secret]
         public string Password { get; set; }
+
         #endregion
 
         #region User data (name + country + photo)
+
         [BsonElement("name"), JsonProperty("name")]
         public string Name { get; set; }
 
@@ -42,62 +44,91 @@ namespace Domain.Users
 
         [BsonElement("city"), JsonProperty("city")]
         public string City { get; set; }
+
         #endregion
 
         [BsonElement("birthDate"), JsonProperty("birthDate")]
         public DateTime BirthDate { get; set; }
 
         #region Career
+
         [BsonElement("careerStages"), JsonProperty("careerStages")]
         public List<CareerStage> CareerStages { get; set; }
+
         #endregion
 
         #region System properties
+
         [BsonElement("isAccountVerified"), JsonProperty("isAccountVerified")]
         public bool IsAccountVerified { get; set; }
 
         [BsonElement("isAccountDeleted"), JsonProperty("isAccountDeleted")]
         public bool IsAccountDeleted { get; set; }
+
+        #endregion
+
+        #region Roles
+
+        [BsonElement("roles"), JsonProperty("roles")]
+        public IEnumerable<Role> Roles { get; set; }
+
         #endregion
 
         #region Constructors
-        public UserInfo() { }
+
+        public UserInfo()
+        {
+        }
 
         public UserInfo(Dictionary<string, object> propertiesValues)
         {
             foreach ((string propName, object value) in propertiesValues)
             {
-                var newValue = value;
+                object newValue = value;
 
                 if (propName == "careerStages")
                 {
-                    newValue = GetCareerStagesFromJArray((JArray)value);
+                    newValue = GetCareerStagesFromJArray((JArray) value);
                 }
 
                 PropertyInfo property = typeof(UserInfo).GetPropertyFromJsonName(propName);
-                property.SetValue(this, newValue is JArray array ? 
-                    array.ToObject(property.PropertyType) : newValue);
+                property.SetValue(this, newValue is JArray array ? array.ToObject(property.PropertyType) : newValue);
             }
         }
 
         private List<CareerStage> GetCareerStagesFromJArray(JArray jArray)
         {
-            List<CareerStage> careerStages = new List<CareerStage>();
-
-            foreach (JObject jObject in jArray)
-            {
-                careerStages.Add(new CareerStage()
+            return (from JObject jObject in jArray
+                select new CareerStage()
                 {
                     Company = jObject.GetValue("company").ToObject<string>(),
                     Description = jObject.GetValue("description").ToObject<string>(),
                     FinishYear = jObject.GetValue("finishYear").ToObject<int>(),
                     StartYear = jObject.GetValue("startYear").ToObject<int>(),
                     Job = jObject.GetValue("job").ToObject<string>(),
-                });
-            }
-
-            return careerStages;
+                }).ToList();
         }
+
+        #endregion
+
+        #region Static factories
+
+        /// <summary>
+        /// Returns default user: user with given email and password.
+        /// Roles: SentenceAPIConsumer, DocumentsAPIConsumer
+        /// Assuming that email and password already validated
+        /// </summary>
+        public static UserInfo GetDefaultUser(string email, string password) =>
+            new UserInfo()
+            {
+                Roles = new[] { Role.SentenceAPI, Role.DocumentsAPI},
+                Email = email,
+                Password = password,
+                ID = ObjectId.GenerateNewId(),
+                IsAccountVerified = false,
+                IsAccountDeleted = false
+            };
+
         #endregion
     }
 }

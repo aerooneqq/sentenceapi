@@ -5,7 +5,7 @@ using Domain.KernelInterfaces;
 using SharedLibrary.FactoriesManager.Interfaces;
 
 
-namespace DocumentsAPI.Features.FileToDocument.Interfaces
+namespace Application.Documents.FileToDocument.Interfaces
 {
      public interface IFileToDocumentServiceFactory : IServiceFactory
      {

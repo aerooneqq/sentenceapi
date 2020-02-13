@@ -1,4 +1,6 @@
+using System;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,10 +20,23 @@ namespace Application.Requests
         /// <summary>
         /// Initializes the webRequest with the URI from the httpRequest
         /// </summary>
-        public HttpWebRequestBuilder(HttpRequest httpRequest)
+        public HttpWebRequestBuilder(HttpRequest httpRequest, string url)
         {
             this.httpRequest = httpRequest;
-            HttpWebRequest = WebRequest.CreateHttp(httpRequest.Path.ToUriComponent());
+            
+            HttpWebRequest = WebRequest.CreateHttp(url);
+        }
+
+        private static string GetHost(string url)
+        {
+            const int slashCount = 2;
+
+            for (int i = 0; i < slashCount; ++i)
+            {
+                url = url.Remove(0, url.IndexOf("/", StringComparison.Ordinal) + 1);
+            }
+
+            return url.Substring(url.IndexOf("/", StringComparison.Ordinal));
         }
 
         /// <summary>
@@ -33,7 +48,8 @@ namespace Application.Requests
             
             foreach ((string headerKey, StringValues headerValue) in httpRequest.Headers)
             {
-                HttpWebRequest.Headers.Add(headerKey, headerValue);
+                if (headerKey != "Host")
+                    HttpWebRequest.Headers.Add(headerKey, headerValue);
             }
             
             HttpWebRequest.Headers.Add("SentenceAPIRequestId", requestId.ToString());
@@ -46,15 +62,19 @@ namespace Application.Requests
         /// </summary>
         public async Task<HttpWebRequestBuilder> SetContent()
         {
+            //Body for get methods are not supported
+            if (httpRequest.Method == "GET") 
+                return this;
+            
             using StreamReader sr = new StreamReader(httpRequest.Body);
             string httpRequestContent = await sr.ReadToEndAsync();
-            
             byte[] httpRequestByteContent = Encoding.UTF8.GetBytes(httpRequestContent);
-            
-            await (await HttpWebRequest.GetRequestStreamAsync()).WriteAsync(httpRequestByteContent);
 
             HttpWebRequest.ContentLength = httpRequestContent.Length;
             HttpWebRequest.ContentType = httpRequest.ContentType;
+
+            await (await HttpWebRequest.GetRequestStreamAsync()).WriteAsync(httpRequestByteContent, 
+                0, httpRequestByteContent.Length);
 
             return this;
         }

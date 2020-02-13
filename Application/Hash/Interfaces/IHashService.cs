@@ -1,7 +1,9 @@
+using Domain.KernelInterfaces;
+
 namespace Application.Hash.Interfaces
 {
-    public interface IHashService
+    public interface IHashService : IService
     {
-        
+        string GetHash(byte[] bytes);
     }
 }

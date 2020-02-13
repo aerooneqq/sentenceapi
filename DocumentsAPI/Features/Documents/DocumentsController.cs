@@ -6,7 +6,6 @@ using DataAccessLayer.Exceptions;
 using DocumentsAPI.ApplicationFeatures.Requests.Interfaces;
 using DocumentsAPI.Features.Authentication.Interfaces;
 using DocumentsAPI.Features.Documents.Events;
-using DocumentsAPI.Features.Documents.Interfaces;
 
 using Domain.Logs;
 using Domain.Logs.Configuration;
@@ -23,10 +22,12 @@ using SharedLibrary.Events.Exceptions;
 using SharedLibrary.FactoriesManager.Interfaces;
 using SharedLibrary.Loggers.Interfaces;
 
+using Application.Documents.Documents.Interfaces;
+
 
 namespace DocumentsAPI.Features.Documents
 {
-    [Route("api/[controller]"), Authorize, ApiController]
+    [Route("documentsapi/[controller]"), Authorize, ApiController]
     public class DocumentsController : Controller
     {
         private readonly IFactoriesManager factoriesManager;

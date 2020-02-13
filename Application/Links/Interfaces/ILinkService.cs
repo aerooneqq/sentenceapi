@@ -3,7 +3,7 @@
 using Domain.Users;
 
 
-namespace SentenceAPI.Features.Links.Interfaces
+namespace Application.Links.Interfaces
 {
     public interface ILinkService
     {

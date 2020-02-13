@@ -2,13 +2,13 @@
 
 using System.Collections.Generic;
 using System.Threading.Tasks;
+ using Domain.KernelInterfaces;
+ using Domain.Workplace.DocumentsStorage;
 
-using Domain.Workplace.DocumentsStorage;
 
-
-namespace SentenceAPI.Features.Workplace.DocumentsStorage.Interfaces
+namespace Application.Workplace.DocumentStorage.FileService.Interfaces
 {
-    internal interface IFileService
+    public interface IFileService : IService
     {
         Task<IEnumerable<DocumentFile>> GetFilesAsync(ObjectId userID, ObjectId parentFolderID);
         Task<ObjectId> CreateNewFileAsync(ObjectId userID, ObjectId parentFileID, string fileName);

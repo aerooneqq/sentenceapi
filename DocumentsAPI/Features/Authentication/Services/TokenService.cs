@@ -81,8 +81,8 @@ namespace DocumentsAPI.Features.Authentication.Services
                                                                                         ObjectId parentTokenID,
                                                                                         ObjectId requestID)
         {
-            var currDate = dateService.Now;
-            var jwtToken = new JwtSecurityToken
+            DateTime currDate = dateService.Now;
+            JwtSecurityToken jwtToken = new JwtSecurityToken
                 (
                     AuthOptions.Issuer,
                     AuthOptions.Audience,
@@ -93,7 +93,7 @@ namespace DocumentsAPI.Features.Authentication.Services
                         SecurityAlgorithms.HmacSha256)
                 );
 
-            var encodedToken = new JwtSecurityTokenHandler().WriteToken(jwtToken);
+            string encodedToken = new JwtSecurityTokenHandler().WriteToken(jwtToken);
             return (encodedToken, jwtToken);
         }
 

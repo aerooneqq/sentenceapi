@@ -1,6 +1,11 @@
 ﻿using System;
 using System.Threading.Tasks;
 
+using Application.Requests.Interfaces;
+using Application.UserFeed.Interfaces;
+using Application.UserFeed.Models;
+using Application.Users.Interfaces;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,15 +19,10 @@ using SharedLibrary.ActionResults;
 using SharedLibrary.FactoriesManager.Interfaces;
 using SharedLibrary.Loggers.Interfaces;
 
-using SentenceAPI.ApplicationFeatures.Requests.Interfaces;
-using SentenceAPI.Features.UserFeed.Interfaces;
-using SentenceAPI.Features.UserFeed.Models;
-using SentenceAPI.Features.Users.Interfaces;
-
 
 namespace SentenceAPI.Features.UserFeed
 {
-    [Route("api/[controller]"), Authorize, ApiController]
+    [Route("sentenceapi/[controller]"), Authorize, ApiController]
     public class UserFeedController : Controller
     {
         #region Services

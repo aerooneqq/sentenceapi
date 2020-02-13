@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace DocumentsAPI.Features.DocumentStructure.Exceptions
+namespace Application.Documents.DocumentStructure.Exceptions
 {
     public class ItemNotFoundException : Exception
     {

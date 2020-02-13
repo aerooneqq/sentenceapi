@@ -3,7 +3,7 @@ using Domain.DocumentStructureModels;
 using Newtonsoft.Json;
 
 
-namespace DocumentsAPI.Features.DocumentStructure.Models
+namespace Application.Documents.DocumentStructure.Models
 {
     public class NewInnerItem
     {

@@ -1,16 +1,18 @@
 ﻿﻿﻿using System;
 using System.Threading.Tasks;
 
+using Application.Codes.Interfaces;
+using Application.Email.Interfaces;
+  
 using DataAccessLayer.Exceptions;
+
 using Domain.Codes;
 using Domain.Logs;
 using Domain.Logs.Configuration;
+
 using SharedLibrary.Loggers.Interfaces;
 using SharedLibrary.FactoriesManager.Interfaces;
-
-using SentenceAPI.Features.Codes.Interfaces;
-using SentenceAPI.Features.Email.Interfaces;
-
+  
 using MongoDB.Bson;
 
 using SharedLibrary.Events.Interfaces;

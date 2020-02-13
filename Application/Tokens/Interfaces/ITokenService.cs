@@ -7,7 +7,7 @@ using Domain.Users;
 using Domain.KernelInterfaces;
 
 
-namespace SentenceAPI.Features.Authentication.Interfaces
+namespace Application.Tokens.Interfaces
 {   
     public interface ITokenService : IService
     {
@@ -15,5 +15,6 @@ namespace SentenceAPI.Features.Authentication.Interfaces
         (string encodedToken, JwtSecurityToken securityToken) CreateEncodedToken(UserInfo user);
         Task InsertTokenInDBAsync(JwtToken token);
         string GetTokenClaim(string token, string claimType);
+        JwtSecurityToken DecodeToken(string token);
     }
 }

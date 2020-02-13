@@ -7,7 +7,7 @@ using Domain.JsonConverters;
 using Domain.Users;
 
 
-namespace SentenceAPI.Features.Users.Models
+namespace Application.Users.Models
 {
     public class UserSearchResult
     {

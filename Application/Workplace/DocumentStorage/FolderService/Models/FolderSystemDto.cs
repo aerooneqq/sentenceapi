@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using Domain.Workplace.DocumentsStorage;
 
 
-namespace SentenceAPI.Features.Workplace.DocumentsStorage.Models
+namespace Application.Workplace.DocumentStorage.FolderService.Models
 {
     /// <summary>
     /// Data transfer object which is used to return the the file system.

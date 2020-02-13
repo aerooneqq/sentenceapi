@@ -5,7 +5,7 @@ using Domain.KernelInterfaces;
 using SharedLibrary.FactoriesManager.Interfaces;
 
 
-namespace DocumentsAPI.Features.DocumentStructure.Interfaces
+namespace Application.Documents.DocumentStructure.Interfaces
 {
     public interface IDocumentStructureServiceFactory : IServiceFactory
     {

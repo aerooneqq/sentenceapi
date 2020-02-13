@@ -6,7 +6,7 @@ using Domain.Models.Document;
 using MongoDB.Bson;
 
 
-namespace DocumentsAPI.Features.Documents.Interfaces
+namespace Application.Documents.Documents.Interfaces
 {
     public interface IDocumentService : IService
     {
