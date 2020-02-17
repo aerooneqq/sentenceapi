@@ -1,7 +1,6 @@
-using System; 
+using System;
 using System.Collections.Generic;
 
-using Domain.Date;
 using Domain.KernelModels;
 
 using MongoDB.Bson;
@@ -11,7 +10,7 @@ using Newtonsoft.Json;
 
 
 namespace Domain.DocumentStructureModels
-{ 
+{
     public class DocumentStructureModel : UniqueEntity
     { 
         [BsonElement("lastUpdatedAt"), JsonProperty("lastUpdatedAt")]
@@ -24,13 +23,41 @@ namespace Domain.DocumentStructureModels
         public List<Item> Items { get; set; }
 
 
-        public static DocumentStructureModel GetNewDocumentStructure(DateTime lastUpdatedDate, ObjectId documentID) =>
-            new DocumentStructureModel
+        public static DocumentStructureModel GetNewDocumentStructure(DateTime lastUpdatedDate, ObjectId documentID,
+                                                                     ObjectId userID, string documentName) 
+        {
+            ObjectId documentStructureID = ObjectId.GenerateNewId();
+
+            Item rootItem = new Item() 
             {
-                ID = ObjectId.GenerateNewId(),
+                CreatedAt = lastUpdatedDate,
                 Items = new List<Item>(),
+                ItemStatus = new ItemStatus.ItemStatus()
+                {
+                    ItemType = ItemType.Item,
+                    Accesses = new List<ItemStatus.ItemUserRole>()
+                    {
+                        new ItemStatus.ItemUserRole()
+                        {
+                            Access = ItemStatus.AccessType.CanAccess,
+                            UserID = userID
+                        }
+                    }
+                },
+                Name = documentName,
+                UpdatedAt = lastUpdatedDate
+            };
+
+            return new DocumentStructureModel
+            {
+                ID = documentStructureID,
+                Items = new List<Item>() 
+                {
+                    rootItem
+                },
                 LastUpdatedAt = lastUpdatedDate,
                 ParentDocumentID = documentID
             };
+        }
     }
 }

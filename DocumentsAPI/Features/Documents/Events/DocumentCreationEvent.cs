@@ -27,12 +27,18 @@ namespace DocumentsAPI.Features.Documents.Events
         #endregion
 
         private readonly LogConfiguration logConfiguration;
+        
         private readonly ObjectId documentID;
+        private readonly string documentName;
+        private readonly ObjectId userID;
 
 
-        public DocumentCreationEvent(ObjectId documentID, IFactoriesManager factoriesManager)
+        public DocumentCreationEvent(ObjectId documentID, string documentName, ObjectId userID,
+                                     IFactoriesManager factoriesManager)
         {
             this.documentID = documentID;
+            this.userID = userID;
+            this.documentName = documentName;
 
             factoriesManager.GetService<ILogger<ApplicationError>>().TryGetTarget(out exceptionLogger);
             factoriesManager.GetService<IDocumentStructureService>().TryGetTarget(out documentStructureService);
@@ -45,7 +51,7 @@ namespace DocumentsAPI.Features.Documents.Events
         {
             try
             {
-                await documentStructureService.CreateNewDocumentStructure(documentID);
+                await documentStructureService.CreateNewDocumentStructure(documentID, documentName, userID);
             }
             catch (Exception ex)
             {

@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using DataAccessLayer.Exceptions;
 
 using DocumentsAPI.ApplicationFeatures.Requests.Interfaces;
-using DocumentsAPI.Features.Authentication.Interfaces;
 using DocumentsAPI.Features.Documents.Events;
 
 using Domain.Logs;
@@ -23,6 +22,7 @@ using SharedLibrary.FactoriesManager.Interfaces;
 using SharedLibrary.Loggers.Interfaces;
 
 using Application.Documents.Documents.Interfaces;
+using Application.Tokens.Interfaces;
 
 
 namespace DocumentsAPI.Features.Documents
@@ -61,12 +61,17 @@ namespace DocumentsAPI.Features.Documents
         {
             try
             {
+                if (documentName is null) 
+                {
+                    return new BadSentRequest<string>("Document name must be set");
+                }
+
                 ObjectId userID = requestService.GetUserID(Request);
 
-                ObjectId documentID = await documentService.CreateEmptyDocument(userID, documentName, documentType)
-                    .ConfigureAwait(false);
+                ObjectId documentID = await documentService.CreateEmptyDocument(userID, documentName, documentType).
+                    ConfigureAwait(false);
 
-                await EventManager.Raise(new DocumentCreationEvent(documentID, factoriesManager)).
+                await EventManager.Raise(new DocumentCreationEvent(documentID, documentName, userID, factoriesManager)).
                     ConfigureAwait(false);
 
                 return new Created(documentID.ToString());

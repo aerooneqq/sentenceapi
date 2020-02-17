@@ -22,10 +22,10 @@ using MongoDB.Bson;
 
 using DataAccessLayer.Filters;
 
-using DocumentsAPI.Features.Authentication.Interfaces;
-
 using Domain.Logs;
 using Domain.Logs.Configuration;
+
+using Application.Tokens.Interfaces;
 
 
 namespace DocumentsAPI.ApplicationFeatures.Requests

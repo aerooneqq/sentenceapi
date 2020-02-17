@@ -1,8 +1,10 @@
 using System;
 using System.Threading.Tasks;
+
 using Application.Documents.DocumentStructure.Exceptions;
 using Application.Documents.DocumentStructure.Interfaces;
 using Application.Documents.DocumentStructure.Models;
+
 using DataAccessLayer.Exceptions;
 
 using DocumentsAPI.ApplicationFeatures.Requests.Interfaces;
@@ -39,6 +41,7 @@ namespace DocumentsAPI.Features.DocumentStructure
         public DocumentStructureController(IFactoriesManager factoriesManager)
         { 
             factoriesManager.GetService<ILogger<ApplicationError>>().TryGetTarget(out exceptionLogger);
+
             logConfiguration = new LogConfiguration(GetType());
 
             factoriesManager.GetService<IDocumentStructureService>().TryGetTarget(out documentStructureService);
@@ -47,11 +50,16 @@ namespace DocumentsAPI.Features.DocumentStructure
 
 
         [HttpGet]
-        public async Task<IActionResult> GetDocumentStructure([FromQuery]ObjectId documentID)
+        public async Task<IActionResult> GetDocumentStructure([FromQuery]string documentID)
         { 
             try 
             { 
-                var documentStructure = await documentStructureService.GetDocumentStructureAsync(documentID)
+                if (documentID is null) 
+                    return new BadSentRequest<string>("Document id can not be null");
+
+                ObjectId documentObjectId = ObjectId.Parse(documentID);
+
+                var documentStructure = await documentStructureService.GetDocumentStructureAsync(documentObjectId)
                     .ConfigureAwait(false);
 
                 if (documentStructure is null)
@@ -79,17 +87,13 @@ namespace DocumentsAPI.Features.DocumentStructure
                     .ConfigureAwait(false);
 
                 if (itemUpdateDto is null)
-                {
                     return new BadSentRequest<string>("Update info was sent in a bad format");
-                }
 
                 var documentStructure = await documentStructureService.GetDocumentStructureAsync(
                     itemUpdateDto.ParentDocumentStructureID).ConfigureAwait(false);
 
                 if (documentStructure is null)
-                {
                     return new BadSentRequest<string>("Document structure with given ID does not exist");
-                }
 
                 var validationResult = new ItemUpdateDtoValidator(itemUpdateDto, documentStructure).Validate();
                 if (!validationResult.result)

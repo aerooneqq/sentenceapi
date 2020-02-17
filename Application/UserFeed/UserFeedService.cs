@@ -116,8 +116,13 @@ namespace Application.UserFeed
 
             foreach (ObjectId userID in userIDs)
             {
-                ObjectId id = (await userPhotoService.GetPhotoAsync(userID).ConfigureAwait(false)).CurrentPhotoID;
-                userPhotoes.Add(userID, id);
+                var userPhoto = await userPhotoService.GetPhotoAsync(userID).ConfigureAwait(false); 
+                
+                if (userPhoto is null)
+                    continue;
+
+                ObjectId photoId = userPhoto.CurrentPhotoID;
+                userPhotoes.Add(userID, photoId);
             }
 
             return userPhotoes;

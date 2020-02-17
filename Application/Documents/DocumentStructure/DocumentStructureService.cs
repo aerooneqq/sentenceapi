@@ -29,7 +29,7 @@ namespace Application.Documents.DocumentStructure
 {
     public class DocumentStructureService : IDocumentStructureService
     { 
-        private static readonly string databaseConfigFile = "mongo_database_config.json";
+        private static readonly string databaseConfigFile = "./configs/mongo_database_config.json";
         
         #region Databases
         private readonly IDatabaseService<DocumentStructureModel> database;
@@ -64,7 +64,7 @@ namespace Application.Documents.DocumentStructure
             try
             {
                 await database.Connect().ConfigureAwait(false);
-                var documentStructure = (await database.Get(new EqualityFilter<ObjectId>("DocumentID", documentID))
+                var documentStructure = (await database.Get(new EqualityFilter<ObjectId>("parentDocumentID", documentID))
                     .ConfigureAwait(false)).FirstOrDefault();
 
                 return documentStructure;
@@ -113,10 +113,8 @@ namespace Application.Documents.DocumentStructure
             Item newItem = new Item
             {
                 CreatedAt = dateService.Now,
-                DocumentID = item.DocumentID,
                 ID = ObjectId.GenerateNewId(),
                 Items = new List<Item>(),
-                ItemType = newInnerItem.ItemType,
                 Name = newInnerItem.Name,
                 UpdatedAt = dateService.Now
             };
@@ -160,12 +158,12 @@ namespace Application.Documents.DocumentStructure
             }
         }
 
-        public async Task<ObjectId> CreateNewDocumentStructure(ObjectId documentID)
+        public async Task<ObjectId> CreateNewDocumentStructure(ObjectId documentID, string documentName, ObjectId userID)
         {
             try
             {
                 DocumentStructureModel documentStructure = DocumentStructureModel.
-                    GetNewDocumentStructure(dateService.Now, documentID);
+                    GetNewDocumentStructure(dateService.Now, documentID, userID, documentName);
 
                 await database.Connect().ConfigureAwait(false);
                 await database.Insert(documentStructure).ConfigureAwait(false);

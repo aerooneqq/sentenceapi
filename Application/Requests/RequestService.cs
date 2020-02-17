@@ -138,9 +138,9 @@ namespace Application.Requests
             {
                 HttpWebRequest request = await GetRequestFrom(requestInfo, requestId, url);
 
-                return (HttpWebResponse)await request.GetResponseAsync();
+                return (HttpWebResponse)request.GetResponse();
             }
-            catch (Exception ex)
+            catch (WebException ex)
             {
                 throw new RequestException("The error occured while sending the request", ex);
             }

@@ -1,7 +1,9 @@
 ﻿using System.IO;
+
 using Application.Documents.Documents.Factories;
 using Application.Documents.DocumentStructure.Factories;
 using Application.Documents.FileToDocument.Factories;
+
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,8 +19,10 @@ using DocumentsAPI.ApplicationFeatures.Loggers.Factories;
 using DocumentsAPI.ApplicationFeatures.Requests.Factories;
 using DocumentsAPI.Extensions.AppExtensions;
 using DocumentsAPI.Extensions.ServiceCollectionExtensions;
-using DocumentsAPI.Features.Authentication.Factories;
+
 using Domain.Date;
+
+using Application.Tokens.Factories;
 
 namespace DocumentsAPI
 {

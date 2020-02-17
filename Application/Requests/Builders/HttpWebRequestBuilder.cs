@@ -1,12 +1,14 @@
 using System;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Primitives;
+
 using MongoDB.Bson;
+
 
 namespace Application.Requests
 {
@@ -45,10 +47,10 @@ namespace Application.Requests
         public HttpWebRequestBuilder SetHeaders(ObjectId requestId)
         {
             HttpWebRequest.Headers = new WebHeaderCollection();
-            
+            HttpWebRequest.Method = httpRequest.Method;
             foreach ((string headerKey, StringValues headerValue) in httpRequest.Headers)
             {
-                if (headerKey != "Host")
+                if (headerKey != "Host" && headerKey != "Method")
                     HttpWebRequest.Headers.Add(headerKey, headerValue);
             }
             

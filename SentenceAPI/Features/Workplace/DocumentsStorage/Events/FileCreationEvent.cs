@@ -31,21 +31,23 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage.Events
             this.userID = userID;
             this.file = file;
 
-            documentsApiUrl = $"{Startup.OtherApis[OtherApis.DocumentsAPI]}/api/fileToDocument?fileID={file.ID}&" +
+            documentsApiUrl = $"{Startup.OtherApis[OtherApis.DocumentsAPI]}/documentsapi/fileToDocument?fileID={file.ID}&" +
                               $"userID={userID}&fileName={file.FileName}&documentType={documentType}";
         }
 
- 
+
         public async Task Handle()
         {
-            HttpWebRequest request = (HttpWebRequest) HttpWebRequest.Create(documentsApiUrl);
-            request.Method = "PUT";
-
-            HttpWebResponse response = (HttpWebResponse) (await request.GetResponseAsync().ConfigureAwait(false));
-
-            if (response.StatusCode == HttpStatusCode.InternalServerError)
+            try
             {
-                throw new DomainEventException("Error occured on the document server");
+                HttpWebRequest request = (HttpWebRequest) HttpWebRequest.Create(documentsApiUrl);
+                request.Method = "PUT";
+
+                HttpWebResponse response = (HttpWebResponse) (await request.GetResponseAsync().ConfigureAwait(false));
+            }
+            catch (WebException) 
+            {
+                throw new DomainEventException("Error occured on the document's API server");
             }
         }
     }

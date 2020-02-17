@@ -3,6 +3,7 @@ using System.IO;
 using Application.Requests.Factories;
 using Application.Responses.Factories;
 using Application.Tokens.Factories;
+using Application.UserActivity.Factories;
 using Application.Users.Factories;
 using AuthorizationServer.ApplicationFeatures.Loggers;
 using AuthorizationServer.Middlewares;
@@ -120,6 +121,7 @@ namespace AuthorizationServer
             factoriesManager.AddFactory(new FactoryInfo(new LoggerFactory(), typeof(LoggerFactory)));
             factoriesManager.AddFactory(new FactoryInfo(new ResponseServiceFactory(), typeof(ResponseServiceFactory)));
             factoriesManager.AddFactory(new FactoryInfo(new RequestServiceFactory(), typeof(RequestServiceFactory)));
+            factoriesManager.AddFactory(new FactoryInfo(new UserActivityServiceFactory(), typeof(UserActivityServiceFactory)));
         }
     }
 }

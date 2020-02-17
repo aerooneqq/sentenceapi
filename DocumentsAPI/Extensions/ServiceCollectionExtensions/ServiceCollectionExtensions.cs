@@ -1,8 +1,10 @@
-using DocumentsAPI.Features.Authentication.Models;
+using Domain.Authentication;
+
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+
 
 namespace DocumentsAPI.Extensions.ServiceCollectionExtensions
 {
@@ -17,13 +19,13 @@ namespace DocumentsAPI.Extensions.ServiceCollectionExtensions
                     options.TokenValidationParameters = new TokenValidationParameters()
                     {
                         ValidateIssuer = true,
-                        ValidIssuer = AuthOptions.Issuer,
+                        ValidIssuer = AuthOptions.ISSUER,
                         ValidateAudience = true,
-                        ValidAudience = AuthOptions.Audience,
+                        ValidAudience = AuthOptions.AUDIENCE,
                         ValidateLifetime = true,
                         LifetimeValidator = AuthOptions.GetLifeTimeValidationDel(),
 
-                        IssuerSigningKey = AuthOptions.GetSecurityKey(),
+                        IssuerSigningKey = AuthOptions.GetSymmetricSecurityKey(),
                         ValidateIssuerSigningKey = true
                     };
                 });

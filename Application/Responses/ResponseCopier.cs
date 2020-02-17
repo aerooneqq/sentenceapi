@@ -25,7 +25,22 @@ namespace Application.Responses
         {
             this.response = response;
 
-            CopyStatusCode();
+            response.OnStarting((state) => 
+            {
+                HttpResponse httpResponse = (HttpResponse)state;
+
+                httpResponse.Headers.Add("Access-Control-Allow-Origin", "*");
+                httpResponse.Headers.Add("Access-Control-Allow-Methods", "*");
+                httpResponse.Headers.Add("Access-Control-Allow-Headers", "*");
+
+                httpResponse.ContentType = webResponse.ContentType;
+                httpResponse.StatusCode = (int)webResponse.StatusCode;
+
+                System.Console.WriteLine(httpResponse.ContentType);
+
+                return Task.CompletedTask;
+            }, response);
+
             await CopyContent();
         }
 

@@ -1,7 +1,9 @@
 using System;
 using System.Threading.Tasks;
+
 using Application.Documents.Documents.Interfaces;
 using Application.Documents.FileToDocument.Interfaces;
+
 using DataAccessLayer.Exceptions;
 using Domain.Logs;
 using Domain.Logs.Configuration;
@@ -15,6 +17,10 @@ using SharedLibrary.Loggers.Interfaces;
 
 using Microsoft.AspNetCore.Mvc;
 
+using SharedLibrary.Events;
+
+using DocumentsAPI.Features.FileToDocument.Events;
+
 
 namespace DocumentsAPI.Features.FileToDocument
 {
@@ -27,6 +33,8 @@ namespace DocumentsAPI.Features.FileToDocument
         private readonly IDocumentService documentService;
         #endregion
 
+        private readonly IFactoriesManager factoriesManager;
+
         private readonly LogConfiguration logConfiguration;
 
 
@@ -36,6 +44,8 @@ namespace DocumentsAPI.Features.FileToDocument
             factoriesManager.GetService<ILogger<ApplicationError>>().TryGetTarget(out exceptionLogger);
             factoriesManager.GetService<IDocumentService>().TryGetTarget(out documentService);
             
+            this.factoriesManager = factoriesManager;
+
             logConfiguration = new LogConfiguration(GetType());
         }
 
@@ -67,8 +77,12 @@ namespace DocumentsAPI.Features.FileToDocument
         {
             try 
             {
+                if (fileID is null || userID is null || fileName is null)
+                    return new BadSentRequest<string>("All parameters must be set");
+
                 ObjectId fileObjectId = ObjectId.Parse(fileID);
                 ObjectId userObjectId = ObjectId.Parse(userID);
+
                 var fileToDocument = await fileToDocumentService.GetFileToDocumentModelAsync(fileObjectId).
                     ConfigureAwait(false);
 
@@ -79,6 +93,9 @@ namespace DocumentsAPI.Features.FileToDocument
 
                 ObjectId documentID = await documentService.CreateEmptyDocument(userObjectId, fileName, documentType);
                 await fileToDocumentService.AssociateFileWithDocumentAsync(fileObjectId, documentID).ConfigureAwait(false);
+
+                await EventManager.Raise(new FileToDocumentAssociated(documentID, userObjectId, 
+                                                                      fileName, factoriesManager));
                 
                 return new Ok();
             }

@@ -27,7 +27,7 @@ namespace SentenceAPI.Features.UserPhoto
     public class UserPhotoController : ControllerBase
     {
         #region Services
-        private ILogger<ApplicationError> exceptionLogger;
+        private  ILogger<ApplicationError> exceptionLogger;
         private IUserPhotoService userPhotoService;
         private IRequestService requestService;
         private ITokenService tokenService;

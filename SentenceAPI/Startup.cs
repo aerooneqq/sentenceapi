@@ -39,7 +39,8 @@ using DataAccessLayer.DatabasesManager;
 using Domain.Date;
 
 using Newtonsoft.Json;
-
+using Application.Hash.Factories;
+using Application.Caching.Factories;
 
 namespace SentenceAPI
 {
@@ -130,6 +131,8 @@ namespace SentenceAPI
             factoriesManager.AddFactory(new FactoryInfo(new UserMainFoldersServiceFactory(), 
                 typeof(UserMainFoldersServiceFactory)));
             factoriesManager.AddFactory(new FactoryInfo(new DateServiceFactory(), typeof(DateServiceFactory)));
+            factoriesManager.AddFactory(new FactoryInfo(new HashServiceFactory(), typeof(HashServiceFactory)));
+            factoriesManager.AddFactory(new FactoryInfo(new CacheServiceFactory(), typeof(CacheServiceFactory)));
         }
 
         private async Task ReadOtherApisConfigFile(string filePath)

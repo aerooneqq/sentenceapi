@@ -14,6 +14,6 @@ namespace Application.Documents.DocumentStructure.Interfaces
     {
         Task<DocumentStructureModel> GetDocumentStructureAsync(ObjectId documentID);
         Task UpdateStructureAsync(DocumentStructureModel documentStructure, ItemUpdateDto itemUpdateDto);
-        Task<ObjectId> CreateNewDocumentStructure(ObjectId documentID);
+        Task<ObjectId> CreateNewDocumentStructure(ObjectId documentID, string documentName, ObjectId userID);
     }
 }

@@ -10,6 +10,6 @@ namespace Domain.DocumentStructureModels.ItemStatus
         public ObjectId UserID { get; set; }
         
         [BsonElement("access"), JsonProperty("access")]
-        public ItemAccess Access { get; set; }
+        public AccessType Access { get; set; }
     }
 }

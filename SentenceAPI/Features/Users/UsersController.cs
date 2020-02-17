@@ -114,8 +114,9 @@ namespace SentenceAPI.Features.Users
             {
                 string token = requestService.GetToken(Request);
 
-                return new OkJson<Dictionary<string, object>>((await userService.GetAsync(token).ConfigureAwait(false))
-                    .ConfigureNewObject(properties.Split(new [] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries)));
+                var user = await userService.GetAsync(token).ConfigureAwait(false);
+
+                return new OkJson<Dictionary<string, object>>(user.ConfigureNewObject(properties.Split(new char[] { ',', ';'})));
             }
             catch (DatabaseException ex)
             {

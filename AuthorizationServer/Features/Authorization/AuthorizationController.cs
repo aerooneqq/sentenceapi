@@ -3,11 +3,13 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Threading.Tasks;
 
 using Application.Tokens.Interfaces;
+using Application.UserActivity.Interfaces;
 using Application.Users.Interfaces;
 
 using DataAccessLayer.Exceptions;
 using DataAccessLayer.Hashes;
 using Domain.Authentication;
+using Domain.Date;
 using Domain.Logs;
 using Domain.Logs.Configuration;
 using Domain.Users;
@@ -27,6 +29,8 @@ namespace AuthorizationServer.Features.Authorization
         private readonly ILogger<ApplicationError> exceptionLogger;
         private readonly IUserService<UserInfo> userService;
         private readonly ITokenService tokenService;
+        private readonly IUserActivityService userActivityService;
+        private readonly IDateService dateService;
 
         private readonly LogConfiguration logConfiguration;
 
@@ -35,6 +39,8 @@ namespace AuthorizationServer.Features.Authorization
             factoriesManager.GetService<ILogger<ApplicationError>>().TryGetTarget(out exceptionLogger);
             factoriesManager.GetService<ITokenService>().TryGetTarget(out tokenService);
             factoriesManager.GetService<IUserService<UserInfo>>().TryGetTarget(out userService);
+            factoriesManager.GetService<IUserActivityService>().TryGetTarget(out userActivityService);
+            factoriesManager.GetService<IDateService>().TryGetTarget(out dateService);
             
             logConfiguration = new LogConfiguration(GetType());
         }
@@ -53,8 +59,13 @@ namespace AuthorizationServer.Features.Authorization
                 }
 
                 (string encodedToken, JwtSecurityToken jwtSecurityToken) = tokenService.CreateEncodedToken(user);
-
+                
                 await tokenService.InsertTokenInDBAsync(new JwtToken(jwtSecurityToken, user)).ConfigureAwait(false);
+                await userActivityService.AddSingleActivityAsync(user.ID, new Domain.UserActivity.SingleUserActivity() 
+                {
+                    ActivityDate = dateService.Now,
+                    Activity = "Logged in"
+                }).ConfigureAwait(false);
 
                 return new OkJson<string>(encodedToken);
             }

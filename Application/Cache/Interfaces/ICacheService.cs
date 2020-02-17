@@ -1,10 +1,8 @@
-﻿﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿﻿using Domain.KernelInterfaces;
 
 namespace Application.Caching.Interfaces
 {
-    public interface ICacheService
+    public interface ICacheService : IService
     {
         bool Contains(string key);
         object GetValue(string key);

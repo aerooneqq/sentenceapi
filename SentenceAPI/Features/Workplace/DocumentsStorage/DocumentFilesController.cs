@@ -69,7 +69,6 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage
                     .ConfigureAwait(false);
                 var file = await fileService.GetFileAsync(createdFileID).ConfigureAwait(false);
 
-
                 await EventManager.Raise(new FileCreationEvent(file, userID, 0)).ConfigureAwait(false);
 
                 return new Ok();

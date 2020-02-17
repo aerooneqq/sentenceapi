@@ -3,10 +3,12 @@ using System.Threading.Tasks;
 using System.Net;
 using SentenceAPI.StartupHelperClasses;
 using System.IO;
+
 using Application.Requests.Interfaces;
 using Application.Tokens.Interfaces;
 using Application.UserActivity.Interfaces;
 using Application.Users.Interfaces;
+
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 
@@ -29,16 +31,12 @@ using SharedLibrary.Loggers.Interfaces;
 using MongoDB.Bson;
 
 
-
-
 namespace SentenceAPI.Features.Authentication
 {
     [Route("sentenceapi/[controller]")]
     [ApiController]
     public class TokensController : Controller
     {
-        private readonly LogConfiguration logConfiguration; 
-
         #region Services
         private readonly IUserService<UserInfo> userService;
         private readonly ITokenService tokenService;
@@ -47,6 +45,8 @@ namespace SentenceAPI.Features.Authentication
         private readonly IRequestService requestService;
         #endregion
 
+        private readonly LogConfiguration logConfiguration; 
+        
 
         #region Constructors
         public TokensController(IFactoriesManager factoriesManager)
