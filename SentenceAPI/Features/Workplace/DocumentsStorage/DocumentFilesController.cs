@@ -23,7 +23,10 @@ using SharedLibrary.Loggers.Interfaces;
 using MongoDB.Bson;
 
 using SentenceAPI.Features.Workplace.DocumentsStorage.Events;
-
+using System.Net;
+using SentenceAPI.StartupHelperClasses;
+using Domain.Models.Document;
+using System.IO;
 
 namespace SentenceAPI.Features.Workplace.DocumentsStorage
 {
@@ -69,7 +72,10 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage
                     .ConfigureAwait(false);
                 var file = await fileService.GetFileAsync(createdFileID).ConfigureAwait(false);
 
-                await EventManager.Raise(new FileCreationEvent(file, userID, 0)).ConfigureAwait(false);
+                file.DocumentID = await SendCreationRequestToDocumentsAPI(createdFileID, userID, 
+                    file.FileName, DocumentType.UserOnly).ConfigureAwait(false);
+
+                await fileService.UpdateAsync(file);
 
                 return new Ok();
             }
@@ -81,6 +87,27 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage
             {
                 exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
                 return new InternalServerError();
+            }
+        }
+
+        private async Task<ObjectId> SendCreationRequestToDocumentsAPI(ObjectId fileID, ObjectId userID, 
+                                                                       string fileName, DocumentType documentType) 
+        {
+            try
+            {
+                var documentsApiUrl = $"{Startup.OtherApis[OtherApis.DocumentsAPI]}/documentsapi/fileToDocument?fileID={fileID}&" +
+                              $"userID={userID}&fileName={fileName}&documentType={documentType}";
+
+                HttpWebRequest request = (HttpWebRequest) HttpWebRequest.Create(documentsApiUrl);
+                request.Method = "PUT";
+
+                HttpWebResponse response = (HttpWebResponse) (await request.GetResponseAsync().ConfigureAwait(false));
+
+                return ObjectId.Parse(await new StreamReader(response.GetResponseStream()).ReadToEndAsync());
+            }
+            catch (WebException) 
+            {
+                throw new DatabaseException("Error occured while creating the document for file");
             }
         }
 
