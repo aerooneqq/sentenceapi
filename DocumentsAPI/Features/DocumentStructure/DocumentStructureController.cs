@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Application.Documents.DocumentStructure.Exceptions;
 using Application.Documents.DocumentStructure.Interfaces;
 using Application.Documents.DocumentStructure.Models;
-
+using Application.Tokens.Interfaces;
 using DataAccessLayer.Exceptions;
 
 using DocumentsAPI.ApplicationFeatures.Requests.Interfaces;
@@ -33,6 +33,7 @@ namespace DocumentsAPI.Features.DocumentStructure
         private readonly ILogger<ApplicationError> exceptionLogger;
         private readonly IDocumentStructureService documentStructureService;
         private readonly IRequestService requestService;
+        private readonly ITokenService tokenService;
         #endregion
 
         private readonly LogConfiguration logConfiguration;
@@ -46,6 +47,7 @@ namespace DocumentsAPI.Features.DocumentStructure
 
             factoriesManager.GetService<IDocumentStructureService>().TryGetTarget(out documentStructureService);
             factoriesManager.GetService<IRequestService>().TryGetTarget(out requestService);
+            factoriesManager.GetService<ITokenService>().TryGetTarget(out tokenService);
         }
 
 
@@ -78,18 +80,20 @@ namespace DocumentsAPI.Features.DocumentStructure
             }
         }
 
+
         [HttpPut]
         public async Task<IActionResult> PutItemInDocumentStructure()
         {
             try 
             {
+                ObjectId userID = ObjectId.Parse(tokenService.GetTokenClaim(requestService.GetToken(Request), "ID"));
                 var itemUpdateDto = await requestService.GetRequestBodyAsync<ItemUpdateDto>(Request)
                     .ConfigureAwait(false);
 
                 if (itemUpdateDto is null)
                     return new BadSentRequest<string>("Update info was sent in a bad format");
 
-                var documentStructure = await documentStructureService.GetDocumentStructureAsync(
+                var documentStructure = await documentStructureService.GetStructureByID(
                     itemUpdateDto.ParentDocumentStructureID).ConfigureAwait(false);
 
                 if (documentStructure is null)
@@ -97,12 +101,12 @@ namespace DocumentsAPI.Features.DocumentStructure
 
                 var validationResult = new ItemUpdateDtoValidator(itemUpdateDto, documentStructure).Validate();
                 if (!validationResult.result)
-                {
+                {   
                     #warning Add logging for validation errors
                     return new BadSentRequest<string>(validationResult.errorMessage);
                 }
 
-                await documentStructureService.UpdateStructureAsync(documentStructure, itemUpdateDto).
+                await documentStructureService.UpdateStructureAsync(documentStructure, itemUpdateDto, userID).
                     ConfigureAwait(false);
 
                 return new Ok();

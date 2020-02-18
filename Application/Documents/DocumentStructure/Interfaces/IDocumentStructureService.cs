@@ -13,7 +13,8 @@ namespace Application.Documents.DocumentStructure.Interfaces
     public interface IDocumentStructureService : IService
     {
         Task<DocumentStructureModel> GetDocumentStructureAsync(ObjectId documentID);
-        Task UpdateStructureAsync(DocumentStructureModel documentStructure, ItemUpdateDto itemUpdateDto);
+        Task UpdateStructureAsync(DocumentStructureModel documentStructure, ItemUpdateDto itemUpdateDto, ObjectId userID);
         Task<ObjectId> CreateNewDocumentStructure(ObjectId documentID, string documentName, ObjectId userID);
+        Task<DocumentStructureModel> GetStructureByID(ObjectId structureID);
     }
 }

@@ -23,7 +23,7 @@ using SharedLibrary.Loggers.Interfaces;
 using SharedLibrary.FactoriesManager.Interfaces;
 
 using MongoDB.Bson;
-
+using Domain.DocumentStructureModels.ItemStatus;
 
 namespace Application.Documents.DocumentStructure
 {
@@ -76,7 +76,25 @@ namespace Application.Documents.DocumentStructure
             }
         }
 
-        public async Task UpdateStructureAsync(DocumentStructureModel documentStructure, ItemUpdateDto itemUpdateDto)
+        public async Task<DocumentStructureModel> GetStructureByID(ObjectId structureID) 
+        { 
+            try
+            {
+                await database.Connect().ConfigureAwait(false);
+                var documentStructure = (await database.Get(new EqualityFilter<ObjectId>("_id", structureID))
+                    .ConfigureAwait(false)).FirstOrDefault();
+
+                return documentStructure;
+            }
+            catch (Exception ex)
+            {
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
+                throw new DatabaseException("The error occured while getting document structure.", ex);
+            }
+        }
+
+        public async Task UpdateStructureAsync(DocumentStructureModel documentStructure, ItemUpdateDto itemUpdateDto,
+                                               ObjectId userID)
         {
             try
             {
@@ -89,7 +107,7 @@ namespace Application.Documents.DocumentStructure
 
                 if (itemUpdateDto.NewInnerItem is {})
                 {
-                    InsertNewItemInItem(itemToUpdate, itemUpdateDto.NewInnerItem);
+                    InsertNewItemInItem(itemToUpdate, itemUpdateDto.NewInnerItem, userID);
                 }
 
                 if (itemUpdateDto.NewName is {} && itemUpdateDto.NewName.Length > 0)
@@ -108,7 +126,7 @@ namespace Application.Documents.DocumentStructure
             }
         }
 
-        private void InsertNewItemInItem(Item item, NewInnerItem newInnerItem)
+        private void InsertNewItemInItem(Item item, NewInnerItem newInnerItem, ObjectId userID)
         {
             Item newItem = new Item
             {
@@ -116,7 +134,18 @@ namespace Application.Documents.DocumentStructure
                 ID = ObjectId.GenerateNewId(),
                 Items = new List<Item>(),
                 Name = newInnerItem.Name,
-                UpdatedAt = dateService.Now
+                UpdatedAt = dateService.Now,
+                ItemStatus = new ItemStatus() 
+                {
+                    Accesses = new List<ItemUserRole>() {
+                        new ItemUserRole()
+                        {
+                            Access = AccessType.CanAccess,
+                            UserID = userID
+                        },
+                    },
+                    ItemType = newInnerItem.ItemType
+                }
             };
 
             item.Items.Insert(newInnerItem.Position, newItem);

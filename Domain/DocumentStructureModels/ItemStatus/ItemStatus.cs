@@ -14,5 +14,8 @@ namespace Domain.DocumentStructureModels.ItemStatus
 
         [BsonElement("accesses"), JsonProperty("accesses")]
         public List<ItemUserRole> Accesses { get; set; }
+
+        [BsonElement("isExpanded"), JsonProperty("isExpanded")]
+        public bool IsExpanded { get; set; }
     }
 }

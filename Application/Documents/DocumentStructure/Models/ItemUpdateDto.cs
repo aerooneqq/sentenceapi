@@ -1,3 +1,5 @@
+using Domain.JsonConverters;
+
 using MongoDB.Bson;
 
 using Newtonsoft.Json;
@@ -7,10 +9,10 @@ namespace Application.Documents.DocumentStructure.Models
 {
     public class ItemUpdateDto
     {
-        [JsonProperty("parentDocumentStructureID")]
+        [JsonProperty("parentDocumentStructureID"), JsonConverter(typeof(ObjectIDJsonConverter))]
         public ObjectId ParentDocumentStructureID { get; set; }
 
-        [JsonProperty("itemID")]
+        [JsonProperty("itemID"), JsonConverter(typeof(ObjectIDJsonConverter))]
         public ObjectId ItemID { get; set; }
 
         [JsonProperty("newName")]

@@ -103,7 +103,8 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage
 
                 HttpWebResponse response = (HttpWebResponse) (await request.GetResponseAsync().ConfigureAwait(false));
 
-                return ObjectId.Parse(await new StreamReader(response.GetResponseStream()).ReadToEndAsync());
+                string content = await new StreamReader(response.GetResponseStream()).ReadToEndAsync();
+                return ObjectId.Parse(content.Substring(1, content.Length - 2));
             }
             catch (WebException) 
             {
