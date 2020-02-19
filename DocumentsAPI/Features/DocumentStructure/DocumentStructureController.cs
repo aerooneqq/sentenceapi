@@ -1,10 +1,13 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Linq;
 
 using Application.Documents.DocumentStructure.Exceptions;
 using Application.Documents.DocumentStructure.Interfaces;
 using Application.Documents.DocumentStructure.Models;
 using Application.Tokens.Interfaces;
+
 using DataAccessLayer.Exceptions;
 
 using DocumentsAPI.ApplicationFeatures.Requests.Interfaces;
@@ -77,6 +80,127 @@ namespace DocumentsAPI.Features.DocumentStructure
             {
                 exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
                 return new InternalServerError();
+            }
+        }
+
+
+        [HttpDelete("item")]
+        public async Task<IActionResult> DeleteItemFromStructure([FromQuery]string documentStructureID,
+                                                                 [FromQuery]string itemToDeleteID) 
+        {
+            try
+            {
+                ObjectId documentObjectID = ObjectId.Parse(documentStructureID);
+                ObjectId itemToDeleteObjectID = ObjectId.Parse(itemToDeleteID);
+
+                var documentStructure = await documentStructureService.GetStructureByID(documentObjectID)
+                    .ConfigureAwait(false);
+
+                if (documentStructure is null)
+                    return new BadSentRequest<string>("Incorrect document ID");
+
+                FindParentItemRecursive(itemToDeleteObjectID, documentStructure.Items, out Item parentItem);
+
+                if (parentItem is null)
+                    return new BadSentRequest<string>("Incorrect item ID");
+
+                DeleteItemFromParentItem(parentItem, itemToDeleteObjectID);
+
+                return new Ok();
+            }
+            catch (DatabaseException ex) 
+            {
+                return new InternalServerError(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
+                return new InternalServerError();
+            }
+        }
+
+        private void DeleteItemFromParentItem(Item parentItem, ObjectId itemToDeleteID) =>
+            parentItem.Items.Remove(parentItem.Items.Find(item => item.ID == itemToDeleteID));
+
+        private void FindParentItemRecursive(ObjectId itemID, IEnumerable<Item> items, out Item searchResult) 
+        {
+            searchResult = null;
+
+            if (items is null)
+                return;
+
+            foreach (Item item in items)
+            {
+                if (item.ID == itemID)
+                {
+                    searchResult = item;
+                    return;
+                }
+
+                FindParentItemRecursive(itemID, item.Items, out searchResult);
+            }
+        }
+
+
+        [HttpPut("item/replacement")]
+        public async Task<IActionResult> MoveOneItemToAnother([FromQuery]string itemToMoveID,
+                                                              [FromQuery]string destinationItemID,
+                                                              [FromQuery]string documentStructureID) 
+        {
+            try
+            {
+                ObjectId itemToMoveObjectID = ObjectId.Parse(itemToMoveID);
+                ObjectId destinationItemObjectID = ObjectId.Parse(destinationItemID);
+                ObjectId documentStructureObjectID = ObjectId.Parse(documentStructureID);
+
+                var documentStructure = await documentStructureService.GetStructureByID(documentStructureObjectID)
+                    .ConfigureAwait(false);
+
+                if (documentStructure is null)
+                    return new BadSentRequest<string>("The structure with such an id does not exist");
+
+                FindParentItemRecursive(itemToMoveObjectID, documentStructure.Items, out Item parentItem);
+                FindItemRecursive(destinationItemObjectID, documentStructure.Items, out Item destinationItem);
+
+                if (parentItem is null || destinationItem is null)
+                    return new BadSentRequest<string>("Incorrect item selection");
+
+                documentStructureService.MoveItemToDestination(documentStructure, parentItem, itemToMoveObjectID, destinationItem);
+
+                return new Ok();
+            }
+            catch (FormatException)
+            {
+                return new BadSentRequest<string>("Bad id format");
+            }
+            catch (DatabaseException ex)
+            {
+                return new InternalServerError(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
+                return new InternalServerError();
+            }
+        }
+
+        private void FindItemRecursive(ObjectId itemID, IEnumerable<Item> items, out Item seatchResult)
+        {
+            seatchResult = null;
+
+            if (items is null)
+                return;
+
+            foreach (Item item in items)
+            {
+                if (item.ID == itemID)
+                {
+                    seatchResult = item;
+                    return;
+                }
+
+                if (seatchResult is null)
+                    FindItemRecursive(itemID, item.Items, out seatchResult);
             }
         }
 

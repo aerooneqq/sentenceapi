@@ -187,6 +187,27 @@ namespace Application.Documents.DocumentStructure
             }
         }
 
+        public async Task UpdateDocumentStructureAsync(DocumentStructureModel documentStructure)
+        {
+            try
+            {
+                await database.Update(documentStructure).ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
+                throw new DatabaseException("Error ocured while updating the document");
+            }
+        }
+
+        public void MoveItemToDestination(DocumentStructureModel documentStructure, Item parentItem, 
+                                                ObjectId itemToMoveID, Item destinationItem)
+        {
+            Item itemToMove = parentItem.Items.First(item => item.ID == itemToMoveID);
+            parentItem.Items.Remove(itemToMove);
+            destinationItem.Items.Add(itemToMove);
+        }
+
         public async Task<ObjectId> CreateNewDocumentStructure(ObjectId documentID, string documentName, ObjectId userID)
         {
             try
