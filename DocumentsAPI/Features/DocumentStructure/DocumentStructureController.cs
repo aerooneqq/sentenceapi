@@ -99,12 +99,15 @@ namespace DocumentsAPI.Features.DocumentStructure
                 if (documentStructure is null)
                     return new BadSentRequest<string>("Incorrect document ID");
 
-                FindParentItemRecursive(itemToDeleteObjectID, documentStructure.Items, out Item parentItem);
+                System.Console.WriteLine("asdasd");
+                FindParentItemRecursive(itemToDeleteObjectID, documentStructure.Items[0], out Item parentItem);
 
                 if (parentItem is null)
                     return new BadSentRequest<string>("Incorrect item ID");
 
                 DeleteItemFromParentItem(parentItem, itemToDeleteObjectID);
+
+                await documentStructureService.UpdateDocumentStructureAsync(documentStructure).ConfigureAwait(false);
 
                 return new Ok();
             }
@@ -122,22 +125,23 @@ namespace DocumentsAPI.Features.DocumentStructure
         private void DeleteItemFromParentItem(Item parentItem, ObjectId itemToDeleteID) =>
             parentItem.Items.Remove(parentItem.Items.Find(item => item.ID == itemToDeleteID));
 
-        private void FindParentItemRecursive(ObjectId itemID, IEnumerable<Item> items, out Item searchResult) 
+        private void FindParentItemRecursive(ObjectId itemID, Item parentItem, out Item searchResult) 
         {
             searchResult = null;
 
-            if (items is null)
+            if (parentItem is null)
                 return;
 
-            foreach (Item item in items)
+            foreach (Item item in parentItem.Items)
             {
                 if (item.ID == itemID)
                 {
-                    searchResult = item;
+                    searchResult = parentItem;
                     return;
                 }
 
-                FindParentItemRecursive(itemID, item.Items, out searchResult);
+                if (searchResult is null)
+                    FindParentItemRecursive(itemID, item, out searchResult);
             }
         }
 
@@ -159,7 +163,7 @@ namespace DocumentsAPI.Features.DocumentStructure
                 if (documentStructure is null)
                     return new BadSentRequest<string>("The structure with such an id does not exist");
 
-                FindParentItemRecursive(itemToMoveObjectID, documentStructure.Items, out Item parentItem);
+                FindParentItemRecursive(itemToMoveObjectID, documentStructure.Items[0], out Item parentItem);
                 FindItemRecursive(destinationItemObjectID, documentStructure.Items, out Item destinationItem);
 
                 if (parentItem is null || destinationItem is null)
