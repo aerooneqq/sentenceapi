@@ -48,6 +48,7 @@ namespace Application.Requests
         {
             HttpWebRequest.Headers = new WebHeaderCollection();
             HttpWebRequest.Method = httpRequest.Method;
+
             foreach ((string headerKey, StringValues headerValue) in httpRequest.Headers)
             {
                 if (headerKey != "Host" && headerKey != "Method")
@@ -64,19 +65,18 @@ namespace Application.Requests
         /// </summary>
         public async Task<HttpWebRequestBuilder> SetContent()
         {
-            //Body for get methods are not supported
+            //Body for get methods is not supported
             if (httpRequest.Method == "GET") 
                 return this;
             
             using StreamReader sr = new StreamReader(httpRequest.Body);
             string httpRequestContent = await sr.ReadToEndAsync();
-            byte[] httpRequestByteContent = Encoding.UTF8.GetBytes(httpRequestContent);
 
             HttpWebRequest.ContentLength = httpRequestContent.Length;
             HttpWebRequest.ContentType = httpRequest.ContentType;
 
-            await (await HttpWebRequest.GetRequestStreamAsync()).WriteAsync(httpRequestByteContent, 
-                0, httpRequestByteContent.Length);
+            using StreamWriter sw = new StreamWriter(await HttpWebRequest.GetRequestStreamAsync());
+            await sw.WriteAsync(httpRequestContent);
 
             return this;
         }

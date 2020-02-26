@@ -99,7 +99,7 @@ namespace Application.Workplace.DocumentsDeskState.Services
         {
             try
             {
-                return await GetDeskStateAsync(ObjectId.Parse(tokenService.GetTokenClaim("ID", token))).ConfigureAwait(false);
+                return await GetDeskStateAsync(ObjectId.Parse(tokenService.GetTokenClaim(token, "ID"))).ConfigureAwait(false);
             }
             catch (Exception ex) when (ex.GetType() != typeof(DatabaseException))
             {
@@ -114,7 +114,7 @@ namespace Application.Workplace.DocumentsDeskState.Services
             {
                 await database.Connect().ConfigureAwait(false);
 
-                var getFilter = new EqualityFilter<ObjectId>(typeof(DocumentDeskState).GetBsonPropertyName("ID"), userID);
+                var getFilter = new EqualityFilter<ObjectId>(typeof(DocumentDeskState).GetBsonPropertyName("UserID"), userID);
                 return (await database.Get(getFilter).ConfigureAwait(false)).FirstOrDefault();
             }
             catch (Exception ex)

@@ -1,9 +1,10 @@
 namespace Domain.VersionControl
 {
-    public enum BranchAccessType
+    public enum BranchAccessType : byte
     {
-        Read, 
+        Read = 0, 
         Write,
         ReadWrite,
+        NoAccess,
     }
 }

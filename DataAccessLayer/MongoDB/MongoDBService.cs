@@ -44,9 +44,6 @@ namespace DataAccessLayer.MongoDB
         #endregion
 
         #region Bridges
-        /// <summary>
-        /// 
-        /// </summary>
         public IGridFSService GridFS { get; private set; }
         #endregion
 

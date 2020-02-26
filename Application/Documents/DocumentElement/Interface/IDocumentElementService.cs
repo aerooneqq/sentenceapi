@@ -11,6 +11,6 @@ namespace Application.Documents.DocumentElement.Interface
 {
     public interface IDocumentElementService : IService
     {
-        Task<IEnumerable<DocumentElementDto>> GetDocumentElements(ObjectId parentItemID);
+        Task<IEnumerable<DocumentElementDto>> GetDocumentElementsAsync(ObjectId parentItemID);
     }
 }
