@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-
+using System.Linq;
 using Domain.VersionControl;
 
 using MongoDB.Bson;
@@ -27,13 +27,34 @@ namespace Domain.DocumentElements.Dto
         [JsonProperty("updatedAt")]
         public DateTime UpdatedAt { get; set; }
 
-        [JsonProperty("hint")]
-        public string Hint { get; set; }
-
-        [JsonProperty("name")]
-        public string Name { get; set; }
-
         [JsonProperty("document")]
-        public List<Branch> Branches { get; set; }
+        public List<Branch> Branches { get; private set; }
+
+
+        /// <summary>
+        /// Initializes all 
+        /// </summary>
+        public DocumentElementDto(DocumentElementWrapper wrapper)
+        {
+            ElementID = wrapper.ID;
+            ParentDocumentID = wrapper.ParentDocumentID;
+            Type = wrapper.Type.ToString();
+            CreatedAt = wrapper.CreatedAt;
+            UpdatedAt = wrapper.UpdatedAt;
+            Branches = new List<Branch>();
+        }
+
+        public void SetBranches(IEnumerable<Branch> allBranches, ObjectId userID) 
+        {
+            if (Branches is null)
+                Branches = new List<Branch>();
+
+            foreach (Branch branch in allBranches) {
+                BranchAccess access = branch.Accesses.FirstOrDefault(a => a.UserID == userID);
+
+                if (access is {} && access.AccessType != BranchAccessType.NoAccess)
+                    Branches.Add(branch);
+            }
+        }
     }
 }

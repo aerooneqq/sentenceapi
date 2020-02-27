@@ -34,7 +34,7 @@ namespace SentenceAPI.ApplicationFeatures.Loggers.Factories
             requestLoggers = new List<RequestLogger>();
             emailLoggers = new List<EmailLogger>();
 
-            for (int i = 0; i < 5; ++i)
+            for (int i = 0; i < 1; ++i)
             {
                 exceptionLoggers.Add(new ExceptionLogger(loggersPaths[typeof(ExceptionLogger)], i));
                 responseLoggers.Add(new ResponseLogger(loggersPaths[typeof(ResponseLogger)], i));

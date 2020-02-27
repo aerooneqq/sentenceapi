@@ -13,7 +13,7 @@ using DataAccessLayer.DatabasesManager.Interfaces;
 using DataAccessLayer.Exceptions;
 using DataAccessLayer.Filters;
 using DataAccessLayer.Filters.Base;
-
+using Domain.Date;
 using Domain.DocumentElements;
 using Domain.DocumentElements.Dto;
 using Domain.DocumentElements.Image;
@@ -41,6 +41,7 @@ namespace Application.Documents.DocumentElement
         private readonly IDatabaseService<DocumentElementWrapper> database;
 
         private readonly ILogger<ApplicationError> exceptionLogger;
+        private readonly IDateService dateService;
 
         private readonly LogConfiguration logConfiguration;
 
@@ -48,6 +49,7 @@ namespace Application.Documents.DocumentElement
         public DocumentElementService(IFactoriesManager factoriesManager, IDatabaseManager databaseManager) 
         {
             factoriesManager.GetService<ILogger<ApplicationError>>().TryGetTarget(out exceptionLogger);
+            factoriesManager.GetService<IDateService>().TryGetTarget(out dateService);
 
             databaseManager.MongoDBFactory.GetDatabase<DocumentElementWrapper>().TryGetTarget(out database);
             
@@ -60,20 +62,25 @@ namespace Application.Documents.DocumentElement
             logConfiguration = new LogConfiguration(GetType());
         }
 
-
-        public async Task<IEnumerable<DocumentElementDto>> GetDocumentElementsAsync(ObjectId parentItemID)
+        public async Task<IEnumerable<DocumentElementDto>> GetDocumentElementsAsync(ObjectId parentItemID, ObjectId userID)
         {
             try
             {
-                var elementWrapper = (await database.Get(new EqualityFilter<ObjectId>("parentItemID", parentItemID))
-                    .ConfigureAwait(false)).FirstOrDefault();
+                var elementWrappers = await database.Get(new EqualityFilter<ObjectId>("parentItemID", parentItemID))
+                    .ConfigureAwait(false);
 
-                if (elementWrapper is null)
+                if (elementWrappers is null)
                 {
                     return null;
                 }
 
-                return null;
+                return elementWrappers.Select(w => 
+                {
+                    DocumentElementDto dto = new DocumentElementDto(w);
+                    dto.SetBranches(w.Branches, userID);
+
+                    return dto;
+                });
             }
             catch (Exception ex)
             {
@@ -116,7 +123,7 @@ namespace Application.Documents.DocumentElement
         private FilterBase GetGetDocumenElWrapperByIdFilter(ObjectId id) =>
             new EqualityFilter<ObjectId>(typeof(DocumentElementWrapper).GetBsonPropertyName("ID"), id);
 
-        public async Task UpdateContentInBranchNode(DocumentElementContentUpdateDto updateDto) 
+        public async Task UpdateContentInBranchNodeAsync(DocumentElementContentUpdateDto updateDto) 
         {
             try
             {
@@ -128,7 +135,7 @@ namespace Application.Documents.DocumentElement
                     throw new ArgumentException("There is no document element with such an ID");
 
                 Branch currBranch = documentElement.Branches.FirstOrDefault(b => b.BranchID == updateDto.BranchID);
-
+                #warning add checks to access
                 if (currBranch is null)
                     throw new ArgumentException("Branch with such an id does not exist");
 
@@ -158,7 +165,7 @@ namespace Application.Documents.DocumentElement
                 _ => null
             };
 
-        public async Task DeleteDocumentElement(DocumentElementDeleteDto deleteDto) 
+        public async Task DeleteDocumentElementAsync(DocumentElementDeleteDto deleteDto) 
         {
             try
             {
@@ -178,30 +185,76 @@ namespace Application.Documents.DocumentElement
             }
         }
 
-        public async Task<ObjectId> CreateNewDocumentElement(DocumentElementCreateDto createDto) 
+        public async Task<ObjectId> CreateNewDocumentElementAsync(DocumentElementCreateDto createDto) 
         {
             try
             {
-                ObjectId newDocElementID = ObjectId.GenerateNewId();
-                DocumentElementWrapper documentElement = new DocumentElementWrapper()
-                {
-                    CreatorID = createDto.UserID,
-                    ID = newDocElementID,
-                    ParentDocumentID = createDto.ParentDocumentID,
-                    ParentItemID = createDto.ParentItemID,
-                    Type = createDto.Type,
-                    Branches = new List<Branch>(),
-                };
+                var documentElementWrapper = GetEmptyDocumentWrapper(createDto);
+                await database.Insert(documentElementWrapper).ConfigureAwait(false);
 
-                await database.Insert(documentElement).ConfigureAwait(false);
-
-                return newDocElementID;
+                return documentElementWrapper.ID;
             }
             catch (Exception ex)
             {
                 exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
                 throw new DatabaseException("The error occured while creationg new element");
             }
+        }
+
+        private DocumentElementWrapper GetEmptyDocumentWrapper(DocumentElementCreateDto createDto)
+        {
+            DateTime creationDate = dateService.Now;
+            ObjectId newDocElementID = ObjectId.GenerateNewId();
+            
+            DocumentElementWrapper documentElement = new DocumentElementWrapper()
+            {
+                CreatorID = createDto.UserID,
+                ID = newDocElementID,
+                ParentDocumentID = createDto.ParentDocumentID,
+                ParentItemID = createDto.ParentItemID,
+                Type = createDto.Type,
+                Branches = new List<Branch>() 
+                {
+                    new Branch() 
+                    {
+                        Author = createDto.UserID,
+                        BranchID = ObjectId.GenerateNewId(),
+                        UpdatedAt = creationDate,
+                        BranchName = "New branch",
+                        CreatedAt = creationDate,
+                        Accesses = new List<BranchAccess>() 
+                        {
+                            new BranchAccess()
+                            {
+                                AccessType = BranchAccessType.ReadWrite,
+                                UserID = createDto.UserID
+                            }
+                        },
+                        BranchNodes = new List<BranchNode>()
+                        {
+                            new BranchNode()
+                            {
+                                BranchNodeID = ObjectId.GenerateNewId(),
+                                Comment = string.Empty,
+                                CreatedAt = creationDate,
+                                CreatorID = createDto.UserID,
+                                Title = "New title",
+                                UpdatedAt = creationDate,
+                                DocumentElement = createDto.Type switch
+                                {
+                                    DocumentElementType.Image => new Image(),
+                                    DocumentElementType.NumberedList => new NumberedList(),
+                                    DocumentElementType.Paragraph => new Paragraph(),
+                                    DocumentElementType.Table => new Table(),
+                                    _ => null
+                                }
+                            }
+                        }
+                    }
+                }
+            };
+
+            return documentElement;
         }
     }
 }

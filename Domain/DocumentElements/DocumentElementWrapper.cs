@@ -8,7 +8,7 @@ using Newtonsoft.Json;
 using System.Collections.Generic;
 
 using Domain.KernelModels;
-
+using System;
 
 namespace Domain.DocumentElements
 {
@@ -28,6 +28,12 @@ namespace Domain.DocumentElements
 
         [BsonElement("isDeleted"), JsonProperty("isDeleted")]
         public bool IsDeleted { get; set; }
+
+        [BsonElement("createdAt"), JsonProperty("createdAt")]
+        public DateTime CreatedAt { get; set; }
+        
+        [BsonElement("updatedAt"), JsonProperty("updatedAt")]
+        public DateTime UpdatedAt { get; set; }
 
         /// <summary>
         /// The versions of the document element

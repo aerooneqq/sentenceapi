@@ -15,6 +15,7 @@ namespace SharedLibrary.Loggers
         private readonly Thread logThread; 
         private readonly FileStream logFileStream;
         private readonly StreamWriter logStreamWriter;
+        private readonly AutoResetEvent logThreadResetEvent;
     
 
         public LogThread(string logFilePath, LoggerConfiguration loggerConfiguration)
@@ -25,6 +26,8 @@ namespace SharedLibrary.Loggers
             
             logFileStream = new FileStream(logFilePath, FileMode.Append, FileAccess.Write);
             logStreamWriter = new StreamWriter(logFileStream);
+
+            logThreadResetEvent = new AutoResetEvent(true);
 
             logThread = new Thread(() => Log());
             logThread.Start();
@@ -40,21 +43,22 @@ namespace SharedLibrary.Loggers
         public void QueueLog(Log log)
         {
             logQueue.Enqueue(log);
+            logThreadResetEvent.Set();
         }
 
         private void Log()
         {
             while (true)
             {
-                if (logQueue.Count != 0)
-                {
-                    bool dequeResult = logQueue.TryDequeue(out Log log);
+                bool dequeResult = logQueue.TryDequeue(out Log log);
 
-                    if (dequeResult)
-                    {
-                        LogLogObject(log);
-                    }
+                if (dequeResult)
+                {
+                    LogLogObject(log);
                 }
+
+                if (logQueue.Count == 0)
+                    logThreadResetEvent.WaitOne();
             } 
         }
 

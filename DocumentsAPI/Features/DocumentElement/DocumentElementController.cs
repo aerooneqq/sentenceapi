@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 
 using Application.Documents.DocumentElement.Interface;
-
+using Application.Documents.DocumentElement.Models;
+using Application.Requests.Interfaces;
+using Application.Tokens.Interfaces;
 using DataAccessLayer.Exceptions;
 
 using Domain.DocumentElements.Dto;
@@ -28,6 +30,8 @@ namespace DocumentsAPI.Features.DocumentElement
         #region Services
         private readonly ILogger<ApplicationError> exceptionLogger;
         private readonly IDocumentElementService documentElementService;
+        private readonly ITokenService tokenService;
+        private readonly IRequestService requestService;
         #endregion
 
         private readonly LogConfiguration logConfiguration;
@@ -37,6 +41,8 @@ namespace DocumentsAPI.Features.DocumentElement
         {
             factoriesManager.GetService<ILogger<ApplicationError>>().TryGetTarget(out exceptionLogger);
             factoriesManager.GetService<IDocumentElementService>().TryGetTarget(out documentElementService);
+            factoriesManager.GetService<ITokenService>().TryGetTarget(out tokenService);
+            factoriesManager.GetService<IRequestService>().TryGetTarget(out requestService);
 
             logConfiguration = new LogConfiguration(GetType());
         }
@@ -46,10 +52,11 @@ namespace DocumentsAPI.Features.DocumentElement
         public async Task<IActionResult> GetItemContent([FromQuery]string itemID)
         {
             try
-            {   
+            {
+                ObjectId userID = ObjectId.Parse(tokenService.GetTokenClaim(requestService.GetToken(Request), "ID"));
                 ObjectId itemObjectID = ObjectId.Parse(itemID);
 
-                var itemElements = await documentElementService.GetDocumentElements(itemObjectID).ConfigureAwait(false);
+                var itemElements = await documentElementService.GetDocumentElementsAsync(itemObjectID, userID).ConfigureAwait(false);
 
                 return new OkJson<IEnumerable<DocumentElementDto>>(itemElements);
             }
@@ -68,6 +75,32 @@ namespace DocumentsAPI.Features.DocumentElement
             }
         }
 
+        [HttpPost]
+        public async Task<IActionResult> CreateDocumentElement([FromQuery]string documentID, [FromQuery]string itemID, 
+                                                               [FromQuery]int type) 
+        {
+            try
+            {
+                ObjectId userID = ObjectId.Parse(tokenService.GetTokenClaim(requestService.GetToken(Request), "ID"));
+                ObjectId documentObjectID = ObjectId.Parse(documentID);
+                ObjectId itemObjectID = ObjectId.Parse(itemID);
+
+                DocumentElementCreateDto dto = new DocumentElementCreateDto(documentObjectID, userID, itemObjectID, type);
+                await documentElementService.CreateNewDocumentElementAsync(dto).ConfigureAwait(false);
+
+                return new Ok();
+            }
+            catch (DatabaseException ex) 
+            {
+                return new InternalServerError(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
+                return new InternalServerError();
+            }
+        }
+
         [HttpPut]
         public async Task<IActionResult> UpdateDocumentElement([FromQuery]string documentElementID)
         {
@@ -75,7 +108,7 @@ namespace DocumentsAPI.Features.DocumentElement
             {
                 ObjectId documentElementObjectID = ObjectId.Parse(documentElementID);
 
-                
+                return new Ok();
             }
             catch (FormatException)
             {

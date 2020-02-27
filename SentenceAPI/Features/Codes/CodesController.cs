@@ -29,6 +29,7 @@ namespace SentenceAPI.Features.Codes
         private readonly IUserService<UserInfo> userService;
         private readonly ICodesService codesService;
         private readonly IRequestService requestService;
+
         #endregion
 
         private readonly LogConfiguration logConfiguration;

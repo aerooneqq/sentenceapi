@@ -23,10 +23,12 @@ namespace SentenceAPI.ApplicationFeatures.DefferedExecution
         private static ILogger<ApplicationError> exceptionLogger;
         private static ConcurrentQueue<Action> actions;
         private static LogConfiguration logConfiguration;
+        private static AutoResetEvent resetEvent;
 
         public static void Initialize(IFactoriesManager factoriesManager)
         {
             actions = new ConcurrentQueue<Action>();
+            resetEvent = new AutoResetEvent(true);
             
             factoriesManager.GetService<ILogger<ApplicationError>>().TryGetTarget(out exceptionLogger);
 
@@ -47,6 +49,7 @@ namespace SentenceAPI.ApplicationFeatures.DefferedExecution
             }
 
             actions.Enqueue(task);
+            resetEvent.Set();
         }
 
         /// <summary>
@@ -74,7 +77,7 @@ namespace SentenceAPI.ApplicationFeatures.DefferedExecution
                     }
                     else 
                     {
-                        Thread.Yield();
+                        resetEvent.WaitOne();
                     }
                 }
             }).Start();
