@@ -40,7 +40,7 @@ namespace DocumentsAPI.Features.Documents
         #endregion
 
         private readonly LogConfiguration logConfiguration;
-
+        
 
         public DocumentsController(IFactoriesManager factoriesManager)
         {
