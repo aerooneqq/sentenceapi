@@ -99,7 +99,6 @@ namespace DocumentsAPI.Features.DocumentStructure
                 if (documentStructure is null)
                     return new BadSentRequest<string>("Incorrect document ID");
 
-                System.Console.WriteLine("asdasd");
                 FindParentItemRecursive(itemToDeleteObjectID, documentStructure.Items[0], out Item parentItem);
 
                 if (parentItem is null)

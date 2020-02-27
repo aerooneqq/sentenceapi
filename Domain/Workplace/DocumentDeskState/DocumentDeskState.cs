@@ -26,6 +26,5 @@ namespace Domain.Workplace.DocumentsDeskState
         [BsonElement("openedDocumentID"), JsonProperty("openedDocumentID")]
         [JsonConverter(typeof(ObjectIDJsonConverter))]
         public ObjectId OpenedDocumentID { get; set; }
-
     }
 }

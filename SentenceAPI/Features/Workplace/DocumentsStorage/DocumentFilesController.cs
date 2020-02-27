@@ -16,13 +16,10 @@ using Domain.Validators;
 using Domain.Workplace.DocumentsStorage;
 
 using SharedLibrary.FactoriesManager.Interfaces;
-using SharedLibrary.Events;
 using SharedLibrary.ActionResults;
 using SharedLibrary.Loggers.Interfaces;
 
 using MongoDB.Bson;
-
-using SentenceAPI.Features.Workplace.DocumentsStorage.Events;
 using System.Net;
 using SentenceAPI.StartupHelperClasses;
 using Domain.Models.Document;

@@ -23,11 +23,11 @@ namespace Domain.DocumentElements
         [BsonElement("creatorID"), JsonProperty("creatorID")]
         public ObjectId CreatorID { get; set; }
 
-        [BsonElement("versionsCount"), JsonProperty("versionsCount")]
-        public int VersionsCount { get; set; }
-
         [BsonElement("documentElementType"), JsonProperty("documentElementType")]
         public DocumentElementType Type { get; set; }
+
+        [BsonElement("isDeleted"), JsonProperty("isDeleted")]
+        public bool IsDeleted { get; set; }
 
         /// <summary>
         /// The versions of the document element

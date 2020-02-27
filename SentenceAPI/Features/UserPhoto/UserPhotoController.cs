@@ -61,7 +61,7 @@ namespace SentenceAPI.Features.UserPhoto
                 }
 
                 byte[] photo = await userPhotoService.GetRawPhotoAsync(userPhoto.CurrentPhotoID).ConfigureAwait(false);
-
+                
                 return new OkJson<byte[]>(photo, Encoding.UTF8);
             }
             catch (DatabaseException ex)
