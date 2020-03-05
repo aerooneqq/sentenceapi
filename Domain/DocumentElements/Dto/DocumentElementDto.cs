@@ -27,7 +27,7 @@ namespace Domain.DocumentElements.Dto
         [JsonProperty("updatedAt")]
         public DateTime UpdatedAt { get; set; }
 
-        [JsonProperty("document")]
+        [JsonProperty("branches")]
         public List<Branch> Branches { get; private set; }
 
 

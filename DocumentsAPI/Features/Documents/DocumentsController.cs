@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 
 using DataAccessLayer.Exceptions;
 
-using DocumentsAPI.ApplicationFeatures.Requests.Interfaces;
 using DocumentsAPI.Features.Documents.Events;
 
 using Domain.Logs;
@@ -23,7 +22,7 @@ using SharedLibrary.Loggers.Interfaces;
 
 using Application.Documents.Documents.Interfaces;
 using Application.Tokens.Interfaces;
-
+using Application.Requests.Interfaces;
 
 namespace DocumentsAPI.Features.Documents
 {
@@ -66,7 +65,7 @@ namespace DocumentsAPI.Features.Documents
                     return new BadSentRequest<string>("Document name must be set");
                 }
 
-                ObjectId userID = requestService.GetUserID(Request);
+                ObjectId userID = ObjectId.Parse(tokenService.GetTokenClaim(requestService.GetToken(Request), "ID"));
 
                 ObjectId documentID = await documentService.CreateEmptyDocument(userID, documentName, documentType).
                     ConfigureAwait(false);

@@ -16,13 +16,15 @@ using DataAccessLayer.DatabasesManager.Interfaces;
 using DataAccessLayer.DatabasesManager;
 
 using DocumentsAPI.ApplicationFeatures.Loggers.Factories;
-using DocumentsAPI.ApplicationFeatures.Requests.Factories;
 using DocumentsAPI.Extensions.AppExtensions;
 using DocumentsAPI.Extensions.ServiceCollectionExtensions;
 
 using Domain.Date;
 
 using Application.Tokens.Factories;
+using Application.Documents.DocumentElement.Factories;
+using Application.Requests.Factories;
+using Application.Responses.Factories;
 
 namespace DocumentsAPI
 {
@@ -73,11 +75,13 @@ namespace DocumentsAPI
 
             factoriesManager.AddFactory(new FactoryInfo(new DateServiceFactory(), typeof(DateServiceFactory)));
             factoriesManager.AddFactory(new FactoryInfo(new RequestServiceFactory(), typeof(RequestServiceFactory)));
+            factoriesManager.AddFactory(new FactoryInfo(new ResponseServiceFactory(), typeof(ResponseServiceFactory)));
             factoriesManager.AddFactory(new FactoryInfo(new FileToDocumentServiceFactory(), typeof(FileToDocumentServiceFactory)));
             factoriesManager.AddFactory(new FactoryInfo(new DocumentStructureServiceFactory(), typeof(DocumentStructureServiceFactory)));
             factoriesManager.AddFactory(new FactoryInfo(new DocumentServiceFactory(), typeof(DocumentServiceFactory)));
             factoriesManager.AddFactory(new FactoryInfo(new LoggerFactory(), typeof(LoggerFactory)));
             factoriesManager.AddFactory(new FactoryInfo(new TokenServiceFactory(), typeof(TokenServiceFactory)));
+            factoriesManager.AddFactory(new FactoryInfo(new DocumentElementServiceFactory(), typeof(DocumentElementServiceFactory)));
         }
     }
 }

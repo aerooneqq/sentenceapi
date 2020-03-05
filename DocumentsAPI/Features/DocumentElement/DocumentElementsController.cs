@@ -25,7 +25,7 @@ using SharedLibrary.Loggers.Interfaces;
 namespace DocumentsAPI.Features.DocumentElement
 {
     [Authorize, ApiController, Route("documentsapi/[controller]")]
-    public class DocumentElementController : ControllerBase
+    public class DocumentElementsController : ControllerBase
     {
         #region Services
         private readonly ILogger<ApplicationError> exceptionLogger;
@@ -37,12 +37,12 @@ namespace DocumentsAPI.Features.DocumentElement
         private readonly LogConfiguration logConfiguration;
         
 
-        public DocumentElementController(IFactoriesManager factoriesManager)
+        public DocumentElementsController(IFactoriesManager factoriesManager)
         {
+            factoriesManager.GetService<IRequestService>().TryGetTarget(out requestService);
             factoriesManager.GetService<ILogger<ApplicationError>>().TryGetTarget(out exceptionLogger);
             factoriesManager.GetService<IDocumentElementService>().TryGetTarget(out documentElementService);
             factoriesManager.GetService<ITokenService>().TryGetTarget(out tokenService);
-            factoriesManager.GetService<IRequestService>().TryGetTarget(out requestService);
 
             logConfiguration = new LogConfiguration(GetType());
         }
@@ -88,7 +88,9 @@ namespace DocumentsAPI.Features.DocumentElement
                 DocumentElementCreateDto dto = new DocumentElementCreateDto(documentObjectID, userID, itemObjectID, type);
                 await documentElementService.CreateNewDocumentElementAsync(dto).ConfigureAwait(false);
 
-                return new Ok();
+                var itemElements = await documentElementService.GetDocumentElementsAsync(itemObjectID, userID).ConfigureAwait(false);
+                
+                return new OkJson<IEnumerable<DocumentElementDto>>(itemElements);
             }
             catch (DatabaseException ex) 
             {

@@ -17,7 +17,7 @@ namespace Application.Documents.DocumentElement.Models
         {
             ParentDocumentID = parentDocumentID;
             UserID = userID;
-            ParentItemID = parentDocumentID;
+            ParentItemID = parentItemID;
             Type = (DocumentElementType)type;
             Name = "New element";
         }

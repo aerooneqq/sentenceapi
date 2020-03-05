@@ -57,8 +57,6 @@ namespace Application.Documents.DocumentElement
             configurationBuilder.SetConfigurationFilePath(databaseConfigFile).SetAuthMechanism()
                                 .SetUserName().SetPassword().SetDatabaseName().SetServerName().SetConnectionString();
 
-            database.CreateCollection();
-
             logConfiguration = new LogConfiguration(GetType());
         }
 
@@ -66,6 +64,7 @@ namespace Application.Documents.DocumentElement
         {
             try
             {
+                await database.Connect();
                 var elementWrappers = await database.Get(new EqualityFilter<ObjectId>("parentItemID", parentItemID))
                     .ConfigureAwait(false);
 
@@ -93,6 +92,7 @@ namespace Application.Documents.DocumentElement
         {
             try
             {
+                await database.Connect();
                 if (string.IsNullOrEmpty(renameDto.NewName) || string.IsNullOrWhiteSpace(renameDto.NewName))
                     throw new ArgumentException("New name length must be greater than 0");
                 
@@ -127,6 +127,7 @@ namespace Application.Documents.DocumentElement
         {
             try
             {
+                await database.Connect();
                 var getFilter = GetGetDocumenElWrapperByIdFilter(updateDto.DocumentElementID);
                 
                 DocumentElementWrapper documentElement = (await database.Get(getFilter).ConfigureAwait(false)).FirstOrDefault();
@@ -169,6 +170,7 @@ namespace Application.Documents.DocumentElement
         {
             try
             {
+                await database.Connect();
                 var getFilter = GetGetDocumenElWrapperByIdFilter(deleteDto.DocumentElementID);
                 
                 DocumentElementWrapper documentElement = (await database.Get(getFilter).ConfigureAwait(false)).FirstOrDefault();
@@ -189,6 +191,7 @@ namespace Application.Documents.DocumentElement
         {
             try
             {
+                await database.Connect();
                 var documentElementWrapper = GetEmptyDocumentWrapper(createDto);
                 await database.Insert(documentElementWrapper).ConfigureAwait(false);
 

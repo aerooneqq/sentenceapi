@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.Linq;
 
 using Application.Documents.DocumentStructure.Exceptions;
 using Application.Documents.DocumentStructure.Interfaces;
@@ -10,7 +9,6 @@ using Application.Tokens.Interfaces;
 
 using DataAccessLayer.Exceptions;
 
-using DocumentsAPI.ApplicationFeatures.Requests.Interfaces;
 using DocumentsAPI.Features.DocumentStructure.Validators;
 
 using Domain.DocumentStructureModels;
@@ -25,7 +23,7 @@ using MongoDB.Bson;
 using SharedLibrary.ActionResults;
 using SharedLibrary.FactoriesManager.Interfaces;
 using SharedLibrary.Loggers.Interfaces;
-
+using Application.Requests.Interfaces;
 
 namespace DocumentsAPI.Features.DocumentStructure 
 {
@@ -214,7 +212,7 @@ namespace DocumentsAPI.Features.DocumentStructure
             try 
             {
                 ObjectId userID = ObjectId.Parse(tokenService.GetTokenClaim(requestService.GetToken(Request), "ID"));
-                var itemUpdateDto = await requestService.GetRequestBodyAsync<ItemUpdateDto>(Request)
+                var itemUpdateDto = await requestService.GetRequestBody<ItemUpdateDto>(Request)
                     .ConfigureAwait(false);
 
                 if (itemUpdateDto is null)
