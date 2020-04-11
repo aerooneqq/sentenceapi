@@ -7,7 +7,7 @@ using Application.UserFriends.Interfaces;
 using Application.Workplace.DocumentStorage.UserMainFoldersService.Interfaces;
 using Domain.Codes;
 using Domain.Users;
-
+using SentenceAPI.Features.Workplace.DocumentsDeskState.Interfaces;
 using SharedLibrary.Events.Interfaces;
 using SharedLibrary.FactoriesManager.Interfaces;
 
@@ -26,6 +26,7 @@ namespace SentenceAPI.Features.Users.Events
         private readonly ILinkService linkService;
         private readonly IEmailService emailService;
         private readonly IUserMainFoldersService userMainFoldersService;
+        private readonly IDocumentDeskStateService documentDeskStateService;
         #endregion
 
         private readonly UserInfo user;
@@ -38,6 +39,7 @@ namespace SentenceAPI.Features.Users.Events
             factoriesManager.GetService<IUserFriendsService>().TryGetTarget(out userFriendsService);
             factoriesManager.GetService<ICodesService>().TryGetTarget(out codesService);
             factoriesManager.GetService<IUserMainFoldersService>().TryGetTarget(out userMainFoldersService);
+            factoriesManager.GetService<IDocumentDeskStateService>().TryGetTarget(out documentDeskStateService);
 
             this.user = user;
         }
@@ -51,6 +53,7 @@ namespace SentenceAPI.Features.Users.Events
             await codesService.InsertCodeInDatabaseAsync(activationCode).ConfigureAwait(false);
 
             await userMainFoldersService.CreateNewUserMainFolders(user.ID).ConfigureAwait(false);
+            await documentDeskStateService.CreateDeskStateAsync(user.ID).ConfigureAwait(false);
             
             //await emailService.SendConfirmationEmailAsync(activationCode.Code, user.Email).ConfigureAwait(false);
         }

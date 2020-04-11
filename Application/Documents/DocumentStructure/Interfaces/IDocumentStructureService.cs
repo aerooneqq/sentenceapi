@@ -19,5 +19,7 @@ namespace Application.Documents.DocumentStructure.Interfaces
         Task UpdateDocumentStructureAsync(DocumentStructureModel documentStructure);
         void MoveItemToDestination(DocumentStructureModel documentStructure, Item parentItem, 
                                    ObjectId itemToMoveID, Item destinationItem);
+
+        Task InsertDocumentElementInOrder(ObjectId documentID, ObjectId itemID, ObjectId documentElementID, int index);
     }
 }

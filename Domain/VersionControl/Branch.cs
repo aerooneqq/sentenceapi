@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
-
+using Domain.Date;
+using Domain.DocumentElements;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
@@ -33,5 +34,25 @@ namespace Domain.VersionControl
 
         [BsonElement("branchNodes"), JsonProperty("branchNodes")]
         public List<BranchNode> BranchNodes { get; set; }
+
+
+
+        public static Branch GetNewBranch(string branchName, IDateService dateService, DocumentElementType elementType,
+                                          List<BranchAccess> accesses, ObjectId creatorID)
+        {
+            BranchNode firstNode = BranchNode.GetEmptyNode(elementType, dateService, creatorID);
+
+            return new Branch()
+            {
+                Accesses = accesses,
+                Author = creatorID,
+                BranchID = ObjectId.GenerateNewId(),
+                BranchName = branchName,
+                BranchNodes = new List<BranchNode>() {firstNode},
+                CreatedAt = dateService.Now, 
+                CurrentBranchNodeID = firstNode.BranchNodeID,
+                UpdatedAt = dateService.Now,
+            };
+        }
     }
 }

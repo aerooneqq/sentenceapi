@@ -35,6 +35,13 @@ namespace Domain.DocumentElements
         [BsonElement("updatedAt"), JsonProperty("updatedAt")]
         public DateTime UpdatedAt { get; set; }
 
+        [BsonElement("currentBranchID"), JsonProperty("currentBranchID")]
+        public ObjectId CurrentBranchID { get; set; }
+
+        [BsonElement("currentBranchNodeID"), JsonProperty("currentBranchNodeID")]
+        public ObjectId CurrentBranchNodeID { get; set; }
+        
+
         /// <summary>
         /// The versions of the document element
         /// </summary>

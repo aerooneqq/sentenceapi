@@ -8,7 +8,6 @@ using Application.Requests.Interfaces;
 using Application.Tokens.Interfaces;
 using DataAccessLayer.Exceptions;
 
-using Domain.DocumentElements.Dto;
 using Domain.Logs;
 using Domain.Logs.Configuration;
 
@@ -49,14 +48,16 @@ namespace DocumentsAPI.Features.DocumentElement
 
 
         [HttpGet]
-        public async Task<IActionResult> GetItemContent([FromQuery]string itemID)
+        public async Task<IActionResult> GetItemContent([FromQuery]string documentID, [FromQuery]string itemID)
         {
             try
             {
+                ObjectId documentObjectID = ObjectId.Parse(documentID);
                 ObjectId userID = ObjectId.Parse(tokenService.GetTokenClaim(requestService.GetToken(Request), "ID"));
                 ObjectId itemObjectID = ObjectId.Parse(itemID);
 
-                var itemElements = await documentElementService.GetDocumentElementsAsync(itemObjectID, userID).ConfigureAwait(false);
+                var itemElements = await documentElementService.GetDocumentElementsAsync(documentObjectID,
+                    itemObjectID, userID).ConfigureAwait(false);
 
                 return new OkJson<IEnumerable<DocumentElementDto>>(itemElements);
             }
@@ -75,9 +76,68 @@ namespace DocumentsAPI.Features.DocumentElement
             }
         }
 
+        [HttpGet("element")]
+        public async Task<IActionResult> GetDocumentElement([FromQuery]string documentElementID)
+        {
+            try
+            {
+                ObjectId documentElementObjectID = ObjectId.Parse(documentElementID);
+                ObjectId userID = ObjectId.Parse(tokenService.GetTokenClaim(requestService.GetToken(Request), "ID"));
+
+                var wrapper = await documentElementService.GetDocumentElementAsync(documentElementObjectID, userID)
+                    .ConfigureAwait(false);
+
+                return new OkJson<DocumentElementDto>(wrapper);
+            }
+            catch (FormatException)
+            {
+                return new BadSentRequest<string>("One of query params was not in correct format");
+            }
+            catch (ArgumentException ex)
+            {
+                return new BadSentRequest<string>(ex.Message);
+            }
+            catch (DatabaseException ex)
+            {
+                return new InternalServerError(ex.Message);
+            }
+            catch (Exception ex) 
+            {
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
+                return new InternalServerError();
+            }
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> UpdateElementContent([FromQuery]string elementID, [FromQuery]string branchID,
+                                                              [FromQuery]string nodeID)
+        {
+            try
+            {
+                return new Ok();   
+            }
+            catch (FormatException)
+            {
+                return new BadSentRequest<string>("This id is not in correct format");
+            }
+            catch (ArgumentException ex)
+            {
+                return new BadSentRequest<string>(ex.Message);
+            }
+            catch (DatabaseException ex) 
+            {
+                return new InternalServerError(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
+                return new InternalServerError();
+            }
+        }
+
         [HttpPost]
         public async Task<IActionResult> CreateDocumentElement([FromQuery]string documentID, [FromQuery]string itemID, 
-                                                               [FromQuery]int type) 
+                                                               [FromQuery]int type, [FromQuery]int index) 
         {
             try
             {
@@ -85,14 +145,88 @@ namespace DocumentsAPI.Features.DocumentElement
                 ObjectId documentObjectID = ObjectId.Parse(documentID);
                 ObjectId itemObjectID = ObjectId.Parse(itemID);
 
-                DocumentElementCreateDto dto = new DocumentElementCreateDto(documentObjectID, userID, itemObjectID, type);
+                DocumentElementCreateDto dto = new DocumentElementCreateDto(documentObjectID, userID, itemObjectID, type, index);
                 await documentElementService.CreateNewDocumentElementAsync(dto).ConfigureAwait(false);
 
-                var itemElements = await documentElementService.GetDocumentElementsAsync(itemObjectID, userID).ConfigureAwait(false);
+                var itemElements = await documentElementService.GetDocumentElementsAsync(documentObjectID, 
+                    itemObjectID, userID).ConfigureAwait(false);
                 
                 return new OkJson<IEnumerable<DocumentElementDto>>(itemElements);
             }
+            catch (FormatException)
+            {
+                return new BadSentRequest<string>("This id is not in correct format");
+            }
+            catch (ArgumentException ex)
+            {
+                return new BadSentRequest<string>(ex.Message);
+            }
             catch (DatabaseException ex) 
+            {
+                return new InternalServerError(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
+                return new InternalServerError();
+            }
+        }
+
+        [HttpPost("node")]
+        public async Task<IActionResult> CreateNewNode([FromQuery]string elementID, [FromQuery]string branchID)
+        {
+            try
+            {
+                ObjectId elementObjectID = ObjectId.Parse(elementID);
+                ObjectId branchObjectID = ObjectId.Parse(branchID);
+                ObjectId userID = ObjectId.Parse(tokenService.GetTokenClaim(requestService.GetToken(Request), "ID"));
+
+                var elementDto = await documentElementService.CreateNewNode(elementObjectID, branchObjectID, userID)
+                    .ConfigureAwait(false);
+
+                return new OkJson<DocumentElementDto>(elementDto);
+            }
+            catch (FormatException)
+            {
+                return new BadSentRequest<string>("This id is not in correct format");
+            }
+            catch (ArgumentException ex)
+            {
+                return new BadSentRequest<string>(ex.Message);
+            }
+            catch (DatabaseException ex)
+            {
+                return new InternalServerError(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
+                return new InternalServerError();
+            }
+        }
+
+        [HttpPost("branch")]
+        public async Task<IActionResult> CreateNewBranch([FromQuery]string elementID, [FromQuery]string branchName) 
+        {
+            try
+            {
+                ObjectId elementObjectID = ObjectId.Parse(elementID);
+                ObjectId userID = ObjectId.Parse(tokenService.GetTokenClaim(requestService.GetToken(Request), "ID"));
+
+                var elementDto = await documentElementService.CreateNewBranch(elementObjectID, branchName, userID)
+                    .ConfigureAwait(false);
+
+                return new OkJson<DocumentElementDto>(elementDto);
+            }
+            catch (FormatException)
+            {
+                return new BadSentRequest<string>("This id is not in correct format");
+            }
+            catch (ArgumentException ex)
+            {
+                return new BadSentRequest<string>(ex.Message);
+            }
+            catch (DatabaseException ex)
             {
                 return new InternalServerError(ex.Message);
             }

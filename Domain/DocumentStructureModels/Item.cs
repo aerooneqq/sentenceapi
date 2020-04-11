@@ -28,7 +28,16 @@ namespace Domain.DocumentStructureModels
         [BsonElement("items"), JsonProperty("items")]
         public List<Item> Items { get; set; }
 
+        [BsonElement("elementOrders"), JsonProperty("elementOrder")]
+        public List<ObjectId> ElementsIds { get; set; }
+
         [BsonElement("itemStatus"), JsonProperty("itemStatus")]
         public ItemStatus.ItemStatus ItemStatus { get; set; }
+
+        
+        public Item()
+        {
+            ElementsIds = new List<ObjectId>();
+        }
     }
 }

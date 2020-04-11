@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Domain.DocumentElements;
 using Domain.VersionControl;
 
 using MongoDB.Bson;
@@ -8,7 +9,7 @@ using MongoDB.Bson;
 using Newtonsoft.Json;
 
 
-namespace Domain.DocumentElements.Dto
+namespace Application.Documents.DocumentElement.Models
 {
     public class DocumentElementDto
     {
@@ -28,12 +29,15 @@ namespace Domain.DocumentElements.Dto
         public DateTime UpdatedAt { get; set; }
 
         [JsonProperty("branches")]
-        public List<Branch> Branches { get; private set; }
+        public List<BranchDto> Branches { get; private set; }
+
+        [JsonProperty("currentBranchID")]
+        public ObjectId CurrentBranchID { get; set; }
+
+        [JsonProperty("currentBranchNodeID")]
+        public ObjectId CurrentBranchNodeID { get; set; }
 
 
-        /// <summary>
-        /// Initializes all 
-        /// </summary>
         public DocumentElementDto(DocumentElementWrapper wrapper)
         {
             ElementID = wrapper.ID;
@@ -41,20 +45,22 @@ namespace Domain.DocumentElements.Dto
             Type = wrapper.Type.ToString();
             CreatedAt = wrapper.CreatedAt;
             UpdatedAt = wrapper.UpdatedAt;
-            Branches = new List<Branch>();
+            Branches = new List<BranchDto >();
+            CurrentBranchID = wrapper.CurrentBranchID;
+            CurrentBranchNodeID = wrapper.CurrentBranchNodeID;
         }
+
 
         public void SetBranches(IEnumerable<Branch> allBranches, ObjectId userID) 
         {
             if (Branches is null)
-                Branches = new List<Branch>();
+                Branches = new List<BranchDto>();
 
-            foreach (Branch branch in allBranches) {
+            Branches = allBranches.Where(branch => 
+            {
                 BranchAccess access = branch.Accesses.FirstOrDefault(a => a.UserID == userID);
-
-                if (access is {} && access.AccessType != BranchAccessType.NoAccess)
-                    Branches.Add(branch);
-            }
+                return access is {} && access.AccessType != BranchAccessType.NoAccess;
+            }).Select(branch => new BranchDto(branch)).ToList();
         }
     }
 }

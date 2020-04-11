@@ -11,15 +11,18 @@ namespace Application.Documents.DocumentElement.Models
         public ObjectId ParentItemID { get; set; }
         public DocumentElementType Type { get; set; }
         public string Name { get; set; }
+        public int InsertionIndex { get; set; }
 
 
-        public DocumentElementCreateDto(ObjectId parentDocumentID, ObjectId userID, ObjectId parentItemID, int type)
+        public DocumentElementCreateDto(ObjectId parentDocumentID, ObjectId userID, ObjectId parentItemID, 
+                                        int type, int insertionIndex)
         {
             ParentDocumentID = parentDocumentID;
             UserID = userID;
             ParentItemID = parentItemID;
             Type = (DocumentElementType)type;
             Name = "New element";
+            InsertionIndex = insertionIndex;
         }
     }
 }

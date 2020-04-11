@@ -24,6 +24,7 @@ using SharedLibrary.FactoriesManager.Interfaces;
 
 using MongoDB.Bson;
 using Domain.DocumentStructureModels.ItemStatus;
+using DataAccessLayer.Filters.Base;
 
 namespace Application.Documents.DocumentStructure
 {
@@ -224,6 +225,54 @@ namespace Application.Documents.DocumentStructure
             {
                 exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
                 throw new DatabaseException("The error occured while creating the document structure");
+            }
+        }
+
+        public async Task InsertDocumentElementInOrder(ObjectId documentID, ObjectId itemID, 
+                                                       ObjectId documentElementID, int index)
+        {
+            try
+            {
+                await database.Connect().ConfigureAwait(false);
+
+                FilterBase filter = new EqualityFilter<ObjectId>("parentDocumentID", documentID);
+                var documentStructure = (await database.Get(filter).ConfigureAwait(false)).FirstOrDefault();
+                if (documentStructure is null)
+                {
+                    throw new ArgumentException("No document structure for that document id");
+                }
+
+                FindItemRecursive(documentStructure.Items, itemID, out Item item);
+                if (item is null)
+                {
+                    throw new ArgumentException("No item for that item id");
+                }
+
+                item.ElementsIds.Insert(Math.Max(item.ElementsIds.Count, index + 1), documentElementID);
+                await database.Update(documentStructure).ConfigureAwait(false);
+            }
+            catch (Exception ex) when (ex.GetType() != typeof(ArgumentException))
+            {
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
+                throw new DatabaseException("The error occured while inserting the document element structure");
+            }
+        }
+
+        private void FindItemRecursive(List<Item> items, ObjectId itemID, out Item searchResult)
+        {
+            searchResult = items.Find(item => item.ID == itemID);
+            if (searchResult is {})
+            {
+                return;
+            }
+
+            foreach (Item item in items)
+            {
+                FindItemRecursive(item.Items, itemID, out searchResult);
+                if (searchResult is {})
+                {
+                    return;
+                }
             }
         }
     }

@@ -113,7 +113,7 @@ namespace DataAccessLayer.Configuration
             string password = configuration.Password;
 
             configuration.ConnectionString =
-                $"mongodb+srv://{serverName}:{password}@sentencecluster-fwt4x.mongodb.net/test?retryWrites=true&w=majority";
+                $"mongodb://{serverName}";
 
             return this;
         }

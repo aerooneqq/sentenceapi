@@ -10,5 +10,12 @@ namespace Domain.VersionControl
 
         [BsonElement("accessType")]
         public BranchAccessType AccessType { get; set; }
+
+        
+        public BranchAccess(ObjectId userID, BranchAccessType accessType)
+        {
+            UserID = userID;
+            AccessType = accessType;
+        }
     }
 }
