@@ -136,17 +136,23 @@ namespace Application.Documents.DocumentElement
             {
                 await database.Connect();
                 if (string.IsNullOrEmpty(renameDto.NewName) || string.IsNullOrWhiteSpace(renameDto.NewName))
+                {
                     throw new ArgumentException("New name length must be greater than 0");
-                
-                var getFilter = GetGetDocumenElWrapperByIdFilter(renameDto.DocumentElementID);
+                }
+
+                var getFilter = GetGetDocumentElWrapperByIdFilter(renameDto.DocumentElementID);
 
                 DocumentElementWrapper document = (await database.Get(getFilter).ConfigureAwait(false)).FirstOrDefault();
                 if (document is null)
+                {
                     throw new ArgumentException("There is no document with such an ID");
+                }
 
                 Branch currentBranch = document.Branches.FirstOrDefault(b => b.BranchID == renameDto.BranchID);
                 if (currentBranch is null)
+                {
                     throw new ArgumentException("Branch with such an id does not exist");
+                }
 
                 BranchNode currBranchNode = currentBranch.BranchNodes.FirstOrDefault(bn => 
                     bn.BranchNodeID == currentBranch.CurrentBranchNodeID);
@@ -162,7 +168,7 @@ namespace Application.Documents.DocumentElement
             }
         }
 
-        private FilterBase GetGetDocumenElWrapperByIdFilter(ObjectId id) =>
+        private FilterBase GetGetDocumentElWrapperByIdFilter(ObjectId id) =>
             new EqualityFilter<ObjectId>(typeof(DocumentElementWrapper).GetBsonPropertyName("ID"), id);
 
         public async Task UpdateContentInBranchNodeAsync(DocumentElementContentUpdateDto updateDto) 
@@ -170,7 +176,7 @@ namespace Application.Documents.DocumentElement
             try
             {
                 await database.Connect().ConfigureAwait(false);
-                var getFilter = GetGetDocumenElWrapperByIdFilter(updateDto.DocumentElementID);
+                var getFilter = GetGetDocumentElWrapperByIdFilter(updateDto.DocumentElementID);
                 
                 DocumentElementWrapper documentElement = (await database.Get(getFilter).ConfigureAwait(false)).FirstOrDefault();
 
@@ -208,21 +214,14 @@ namespace Application.Documents.DocumentElement
                 _ => null
             };
 
-        public async Task DeleteDocumentElementAsync(DocumentElementDeleteDto deleteDto) 
+        public async Task DeleteDocumentElementAsync(ObjectId elementID) 
         {
             try
             {
                 await database.Connect().ConfigureAwait(false);
-                var getFilter = GetGetDocumenElWrapperByIdFilter(deleteDto.DocumentElementID);
-                
-                DocumentElementWrapper documentElement = (await database.Get(getFilter).ConfigureAwait(false)).FirstOrDefault();
-
-                if (documentElement is null)
-                    throw new ArgumentException("Document element with such an id does not exist");
-
-                documentElement.IsDeleted = true;
+                await database.Delete(new EqualityFilter<ObjectId>("_id", elementID)).ConfigureAwait(false);
             }
-            catch (Exception ex) when (ex.GetType() != typeof(ArgumentException))
+            catch (Exception ex)
             {
                 exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
                 throw new DatabaseException("The error occured while deleting the element");
@@ -253,9 +252,13 @@ namespace Application.Documents.DocumentElement
         {
             DateTime creationDate = dateService.Now;
             ObjectId newDocElementID = ObjectId.GenerateNewId();
-            ObjectId branchID = ObjectId.GenerateNewId();
-            ObjectId branchNodeID = ObjectId.GenerateNewId();
-            
+            List<Branch> branches = new List<Branch>() 
+            {
+                Branch.GetNewBranch("New branch", dateService, createDto.Type, 
+                    new List<BranchAccess>() { new BranchAccess(createDto.UserID, BranchAccessType.ReadWrite)}, 
+                    createDto.UserID)
+            };
+
             DocumentElementWrapper documentElement = new DocumentElementWrapper()
             {
                 CreatorID = createDto.UserID,
@@ -263,14 +266,9 @@ namespace Application.Documents.DocumentElement
                 ParentDocumentID = createDto.ParentDocumentID,
                 ParentItemID = createDto.ParentItemID,
                 Type = createDto.Type,
-                CurrentBranchID = branchID,
-                CurrentBranchNodeID = branchNodeID,
-                Branches = new List<Branch>() 
-                {
-                    Branch.GetNewBranch("New branch", dateService, createDto.Type, 
-                        new List<BranchAccess>() { new BranchAccess(createDto.UserID, BranchAccessType.ReadWrite)}, 
-                        createDto.UserID)
-                }
+                CurrentBranchID = branches[0].BranchID,
+                CurrentBranchNodeID = branches[0].BranchNodes[0].BranchNodeID,
+                Branches = branches
             };
 
             return documentElement;
@@ -346,72 +344,6 @@ namespace Application.Documents.DocumentElement
             {
                 exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
                 throw new DatabaseException("Error occured while getting the document element");
-            }
-        }
-
-        public async Task<DocumentElementDto> CreateNewNode(ObjectId documentElementID, ObjectId branchID, ObjectId userID) 
-        {
-            try
-            {
-                await database.Connect().ConfigureAwait(false);
-
-                FilterBase getFilter = new EqualityFilter<ObjectId>("_id", documentElementID);
-                var element = (await database.Get(getFilter).ConfigureAwait(false)).FirstOrDefault();
-                if (element is null)
-                {
-                    throw new ArgumentException("No document element was found for id");
-                }
-
-                var branch = element.Branches.Find(b => b.BranchID == branchID);
-                if (branch is null)
-                {
-                    throw new ArgumentException("No branch found for this id");
-                }
-
-                branch.BranchNodes.Add(BranchNode.GetEmptyNode(element.Type, dateService, userID));
-
-                await database.Update(element).ConfigureAwait(false);
-
-                var dto = new DocumentElementDto(element);
-                dto.SetBranches(element.Branches, userID);
-
-                return dto;
-            }
-            catch (Exception ex) when (ex.GetType() != typeof(ArgumentException))
-            {
-                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
-                throw new DatabaseException("Error occurred while creating new node");
-            }
-        }
-
-        public async Task<DocumentElementDto> CreateNewBranch(ObjectId documentElementID, string branchName,
-                                                              ObjectId userID)
-        {
-            try
-            {
-                await database.Connect().ConfigureAwait(false);
-
-                FilterBase getFilter = new EqualityFilter<ObjectId>("_id", documentElementID);
-                var element = (await database.Get(getFilter).ConfigureAwait(false)).FirstOrDefault();
-                if (element is null)
-                {
-                    throw new ArgumentException("No document element was found for id");
-                }
-
-                element.Branches.Add(Branch.GetNewBranch(branchName, dateService, element.Type,
-                    new List<BranchAccess>() { new BranchAccess(userID, BranchAccessType.ReadWrite) }, userID));
-
-                await database.Update(element).ConfigureAwait(false);
-
-                var dto = new DocumentElementDto(element);
-                dto.SetBranches(element.Branches, userID);
-
-                return dto;
-            }
-            catch (Exception ex) when (ex.GetType() != typeof(ArgumentException))
-            {
-                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
-                throw new DatabaseException("Error occurred while creating new branch");
             }
         }
     }

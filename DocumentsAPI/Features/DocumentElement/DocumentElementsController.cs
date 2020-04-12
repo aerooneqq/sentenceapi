@@ -172,79 +172,46 @@ namespace DocumentsAPI.Features.DocumentElement
             }
         }
 
-        [HttpPost("node")]
-        public async Task<IActionResult> CreateNewNode([FromQuery]string elementID, [FromQuery]string branchID)
-        {
-            try
-            {
-                ObjectId elementObjectID = ObjectId.Parse(elementID);
-                ObjectId branchObjectID = ObjectId.Parse(branchID);
-                ObjectId userID = ObjectId.Parse(tokenService.GetTokenClaim(requestService.GetToken(Request), "ID"));
-
-                var elementDto = await documentElementService.CreateNewNode(elementObjectID, branchObjectID, userID)
-                    .ConfigureAwait(false);
-
-                return new OkJson<DocumentElementDto>(elementDto);
-            }
-            catch (FormatException)
-            {
-                return new BadSentRequest<string>("This id is not in correct format");
-            }
-            catch (ArgumentException ex)
-            {
-                return new BadSentRequest<string>(ex.Message);
-            }
-            catch (DatabaseException ex)
-            {
-                return new InternalServerError(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
-                return new InternalServerError();
-            }
-        }
-
-        [HttpPost("branch")]
-        public async Task<IActionResult> CreateNewBranch([FromQuery]string elementID, [FromQuery]string branchName) 
-        {
-            try
-            {
-                ObjectId elementObjectID = ObjectId.Parse(elementID);
-                ObjectId userID = ObjectId.Parse(tokenService.GetTokenClaim(requestService.GetToken(Request), "ID"));
-
-                var elementDto = await documentElementService.CreateNewBranch(elementObjectID, branchName, userID)
-                    .ConfigureAwait(false);
-
-                return new OkJson<DocumentElementDto>(elementDto);
-            }
-            catch (FormatException)
-            {
-                return new BadSentRequest<string>("This id is not in correct format");
-            }
-            catch (ArgumentException ex)
-            {
-                return new BadSentRequest<string>(ex.Message);
-            }
-            catch (DatabaseException ex)
-            {
-                return new InternalServerError(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
-                return new InternalServerError();
-            }
-        }
-
         [HttpPut]
         public async Task<IActionResult> UpdateDocumentElement([FromQuery]string documentElementID)
         {
             try
             {
                 ObjectId documentElementObjectID = ObjectId.Parse(documentElementID);
+                ObjectId userID = ObjectId.Parse(tokenService.GetTokenClaim(requestService.GetToken(Request), "ID"));
+
+                await documentElementService.DeleteDocumentElementAsync(documentElementObjectID).ConfigureAwait(false);
 
                 return new Ok();
+            }
+            catch (FormatException)
+            {
+                return new BadSentRequest<string>("This id is not in correct format");
+            }
+            catch (DatabaseException ex)
+            {
+                return new InternalServerError(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
+                return new InternalServerError();
+            }
+        }
+
+        [HttpDelete]
+        public async Task<IActionResult> DeleteDocumentElement([FromQuery]string documentElementID)
+        {
+            try
+            {
+                ObjectId documentElementObjectID = ObjectId.Parse(documentElementID);
+                await documentElementService.DeleteDocumentElementAsync(documentElementObjectID).ConfigureAwait(false);
+
+                return new Ok();
+            }
+            catch (ArgumentException ex)
+            {
+                return new BadSentRequest<string>(ex.Message);
             }
             catch (FormatException)
             {

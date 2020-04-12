@@ -34,12 +34,13 @@ namespace Domain.VersionControl
         public DocumentElement DocumentElement { get; set; }
 
 
-        public static BranchNode GetEmptyNode(DocumentElementType type, IDateService dateService, ObjectId creatorID)
+        public static BranchNode GetEmptyNode(DocumentElementType type, IDateService dateService, 
+                                              ObjectId creatorID, string nodeName, string comment)
         {
             return new BranchNode()
             {
                 BranchNodeID = ObjectId.GenerateNewId(),
-                Comment = "Enter comment here",
+                Comment = comment,
                 CreatedAt = dateService.Now,
                 UpdatedAt = dateService.Now,
                 CreatorID = creatorID,
@@ -51,7 +52,7 @@ namespace Domain.VersionControl
                     DocumentElementType.Table => new Table(), 
                     _ => null
                 },
-                Title = "New node",
+                Title = nodeName,
             };
         } 
     }

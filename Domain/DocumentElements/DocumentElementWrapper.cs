@@ -47,5 +47,36 @@ namespace Domain.DocumentElements
         /// </summary>
         [BsonElement("branches"), JsonIgnore]
         public List<Branch> Branches { get; set; }
+
+
+
+        public BranchNode FindBranchNode(ObjectId nodeID)
+        {
+            foreach (Branch branch in Branches)
+            {
+                var node = branch.BranchNodes.Find(node => node.BranchNodeID == nodeID);
+                if (node is {})
+                {
+                    return node;
+                }
+            }
+
+            return null;
+        }
+
+        public void DeleteNode(ObjectId nodeID)
+        {
+            foreach (Branch branch in Branches)
+            {
+                var node = branch.BranchNodes.Find(node => node.BranchNodeID == nodeID);
+                if (node is {})
+                {
+                    branch.BranchNodes.Remove(node);
+                    return;
+                }
+            }
+
+            throw new ArgumentException("No node for the given ID");
+        }
     }
 }

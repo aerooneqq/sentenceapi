@@ -9,9 +9,19 @@ namespace Application.Documents.DocumentElement.Factories
 {
     public class DocumentElementServiceFactory : IDocumentElementServiceFactory
     {
-        public IDocumentElementService GetService(IFactoriesManager factoriesManager, IDatabaseManager databaseManager)
+        public IBranchService GetBranchService(IFactoriesManager factoriesManager, IDatabaseManager databaseManager)
+        {
+            return new BranchService(factoriesManager, databaseManager);
+        }
+
+        public IDocumentElementService GetElementService(IFactoriesManager factoriesManager, IDatabaseManager databaseManager)
         {
             return new DocumentElementService(factoriesManager, databaseManager);
+        }
+
+        public IBranchNodeService GetNodeService(IFactoriesManager factoriesManager, IDatabaseManager databaseManager)
+        {
+            return new BranchNodeService(factoriesManager, databaseManager);
         }
     }
 }

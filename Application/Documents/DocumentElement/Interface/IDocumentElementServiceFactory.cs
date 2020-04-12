@@ -9,6 +9,8 @@ namespace Application.Documents.DocumentElement.Interface
 {
     public interface IDocumentElementServiceFactory : IServiceFactory
     {
-        IDocumentElementService GetService(IFactoriesManager factoriesManager, IDatabaseManager databaseManager);
+        IDocumentElementService GetElementService(IFactoriesManager factoriesManager, IDatabaseManager databaseManager);
+        IBranchNodeService GetNodeService(IFactoriesManager factoriesManager, IDatabaseManager databaseManager);
+        IBranchService GetBranchService(IFactoriesManager factoriesManager, IDatabaseManager databaseManager);
     }
 }

@@ -36,11 +36,10 @@ namespace Domain.VersionControl
         public List<BranchNode> BranchNodes { get; set; }
 
 
-
         public static Branch GetNewBranch(string branchName, IDateService dateService, DocumentElementType elementType,
                                           List<BranchAccess> accesses, ObjectId creatorID)
         {
-            BranchNode firstNode = BranchNode.GetEmptyNode(elementType, dateService, creatorID);
+            BranchNode firstNode = BranchNode.GetEmptyNode(elementType, dateService, creatorID, "New node", string.Empty);
 
             return new Branch()
             {
