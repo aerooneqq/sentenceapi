@@ -16,5 +16,11 @@ namespace Domain.DocumentElements
         
         [BsonElement("name"), JsonProperty("name")]
         public string Name { get; set; }
+
+        public DocumentElement()
+        {
+            Name = "Enter name here...";
+            Hint = "Enter hint here...";
+        }
     }
 }

@@ -171,38 +171,6 @@ namespace Application.Documents.DocumentElement
         private FilterBase GetGetDocumentElWrapperByIdFilter(ObjectId id) =>
             new EqualityFilter<ObjectId>(typeof(DocumentElementWrapper).GetBsonPropertyName("ID"), id);
 
-        public async Task UpdateContentInBranchNodeAsync(DocumentElementContentUpdateDto updateDto) 
-        {
-            try
-            {
-                await database.Connect().ConfigureAwait(false);
-                var getFilter = GetGetDocumentElWrapperByIdFilter(updateDto.DocumentElementID);
-                
-                DocumentElementWrapper documentElement = (await database.Get(getFilter).ConfigureAwait(false)).FirstOrDefault();
-
-                if (documentElement is null)
-                    throw new ArgumentException("There is no document element with such an ID");
-
-                Branch currBranch = documentElement.Branches.FirstOrDefault(b => b.BranchID == updateDto.BranchID);
-                #warning add checks to access
-                if (currBranch is null)
-                    throw new ArgumentException("Branch with such an id does not exist");
-
-                BranchNode currBranchNode = currBranch.BranchNodes.FirstOrDefault(bn => bn.BranchNodeID == updateDto.BranchNodeID);
-
-                if (currBranchNode is null)
-                    throw new ArgumentException("Branch node with such an id does not exist");
-
-                currBranchNode.DocumentElement = DeserializeDocumentElement(updateDto.NewContent, documentElement.Type);
-
-                await database.Update(documentElement).ConfigureAwait(false);
-            }
-            catch (Exception ex) when (ex.GetType() != typeof(ArgumentException))
-            {
-                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
-                throw new DatabaseException("The error occured while updating the content of the branch node");
-            }
-        }
 
         private Domain.DocumentElements.DocumentElement DeserializeDocumentElement(string content, DocumentElementType type) =>
             type switch 

@@ -69,14 +69,13 @@ namespace Application.Requests
             if (httpRequest.Method == "GET") 
                 return this;
             
-            using StreamReader sr = new StreamReader(httpRequest.Body);
+            using StreamReader sr = new StreamReader(httpRequest.Body, encoding: Encoding.UTF8);
             string httpRequestContent = await sr.ReadToEndAsync();
-
-            HttpWebRequest.ContentLength = httpRequestContent.Length;
+            byte[] bytes = Encoding.UTF8.GetBytes(httpRequestContent);
+            HttpWebRequest.ContentLength = bytes.Length;
             HttpWebRequest.ContentType = httpRequest.ContentType;
 
-            using StreamWriter sw = new StreamWriter(await HttpWebRequest.GetRequestStreamAsync());
-            await sw.WriteAsync(httpRequestContent);
+            HttpWebRequest.GetRequestStream().Write(bytes, 0, bytes.Length);
 
             return this;
         }

@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -20,16 +19,12 @@ using Domain.DocumentElements.Image;
 using Domain.DocumentElements.NumberedList;
 using Domain.DocumentElements.Paragraph;
 using Domain.DocumentElements.Table;
-using Domain.DocumentStructureModels;
-using Domain.Extensions;
 using Domain.Logs;
 using Domain.Logs.Configuration;
 using Domain.VersionControl;
 
 using MongoDB.Bson;
-
 using Newtonsoft.Json;
-
 using SharedLibrary.FactoriesManager.Interfaces;
 using SharedLibrary.Loggers.Interfaces;
 
@@ -84,7 +79,7 @@ namespace Application.Documents.DocumentElement
                     throw new ArgumentException("No branch found for this id");
                 }
 
-                branch.BranchNodes.Add(BranchNode.GetEmptyNode(element.Type, dateService, userID, nodeName, comment ));
+                branch.BranchNodes.Add(BranchNode.GetEmptyNode(element.Type, dateService, userID, nodeName, comment));
 
                 await database.Update(element).ConfigureAwait(false);
 
@@ -166,5 +161,45 @@ namespace Application.Documents.DocumentElement
                 throw new DatabaseException("Error occurred while creating new node");
             }
         }
+
+        public async Task<DocumentElementDto> UpdateContentAsync(DocumentElementContentUpdateDto dto)
+        {
+            try
+            {
+                await database.Connect().ConfigureAwait(false);
+
+                FilterBase getFilter = new EqualityFilter<ObjectId>("_id", dto.DocumentElementID);
+                var element = (await database.Get(getFilter).ConfigureAwait(false)).FirstOrDefault();
+                if (element is null)
+                {
+                    throw new ArgumentException("No document element was found for id");
+                }
+                
+                BranchNode node = element.FindBranchNode(dto.BranchNodeID);
+
+                Console.WriteLine(dto.NewContent);
+#warning Replace with IDeserailizer 
+                node.DocumentElement = element.Type switch 
+                {
+                    DocumentElementType.Table => JsonConvert.DeserializeObject<Table>(dto.NewContent),
+                    DocumentElementType.Image => JsonConvert.DeserializeObject<Image>(dto.NewContent),
+                    DocumentElementType.Paragraph => JsonConvert.DeserializeObject<Paragraph>(dto.NewContent),
+                    DocumentElementType.NumberedList => JsonConvert.DeserializeObject<NumberedList>(dto.NewContent),
+                    _ => null,
+                };
+
+                await database.Update(element).ConfigureAwait(false);
+
+                var elementDto = new DocumentElementDto(element);
+                elementDto.SetBranches(element.Branches, dto.UserID);
+
+                return elementDto;
+            }
+            catch (Exception ex) when (ex.GetType() != typeof(ArgumentException))
+            {
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
+                throw new DatabaseException("Error occurred while creating new node");
+            } 
+        } 
     }
 }

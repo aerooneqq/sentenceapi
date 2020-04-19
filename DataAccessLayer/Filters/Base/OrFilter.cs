@@ -26,7 +26,7 @@ namespace DataAccessLayer.Filters.Base
         public override FilterDefinition<DataType> ToMongoFilter<DataType>()
         {
             return Builders<DataType>.Filter.Or(firstFilter.ToMongoFilter<DataType>(), 
-                secondFilter.ToMongoFilter<DataType>());
+                                                secondFilter.ToMongoFilter<DataType>());
         }
     }
 }

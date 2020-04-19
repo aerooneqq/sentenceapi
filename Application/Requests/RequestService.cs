@@ -85,7 +85,6 @@ namespace Application.Requests
         public async Task<string> GetRequestBody(HttpRequest request)
         {
             using StreamReader sr = new StreamReader(request.Body, Encoding.UTF8, true, 1024, true);
-
             return await sr.ReadToEndAsync();
         }
 
@@ -137,8 +136,7 @@ namespace Application.Requests
             try
             {
                 HttpWebRequest request = await GetRequestFrom(requestInfo, requestId, url);
-
-                return (HttpWebResponse)request.GetResponse();
+                return (HttpWebResponse)await request.GetResponseAsync();
             }
             catch (WebException ex)
             {
@@ -152,6 +150,5 @@ namespace Application.Requests
             
             return (await builder.SetHeaders(requestID).SetContent()).HttpWebRequest;
         }
-
     }
 }

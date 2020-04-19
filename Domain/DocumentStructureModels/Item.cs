@@ -34,6 +34,9 @@ namespace Domain.DocumentStructureModels
         [BsonElement("itemStatus"), JsonProperty("itemStatus")]
         public ItemStatus.ItemStatus ItemStatus { get; set; }
 
+        [BsonElement("comment"), JsonProperty("comment")]
+        public string Comment { get; set; }
+
         
         public Item()
         {

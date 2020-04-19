@@ -71,7 +71,6 @@ namespace AuthorizationServer.Middlewares
                 }
                 else
                 {
-                    System.Console.WriteLine(destinationUrl);
                     await requestService.RedirectRequest(context, destinationUrl);
                 }
             }

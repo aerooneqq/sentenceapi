@@ -13,7 +13,6 @@ namespace Application.Documents.DocumentElement.Interface
         Task<IEnumerable<DocumentElementDto>> GetDocumentElementsAsync(ObjectId documentID, 
                                                                        ObjectId parentItemID, ObjectId userID);
         Task RenameDocumentElementAsync(DocumentElementRenameDto renameDto);
-        Task UpdateContentInBranchNodeAsync(DocumentElementContentUpdateDto updateDto);
         Task DeleteDocumentElementAsync(ObjectId elementID);
         Task<ObjectId> CreateNewDocumentElementAsync(DocumentElementCreateDto createDto);
         Task ChangeSelectedBranch(ObjectId documentElementID, ObjectId branchID);

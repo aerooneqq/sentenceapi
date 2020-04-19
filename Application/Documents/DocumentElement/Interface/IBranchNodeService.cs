@@ -17,5 +17,6 @@ namespace Application.Documents.DocumentElement.Interface
                                                            ObjectId userID, string newName, string newComment);
 
         Task<DocumentElementDto> DeleteNodeAsync(ObjectId documentElementID, ObjectId branchNodeID, ObjectId userID);
+        Task<DocumentElementDto> UpdateContentAsync(DocumentElementContentUpdateDto dto);
     }
 }

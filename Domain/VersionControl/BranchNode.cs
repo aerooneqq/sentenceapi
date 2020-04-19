@@ -47,9 +47,9 @@ namespace Domain.VersionControl
                 DocumentElement = type switch 
                 {
                     DocumentElementType.Image => new Image(),
-                    DocumentElementType.NumberedList => new NumberedList(),
+                    DocumentElementType.NumberedList => NumberedList.GetDefaultList(),
                     DocumentElementType.Paragraph => new Paragraph(),
-                    DocumentElementType.Table => new Table(), 
+                    DocumentElementType.Table => Table.GetDefaultTable(), 
                     _ => null
                 },
                 Title = nodeName,

@@ -116,6 +116,46 @@ namespace DocumentsAPI.Features.DocumentElement
             }
         }
 
+        [HttpPut("content")]
+        public async Task<IActionResult> UpdateNodeContent([FromQuery]string elementID, [FromQuery]string branchNodeID) 
+        {
+            try
+            {
+                ObjectId elementObjectID = ObjectId.Parse(elementID);
+                ObjectId branchNodeObjectID = ObjectId.Parse(branchNodeID);
+                ObjectId userID = ObjectId.Parse(tokenService.GetTokenClaim(requestService.GetToken(Request), "ID"));
+
+                string requestBody = await requestService.GetRequestBody(Request).ConfigureAwait(false);
+
+                var elementDto = await branchNodeService.UpdateContentAsync(new DocumentElementContentUpdateDto()
+                {
+                    BranchNodeID = branchNodeObjectID,
+                    DocumentElementID = elementObjectID,
+                    NewContent = requestBody,
+                    UserID = userID,
+                });
+
+                return new OkJson<DocumentElementDto>(elementDto);
+            }
+            catch (FormatException)
+            {
+                return new BadSentRequest<string>("This id is not in correct format");
+            }
+            catch (ArgumentException ex)
+            {
+                return new BadSentRequest<string>(ex.Message);
+            }
+            catch (DatabaseException ex)
+            {
+                return new InternalServerError(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
+                return new InternalServerError();
+            }
+        }
+
 
         [HttpDelete]
         public async Task<IActionResult> DeleteNode([FromQuery]string elementID, [FromQuery]string branchNodeID) 
