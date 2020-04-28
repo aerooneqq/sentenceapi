@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 using Application.Requests.Interfaces;
 using Application.Templates;
+using Application.Templates.Interfaces;
 using Application.Tokens.Interfaces;
 
 using DataAccessLayer.Exceptions;
@@ -16,7 +18,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 using MongoDB.Bson;
-
+using Newtonsoft.Json;
 using SharedLibrary.ActionResults;
 using SharedLibrary.FactoriesManager.Interfaces;
 using SharedLibrary.Loggers.Interfaces;
@@ -33,6 +35,7 @@ namespace DocumentsAPI.Features.Templates
         private readonly IRequestService requestService;
         private readonly ITokenService tokenService;
         #endregion
+
 
         private readonly LogConfiguration logConfiguration;
 
@@ -54,7 +57,7 @@ namespace DocumentsAPI.Features.Templates
             try
             {
                 var templates = await templateService.GetPublishedTemplates().ConfigureAwait(false);
-                return new OkJson<IEnumerable<Template>>(templates);
+                return new OkJson<IEnumerable<TemplateDto>>(templates.OrderBy(template => template.DocumentCount));
             }
             catch (ArgumentException ex)
             {
@@ -72,13 +75,70 @@ namespace DocumentsAPI.Features.Templates
         }
 
         [HttpGet("user")]
-        public async Task<IActionResult> GetUserTemplates([FromQuery]string userID)
+        public async Task<IActionResult> GetUserTemplates()
         {
             try
             {
-                ObjectId userObjectID = ObjectId.Parse(userID);
+                ObjectId userObjectID = ObjectId.Parse(tokenService.GetTokenClaim(requestService.GetToken(Request), "ID"));
                 var templates = await templateService.GetUserTemplates(userObjectID).ConfigureAwait(false);
-                return new OkJson<IEnumerable<Template>>(templates);
+                return new OkJson<IEnumerable<TemplateDto>>(templates.OrderBy(template => template.DocumentCount));
+            }
+            catch (FormatException)
+            {
+                return new BadSentRequest<string>("userID is incorrect format");
+            }
+            catch (ArgumentException ex)
+            {
+                return new BadSentRequest<string>(ex.Message);
+            }
+            catch (DatabaseException ex)
+            {
+                return new InternalServerError(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
+                return new InternalServerError();
+            }
+        }
+
+        [HttpGet("user/search")]
+        public async Task<IActionResult> SearchForUserTemplates([FromQuery]string query) 
+        {
+            try
+            {
+                query = query ?? string.Empty;
+                ObjectId userObjectID = ObjectId.Parse(tokenService.GetTokenClaim(requestService.GetToken(Request), "ID"));
+                var templates = await templateService.SearchForUserTemplates(userObjectID, query).ConfigureAwait(false);
+                return new OkJson<IEnumerable<TemplateDto>>(templates.OrderBy(template => template.DocumentCount));
+            }
+            catch (FormatException)
+            {
+                return new BadSentRequest<string>("userID is incorrect format");
+            }
+            catch (ArgumentException ex)
+            {
+                return new BadSentRequest<string>(ex.Message);
+            }
+            catch (DatabaseException ex)
+            {
+                return new InternalServerError(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
+                return new InternalServerError();
+            }
+        }
+
+        [HttpGet("published/search")]
+        public async Task<IActionResult> SearchForPublishedTemplates([FromQuery]string query) 
+        {
+            try
+            {
+                query = query ?? string.Empty;
+                var templates = await templateService.SearchForPublishedTemplates(query).ConfigureAwait(false);
+                return new OkJson<IEnumerable<TemplateDto>>(templates.OrderBy(template => template.DocumentCount));
             }
             catch (FormatException)
             {
@@ -106,7 +166,7 @@ namespace DocumentsAPI.Features.Templates
             {
                 ObjectId templateObjectID = ObjectId.Parse(templateID);
                 var template = await templateService.GetTemplateByID(templateObjectID).ConfigureAwait(false);
-                return new OkJson<Template>(template);
+                return new OkJson<TemplateDto>(template);
             }
             catch (FormatException)
             {
@@ -132,8 +192,9 @@ namespace DocumentsAPI.Features.Templates
         {
             try
             {
+                dto.AuthorID = ObjectId.Parse(tokenService.GetTokenClaim(requestService.GetToken(Request), "ID"));
                 var createdTemplate = await templateService.CreateNewTemplate(dto).ConfigureAwait(false);
-                return new OkJson<Template>(createdTemplate);
+                return new OkJson<TemplateDto>(createdTemplate);
             }
             catch (FormatException)
             {
@@ -155,12 +216,13 @@ namespace DocumentsAPI.Features.Templates
         }
 
         [HttpPut]
-        public async Task<IActionResult> UpdateTemplate([FromBody]TemplateUpdateDto dto)
+        public async Task<IActionResult> UpdateTemplate()
         {
             try
             {
+                var dto = JsonConvert.DeserializeObject<TemplateUpdateDto>(await requestService.GetRequestBody(Request));
                 var createdTemplate = await templateService.UpdateTemplate(dto).ConfigureAwait(false);
-                return new OkJson<Template>(createdTemplate);
+                return new OkJson<TemplateDto>(createdTemplate);
             }
             catch (FormatException)
             {
@@ -210,7 +272,7 @@ namespace DocumentsAPI.Features.Templates
             }
         }
 
-        [HttpPut]
+        [HttpPut("documentsCount")]
         public async Task<IActionResult> IncreaseCreatedDocumentCount([FromQuery]string templateID)
         {
             try
@@ -219,7 +281,7 @@ namespace DocumentsAPI.Features.Templates
                 var updatedTemplate = await templateService.IncreaseDocumentCountForTemplate(templateObjectID)
                     .ConfigureAwait(false);
 
-                return new OkJson<Template>(updatedTemplate);
+                return new OkJson<TemplateDto>(updatedTemplate);
             }
             catch (FormatException)
             {

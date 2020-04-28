@@ -3,24 +3,46 @@ using System.Collections.Generic;
 using Domain.Date;
 using Domain.KernelModels;
 using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
+using Domain.DocumentStructureModels;
 
 namespace Domain.Templates 
 {
     public class Template : UniqueEntity
     {
+        [BsonElement("name")]
         public string Name { get; set; }
+
+        [BsonElement("organizationName")]
         public string OrganizationName { get; set; }
+
+        [BsonElement("description")]
         public string Description { get; set; }
+
+        [BsonElement("createdAt")]
         public DateTime CreatedAt { get; set; }
+
+        [BsonElement("updatedAt")]
         public DateTime UpdatedAt { get; set; }
-        public ObjectId AuthorId { get; set; }
+
+        [BsonElement("authorID")]
+        public ObjectId AuthorID { get; set; }
+
+        [BsonElement("published")]
         public bool Published { get; set; }
+
+        [BsonElement("items")]
         public List<TemplateItem> Items { get; set; }
+
+        [BsonElement("documentCount")]
         public long DocumentCount { get; set; }
+
+        [BsonElement("logo")]
+        public byte[] Logo { get; set; }
 
 
         public void Update(bool? newPublished, string newName, string newDescription, string newOrganization,
-                           List<TemplateItem> newItems)
+                           List<TemplateItem> newItems, byte[] newLogo)
         {
             if (newPublished is {})
             {
@@ -46,6 +68,11 @@ namespace Domain.Templates
             {
                 Items = newItems;
             }
+
+            if (newLogo is {})
+            {
+                Logo = newLogo;
+            }
         }
 
 
@@ -56,14 +83,23 @@ namespace Domain.Templates
             return new Template
             {
                 ID = ObjectId.GenerateNewId(),
-                AuthorId = authorID,
+                AuthorID = authorID,
                 Name = name,
                 OrganizationName = organizationName,
                 Description = description,
                 CreatedAt = creationDate,
                 UpdatedAt = creationDate,
                 Published = false,
-                Items = new List<TemplateItem>(),
+                Items = new List<TemplateItem>()
+                {
+                    new TemplateItem()
+                    {
+                        Comment = "Enter comment here...",
+                        Items = new List<TemplateItem>(),
+                        ItemType = ItemType.Start,
+                        Name = name,
+                    }
+                }
             };
         }
     }

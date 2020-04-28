@@ -1,9 +1,10 @@
 using DataAccessLayer.DatabasesManager.Interfaces;
+using Domain.KernelInterfaces;
 using SharedLibrary.FactoriesManager.Interfaces;
 
-namespace Application.Templates
+namespace Application.Templates.Interfaces
 {
-    public interface ITemplateServiceFactory
+    public interface ITemplateServiceFactory : IServiceFactory
     {
         ITemplateService GetService(IDatabaseManager databaseManager, IFactoriesManager factoriesManager);
     }

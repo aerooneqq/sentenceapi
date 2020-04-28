@@ -25,6 +25,8 @@ using Application.Tokens.Factories;
 using Application.Documents.DocumentElement.Factories;
 using Application.Requests.Factories;
 using Application.Responses.Factories;
+using Application.Templates.Factories;
+using Application.Users.Factories;
 
 namespace DocumentsAPI
 {
@@ -82,6 +84,8 @@ namespace DocumentsAPI
             factoriesManager.AddFactory(new FactoryInfo(new LoggerFactory(), typeof(LoggerFactory)));
             factoriesManager.AddFactory(new FactoryInfo(new TokenServiceFactory(), typeof(TokenServiceFactory)));
             factoriesManager.AddFactory(new FactoryInfo(new DocumentElementServiceFactory(), typeof(DocumentElementServiceFactory)));
+            factoriesManager.AddFactory(new FactoryInfo(new TemplateServiceFactory(), typeof(TemplateServiceFactory)));
+            factoriesManager.AddFactory(new FactoryInfo(new UserServiceFactory(), typeof(UserServiceFactory)));
         }
     }
 }
