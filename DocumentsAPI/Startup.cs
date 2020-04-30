@@ -27,6 +27,11 @@ using Application.Requests.Factories;
 using Application.Responses.Factories;
 using Application.Templates.Factories;
 using Application.Users.Factories;
+using Application.Projects;
+using SentenceAPI.Features.UserPhoto.Services;
+using Application.UserPhoto.Factories;
+using Application.Hash.Factories;
+using Application.Caching.Factories;
 
 namespace DocumentsAPI
 {
@@ -86,6 +91,10 @@ namespace DocumentsAPI
             factoriesManager.AddFactory(new FactoryInfo(new DocumentElementServiceFactory(), typeof(DocumentElementServiceFactory)));
             factoriesManager.AddFactory(new FactoryInfo(new TemplateServiceFactory(), typeof(TemplateServiceFactory)));
             factoriesManager.AddFactory(new FactoryInfo(new UserServiceFactory(), typeof(UserServiceFactory)));
+            factoriesManager.AddFactory(new FactoryInfo(new ProjectServiceFactory(), typeof(ProjectServiceFactory)));
+            factoriesManager.AddFactory(new FactoryInfo(new UserPhotoServiceFactory(), typeof(UserPhotoServiceFactory)));
+            factoriesManager.AddFactory(new FactoryInfo(new HashServiceFactory(), typeof(HashServiceFactory)));
+            factoriesManager.AddFactory(new FactoryInfo(new CacheServiceFactory(), typeof(CacheServiceFactory)));
         }
     }
 }

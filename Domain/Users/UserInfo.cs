@@ -16,7 +16,6 @@ namespace Domain.Users
     public class UserInfo : UniqueEntity
     {
         #region Authentication
-
         [BsonElement("login"), JsonProperty("login")]
         public string Login { get; set; }
 
@@ -25,11 +24,9 @@ namespace Domain.Users
 
         [BsonElement("password"), JsonIgnore, Secret]
         public string Password { get; set; }
-
         #endregion
 
         #region User data (name + country + photo)
-
         [BsonElement("name"), JsonProperty("name")]
         public string Name { get; set; }
 
@@ -44,41 +41,37 @@ namespace Domain.Users
 
         [BsonElement("city"), JsonProperty("city")]
         public string City { get; set; }
-
         #endregion
 
         [BsonElement("birthDate"), JsonProperty("birthDate")]
         public DateTime BirthDate { get; set; }
 
         #region Career
-
         [BsonElement("careerStages"), JsonProperty("careerStages")]
         public List<CareerStage> CareerStages { get; set; }
-
         #endregion
 
         #region System properties
-
         [BsonElement("isAccountVerified"), JsonProperty("isAccountVerified")]
         public bool IsAccountVerified { get; set; }
 
         [BsonElement("isAccountDeleted"), JsonProperty("isAccountDeleted")]
         public bool IsAccountDeleted { get; set; }
-
         #endregion
 
         #region Roles
-
         [BsonElement("roles"), JsonProperty("roles")]
         public IEnumerable<Role> Roles { get; set; }
+        #endregion
 
+        #region Project
+        [BsonElement("userRelatedProjects"), JsonProperty("userRelatedProjects")]
+        public List<ObjectId> UserRelatedProjects { get; set; }
         #endregion
 
         #region Constructors
 
-        public UserInfo()
-        {
-        }
+        public UserInfo() {}
 
         public UserInfo(Dictionary<string, object> propertiesValues)
         {
@@ -125,8 +118,11 @@ namespace Domain.Users
                 Email = email,
                 Password = password,
                 ID = ObjectId.GenerateNewId(),
-                IsAccountVerified = false,
-                IsAccountDeleted = false
+                #warning Replace this to false
+                IsAccountVerified = true,
+                IsAccountDeleted = false,
+                UserRelatedProjects = new List<ObjectId>(),
+                CareerStages = new List<CareerStage>(),
             };
 
         #endregion
