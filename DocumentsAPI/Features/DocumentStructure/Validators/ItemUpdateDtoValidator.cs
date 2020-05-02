@@ -32,10 +32,13 @@ namespace DocumentsAPI.Features.DocumentStructure.Validators
                 validationResult.errorMessage += " The document structure ID doesn't equal itemUpdateDto ID.";
             }
 
-            var newInnerValidatorResult = newInnerItemValidator.Validate();
+            if (itemUpdateDto.NewInnerItem is {})
+            {
+                var newInnerValidatorResult = newInnerItemValidator.Validate();
 
-            validationResult.result &= newInnerValidatorResult.result;
-            validationResult.errorMessage += " " + newInnerValidatorResult.errorMessage;
+                validationResult.result &= newInnerValidatorResult.result;
+                validationResult.errorMessage += " " + newInnerValidatorResult.errorMessage;
+            }
 
             return validationResult;
         }

@@ -24,6 +24,7 @@ using MongoDB.Bson;
 using Application.Documents.Documents.Interfaces;
 using Domain.Models.Document;
 using System.Collections.Generic;
+using Application.Tokens.Interfaces;
 
 namespace SentenceAPI.Features.Workplace.DocumentsDeskState
 {
@@ -34,6 +35,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsDeskState
         private readonly ILogger<ApplicationError> exceptionLogger;
         private readonly IDocumentDeskStateService deskStateService;
         private readonly IRequestService requestService;
+        private readonly ITokenService tokenService;
         private readonly IDocumentService documentService;
         #endregion
 
@@ -46,6 +48,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsDeskState
             factoriesManager.GetService<IDocumentDeskStateService>().TryGetTarget(out deskStateService);
             factoriesManager.GetService<IRequestService>().TryGetTarget(out requestService);
             factoriesManager.GetService<IDocumentService>().TryGetTarget(out documentService);
+            factoriesManager.GetService<ITokenService>().TryGetTarget(out tokenService);
 
             logConfiguration = new LogConfiguration(this.GetType());
         }
@@ -81,6 +84,13 @@ namespace SentenceAPI.Features.Workplace.DocumentsDeskState
                 var token = requestService.GetToken(Request);
                 var deskState = await deskStateService.GetDeskStateAsync(token).ConfigureAwait(false);
 
+                if (deskState is null)
+                {
+                    ObjectId userID = ObjectId.Parse(tokenService.GetTokenClaim(requestService.GetToken(Request), "ID"));
+                    await deskStateService.CreateDeskStateAsync(userID);
+                    deskState = await deskStateService.GetDeskStateAsync(token).ConfigureAwait(false);
+                }
+                
                 if (deskState.DocumentTopBarInfos is null)
                     deskState.DocumentTopBarInfos = new List<DocumentTopBarInfo>();
 
