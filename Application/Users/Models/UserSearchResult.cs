@@ -22,6 +22,7 @@ namespace Application.Users.Models
         public DateTime BirthDate { get; set; }
         #endregion
 
+
         #region Constructors
         public UserSearchResult(ObjectId id, string name, DateTime birthDate)
         {

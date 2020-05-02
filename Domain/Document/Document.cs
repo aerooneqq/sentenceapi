@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Domain.Document.DocumentStatus;
 using Domain.KernelModels;
+using Domain.Templates;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 

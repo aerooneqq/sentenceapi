@@ -2,7 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Application.Documents.Documents.Interfaces;
+using Application.Documents.DocumentStructure.Interfaces;
+using Application.Documents.FileToDocument.Interfaces;
 using Application.Projects.Dto;
+using Application.Templates;
+using Application.Templates.Interfaces;
 using Application.UserPhoto.Interfaces;
 using Application.Users.Interfaces;
 
@@ -15,6 +20,7 @@ using DataAccessLayer.Filters;
 using Domain.Date;
 using Domain.Logs;
 using Domain.Logs.Configuration;
+using Domain.Models.Document;
 using Domain.Projects;
 using Domain.Users;
 using MongoDB.Bson;
@@ -31,6 +37,10 @@ namespace Application.Projects
 
         private readonly IUserService<UserInfo> userService;
         private readonly IUserPhotoService userPhotoService;
+        private readonly IDocumentService documentService;
+        private readonly IDocumentStructureService documentStructureService;
+        private readonly ITemplateService templateService;
+        private readonly IFileToDocumentService fileToService; 
         private readonly ILogger<ApplicationError> exceptionLogger;
         private readonly LogConfiguration logConfiguration;
 
@@ -43,6 +53,10 @@ namespace Application.Projects
             factoriesManager.GetService<IDateService>().TryGetTarget(out dateService);
             factoriesManager.GetService<IUserService<UserInfo>>().TryGetTarget(out userService);
             factoriesManager.GetService<IUserPhotoService>().TryGetTarget(out userPhotoService);
+            factoriesManager.GetService<IDocumentService>().TryGetTarget(out documentService);
+            factoriesManager.GetService<IFileToDocumentService>().TryGetTarget(out fileToService);
+            factoriesManager.GetService<IDocumentStructureService>().TryGetTarget(out documentStructureService);
+            factoriesManager.GetService<ITemplateService>().TryGetTarget(out templateService);
 
             logConfiguration = new LogConfiguration(GetType());
 
@@ -53,7 +67,7 @@ namespace Application.Projects
         }
 
 
-        public async Task<ProjectDto> CreateProjectAsync(ObjectId authorID, string name, string description)
+        public async Task<ProjectShortDto> CreateProjectAsync(ObjectId authorID, string name, string description)
         {
             try
             {
@@ -80,56 +94,12 @@ namespace Application.Projects
 
                 await database.Insert(newProject).ConfigureAwait(false);
 
-                return new ProjectDto(newProject, new Dictionary<ObjectId, UserInfo>() { [authorID] = author },
-                                      new Dictionary<ObjectId, byte[]>() { [authorID] = userRawPhoto });
+                return new ProjectShortDto(newProject);
             }
             catch (Exception ex) when (ex.GetType() != typeof(ArgumentException))
             {
                 exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
                 throw new DatabaseException("Error ocurred while creating new projects");
-            }
-        }
-
-        public async Task<ProjectDto> GetProjectInfoAsync(ObjectId projectID)
-        {
-            try
-            {
-                await database.Connect().ConfigureAwait(false);
-                var getFilter = new EqualityFilter<ObjectId>("_id", projectID);
-                Project project = (await database.Get(getFilter).ConfigureAwait(false)).FirstOrDefault();
-                if (project is null)
-                {
-                    throw new ArgumentException("No project was found for given ID");
-                }
-
-                IDictionary<ObjectId, UserInfo> participants = project.Users.Select(user => 
-                {
-                    var getFilter = new EqualityFilter<ObjectId>("_id", user.UserID);
-                    UserInfo userInfo = userService.GetAsync(user.UserID).GetAwaiter().GetResult();
-                    if (userInfo is null)
-                    {
-                        throw new ArgumentException("User was not found for given ID");
-                    }
-
-                    return userInfo;
-                }).ToDictionary(user => user.ID, user => user);
-
-                IDictionary<ObjectId, byte[]> userPhotos = project.Users.Select(user =>
-                {
-                    Domain.UserPhoto.UserPhoto userPhoto = userPhotoService.GetPhotoAsync(user.UserID)
-                        .GetAwaiter().GetResult();
-                    byte[] rawUserPhoto = userPhotoService.GetRawPhotoAsync(userPhoto.CurrentPhotoID)
-                        .GetAwaiter().GetResult();
-
-                    return (userPhoto.UserID, rawUserPhoto);
-                }).ToDictionary(tuple => tuple.UserID, tuple => tuple.rawUserPhoto);
-
-                return new ProjectDto(project, participants, userPhotos);              
-            }
-            catch (Exception ex) when (ex.GetType() != typeof(ArgumentException))
-            {
-                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
-                throw new DatabaseException("Error ocurred while getting project info");
             }
         }
 
@@ -187,6 +157,188 @@ namespace Application.Projects
                 await userService.UpdateAsync(author).ConfigureAwait(false);
 
                 await database.Delete(getFilter).ConfigureAwait(false);
+            }
+            catch (Exception ex) when (ex.GetType() != typeof(ArgumentException))
+            {
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
+                throw new DatabaseException("Error ocurred while deleting project");
+            }
+        }
+
+        public async Task<ProjectShortDto> UpdateProject(ProjectUpdateDto update)
+        {
+            try
+            {
+                await database.Connect().ConfigureAwait(false);
+                var getFilter = new EqualityFilter<ObjectId>("_id", update.ProjectID);
+                Project project = (await database.Get(getFilter).ConfigureAwait(false)).FirstOrDefault();
+                if (project is null)
+                {
+                    throw new ArgumentException("No project was found for given ID");
+                }
+
+                UpdateProject(project, update);
+
+                await database.Update(project).ConfigureAwait(false);
+
+                return new ProjectShortDto(project);
+            }
+            catch (Exception ex) when (ex.GetType() != typeof(ArgumentException))
+            {
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
+                throw new DatabaseException("Error ocurred while deleting project");
+            }
+        }
+
+        private static void UpdateProject(Project project, ProjectUpdateDto update)
+        {
+            if (update.Description is {})
+            {
+                project.Description = update.Description;
+            }
+
+            if (update.Name is {})
+            {
+                project.Name = update.Name;
+            }
+        }
+
+        public async Task<ProjectShortDto> CreateNewDocumentInProject(ObjectId projectID, ObjectId userID, string documentName,
+                                                                 ObjectId templateID)
+        {
+            try
+            {
+                await database.Connect().ConfigureAwait(false);
+                var getFilter = new EqualityFilter<ObjectId>("_id", projectID);
+                Project project = (await database.Get(getFilter).ConfigureAwait(false)).FirstOrDefault();
+                
+                ObjectId documentID = await documentService.CreateEmptyDocument(userID, documentName, DocumentType.Project)
+                    .ConfigureAwait(false);
+
+                project.Documents.Add(documentID);
+
+                ObjectId structureID = await documentStructureService.CreateNewDocumentStructure(documentID, documentName, userID)
+                    .ConfigureAwait(false);
+                var documentStructure = await documentStructureService.GetStructureByID(structureID).ConfigureAwait(false);
+
+                if (documentStructure is null)
+                {
+                    throw new Exception("Document structure was not created. FATAL ERROR");
+                }
+
+                var template = await templateService.GetTemplateByID(templateID);
+                if (template is null)
+                {
+                    throw new ArgumentException("Template with such an ID does not exists");
+                }
+
+                documentStructure.ApplyTemplate(template.Items);
+
+                await documentStructureService.UpdateDocumentStructureAsync(documentStructure).ConfigureAwait(false);
+                await templateService.IncreaseDocumentCountForTemplate(template.ID).ConfigureAwait(false);
+                await database.Update(project).ConfigureAwait(false);
+
+                return new ProjectShortDto(project);
+            }
+            catch (Exception ex) when (ex.GetType() != typeof(ArgumentException))
+            {
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
+                throw new DatabaseException("Error ocurred while deleting project");
+            }
+        }
+
+        public async Task InviteUserInProject(ObjectId projectID, ObjectId userID)
+        {
+            try
+            {
+                await database.Connect().ConfigureAwait(false);
+                var getFilter = new EqualityFilter<ObjectId>("_id", projectID);
+                Project project = (await database.Get(getFilter).ConfigureAwait(false)).FirstOrDefault();
+
+                if (project.InvitedUsers.Contains(userID))
+                {
+                    throw new ArgumentException("The user is already invited");
+                }
+
+                UserInfo user = await userService.GetAsync(userID).ConfigureAwait(false);
+                user.UserInvitedProjects.Add(project.ID);
+
+                project.InvitedUsers.Add(user.ID);
+
+                await userService.UpdateAsync(user).ConfigureAwait(false);
+                await database.Update(project).ConfigureAwait(false);
+            }
+            catch (Exception ex) when (ex.GetType() != typeof(ArgumentException))
+            {
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
+                throw new DatabaseException("Error ocurred while deleting project");
+            }
+        }
+        public async Task<IEnumerable<ProjectUserDto>> GetProjectParticipants(ObjectId projectID)
+        {
+            try
+            {
+                await database.Connect().ConfigureAwait(false);
+                var getFilter = new EqualityFilter<ObjectId>("_id", projectID);
+                Project project = (await database.Get(getFilter).ConfigureAwait(false)).FirstOrDefault();
+
+                return project.Users.Select(user => 
+                {
+                    UserInfo userInfo = userService.GetAsync(user.UserID).GetAwaiter().GetResult();
+                    var userPhoto = userPhotoService.GetPhotoAsync(userInfo.ID).GetAwaiter().GetResult();
+                    byte[] rawPhoto = userPhotoService.GetRawPhotoAsync(userPhoto.CurrentPhotoID).GetAwaiter().GetResult();
+
+                    return new ProjectUserDto
+                    {
+                        AuthorName = userInfo.Name,
+                        Role = user.Role,
+                        UserID = userInfo.ID,
+                        UserPhoto = rawPhoto
+                    };
+                });
+            }
+            catch (Exception ex) when (ex.GetType() != typeof(ArgumentException))
+            {
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
+                throw new DatabaseException("Error ocurred while deleting project");
+            }
+        }
+
+        public async Task<IEnumerable<ProjectDocumentDto>> GetProjectDocuments(ObjectId projectID)
+        {
+            try
+            {
+                await database.Connect().ConfigureAwait(false);
+                var getFilter = new EqualityFilter<ObjectId>("_id", projectID);
+                Project project = (await database.Get(getFilter).ConfigureAwait(false)).FirstOrDefault();
+
+                return project.Documents.Select(documentID => 
+                {
+                    Document document = documentService.GetDocumentByID(documentID).GetAwaiter().GetResult();
+                    return new ProjectDocumentDto()
+                    {
+                        DocumentID = documentID,
+                        DocumentName = document.Name,
+                        DocumentStatus = document.DocumentStatus,
+                    };
+                });
+            }
+            catch (Exception ex) when (ex.GetType() != typeof(ArgumentException))
+            {
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
+                throw new DatabaseException("Error ocurred while deleting project");
+            }
+        }
+
+        public async Task<ProjectShortDto> GetProjectInfoAsync(ObjectId projectID)
+        {
+            try
+            {
+                await database.Connect().ConfigureAwait(false);
+                var getFilter = new EqualityFilter<ObjectId>("_id", projectID);
+                Project project = (await database.Get(getFilter).ConfigureAwait(false)).FirstOrDefault();
+
+                return new ProjectShortDto(project);
             }
             catch (Exception ex) when (ex.GetType() != typeof(ArgumentException))
             {

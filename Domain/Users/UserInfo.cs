@@ -67,6 +67,9 @@ namespace Domain.Users
         #region Project
         [BsonElement("userRelatedProjects"), JsonProperty("userRelatedProjects")]
         public List<ObjectId> UserRelatedProjects { get; set; }
+
+        [BsonElement("userInvitedProjects"), JsonProperty("userInvitedProjects")]
+        public List<ObjectId> UserInvitedProjects { get; set; }
         #endregion
 
         #region Constructors
@@ -121,6 +124,7 @@ namespace Domain.Users
                 #warning Replace this to false
                 IsAccountVerified = true,
                 IsAccountDeleted = false,
+                UserInvitedProjects = new List<ObjectId>(),
                 UserRelatedProjects = new List<ObjectId>(),
                 CareerStages = new List<CareerStage>(),
             };

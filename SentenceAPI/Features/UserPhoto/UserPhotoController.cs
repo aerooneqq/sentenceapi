@@ -75,6 +75,40 @@ namespace SentenceAPI.Features.UserPhoto
             }
         }
 
+        [HttpGet("other")]
+        public async Task<IActionResult> GetUserPhotoAsync([FromQuery]string userID)
+        {
+            try
+            {
+                ObjectId userObjectID = ObjectId.Parse(userID);
+
+                var userPhoto = await userPhotoService.GetPhotoAsync(userObjectID).ConfigureAwait(false);
+
+                if (userPhoto is null)
+                {
+                    return new BadSentRequest<string>("Upload your photo firstly!");
+                }
+
+                byte[] photo = await userPhotoService.GetRawPhotoAsync(userPhoto.CurrentPhotoID).ConfigureAwait(false);
+                
+                return new OkJson<byte[]>(photo, Encoding.UTF8);
+            }
+            catch (FormatException ex)
+            {
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
+                return new BadSentRequest<string>(ex.Message);
+            }
+            catch (DatabaseException ex)
+            {
+                return new InternalServerError(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
+                return new InternalServerError();
+            }
+        }
+
         [HttpPut]
         public async Task<IActionResult> UpdatePhotoAsync()
         {

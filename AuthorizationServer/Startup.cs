@@ -1,17 +1,22 @@
 using System.Collections.Generic;
 using System.IO;
+
 using Application.Requests.Factories;
 using Application.Responses.Factories;
 using Application.Tokens.Factories;
 using Application.UserActivity.Factories;
 using Application.Users.Factories;
+
 using AuthorizationServer.ApplicationFeatures.Loggers;
 using AuthorizationServer.Middlewares;
 using AuthorizationServer.Models;
+
 using DataAccessLayer.DatabasesManager;
 using DataAccessLayer.DatabasesManager.Interfaces;
+
 using Domain.Authentication;
 using Domain.Date;
+
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -21,6 +26,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
+
 using SharedLibrary.FactoriesManager;
 using SharedLibrary.FactoriesManager.Interfaces;
 using SharedLibrary.FactoriesManager.Models;

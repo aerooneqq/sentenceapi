@@ -34,6 +34,7 @@ namespace AuthorizationServer.Features.Authorization
 
         private readonly LogConfiguration logConfiguration;
 
+
         public AuthorizationController(IFactoriesManager factoriesManager)
         {
             factoriesManager.GetService<ILogger<ApplicationError>>().TryGetTarget(out exceptionLogger);

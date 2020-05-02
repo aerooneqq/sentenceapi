@@ -82,7 +82,7 @@ namespace SentenceAPI.Features.Workplace.DocumentsStorage
         /// Searches for the files and folders which satisfy the given query.
         /// </summary>
         [HttpGet, Route("search")]
-        public async Task<IActionResult> GetFodlersAndFiles([FromQuery]string query)
+        public async Task<IActionResult> GetFoldersAndFiles([FromQuery]string query)
         {
             try
             {

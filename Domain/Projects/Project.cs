@@ -27,6 +27,9 @@ namespace Domain.Projects
         [BsonElement("documents")]
         public List<ObjectId> Documents { get; set; }
 
+        [BsonElement("invitedUsers")]
+        public List<ObjectId> InvitedUsers { get; set; }
+
 
         public static Project GetEmptyProject(ObjectId authorID, string name, string description,
                                               IDateService dateService)
@@ -46,7 +49,8 @@ namespace Domain.Projects
                         Role = ProjectRole.Creator,
                         UserID = authorID,
                     }
-                }
+                },
+                InvitedUsers = new List<ObjectId>(),
             };
         }
     }

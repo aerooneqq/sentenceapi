@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 
 using Domain.KernelModels;
-
+using Domain.Templates;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
@@ -41,6 +41,18 @@ namespace Domain.DocumentStructureModels
         public Item()
         {
             ElementsIds = new List<ObjectId>();
+        }
+
+        public Item(TemplateItem templateItem)
+        {
+            Name = templateItem.Name;
+            Items = new List<Item>();
+            ElementsIds = new List<ObjectId>();
+            Comment = templateItem.Comment;
+            ItemStatus = new ItemStatus.ItemStatus()
+            {
+                ItemType = templateItem.ItemType,
+            };
         }
     }
 }

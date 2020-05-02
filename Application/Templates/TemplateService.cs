@@ -43,6 +43,8 @@ namespace Application.Templates
             IConfigurationBuilder configurationBuilder = new MongoConfigurationBuilder(database.Configuration);
             configurationBuilder.SetConfigurationFilePath(databaseConfigFile).SetAuthMechanism()
                                 .SetUserName().SetPassword().SetDatabaseName().SetServerName().SetConnectionString();
+
+            logConfiguration = new LogConfiguration(GetType());
         }
 
         public async Task<TemplateDto> CreateNewTemplate(TemplateCreationDto dto)
@@ -173,7 +175,7 @@ namespace Application.Templates
 
                 ++template.DocumentCount;
 
-                await database.Update(template, new [] {"documentCount"});
+                await database.Update(template).ConfigureAwait(false);
 
                 var templateAuthor = await userService.GetAsync(template.AuthorID);
                 if (templateAuthor is null)

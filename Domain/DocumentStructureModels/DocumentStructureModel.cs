@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-
+using System.Linq;
 using Domain.KernelModels;
-
+using Domain.Templates;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
@@ -58,6 +58,32 @@ namespace Domain.DocumentStructureModels
                 LastUpdatedAt = lastUpdatedDate,
                 ParentDocumentID = documentID
             };
+        }
+        
+        public void ApplyTemplate(List<TemplateItem> templateItems)
+        {
+            if (templateItems is null)
+            {
+                throw new ArgumentNullException("Template is null");
+            }
+
+            InitializeStructure(Items.First().Items, templateItems.First().Items);
+        }
+
+        private static void InitializeStructure(List<Item> items, List<TemplateItem> templateItems)
+        {
+            if (templateItems is null || templateItems.Count == 0)
+            {
+                return;
+            }
+
+            items.Clear();
+            items.AddRange(templateItems.Select(templateItem => new Item(templateItem)));
+
+            for (int i = 0; i < items.Count; ++i)
+            {
+                InitializeStructure(items[i].Items, templateItems[i].Items);
+            }
         }
     }
 }
