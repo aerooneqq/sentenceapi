@@ -16,10 +16,10 @@ namespace Domain.Validators
         private static string englishLetters = "qwertyuiopasdfghjklzxcvbnm";
         private static string numbers = "0123456789";
 
-        private static string notEnglishLetterInPassErrorMsg = "The password must contain only english letters";
-        private static string noNumberInPasswordErrorMsg = "The password must contatin at least one number";
+        private static string notEnglishLetterInPassErrorMsg = "The password must contain only English letters";
+        private static string noNumberInPasswordErrorMsg = "The password must contain at least one number";
         private static string passwordNotLongEnoughErrorMsg =
-            $"The length of the login must be greater than {minPassLength} and less than {maxPassLength}";
+            $"The length of the password must be greater than {minPassLength} and less than {maxPassLength}";
 
         private string password;
 

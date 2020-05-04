@@ -89,7 +89,7 @@ namespace Application.Links.Services
             try
             {
                 var filter = new EqualityFilter<string>("link", link);
-                VerificationLink verificationLink = (await database.Get(filter)).FirstOrDefault();
+                VerificationLink verificationLink = (await database.Get(filter).ConfigureAwait(false)).FirstOrDefault();
 
                 if (verificationLink == null)
                 {

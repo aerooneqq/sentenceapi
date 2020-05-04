@@ -87,7 +87,7 @@ namespace Application.Email.Services
             catch (Exception ex)
             {
                 exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
-                throw new DatabaseException("Error occured while working with the database");
+                throw new DatabaseException("Error occured while sending the email");
             }
         }
     }

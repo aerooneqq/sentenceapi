@@ -82,7 +82,7 @@ namespace Application.UserFriends.Services
             catch (Exception ex)
             {
                 exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
-                throw new DatabaseException("The error occured when creating the user", ex);
+                throw new DatabaseException("The error occured when creating the user friends object", ex);
             }
         }
 
@@ -144,10 +144,6 @@ namespace Application.UserFriends.Services
 
                 await database.Update(userFriends, new[] { "SubscribersID" });
             }
-            catch (DatabaseException ex)
-            {
-                throw new DatabaseException(ex.Message);
-            }
             catch (Exception ex)
             {
                 exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
@@ -170,10 +166,6 @@ namespace Application.UserFriends.Services
 
                 await database.Update(userFriends, new[] { "SubscriptionsID" });
             }
-            catch (DatabaseException ex)
-            {
-                throw new DatabaseException(ex.Message);
-            }
             catch (Exception ex)
             {
                 exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
@@ -187,10 +179,6 @@ namespace Application.UserFriends.Services
             {
                 ObjectId userID = ObjectId.Parse(tokenService.GetTokenClaim(token, "ID"));
                 return await GetSubscribersAsync(userID);
-            }
-            catch (DatabaseException ex)
-            {
-                throw new DatabaseException(ex.Message);
             }
             catch (Exception ex)
             {
@@ -226,10 +214,6 @@ namespace Application.UserFriends.Services
 
                 return subscribers;
             }
-            catch (DatabaseException ex)
-            {
-                throw new DatabaseException(ex.Message);
-            }
             catch (Exception ex)
             {
                 exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
@@ -243,10 +227,6 @@ namespace Application.UserFriends.Services
             {
                 ObjectId userID = ObjectId.Parse(tokenService.GetTokenClaim(token, "ID"));
                 return await GetSubscriptionsAsync(userID);
-            }
-            catch (DatabaseException ex)
-            {
-                throw new DatabaseException(ex.Message);
             }
             catch (Exception ex)
             {
@@ -281,10 +261,6 @@ namespace Application.UserFriends.Services
                 }
 
                 return subscriptions;
-            }
-            catch (DatabaseException ex)
-            {
-                throw new DatabaseException(ex.Message);
             }
             catch (Exception ex)
             {

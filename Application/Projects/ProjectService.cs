@@ -150,7 +150,7 @@ namespace Application.Projects
                 UserInfo author = await userService.GetAsync(authorID).ConfigureAwait(false);
                 if (author is null)
                 {
-                    throw new ArgumentException("No author was found for template");
+                    throw new ArgumentException("No author was found for project");
                 }
 
                 author.UserRelatedProjects.Remove(project.ID);
@@ -186,7 +186,7 @@ namespace Application.Projects
             catch (Exception ex) when (ex.GetType() != typeof(ArgumentException))
             {
                 exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
-                throw new DatabaseException("Error ocurred while deleting project");
+                throw new DatabaseException("Error ocurred while updating project");
             }
         }
 
@@ -243,7 +243,7 @@ namespace Application.Projects
             catch (Exception ex) when (ex.GetType() != typeof(ArgumentException))
             {
                 exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
-                throw new DatabaseException("Error ocurred while deleting project");
+                throw new DatabaseException("Error ocurred while creating new document in    project");
             }
         }
 
@@ -271,7 +271,7 @@ namespace Application.Projects
             catch (Exception ex) when (ex.GetType() != typeof(ArgumentException))
             {
                 exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
-                throw new DatabaseException("Error ocurred while deleting project");
+                throw new DatabaseException("Error ocurred while inviting user in project");
             }
         }
         public async Task<IEnumerable<ProjectUserDto>> GetProjectParticipants(ObjectId projectID)
@@ -300,7 +300,7 @@ namespace Application.Projects
             catch (Exception ex) when (ex.GetType() != typeof(ArgumentException))
             {
                 exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
-                throw new DatabaseException("Error ocurred while deleting project");
+                throw new DatabaseException("Error ocurred while getting project participants");
             }
         }
 
@@ -326,7 +326,7 @@ namespace Application.Projects
             catch (Exception ex) when (ex.GetType() != typeof(ArgumentException))
             {
                 exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
-                throw new DatabaseException("Error ocurred while deleting project");
+                throw new DatabaseException("Error ocurred while getting projecct documents");
             }
         }
 
@@ -343,7 +343,7 @@ namespace Application.Projects
             catch (Exception ex) when (ex.GetType() != typeof(ArgumentException))
             {
                 exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
-                throw new DatabaseException("Error ocurred while deleting project");
+                throw new DatabaseException("Error ocurred while getting proejct info");
             }
         }
     }

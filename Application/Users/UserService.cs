@@ -160,7 +160,7 @@ namespace Application.Users.Services
             catch (Exception ex)
             {
                 exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
-                throw new DatabaseException("Error occured while ipdating record in the database");
+                throw new DatabaseException("Error occured while updating record in the database");
             }
         }
 
@@ -192,7 +192,7 @@ namespace Application.Users.Services
             catch (Exception ex)
             {
                 exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
-                throw new DatabaseException("Error occured when inserting a user in the database");
+                throw new DatabaseException("Error occured when inserting user in the database");
             }
         }
 
@@ -210,7 +210,7 @@ namespace Application.Users.Services
             catch (Exception ex)
             {
                 exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
-                throw new DatabaseException("Error occured when inserting a user in the database");
+                throw new DatabaseException("Error occured when searching for users");
             }
         }
 

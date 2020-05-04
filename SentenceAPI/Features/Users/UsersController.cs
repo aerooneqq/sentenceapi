@@ -37,7 +37,6 @@ namespace SentenceAPI.Features.Users
         #region Services
         private readonly IFactoriesManager factoriesManager;
 
-
         private readonly IUserService<UserInfo> userService;
         private readonly ILogger<ApplicationError> exceptionLogger;
         private readonly IRequestService requestService;
@@ -245,8 +244,7 @@ namespace SentenceAPI.Features.Users
                 UserInfo user = await userService.GetAsync(requestService.GetToken(Request)).ConfigureAwait(false);
                 user.IsAccountDeleted = true;
 
-                await userService.UpdateAsync(user, new[] { "IsAccountDeleted" })
-                    .ConfigureAwait(false);
+                await userService.UpdateAsync(user, new[] { "IsAccountDeleted" }).ConfigureAwait(false);
 
                 return new Ok();
             }

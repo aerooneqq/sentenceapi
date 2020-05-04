@@ -248,13 +248,13 @@ namespace Application.Documents.DocumentStructure
                     throw new ArgumentException("No item for that item id");
                 }
 
-                item.ElementsIds.Insert(Math.Max(item.ElementsIds.Count, index + 1), documentElementID);
+                item.ElementsIds.Insert(Math.Min(item.ElementsIds.Count, index + 1), documentElementID);
                 await database.Update(documentStructure).ConfigureAwait(false);
             }
             catch (Exception ex) when (ex.GetType() != typeof(ArgumentException))
             {
                 exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
-                throw new DatabaseException("The error occured while inserting the document element structure");
+                throw new DatabaseException("The error occured while inserting the document element in structure");
             }
         }
 

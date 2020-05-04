@@ -128,7 +128,7 @@ namespace Application.Documents.DocumentElement
             catch (Exception ex) when (ex.GetType() != typeof(ArgumentException))
             {
                 exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
-                throw new DatabaseException("Error occurred while creating new node");
+                throw new DatabaseException("Error occurred while updating node");
             }
         }
 
@@ -158,7 +158,7 @@ namespace Application.Documents.DocumentElement
             catch (Exception ex) when (ex.GetType() != typeof(ArgumentException))
             {
                 exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
-                throw new DatabaseException("Error occurred while creating new node");
+                throw new DatabaseException("Error occurred while deleting node");
             }
         }
 
@@ -198,7 +198,7 @@ namespace Application.Documents.DocumentElement
             catch (Exception ex) when (ex.GetType() != typeof(ArgumentException))
             {
                 exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
-                throw new DatabaseException("Error occurred while creating new node");
+                throw new DatabaseException("Error occurred while updating node;s content");
             } 
         } 
     }
