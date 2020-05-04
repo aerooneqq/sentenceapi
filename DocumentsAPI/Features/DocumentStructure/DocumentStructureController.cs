@@ -185,9 +185,9 @@ namespace DocumentsAPI.Features.DocumentStructure
             }
         }
 
-        private void FindItemRecursive(ObjectId itemID, IEnumerable<Item> items, out Item seatchResult)
+        private void FindItemRecursive(ObjectId itemID, IEnumerable<Item> items, out Item searchResult)
         {
-            seatchResult = null;
+            searchResult = null;
 
             if (items is null)
                 return;
@@ -196,12 +196,12 @@ namespace DocumentsAPI.Features.DocumentStructure
             {
                 if (item.ID == itemID)
                 {
-                    seatchResult = item;
+                    searchResult = item;
                     return;
                 }
 
-                if (seatchResult is null)
-                    FindItemRecursive(itemID, item.Items, out seatchResult);
+                if (searchResult is null)
+                    FindItemRecursive(itemID, item.Items, out searchResult);
             }
         }
 
