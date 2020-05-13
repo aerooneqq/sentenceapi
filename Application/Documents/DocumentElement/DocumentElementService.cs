@@ -104,7 +104,7 @@ namespace Application.Documents.DocumentElement
             catch (Exception ex)
             {
                 exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
-                throw new DatabaseException("The erorr occured while getting the document");
+                throw new DatabaseException("The erorr occured while getting the document element");
             }
         }
 
@@ -208,7 +208,7 @@ namespace Application.Documents.DocumentElement
             catch (Exception ex) when (ex.GetType() != typeof(ArgumentException))
             {
                 exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
-                throw new DatabaseException("The error occured while creationg new element");
+                throw new DatabaseException("The error occured while creating new element");
             }
         }
 
@@ -282,7 +282,7 @@ namespace Application.Documents.DocumentElement
             catch (Exception ex)
             {
                 exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
-                throw new DatabaseException("Error occured while changing selected branch node id");
+                throw new DatabaseException("Error occured while changing selected branch node");
             }
         }
 

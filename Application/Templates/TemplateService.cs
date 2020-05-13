@@ -78,7 +78,7 @@ namespace Application.Templates
             catch (Exception ex) when (ex.GetType() != typeof(ArgumentException))
             {
                 exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
-                throw new DatabaseException("Error ocurred while creating new template");
+                throw new DatabaseException("Error ocurred while deleting template");
             }
         }
 
@@ -104,7 +104,7 @@ namespace Application.Templates
             catch (Exception ex) when (ex.GetType() != typeof(ArgumentException))
             {
                 exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
-                throw new DatabaseException("Error ocured while getting templates");
+                throw new DatabaseException("Error ocured while getting published templates");
             }
         }
 
@@ -133,7 +133,7 @@ namespace Application.Templates
             catch (Exception ex) when (ex.GetType() != typeof(ArgumentException))
             {
                 exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
-                throw new DatabaseException("Error ocurred while getting template");
+                throw new DatabaseException("Error ocurred while getting template by id");
             }
         }
 
@@ -156,7 +156,7 @@ namespace Application.Templates
             catch (Exception ex) when (ex.GetType() != typeof(ArgumentException))
             {
                 exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
-                throw new DatabaseException("Error ocurred while searching for templates");
+                throw new DatabaseException("Error ocurred while getting user templates");
             }
         }
 
@@ -188,7 +188,7 @@ namespace Application.Templates
             catch (Exception ex) when (ex.GetType() != typeof(ArgumentException))
             {
                 exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
-                throw new DatabaseException("Error ocurred while searching for templates");
+                throw new DatabaseException("Error ocurred while increasing documents count for templates");
             }
         }
 
@@ -216,7 +216,7 @@ namespace Application.Templates
             catch (Exception ex) when (ex.GetType() != typeof(ArgumentException))
             {
                 exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
-                throw new DatabaseException("Error ocurred while searching for templates");
+                throw new DatabaseException("Error ocurred while searching for published templates");
             }
         }
 
@@ -270,7 +270,7 @@ namespace Application.Templates
             catch (Exception ex) when (ex.GetType() != typeof(ArgumentException))
             {
                 exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
-                throw new DatabaseException("Error ocurred while searching for templates");
+                throw new DatabaseException("Error ocurred while updating the template");
             }
         }
     }
