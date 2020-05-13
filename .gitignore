@@ -31,3 +31,4 @@ configs
 .vs
 ./SentenceApiTests
 ./DataAccessLayerTests
+.idea
