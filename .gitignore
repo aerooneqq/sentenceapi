@@ -29,3 +29,5 @@ configs
 **/.idea
 **/**/.idea
 .vs
+./SentenceApiTests
+./DataAccessLayerTests
