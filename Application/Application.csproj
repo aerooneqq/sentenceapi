@@ -1,20 +1,33 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
   
   <ItemGroup>
+    <PackageReference Include="DocumentFormat.OpenXmlSDK" Version="2.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Cors" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.2.2" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.6.1" />
     <PackageReference Include="MongoDB.Driver" Version="2.9.1" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
+    <PackageReference Include="NUnit" Version="3.12.0" />
+    <PackageReference Include="NUnit3TestAdapter" Version="3.16.1" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="5.6.0" />
     <PackageReference Include="MongoDB.Driver.GridFS" Version="2.9.1" />
+    <PackageReference Include="System.IO.Packaging" Version="5.0.0-preview.3.20214.6" />
   </ItemGroup>
-
+  
   <ItemGroup>
-    <ProjectReference Include="../Domain/Domain.csproj" />
-    <ProjectReference Include="../SharedLibrary/SharedLibrary.csproj" />
-    <ProjectReference Include="../DataAccessLayer/DataAccessLayer.csproj " />
+    <Reference Include="DataAccessLayer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\DataAccessLayer\bin\Debug\netcoreapp3.1\DataAccessLayer.dll</HintPath>
+    </Reference>
+    <Reference Include="Domain, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\Domain\bin\Debug\netcoreapp3.1\Domain.dll</HintPath>
+    </Reference>
+    <Reference Include="SharedLibrary, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\SharedLibrary\bin\Debug\netcoreapp3.1\SharedLibrary.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>

@@ -1,39 +1,32 @@
-﻿using DataAccessLayer.CommonInterfaces;
-using DataAccessLayer.Configuration;
-using DataAccessLayer.Configuration.Interfaces;
-using DataAccessLayer.Exceptions;
-using DataAccessLayer.Filters;
-using DataAccessLayer.Filters.Interfaces;
-using DataAccessLayer.DatabasesManager.Interfaces;
-
-using SharedLibrary.Loggers.Interfaces;
-using SharedLibrary.FactoriesManager.Interfaces;
-
-using SentenceAPI.Features.Workplace.DocumentsDeskState.Interfaces;
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-
 using Application.Tokens.Interfaces;
-
-using MongoDB.Bson;
-
+using DataAccessLayer.CommonInterfaces;
+using DataAccessLayer.Configuration;
+using DataAccessLayer.Configuration.Interfaces;
+using DataAccessLayer.DatabasesManager.Interfaces;
+using DataAccessLayer.Exceptions;
+using DataAccessLayer.Filters;
+using DataAccessLayer.Filters.Interfaces;
 using Domain.Extensions;
 using Domain.Logs;
 using Domain.Logs.Configuration;
 using Domain.Workplace.DocumentsDeskState;
+using MongoDB.Bson;
+using SentenceAPI.Features.Workplace.DocumentsDeskState.Interfaces;
+using SharedLibrary.FactoriesManager.Interfaces;
+using SharedLibrary.Loggers.Interfaces;
 
-
-namespace Application.Workplace.DocumentsDeskState.Services
+namespace Application.Workplace.DocumentDeskState
 {
     public class DocumentDeskStateService : IDocumentDeskStateService
     {
         private static readonly string databaseConfigFileName = "./configs/mongo_database_config.json";
 
         #region Databases
-        private readonly IDatabaseService<DocumentDeskState> database;
+        private readonly IDatabaseService<Domain.Workplace.DocumentsDeskState.DocumentDeskState> database;
         private readonly IConfigurationBuilder configurationBuilder;
         #endregion
 
@@ -46,7 +39,7 @@ namespace Application.Workplace.DocumentsDeskState.Services
 
         public DocumentDeskStateService(IFactoriesManager factoriesManager, IDatabaseManager databaseManager)
         {
-            databaseManager.MongoDBFactory.GetDatabase<DocumentDeskState>().
+            databaseManager.MongoDBFactory.GetDatabase<Domain.Workplace.DocumentsDeskState.DocumentDeskState>().
                 TryGetTarget(out database);
 
             configurationBuilder = new MongoConfigurationBuilder(database.Configuration);
@@ -65,7 +58,7 @@ namespace Application.Workplace.DocumentsDeskState.Services
             {
                 await database.Connect().ConfigureAwait(false);
 
-                await database.Insert(new DocumentDeskState()
+                await database.Insert(new Domain.Workplace.DocumentsDeskState.DocumentDeskState()
                 {
                     DocumentTopBarInfos = new List<DocumentTopBarInfo>(),
                     OpenedDocumentID = ObjectId.Empty,
@@ -95,7 +88,7 @@ namespace Application.Workplace.DocumentsDeskState.Services
             }
         }
 
-        public async Task<DocumentDeskState> GetDeskStateAsync(string token)
+        public async Task<Domain.Workplace.DocumentsDeskState.DocumentDeskState> GetDeskStateAsync(string token)
         {
             try
             {
@@ -108,13 +101,13 @@ namespace Application.Workplace.DocumentsDeskState.Services
             }
         }
 
-        public async Task<DocumentDeskState> GetDeskStateAsync(ObjectId userID)
+        public async Task<Domain.Workplace.DocumentsDeskState.DocumentDeskState> GetDeskStateAsync(ObjectId userID)
         {
             try
             {
                 await database.Connect().ConfigureAwait(false);
 
-                var getFilter = new EqualityFilter<ObjectId>(typeof(DocumentDeskState).GetBsonPropertyName("UserID"), userID);
+                var getFilter = new EqualityFilter<ObjectId>(typeof(Domain.Workplace.DocumentsDeskState.DocumentDeskState).GetBsonPropertyName("UserID"), userID);
                 return (await database.Get(getFilter).ConfigureAwait(false)).FirstOrDefault();
             }
             catch (Exception ex)
@@ -124,7 +117,7 @@ namespace Application.Workplace.DocumentsDeskState.Services
             }
         }
 
-        public async Task UpdateDeskStateAsync(DocumentDeskState documentDeskState)
+        public async Task UpdateDeskStateAsync(Domain.Workplace.DocumentsDeskState.DocumentDeskState documentDeskState)
         {
             try
             {
@@ -138,7 +131,7 @@ namespace Application.Workplace.DocumentsDeskState.Services
             }
         }
 
-        public async Task UpdateAsync(DocumentDeskState documentDeskState, IEnumerable<string> properties)
+        public async Task UpdateAsync(Domain.Workplace.DocumentsDeskState.DocumentDeskState documentDeskState, IEnumerable<string> properties)
         {
             try
             {

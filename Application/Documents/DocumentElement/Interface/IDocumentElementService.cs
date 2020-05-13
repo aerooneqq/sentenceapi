@@ -18,5 +18,6 @@ namespace Application.Documents.DocumentElement.Interface
         Task ChangeSelectedBranch(ObjectId documentElementID, ObjectId branchID);
         Task ChangeSelectedBranchNode(ObjectId documentElementID, ObjectId branchNodeID);
         Task<DocumentElementDto> GetDocumentElementAsync(ObjectId elementID, ObjectId userID);
+        Task<Domain.DocumentElements.DocumentElement> GetCurrentDocumentElement(ObjectId elementID);
     }
 }

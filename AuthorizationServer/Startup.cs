@@ -41,9 +41,8 @@ namespace AuthorizationServer
         public static readonly IDictionary<Server, string> Servers = new Dictionary<Server, string>()
         {
             [Server.SentenceAPI] = "http://localhost:5000/sentenceapi",
-            [Server.DocumentsAPI] = "http://localhost:6000/documentsapi"
+            [Server.DocumentsAPI] = "http://localhost:3002/documentsapi"
         };
-
 
         public Startup(IConfiguration configuration)
         {

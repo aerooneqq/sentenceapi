@@ -1,4 +1,4 @@
-﻿using Application.Workplace.DocumentsDeskState.Services;
+﻿using Application.Workplace.DocumentDeskState;
 
 using DataAccessLayer.DatabasesManager.Interfaces;
 

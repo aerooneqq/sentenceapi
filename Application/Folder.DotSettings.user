@@ -1,2 +1,10 @@
 ﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+	<s:Boolean x:Key="/Default/AddReferences/RecentPaths/=_002Fhome_002Faero_002FProgramming_002FSentence_002Fsentenceapi_002FDataAccessLayer_002Fbin_002FDebug_002Fnetcoreapp3_002E1_002FDataAccessLayer_002Edll/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/AddReferences/RecentPaths/=_002Fhome_002Faero_002FProgramming_002FSentence_002Fsentenceapi_002FDomain_002Fbin_002FDebug_002Fnetcoreapp3_002E1_002FDomain_002Edll/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/AddReferences/RecentPaths/=_002Fhome_002Faero_002FProgramming_002FSentence_002Fsentenceapi_002FSharedLibrary_002Fbin_002FDebug_002Fnetcoreapp3_002E1_002FSharedLibrary_002Edll/@EntryIndexedValue">True</s:Boolean>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=08bb9b5a_002Df5f9_002D4309_002Dabd5_002Dc6fdae89941d/@EntryIndexedValue">&lt;SessionState ContinuousTestingIsOn="False" ContinuousTestingMode="0" FrameworkVersion="{x:Null}" IsLocked="False" Name="TestRender" PlatformMonoPreference="{x:Null}" PlatformType="{x:Null}" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"&gt;
+  &lt;TestAncestor&gt;
+    &lt;TestId&gt;NUnit3x::B8BE91B2-3F79-334F-08C4-63951165DAD4::.NETCoreApp,Version=v3.1::Application.WordTests.TestRender&lt;/TestId&gt;
+  &lt;/TestAncestor&gt;
+&lt;/SessionState&gt;</s:String>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=Photoes/@EntryIndexedValue">True</s:Boolean></wpf:ResourceDictionary>

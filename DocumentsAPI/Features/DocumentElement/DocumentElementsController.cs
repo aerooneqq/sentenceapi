@@ -199,6 +199,70 @@ namespace DocumentsAPI.Features.DocumentElement
             }
         }
 
+        [HttpPut("selectedBranch")]
+        public async Task<IActionResult> ChangeSelectedBranch([FromQuery] string elementID,
+            [FromQuery] string selectedBranchID)
+        {
+            try
+            {
+                ObjectId elementObjectId = ObjectId.Parse(elementID);
+                ObjectId selectedBranchObjectID = ObjectId.Parse(selectedBranchID);
+                await documentElementService.ChangeSelectedBranch(elementObjectId, selectedBranchObjectID)
+                    .ConfigureAwait(false);
+                
+                return new Ok();
+            }
+            catch (ArgumentException ex)
+            {
+                return new BadSentRequest<string>(ex.Message);
+            }
+            catch (FormatException)
+            {
+                return new BadSentRequest<string>("This id is not in correct format");
+            }
+            catch (DatabaseException ex)
+            {
+                return new InternalServerError(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
+                return new InternalServerError();
+            }
+        }
+        
+        [HttpPut("selectedBranchNode")]
+        public async Task<IActionResult> ChangeSelectedBranchNode([FromQuery] string elementID,
+            [FromQuery] string selectedBranchNodeID)
+        {
+            try
+            {
+                ObjectId elementObjectId = ObjectId.Parse(elementID);
+                ObjectId selectedBranchNodeObjectID = ObjectId.Parse(selectedBranchNodeID);
+                await documentElementService.ChangeSelectedBranchNode(elementObjectId, selectedBranchNodeObjectID)
+                    .ConfigureAwait(false);
+                
+                return new Ok();
+            }
+            catch (ArgumentException ex)
+            {
+                return new BadSentRequest<string>(ex.Message);
+            }
+            catch (FormatException)
+            {
+                return new BadSentRequest<string>("This id is not in correct format");
+            }
+            catch (DatabaseException ex)
+            {
+                return new InternalServerError(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
+                return new InternalServerError();
+            }
+        }
+
         [HttpDelete]
         public async Task<IActionResult> DeleteDocumentElement([FromQuery]string documentElementID)
         {
@@ -206,7 +270,7 @@ namespace DocumentsAPI.Features.DocumentElement
             {
                 ObjectId documentElementObjectID = ObjectId.Parse(documentElementID);
                 await documentElementService.DeleteDocumentElementAsync(documentElementObjectID).ConfigureAwait(false);
-
+                
                 return new Ok();
             }
             catch (ArgumentException ex)

@@ -86,11 +86,7 @@ namespace Application.Documents.DocumentElement
 
                 var elementWrappers = (await database.Get(new EqualityFilter<ObjectId>("parentItemID", parentItemID))
                     .ConfigureAwait(false)).ToDictionary(w => w.ID, w => w);
-                if (elementWrappers is null)
-                {
-                    return null;
-                }
-
+                
                 return item.ElementsIds is null ? new DocumentElementDto[0]{} : item.ElementsIds.Select(id => 
                 {
                     var wrapper = elementWrappers.GetValueOrDefault(id);
@@ -307,6 +303,41 @@ namespace Application.Documents.DocumentElement
                 wrapper.SetBranches(element.Branches, userID);
 
                 return wrapper;
+            }
+            catch (Exception ex) when (ex.GetType() != typeof(ArgumentException))
+            {
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
+                throw new DatabaseException("Error occured while getting the document element");
+            }
+        }
+
+        public async Task<Domain.DocumentElements.DocumentElement> GetCurrentDocumentElement(ObjectId elementID)
+        {
+            try
+            {
+                await database.Connect().ConfigureAwait(false);
+
+                FilterBase getFilter = new EqualityFilter<ObjectId>("_id", elementID);
+                var element = (await database.Get(getFilter).ConfigureAwait(false)).FirstOrDefault();
+                if (element is null)
+                {
+                    throw new ArgumentException("No document element was found for id");
+                }
+
+                var selectedBranch = element.Branches.Find(b => b.BranchID == element.CurrentBranchID);
+                if (selectedBranch is null)
+                {
+                    throw new ArgumentException("Can't find selected branch");
+                }
+                
+                var selectedBranchNode = selectedBranch.BranchNodes.Find(
+                    node => node.BranchNodeID == element.CurrentBranchNodeID);
+                if (selectedBranchNode is null)
+                {
+                    throw new ArgumentException("Can't find selected branch node");
+                }
+
+                return selectedBranchNode.DocumentElement;
             }
             catch (Exception ex) when (ex.GetType() != typeof(ArgumentException))
             {

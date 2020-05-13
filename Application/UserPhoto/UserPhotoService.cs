@@ -36,7 +36,7 @@ namespace SentenceAPI.Features.UserPhoto.Services
 
         #region Database
         private readonly IDatabaseService<Domain.UserPhoto.UserPhoto> database;
-        private readonly IConfigurationBuilder configurationBuilder;
+
         #endregion
 
         #region Services
@@ -52,7 +52,7 @@ namespace SentenceAPI.Features.UserPhoto.Services
         {
             databasesManager.MongoDBFactory.GetDatabase<Domain.UserPhoto.UserPhoto>().TryGetTarget(out database);
 
-            configurationBuilder = new MongoConfigurationBuilder(database.Configuration);
+            IConfigurationBuilder configurationBuilder = new MongoConfigurationBuilder(database.Configuration);
             configurationBuilder.SetConfigurationFilePath(databaseConfigFile).SetAuthMechanism()
                     .SetUserName().SetPassword().SetDatabaseName().SetServerName().SetConnectionString();
 

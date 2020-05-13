@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 
 using Application.Links.Interfaces;
@@ -18,6 +19,7 @@ using Domain.Links;
 using Domain.Logs;
 using Domain.Logs.Configuration;
 using Domain.Users;
+using MongoDB.Bson;
 
 
 namespace Application.Links.Services
@@ -28,15 +30,13 @@ namespace Application.Links.Services
         private static Random Random { get; } = new Random();
         private static readonly string databaseConfigFile = "./configs/mongo_database_config.json";
         #endregion
-
-
+        
         #region Daatabases
-        private IDatabaseService<VerificationLink> database;
-        private IConfigurationBuilder configurationBuilder;
-        #endregion
+        private readonly IDatabaseService<VerificationLink> verificationLinksDatabase;
+        private readonly IDatabaseService<WordDownloadLink> wordLinksDatabase;
+            #endregion
 
-
-        #region Service
+            #region Service
         private ILogger<ApplicationError> exceptionLogger;
         #endregion
 
@@ -45,12 +45,17 @@ namespace Application.Links.Services
 
         public LinkService(IFactoriesManager factoriesManager, IDatabaseManager databaseManager)
         {
-            databaseManager.MongoDBFactory.GetDatabase<VerificationLink>().TryGetTarget(out database);
+            databaseManager.MongoDBFactory.GetDatabase<VerificationLink>().TryGetTarget(out verificationLinksDatabase);
+            databaseManager.MongoDBFactory.GetDatabase<WordDownloadLink>().TryGetTarget(out wordLinksDatabase);
 
-            configurationBuilder = new MongoConfigurationBuilder(database.Configuration);
+            IConfigurationBuilder configurationBuilder = new MongoConfigurationBuilder(verificationLinksDatabase.Configuration);
             configurationBuilder.SetConfigurationFilePath(databaseConfigFile).SetAuthMechanism()
                                 .SetUserName().SetPassword().SetDatabaseName().SetServerName().SetConnectionString();
-
+            
+            configurationBuilder = new MongoConfigurationBuilder(wordLinksDatabase.Configuration);
+            configurationBuilder.SetConfigurationFilePath(databaseConfigFile).SetAuthMechanism()
+                .SetUserName().SetPassword().SetDatabaseName().SetServerName().SetConnectionString();
+            
             factoriesManager.GetService<ILogger<ApplicationError>>().TryGetTarget(out exceptionLogger);
 
             logConfiguration = new LogConfiguration(this.GetType());
@@ -64,8 +69,8 @@ namespace Application.Links.Services
             {
                 VerificationLink link = new VerificationLink(user);
 
-                await database.Connect();
-                await database.Insert(link);
+                await verificationLinksDatabase.Connect();
+                await verificationLinksDatabase.Insert(link);
 
                 return link.Link;
             }
@@ -89,7 +94,7 @@ namespace Application.Links.Services
             try
             {
                 var filter = new EqualityFilter<string>("link", link);
-                VerificationLink verificationLink = (await database.Get(filter)).FirstOrDefault();
+                VerificationLink verificationLink = (await verificationLinksDatabase.Get(filter)).FirstOrDefault();
 
                 if (verificationLink == null)
                 {
@@ -102,11 +107,82 @@ namespace Application.Links.Services
                 }
 
                 verificationLink.Used = true;
-                await database.Update(verificationLink, new[] { "Used" });
+                await verificationLinksDatabase.Update(verificationLink, new[] { "Used" });
 
                 return true;
             }
             catch (Exception ex)
+            {
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
+                throw new DatabaseException("Error occured while working with the database");
+            }
+        }
+        
+        public async Task MarkWordLinkAsUsed(ObjectId linkID)
+        {
+            try
+            {
+                await wordLinksDatabase.Connect().ConfigureAwait(false);
+                
+                var filter = new EqualityFilter<ObjectId>("_id", linkID);
+                var wordDownloadLink = (await wordLinksDatabase.Get(filter).ConfigureAwait(false))
+                    .FirstOrDefault();
+                if (wordDownloadLink is null)
+                {
+                    throw new ArgumentException("No link was found for given ID");
+                }
+
+                wordDownloadLink.Used = true;
+
+                await wordLinksDatabase.Update(wordDownloadLink).ConfigureAwait(false);
+            }
+            catch (Exception ex) when (ex.GetType() != typeof(ArgumentException))
+            {
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
+                throw new DatabaseException("Error occured while working with the database");
+            }
+        }
+
+        public async Task<WordDownloadLink> GetUnusedDownloadLink(ObjectId linkID)
+        {
+            try
+            {
+                await wordLinksDatabase.Connect().ConfigureAwait(false);
+                
+                var filter = new EqualityFilter<ObjectId>("_id", linkID);
+                var wordDownloadLink = (await wordLinksDatabase.Get(filter).ConfigureAwait(false))
+                    .FirstOrDefault();
+                if (wordDownloadLink is null)
+                {
+                    throw new ArgumentException("No link was found for given ID");
+                }
+
+                if (wordDownloadLink.Used)
+                {
+                    throw new ArgumentException("The link has already been used");
+                }
+
+                return wordDownloadLink;
+            }
+            catch (Exception ex) when (ex.GetType() != typeof(ArgumentException))
+            {
+                exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
+                throw new DatabaseException("Error occured while working with the database");
+            }
+        }
+
+        public async Task<WordDownloadLink> CreateWordDownloadLink(ObjectId documentID, ObjectId userID)
+        {
+            try
+            {
+                await wordLinksDatabase.Connect().ConfigureAwait(false);
+                var wordDownloadLink = new WordDownloadLink(userID, documentID);
+
+                await wordLinksDatabase.Insert(wordDownloadLink).ConfigureAwait(false);
+
+                return wordDownloadLink;
+            }
+            catch (Exception ex) when (ex.GetType() != typeof(ArgumentException))
             {
                 exceptionLogger.Log(new ApplicationError(ex), LogLevel.Error, logConfiguration);
                 throw new DatabaseException("Error occured while working with the database");

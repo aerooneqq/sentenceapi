@@ -1,0 +1,9 @@
+﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+	<s:Boolean x:Key="/Default/AddReferences/RecentPaths/=_002Fhome_002Faero_002FProgramming_002FSentence_002Fsentenceapi_002FApplication_002Fbin_002FDebug_002Fnetcoreapp3_002E1_002FApplication_002Edll/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/AddReferences/RecentPaths/=_002Fhome_002Faero_002FProgramming_002FSentence_002Fsentenceapi_002FDataAccessLayer_002Fbin_002FDebug_002Fnetcoreapp3_002E1_002FDataAccessLayer_002Edll/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/AddReferences/RecentPaths/=_002Fhome_002Faero_002FProgramming_002FSentence_002Fsentenceapi_002FDomain_002Fbin_002FDebug_002Fnetcoreapp3_002E1_002FDomain_002Edll/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/AddReferences/RecentPaths/=_002Fhome_002Faero_002FProgramming_002FSentence_002Fsentenceapi_002FSharedLibrary_002Fbin_002FDebug_002Fnetcoreapp3_002E1_002FSharedLibrary_002Edll/@EntryIndexedValue">True</s:Boolean>
+	<s:String x:Key="/Default/Environment/AssemblyExplorer/XmlDocument/@EntryValue">&lt;AssemblyExplorer&gt;
+  &lt;Assembly Path="/home/aero/Programming/Sentence/sentenceapi/Domain/bin/Debug/netcoreapp3.1/Domain.dll" /&gt;
+  &lt;Assembly Path="/home/aero/Programming/Sentence/sentenceapi/DocumentsAPI/Assemblies/SharedLibrary.dll" /&gt;
+&lt;/AssemblyExplorer&gt;</s:String></wpf:ResourceDictionary>

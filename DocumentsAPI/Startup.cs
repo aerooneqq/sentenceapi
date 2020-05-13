@@ -32,6 +32,8 @@ using SentenceAPI.Features.UserPhoto.Services;
 using Application.UserPhoto.Factories;
 using Application.Hash.Factories;
 using Application.Caching.Factories;
+using Application.Links.Factories;
+using Application.Word.Factories;
 
 namespace DocumentsAPI
 {
@@ -95,6 +97,8 @@ namespace DocumentsAPI
             factoriesManager.AddFactory(new FactoryInfo(new UserPhotoServiceFactory(), typeof(UserPhotoServiceFactory)));
             factoriesManager.AddFactory(new FactoryInfo(new HashServiceFactory(), typeof(HashServiceFactory)));
             factoriesManager.AddFactory(new FactoryInfo(new CacheServiceFactory(), typeof(CacheServiceFactory)));
+            factoriesManager.AddFactory(new FactoryInfo(new WordServiceFactory(), typeof(WordServiceFactory)));
+            factoriesManager.AddFactory(new FactoryInfo(new LinkServiceFactory(), typeof(LinkServiceFactory)));
         }
     }
 }

@@ -12,7 +12,7 @@ namespace DocumentsAPI
             WebHost.CreateDefaultBuilder(args)
                    .UseKestrel(options => 
                    {
-                       options.ListenAnyIP(6000);
+                       options.ListenAnyIP(3002);
                    })
                    .UseStartup<Startup>();
     }
